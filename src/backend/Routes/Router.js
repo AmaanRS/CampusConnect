@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Router = void 0;
+var _a = require("../Controllers/Controller"), login = _a.login, signup = _a.signup, mainPage = _a.mainPage, getUserData = _a.getUserData, getAllUsersEmail = _a.getAllUsersEmail, addFriendBothWays = _a.addFriendBothWays, getUserConversation = _a.getUserConversation;
+var express = require("express");
+var cookieChecker = require("../Middlewares/CookieChecker").cookieChecker;
+exports.Router = express.Router();
+exports.Router.route("/login").post(login);
+exports.Router.route("/signup").post(signup);
+exports.Router.route("/main").post(cookieChecker, mainPage);
+exports.Router.route("/getUserData").post(cookieChecker, getUserData);
+exports.Router.route("/getAllUsersEmail").post(cookieChecker, getAllUsersEmail);
+exports.Router.route("/addFriendBothWays").post(cookieChecker, addFriendBothWays);
+exports.Router.route("/getUserConversation").post(cookieChecker, getUserConversation);
+// module.exports = Router;

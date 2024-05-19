@@ -1,10 +1,11 @@
 {
 	"name": "backend",
 	"version": "1.0.0",
-	"main": "app.js",
+	"main": "app.ts",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "tsc",
+		"build": "rimraf ../dist && tsc",
+		"dev": "nodemon",
 		"format": "prettier --write ."
 	},
 	"author": "",
@@ -12,7 +13,28 @@
 	"description": "",
 	"type": "module",
 	"devDependencies": {
+		"@types/bcrypt": "^5.0.2",
+		"@types/cookie-parser": "^1.4.7",
+		"@types/express": "^4.17.21",
+		"@types/jsonwebtoken": "^9.0.6",
+		"@types/node": "^20.12.12",
+		"nodemon": "^3.0.3",
 		"prettier": "3.2.5",
+		"rimraf": "^5.0.7",
+		"ts-node": "^10.9.2",
 		"typescript": "5.4.5"
+	},
+	"dependencies": {
+		"bcrypt": "^5.1.1",
+		"cookie-parser": "^1.4.6",
+		"cors": "^2.8.5",
+		"dotenv": "^16.3.2",
+		"express": "^4.18.2",
+		"ioredis": "^5.3.2",
+		"jsonwebtoken": "^9.0.2",
+		"kafkajs": "^2.2.4",
+		"mongoose": "^8.3.3",
+		"redis": "^3.1",
+		"socket.io": "^4.7.4"
 	}
 }

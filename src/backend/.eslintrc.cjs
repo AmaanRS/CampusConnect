@@ -19,7 +19,6 @@ module.exports = {
 			destructuring: true,
 			forOf: true,
 			jsx: true,
-			modules: true,
 			spread: true,
 		},
 	},
