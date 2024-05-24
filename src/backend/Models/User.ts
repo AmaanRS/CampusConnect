@@ -1,5 +1,11 @@
 import { Model, Schema, model } from "mongoose";
-import { IUser } from "../BackendTypes";
+import {
+	IUser,
+	Year,
+	Department,
+	AccountType,
+	Position,
+} from "../BackendTypes";
 
 const userSchema = new Schema<IUser>(
 	{
@@ -8,22 +14,36 @@ const userSchema = new Schema<IUser>(
 			type: String,
 			trim: true,
 		},
-		password: {
-			required: true,
-			type: String,
-		},
 		email: {
 			required: true,
 			type: String,
 			unique: true,
 		},
-		//Newly added testing this field is remaining
-		// friends: [
-		// 	{
-		// 		type: Schema.Types.ObjectId,
-		// 		ref: "userModel",
-		// 	},
-		// ],
+		year: {
+			type: Number,
+			enum: Object.values(Year),
+		},
+		division: {
+			type: String,
+		},
+		department: {
+			type: String,
+			enum: Object.values(Department),
+		},
+		id: {
+			type: Number,
+		},
+		accType: {
+			type: String,
+			enum: Object.values(AccountType),
+		},
+		position: {
+			type: String,
+			enum: Object.values(Position),
+		},
+		isProfileComplete: {
+			type: Boolean,
+		},
 	},
 	{
 		timestamps: true,

@@ -30,17 +30,17 @@ const login = async (req: Request, res: Response) => {
 			}
 
 			//Check the user input password against the password from the database
-			let matchPassword = await bcrypt.compare(password, user.password);
+			// let matchPassword = await bcrypt.compare(password, user.password);
 
-			//If the passwords do not match
-			if (!matchPassword) {
-				const response: StandardResponse = {
-					message: "Either email or password entered is wrong",
-					success: false,
-				};
+			// //If the passwords do not match
+			// if (!matchPassword) {
+			// 	const response: StandardResponse = {
+			// 		message: "Either email or password entered is wrong",
+			// 		success: false,
+			// 	};
 
-				return res.json(response);
-			}
+			// 	return res.json(response);
+			// }
 
 			//Create a jwt token
 			let token = jwt.sign({ email: email }, process.env.JWT_SECRET!);
