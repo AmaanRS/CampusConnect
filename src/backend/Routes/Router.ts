@@ -1,6 +1,8 @@
 import express from 'express'
 export const Router = express.Router();
-// import { cookieChecker } from "../Middlewares/CookieChecker";
+import { cookieCheckerFunction } from "../Middlewares/CookieChecker";
+
+Router.route("/validateUser").post(cookieCheckerFunction);
 
 
 // const {

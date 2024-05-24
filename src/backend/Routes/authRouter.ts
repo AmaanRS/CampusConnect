@@ -11,7 +11,7 @@ authRouter.get(
 
 authRouter.get(
 	"/google/callback",
-	passport.authenticate("google", { failureRedirect: "/login" }),
+	passport.authenticate("google", { failureRedirect: "/" }),
 	(req: Request, res: Response) => {
 		try {
 			const token = jwt.sign({ user: req.user }, process.env.JWT_SECRET!, {
@@ -21,7 +21,7 @@ authRouter.get(
 			res.redirect(`http://localhost:5173/redirect/token=${encodeURI(token)}`);
 		} catch (error) {
 			console.log(error);
-			res.redirect("http://localhost:5173/login");
+			res.redirect("http://localhost:5173/");
 		}
 	},
 );

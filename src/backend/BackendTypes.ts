@@ -7,11 +7,11 @@ export interface StandardResponse {
 }
 
 export interface TokenResponse extends StandardResponse{
-    token?:string
+    token:string
 }
 
 export interface MiddlewareResponse extends StandardResponse {
-	decodedToken?: JwtPayload;
+	decodedToken: JwtPayload;
 }
 
 export enum Year{
@@ -50,7 +50,7 @@ export interface IUser extends Document {
 	id?:number,
 	accType?:AccountType,
 	position?:Position,
-	isProfileComplete?:boolean
+	isProfileComplete:boolean
 }
 
 export interface ICommittee extends Document{

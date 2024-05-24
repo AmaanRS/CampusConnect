@@ -42,6 +42,7 @@ const userSchema = new Schema<IUser>(
 			enum: Object.values(Position),
 		},
 		isProfileComplete: {
+			default:false,
 			type: Boolean,
 		},
 	},

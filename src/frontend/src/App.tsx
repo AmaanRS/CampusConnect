@@ -1,5 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
-import HomePage from "./pages/HomePage"
+import HomePage, { homePageLoader } from "./pages/HomePage"
 import MainPage from "./pages/MainPage"
 
 function App() {
@@ -9,6 +9,7 @@ function App() {
 			children: [
 				{
 					index: true,
+					loader:homePageLoader,
 					element: <HomePage />,
 				},
 				{
