@@ -11,24 +11,26 @@ authRouter.get(
 
 authRouter.get(
 	"/google/callback",
-	passport.authenticate("google", { failureRedirect: "/" }),
-	(req: Request, res: Response) => {
-		try {
-			const token = jwt.sign({ user: req.user }, process.env.JWT_SECRET!, {
-				expiresIn: "1h",
-			});
-
-			res.redirect(`http://localhost:5173/redirect/token=${encodeURI(token)}`);
-		} catch (error) {
-			console.log(error);
-			res.redirect("http://localhost:5173/");
-		}
-	},
+	passport.authenticate("google", {
+		failureRedirect: "/",
+		successRedirect: "http://localhost:5173/redirect/1",
+	}),
 );
 
-authRouter.get("/logout", (req: Request, res: Response, next: NextFunction) => {
-	req.logout(function (err) {
-		if (err) return next(err);
-		res.redirect("/");
+authRouter.get('/logout', (req, res,next) => {
+	console.log("Outside");
+	req.logout((err) => {
+	  if (err) {
+		return next(err);
+	  }
+	  req.session.destroy((err) => {
+		if (err) {
+		  return next(err);
+		}
+		console.log("Inside");
+		res.clearCookie('connect.sid');
+		res.redirect('http://localhost:5173'); // Redirect to your React app
+	  });
 	});
-});
+  });
+  

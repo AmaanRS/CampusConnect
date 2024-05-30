@@ -39,3 +39,15 @@ export const getCookie = async (): Promise<
 		return response
 	}
 }
+
+export function setCookie(token: string | undefined): void {
+	try {
+		if(!token){
+			console.log("The the token to set is not found:")
+		}else{
+			Cookie.set("token", token)
+		}
+	} catch (error) {
+		console.log("Error setting cookie:", (error as Error).message)
+	}
+}
