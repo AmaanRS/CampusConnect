@@ -6,12 +6,8 @@ import cors from "cors";
 import { Router } from "./Routes/Router";
 import session from "express-session";
 import passport from "passport";
-import { authRouter } from "./Routes/authRouter";
-import { useGoogleStrategy } from "./OAuth/passport.config";
 
 dotenv.config();
-useGoogleStrategy();
-
 const app = express();
 
 app.use(
@@ -24,19 +20,8 @@ app.use(
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(
-	session({
-		secret: process.env.SESSION_SECRET!,
-		resave: false,
-		saveUninitialized: true,
-		cookie: { secure: false },
-	}),
-);
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use("/", Router);
-app.use("/auth", authRouter);
 
 async function startServer(): Promise<void> {
 	try {

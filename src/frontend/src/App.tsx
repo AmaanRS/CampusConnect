@@ -1,7 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import HomePage, { homePageLoader } from "./pages/HomePage"
 import MainPage from "./pages/MainPage"
-import RedirectPage from "./pages/RedirectPage"
 
 function App() {
 	const router = createBrowserRouter([
@@ -16,11 +15,7 @@ function App() {
 				{
 					path: "main",
 					element: <MainPage />,
-				},
-				{
-					path: "redirect/:token",
-					element: <RedirectPage />,
-				},
+				}
 			],
 		},
 	])
