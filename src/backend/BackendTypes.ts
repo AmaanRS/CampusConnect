@@ -11,7 +11,7 @@ export interface TokenResponse extends StandardResponse{
 }
 
 export interface MiddlewareResponse extends StandardResponse {
-	decodedToken: JwtPayload;
+	decodedToken?: JwtPayload;
 }
 
 export enum Year{
@@ -44,6 +44,7 @@ export enum Position{
 export interface IUser extends Document {
 	username: string;
 	email: string;
+	password:string;
 	year?:Year,
 	division?:string,
 	department?:Department,

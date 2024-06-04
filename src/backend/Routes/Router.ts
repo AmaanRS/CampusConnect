@@ -1,9 +1,11 @@
-import express from 'express'
+import express from "express";
 export const Router = express.Router();
 import { cookieCheckerFunction } from "../Middlewares/CookieChecker";
+import { login, signup } from "../Controllers/UserController";
 
 Router.route("/validateUser").post(cookieCheckerFunction);
-
+Router.route("/login").post(login);
+Router.route("/signup").post(signup);
 
 // const {
 // 	login,
@@ -14,7 +16,6 @@ Router.route("/validateUser").post(cookieCheckerFunction);
 // 	addFriendBothWays,
 // 	getUserConversation,
 // } = require("../Controllers/UserController");
-
 
 // Router.route("/login").post(login);
 // Router.route("/signup").post(signup);

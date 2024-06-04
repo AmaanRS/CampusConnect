@@ -19,6 +19,10 @@ const userSchema = new Schema<IUser>(
 			type: String,
 			unique: true,
 		},
+		password: {
+			required: true,
+			type: String,
+		},
 		year: {
 			type: Number,
 			enum: Object.values(Year),

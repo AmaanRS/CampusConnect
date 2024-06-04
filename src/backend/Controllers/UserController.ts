@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // import mongoose from "mongoose";
 import { Request, Response } from "express";
-import { StandardResponse, TokenResponse } from "../BackendTypes";
+import { IUser, StandardResponse, TokenResponse } from "../BackendTypes";
 
 const login = async (req: Request, res: Response) => {
 	try {
@@ -17,7 +17,7 @@ const login = async (req: Request, res: Response) => {
 		//If email and password exist
 		if (email && password) {
 			//Try to get the email from the database
-			let user = await userModel.findOne({ email: email });
+			let user = (await userModel.findOne({ email: email })) as IUser;
 
 			//If the database does not returns the data of the user
 			if (!user) {
@@ -30,17 +30,17 @@ const login = async (req: Request, res: Response) => {
 			}
 
 			//Check the user input password against the password from the database
-			// let matchPassword = await bcrypt.compare(password, user.password);
+			let matchPassword = await bcrypt.compare(password, user.password);
 
-			// //If the passwords do not match
-			// if (!matchPassword) {
-			// 	const response: StandardResponse = {
-			// 		message: "Either email or password entered is wrong",
-			// 		success: false,
-			// 	};
+			//If the passwords do not match
+			if (!matchPassword) {
+				const response: StandardResponse = {
+					message: "Either email or password entered is wrong",
+					success: false,
+				};
 
-			// 	return res.json(response);
-			// }
+				return res.json(response);
+			}
 
 			//Create a jwt token
 			let token = jwt.sign({ email: email }, process.env.JWT_SECRET!);
@@ -65,7 +65,7 @@ const login = async (req: Request, res: Response) => {
 		console.log("There is some error in login controller");
 
 		//Logging the error
-		console.log((e as Error).message);
+		console.log((e as Error));
 
 		//Send the message to the frontend that the user is not logged in
 		const response: StandardResponse = {

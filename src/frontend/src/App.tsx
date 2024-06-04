@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import HomePage, { homePageLoader } from "./pages/HomePage"
-import MainPage from "./pages/MainPage"
+import MainPage, { mainPageLoader } from "./pages/MainPage"
 
 function App() {
 	const router = createBrowserRouter([
@@ -14,6 +14,7 @@ function App() {
 				},
 				{
 					path: "main",
+					loader:mainPageLoader,
 					element: <MainPage />,
 				}
 			],

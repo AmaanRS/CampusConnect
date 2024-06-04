@@ -4,19 +4,12 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { Router } from "./Routes/Router";
-import session from "express-session";
-import passport from "passport";
+
 
 dotenv.config();
 const app = express();
 
-app.use(
-	cors({
-		origin: "http://localhost:5173",
-		methods: "GET,POST,PUT,DELETE",
-		credentials: true,
-	}),
-);
+app.use(cors());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
