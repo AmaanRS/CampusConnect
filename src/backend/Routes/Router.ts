@@ -1,11 +1,20 @@
 import express from "express";
 export const Router = express.Router();
-import { cookieCheckerFunction } from "../Middlewares/CookieChecker";
+import {
+	cookieCheckerMiddleware,
+	cookieCheckerFunction,
+} from "../Middlewares/CookieChecker";
 import { login, signup } from "../Controllers/UserController";
+import { getAllEvents, createEvent } from "../Controllers/CommitteeController";
 
+//UserController Routes
 Router.route("/validateUser").post(cookieCheckerFunction);
 Router.route("/login").post(login);
 Router.route("/signup").post(signup);
+
+//CommitteeController Routes
+Router.route("/login").post(cookieCheckerMiddleware, getAllEvents);
+Router.route("/signup").post(cookieCheckerMiddleware, createEvent);
 
 // const {
 // 	login,

@@ -1,3 +1,4 @@
+import { IEvent } from "../backend/BackendTypes"
 
 export interface StandardResponse {
 	message: string
@@ -23,4 +24,15 @@ export interface IAuthContext {
 	>
 	login: () => Promise<{ message: string; success: boolean; token?: string }>
 	signup: () => Promise<{ message: string; success: boolean }>
+}
+
+export interface IEventContext {
+	events: IEvent[]
+	setEvents: React.Dispatch<React.SetStateAction<IEvent[]>>
+	getAllEvents: () => Promise<{
+		message: string
+		success: boolean
+		events: IEvent[]
+	}>
+	createEvent: () => Promise<{ message: string; success: boolean }>
 }

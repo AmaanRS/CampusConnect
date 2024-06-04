@@ -14,6 +14,10 @@ export interface MiddlewareResponse extends StandardResponse {
 	decodedToken?: JwtPayload;
 }
 
+export interface EventResponse extends StandardResponse {
+	events: IEvent[]
+}
+
 export enum Year{
 	"1ST" = 1,
 	"2ND" = 2,
