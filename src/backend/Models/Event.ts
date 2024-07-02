@@ -1,6 +1,6 @@
 import { Model, Schema, model } from "mongoose";
 import { IEvent } from "../BackendTypes";
-import { committeeModel } from "./Committee";
+// import { committeeModel } from "./Committee";
 
 const eventSchema = new Schema<IEvent>(
 	{
@@ -16,7 +16,7 @@ const eventSchema = new Schema<IEvent>(
 		hostingCommittees: [
 			{
 				type: Schema.Types.ObjectId,
-				ref: committeeModel,
+				// ref: committeeModel,
 				required: true,
 			},
 		],

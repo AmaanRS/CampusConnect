@@ -13,8 +13,8 @@ Router.route("/login").post(login);
 Router.route("/signup").post(signup);
 
 //CommitteeController Routes
-Router.route("/login").post(cookieCheckerMiddleware, getAllEvents);
-Router.route("/signup").post(cookieCheckerMiddleware, createEvent);
+Router.route("/getAllEvents").get(getAllEvents);
+Router.route("/createEvent").post(cookieCheckerMiddleware, createEvent);
 
 // const {
 // 	login,

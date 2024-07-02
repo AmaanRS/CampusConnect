@@ -1,7 +1,7 @@
 import { Model, Schema, model } from "mongoose";
 import { ICommittee } from "../BackendTypes";
-import { userModel } from "./User";
-import { eventModel } from './Event';
+// import { eventModel } from './Event';
+// import { userModel } from "./User";
 
 const committeeSchema = new Schema<ICommittee>(
 	{
@@ -12,17 +12,17 @@ const committeeSchema = new Schema<ICommittee>(
 		},
 		head: {
 			type: Schema.Types.ObjectId,
-			ref: userModel,
+			ref: "userModel",
             required: true,
 		},
 		viceHead: {
 			type: Schema.Types.ObjectId,
-			ref: userModel,
+			ref: "userModel",
             required: true,
 		},
 		teacherIncharge: {
 			type: Schema.Types.ObjectId,
-			ref: userModel,
+			ref: "userModel",
             required: true,
 		},
 		description: {
@@ -32,14 +32,14 @@ const committeeSchema = new Schema<ICommittee>(
 		members: [
 			{
 				type: Schema.Types.ObjectId,
-				ref: userModel,
+				ref: "userModel",
                 required: true,
 			},
 		],
 		events: [
 			{
 				type: Schema.Types.ObjectId,
-				ref: eventModel,
+				ref: "eventModel",
 			},
 		],
 	},

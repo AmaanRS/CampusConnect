@@ -3,6 +3,10 @@ module.exports = {
 	env: {
 		browser: true,
 		es2020: true,
+		es6: true,
+		jest: true,
+		mocha: true,
+		node: true,
 	},
 	extends: [
 		"eslint:recommended",
@@ -12,15 +16,8 @@ module.exports = {
 	ignorePatterns: ["dist", ".eslintrc.cjs"],
 	parser: "@typescript-eslint/parser",
 	parserOptions: {
-		ecmaFeatures: {
-			arrowFunctions: true,
-			blockBindings: true,
-			classes: true,
-			destructuring: true,
-			forOf: true,
-			jsx: true,
-			spread: true,
-		},
+		ecmaVersion: 2020,
+		sourceType: null,
 	},
 	rules: {
 		"array-callback-return": ["off", {}],
