@@ -6,6 +6,7 @@ import Contact from "../Components/Contact";
 import Layout from "../Components/Layout";
 import Login from "../Components/Login";
 import Signup from "../Components/Signup";
+import Dashboard from "../Components/Dashboard";
 
 function Routing() {
   return (
@@ -15,6 +16,7 @@ function Routing() {
       <Route path="/contact" element={<Contact />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   );
 }

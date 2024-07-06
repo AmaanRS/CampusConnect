@@ -15,7 +15,7 @@ function Buttonborder({ name, val, burger = false, togglebtn }) {
         >
           {name}
         </NavLink>
-      ) : (
+      ) : val === "signup" ? (
         <NavLink
           className={`px-6 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
   lg:text-xl lg:px-10 lg:py-3`}
@@ -23,6 +23,16 @@ function Buttonborder({ name, val, burger = false, togglebtn }) {
         >
           {name}
         </NavLink>
+      ) : val === "createAcc" ? (
+        <NavLink
+          className={`px-6 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
+  lg:text-xl lg:px-10 lg:py-3`}
+          to=""
+        >
+          {name}
+        </NavLink>
+      ) : (
+        console.log("404 Error")
       )}
     </>
   );
