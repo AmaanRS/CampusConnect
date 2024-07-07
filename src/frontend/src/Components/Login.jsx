@@ -1,8 +1,8 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable no-unused-vars */
 import React from "react";
-import Buttonborder from "./Buttonborder";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import loginImg from "../utils/pics/loginwhite.svg";
@@ -10,6 +10,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const schema = yup.object({
   email: yup
@@ -26,23 +28,36 @@ const schema = yup.object({
   // /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/ high complexity Password must be at least 8 characters long, include letters, numbers, and special characters
 });
 
+// predefined data for validation
+const predefinedData = [
+  { email: "zaidachhwa@gmail.com", password: "zaid1234" },
+  { email: "john@gmail.com", password: "john1234" },
+  { email: "smith@gmail.com", password: "smith1234" },
+];
+
 function Login() {
   const { handleSubmit, register, formState, reset } = useForm({
     resolver: yupResolver(schema),
   });
 
   const formSubmit = (data) => {
-    reset();
     const { email, password } = data;
     // variables set for accessing the input
-    const getEmailData = email;
-    const getPasswordData = password;
+
+    const user = predefinedData.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    user ? navigate("/dashboard") : toast.error("Invalid Credentials");
+
+    reset();
   };
 
   const navigate = useNavigate();
 
   return (
     <div className="relative bg-blue-lightone w-full h-screen flex items-center justify-center text-blue-dark">
+      <ToastContainer />
       <div className="absolute top-2 text-2xl left-0 p-3 md:text-4xl">
         <FaArrowCircleLeft onClick={() => navigate("/")} />
       </div>
@@ -89,7 +104,7 @@ function Login() {
             placeholder="Enter Email"
             {...register("email")}
           />
-          <span className="text-red-500 text-sm mt-1 lg:mt-2">
+          <span className="text-red-500 text-xs md:text-sm mt-1 lg:mt-2">
             {formState.errors.email?.message}
           </span>
           <motion.label
@@ -109,7 +124,7 @@ function Login() {
             placeholder="Enter Password"
             {...register("password")}
           />
-          <span className="text-red-500 text-sm mt-1 lg:mt-2">
+          <span className="text-red-500 text-xs md:text-sm mt-1 lg:mt-2">
             {formState.errors.password?.message}
           </span>
           <div className="btn flex flex-col items-center justify-center mt-12 ">
