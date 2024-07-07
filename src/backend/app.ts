@@ -17,7 +17,6 @@ app.use("/", Router);
 
 async function startServer(MONGO_URI:string, PORT:string): Promise<void> {
 	try {
-		// Write the database url in the env file
 		await mongoose
 			.connect(MONGO_URI)
 			.then(() => {

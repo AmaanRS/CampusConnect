@@ -9,12 +9,6 @@ import {
 
 const userSchema = new Schema<IUserDocument>(
 	{
-		username: {
-			required: true,
-			type: String,
-			trim: true,
-			minlength: 1,
-		},
 		email: {
 			required: true,
 			type: String,

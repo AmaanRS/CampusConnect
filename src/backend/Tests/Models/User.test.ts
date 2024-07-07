@@ -78,7 +78,6 @@ describe("User model", () => {
 		const testEmail = "invalid-email-format";
 
 		const UserObject: IUser = {
-			username: faker.person.fullName(),
 			email: testEmail,
 			password: generatePassword(),
 			isProfileComplete: faker.datatype.boolean(),
@@ -121,7 +120,6 @@ describe("User model", () => {
 
 		for (let i = 0; i < testPasswords.length; i++) {
 			const UserObject: IUser = {
-				username: faker.person.fullName(),
 				email: faker.internet.email({ allowSpecialCharacters: true }),
 				password: testPasswords[i],
 				isProfileComplete: faker.datatype.boolean(),
@@ -152,7 +150,6 @@ describe("User model", () => {
 
 		for (let i = 0; i < testDivision.length; i++) {
 			const UserObject: IUser = {
-				username: faker.person.fullName(),
 				email: faker.internet.email({ allowSpecialCharacters: true }),
 				password: generatePassword(),
 				accType: testAccType,
@@ -176,7 +173,6 @@ describe("User model", () => {
 				: AccountType.Teacher;
 
 		const UserObject: IUser = {
-			username: faker.person.fullName(),
 			email: faker.internet.email({ allowSpecialCharacters: true }),
 			password: generatePassword(),
 			accType: testAccType,
@@ -205,7 +201,6 @@ describe("User model", () => {
 
 		for (let i = 0; i < testStudentId.length; i++) {
 			const UserObject: IUser = {
-				username: faker.person.fullName(),
 				email: faker.internet.email({ allowSpecialCharacters: true }),
 				password: generatePassword(),
 				accType: AccountType.Student,
@@ -224,7 +219,6 @@ describe("User model", () => {
 		const testAccType = AccountType.Student;
 
 		const UserObject: IUser = {
-			username: faker.person.fullName(),
 			email: faker.internet.email({ allowSpecialCharacters: true }),
 			password: generatePassword(),
 			accType: testAccType,
@@ -240,7 +234,6 @@ describe("User model", () => {
 
 	it("should not save user if User's Account type is not given but other optional fields are given and throw ERROR", async () => {
 		const UserObject: IUser = {
-			username: faker.person.fullName(),
 			email: faker.internet.email({ allowSpecialCharacters: true }),
 			password: generatePassword(),
 			department: randomDepartment,
@@ -259,7 +252,6 @@ describe("User model", () => {
 		const testAccType = AccountType.Admin;
 
 		const UserObject: IUser = {
-			username: faker.person.fullName(),
 			email: faker.internet.email({ allowSpecialCharacters: true }),
 			password: generatePassword(),
 			accType: testAccType,
@@ -280,7 +272,6 @@ describe("User model", () => {
 			randomPosition !== Position.LabIncharge ? randomPosition : Position.HOD;
 
 		const UserObject: IUser = {
-			username: faker.person.fullName(),
 			email: faker.internet.email({ allowSpecialCharacters: true }),
 			password: generatePassword(),
 			accType: testAccType,
@@ -303,7 +294,6 @@ describe("User model", () => {
 				: AccountType.Teacher;
 
 		const UserObject: IUser = {
-			username: faker.person.fullName(),
 			email: faker.internet.email({ allowSpecialCharacters: true }),
 			password: generatePassword(),
 			accType: testAccType,
