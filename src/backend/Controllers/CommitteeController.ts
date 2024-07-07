@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { EventResponse, IEvent, StandardResponse } from "../BackendTypes";
 import { eventModel } from "../Models/Event";
 
-const getAllEvents = async (req: Request, res: Response) => {
+const getAllEvents = async (res: Response) => {
 	try {
 		const events = (await eventModel.find()) as IEvent[];
 

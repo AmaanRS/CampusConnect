@@ -4,13 +4,15 @@ import {
 	cookieCheckerMiddleware,
 	cookieCheckerFunction,
 } from "../Middlewares/CookieChecker";
-import { login, signup } from "../Controllers/UserController";
-import { getAllEvents, createEvent } from "../Controllers/CommitteeController";
+import {login, signup} from "../Controllers/UserController";
+import {getAllEvents, createEvent} from "../Controllers/CommitteeController";
 
 //UserController Routes
 Router.route("/validateUser").post(cookieCheckerFunction);
 Router.route("/login").post(login);
 Router.route("/signup").post(signup);
+
+
 
 //CommitteeController Routes
 Router.route("/getAllEvents").get(getAllEvents);
