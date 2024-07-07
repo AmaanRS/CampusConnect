@@ -23,15 +23,6 @@ const userSchema = new Schema<IUserDocument>(
 		password: {
 			required: true,
 			type: String,
-			validate: {
-				validator: function (value: string) {
-					const passwordRegex =
-						/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
-					return passwordRegex.test(value);
-				},
-				message:
-					"Password must have at least one lowercase letter, one uppercase letter, one digit, one special character, and be between 8 to 10 characters long.",
-			},
 		},
 		year: {
 			type: Number,
@@ -78,6 +69,7 @@ const userSchema = new Schema<IUserDocument>(
 );
 
 //Test for this is left Write it in github issues
+//There are too many problems on running update validators so understand carefully the problem before using update validators
 userSchema.pre("findOneAndUpdate", function (next) {
 	this._mongooseOptions.runValidators = true;
 	next();

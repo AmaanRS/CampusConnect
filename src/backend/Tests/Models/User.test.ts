@@ -13,13 +13,6 @@ dotenv.config();
 
 jest.mock("mongoose");
 
-// For Password
-// At least one lowercase letter
-// At least one uppercase letter
-// At least one digit
-// At least one special character
-// Total length between 8 and 10 characters
-
 //In all the test cases below i have checked if invalid cases throw error but have not checked if valid cases work write it in github issues
 
 describe("User model", () => {
@@ -85,51 +78,6 @@ describe("User model", () => {
 
 		const User = new userModel({ ...UserObject });
 		await expect(User.validate()).rejects.toThrow("Invalid email format");
-	});
-
-	it("should not save user if password does not follow constraints and throw ERROR", async () => {
-		let testPasswords = [
-			// Length less than 8 check
-			faker.string.alphanumeric({ length: 3 }),
-
-			//Length greater than 10 check
-			faker.string.alphanumeric({ length: 12 }),
-
-			//No lowercase but everything else present check
-			faker.string.alpha({ length: 7, casing: "upper" }) +
-				faker.string.numeric(1) +
-				faker.string.symbol(1),
-
-			//No uppercase but everything else present check
-			faker.string.alpha({ length: 7, casing: "lower" }) +
-				faker.string.numeric(1) +
-				faker.string.symbol(1),
-
-			//No number but everything else present check
-			faker.string.alpha({ length: 6 }) +
-				faker.string.alpha({ length: 1, casing: "upper" }) +
-				faker.string.alpha({ length: 1, casing: "lower" }) +
-				faker.string.symbol(1),
-
-			//No special character but everything else present check
-			faker.string.alpha({ length: 8 }) +
-				faker.string.alpha({ length: 1, casing: "upper" }) +
-				faker.string.alpha({ length: 1, casing: "lower" }) +
-				+faker.string.numeric(1),
-		];
-
-		for (let i = 0; i < testPasswords.length; i++) {
-			const UserObject: IUser = {
-				email: faker.internet.email({ allowSpecialCharacters: true }),
-				password: testPasswords[i],
-				isProfileComplete: faker.datatype.boolean(),
-			};
-
-			const User = new userModel({ ...UserObject });
-			await expect(User.validate()).rejects.toThrow(
-				"Password must have at least one lowercase letter, one uppercase letter, one digit, one special character, and be between 8 to 10 characters long.",
-			);
-		}
 	});
 
 	it("should not save user with invalid division and throw ERROR", async () => {
