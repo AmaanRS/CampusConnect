@@ -19,9 +19,6 @@ export interface EventResponse extends StandardResponse {
 }
 
 export enum Year {
-	//For everyone except student
-	// "NONE" = 0,
-
 	"1ST" = 1,
 	"2ND" = 2,
 	"3RD" = 3,
@@ -42,9 +39,6 @@ export enum AccountType {
 }
 
 export enum Position {
-	// For Student
-	// None = "NONE",
-
 	Professor = "PROFESSOR",
 	AssistantProfessor = "ASSISTANT_PROFESSOR",
 	HOD = "HOD",
@@ -52,7 +46,6 @@ export enum Position {
 }
 
 export interface IUser {
-	username: string;
 	email: string;
 	password: string;
 	year?: Year;
