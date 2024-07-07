@@ -1,10 +1,9 @@
 import { userModel } from "../Models/User";
-// import conversationModel from "../Models/Conversation";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-// import mongoose from "mongoose";
 import { Request, Response } from "express";
 import { IUser, StandardResponse, TokenResponse } from "../BackendTypes";
+import { MongooseError } from "mongoose";
 
 const login = async (req: Request, res: Response) => {
 	try {
@@ -16,8 +15,8 @@ const login = async (req: Request, res: Response) => {
 
 		//If email and password exist
 		if (email && password) {
-			//Try to get the email from the database
-			let user = (await userModel.findOne({ email: email })) as IUser;
+			//Try to get the document from the database using email
+			let user: IUser | null = await userModel.findOne({ email: email });
 
 			//If the database does not returns the data of the user
 			if (!user) {
@@ -43,7 +42,7 @@ const login = async (req: Request, res: Response) => {
 			}
 
 			//Create a jwt token
-			let token = jwt.sign({ email: email }, process.env.JWT_SECRET!);
+			let token: string = jwt.sign({ email: email }, process.env.JWT_SECRET!);
 
 			//Send the message to the frontend that the user is now logged in
 			const response: TokenResponse = {
@@ -51,25 +50,26 @@ const login = async (req: Request, res: Response) => {
 				success: true,
 				token: token,
 			};
+
 			return res.json(response);
 		}
 		//If either email or password does not exist
 		else {
 			const response: StandardResponse = {
-				message: "Either email or password is missing",
+				message: "Enter both email and password",
 				success: false,
 			};
 			return res.json(response);
 		}
 	} catch (e) {
-		console.log("There is some error in login controller");
+		console.log("There is some error while logging in");
 
 		//Logging the error
-		console.log((e as Error));
+		console.log((e as Error).message);
 
 		//Send the message to the frontend that the user is not logged in
 		const response: StandardResponse = {
-			message: "There is some problem in logging in",
+			message: "There is some problem in logging in" + (e as Error).message,
 			success: false,
 		};
 
@@ -80,31 +80,56 @@ const login = async (req: Request, res: Response) => {
 const signup = async (req: Request, res: Response) => {
 	try {
 		const {
-			username,
 			email,
 			password,
 		}: {
-			username: string | undefined;
 			email: string | undefined;
 			password: string | undefined;
 		} = req.body;
 
-		if (email && password && username) {
-			const hashedPassword: string = await bcrypt.hash(password, 8);
+		if (email && password) {
+			//Validation for Email is in User model
 
-			const isUserCreated = await userModel.create({
-				username: username,
-				email: email,
-				password: hashedPassword,
-			});
+			// Validation for Password
+			// Validation is done here because hashed password is being stored rather than plain text
 
-			if (!isUserCreated) {
+			// At least one lowercase letter
+			// At least one uppercase letter
+			// At least one digit
+			// At least one special character
+			// Total length between 8 and 10 characters
+			const passwordRegex =
+				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
+			const isPassValid = passwordRegex.test(password);
+
+			if (!isPassValid) {
 				const response: StandardResponse = {
-					message: "User not created",
+					message:
+						"Password must have at least one lowercase letter, one uppercase letter, one digit, one special character, and be between 8 to 10 characters long",
 					success: false,
 				};
 				return res.json(response);
 			}
+
+			const hashedPassword: string = await bcrypt.hash(password, 8);
+
+			try {
+				// This throws error from mongoose validation
+				// This will throw error for duplicate email
+				// This will throw error for invalid email or random error found while creation of document
+
+				await userModel.create({
+					email: email,
+					password: hashedPassword,
+				});
+			} catch (error) {
+				const response: StandardResponse = {
+					message: (error as MongooseError).message.split(":")[2].trim(),
+					success: false,
+				};
+				return res.json(response);
+			}
+
 			const response: StandardResponse = {
 				message: "Your account has been created now you can login",
 				success: true,
@@ -121,16 +146,17 @@ const signup = async (req: Request, res: Response) => {
 		//Logging the error
 		console.log((e as Error).message);
 
-		if ((e as any).code == 11000) {
-			return res.json({
-				message: "This email is already registered",
-				success: false,
-			});
-		}
+		// This error is handled in above nested try catch block
+		// if ((e as any).code == 11000) {
+		// 	return res.json({
+		// 		message: "This email is already registered",
+		// 		success: false,
+		// 	});
+		// }
 
 		//Send the message to the frontend that the user's account is not created
 		const response: StandardResponse = {
-			message: "There is some problem in signning up",
+			message: "There is some problem in signning up" + (e as Error).message,
 			success: false,
 		};
 
