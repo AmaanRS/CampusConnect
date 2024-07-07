@@ -46,7 +46,6 @@ function Login() {
   const [alertMessage, setAlertMessage] = useState("");
 
   const formSubmit = (data) => {
-    const { email, password } = data;
     // variables set for accessing the input
 
     const user = predefinedData.find(

@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import signupImg from "../utils/pics/signupwhite.svg";
@@ -10,6 +10,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
 import AccCreated from "../utils/AccCreated";
+import axios from "axios";
 
 const schema = yup.object({
   email: yup
@@ -27,6 +28,8 @@ const schema = yup.object({
 });
 
 function Signup() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
 
@@ -35,11 +38,10 @@ function Signup() {
   });
 
   const formSubmit = (data) => {
-    reset();
-    const { email, password } = data;
+    setEmail(data.email);
+    setPassword(data.password);
     // variables set for accessing the input
-    const setEmailData = email;
-    const setPasswordData = password;
+    reset();
 
     // pop up
     setShowPopup(true);
@@ -48,6 +50,17 @@ function Signup() {
       navigate("/login");
     }, 2000);
   };
+
+  useEffect(() => {
+    const Signup = (async () => {
+      const res = await axios.post("http://127.0.0.1:8000/signup", {
+        email,
+        password,
+      });
+      console.log(res);
+      console.log(email, password);
+    })();
+  }, [email, password]);
 
   return (
     <div className="relative bg-blue-lightone w-full h-screen flex items-center justify-center text-blue-dark">
