@@ -25,7 +25,7 @@ const schema = yup.object({
   password: yup
     .string()
     .required("Password is required")
-    .matches(/^.{8,}$/, "Password must be at least 8 characters long"),
+    .matches(/^.{5,}$/, "Password must be at least 5 characters long"),
   // /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/ high complexity Password must be at least 8 characters long, include letters, numbers, and special characters
 });
 
@@ -37,6 +37,7 @@ const predefinedData = [
 ];
 
 function Login() {
+  //form handling
   const { handleSubmit, register, formState, reset } = useForm({
     resolver: yupResolver(schema),
   });
