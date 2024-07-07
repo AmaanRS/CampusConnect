@@ -22,7 +22,7 @@ function Sectionodd({ val }) {
     para: "Plan, organize, and participate in campus events effortlessly with our user-friendly tools.Create event pages and share event highlights",
   };
   return (
-    <div className="flex items-center flex-col justify-center m-3 w-full text-blue-dark rounded-xl bg-white shadow-xl">
+    <div className="mt-20 flex items-center flex-col justify-center m-3 w-full text-blue-dark rounded-xl bg-white shadow-xl">
       <ScrollX>
         <motion.h1 className="text-lg mt-4 font-bold sm:text-xl  md:text-2xl sm:hidden">
           {val ? dataOne.name : dataTwo.name}

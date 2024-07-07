@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useState } from "react";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import loginImg from "../utils/pics/loginwhite.svg";
@@ -12,6 +12,7 @@ import * as yup from "yup";
 import { motion } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CustomAlert from "../utils/Alert";
 
 const schema = yup.object({
   email: yup
@@ -40,6 +41,9 @@ function Login() {
     resolver: yupResolver(schema),
   });
 
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
   const formSubmit = (data) => {
     const { email, password } = data;
     // variables set for accessing the input
@@ -48,7 +52,10 @@ function Login() {
       (user) => user.email === email && user.password === password
     );
 
-    user ? navigate("/dashboard") : toast.error("Invalid Credentials");
+    user
+      ? navigate("/dashboard")
+      : setAlertMessage("Invalid email or password"),
+      setIsAlertOpen(true);
 
     reset();
   };
@@ -57,12 +64,16 @@ function Login() {
 
   return (
     <div className="relative bg-blue-lightone w-full h-screen flex items-center justify-center text-blue-dark">
-      <ToastContainer />
+      <CustomAlert
+        isOpen={isAlertOpen}
+        onRequestClose={() => setIsAlertOpen(false)}
+        message={alertMessage}
+      />
       <div className="absolute top-2 text-2xl left-0 p-3 md:text-4xl">
         <FaArrowCircleLeft onClick={() => navigate("/")} />
       </div>
 
-      <div className="bg-white rounded-2xl mx-5 h-[80vh] sm:w-[60vw] md:w-full lg:w-[80%] xl:w-2/3 overflow-hidden shadow-xl md:flex 2xl:w-[80%]">
+      <div className="bg-white rounded-2xl mx-5 h-[80vh] w-full sm:w-[60vw] md:w-full lg:w-[80%] xl:w-2/3 overflow-hidden shadow-xl md:flex 2xl:w-[80%]">
         {/* Img Div  */}
         <div className="hidden md:flex w-[40%] lg:w-1/2 justify-center bg-blue-light">
           <motion.img

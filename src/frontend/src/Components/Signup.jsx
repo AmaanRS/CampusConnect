@@ -55,7 +55,7 @@ function Signup() {
         <FaArrowCircleLeft onClick={() => navigate("/")} />
       </div>
 
-      <div className="bg-white rounded-2xl mx-5 h-[80vh] sm:w-[60vw] md:w-full lg:w-[80%] xl:w-2/3 overflow-hidden shadow-xl md:flex 2xl:w-[80%]">
+      <div className="bg-white rounded-2xl mx-5 h-[80vh] w-full sm:w-[60vw] md:w-full lg:w-[80%] xl:w-2/3 overflow-hidden shadow-xl md:flex 2xl:w-[80%]">
         {/* Img Div  */}
         <div className="hidden md:flex w-[40%] lg:w-1/2 justify-center bg-blue-light">
           <motion.img

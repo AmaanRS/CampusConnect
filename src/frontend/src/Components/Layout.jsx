@@ -8,7 +8,9 @@ import Footer from "./Footer";
 function Layout() {
   return (
     <>
-      <Mainsection />
+      <div className="h-full">
+        <Mainsection />
+      </div>
       <div className="flex justify-center items-center flex-col m-5 h-full">
         <Sectionodd val={true} />
         <Sectioneven val={true} />

@@ -12,8 +12,8 @@ import ScrollReveal from "../utils/ScrollReveal";
 function Mainsection() {
   return (
     <>
-      <div className="  md:flex justify-between h-screen overflow-x-hidden">
-        <div className="md:w-[50%] mt-32 md:mt-0 left mx-2">
+      <div className="  md:flex justify-between h-full overflow-x-hidden">
+        <div className="md:w-[50%] my-32 md:mt-0 left mx-2">
           <motion.div
             className=" left heading text-center  text-blue-dark font-bold text-5xl 
           sm:mt-44 sm:text-7xl 
