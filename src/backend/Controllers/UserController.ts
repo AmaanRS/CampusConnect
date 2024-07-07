@@ -1,10 +1,10 @@
-import { userModel } from "../Models/User";
+import {userModel} from "../Models/User";
 // import conversationModel from "../Models/Conversation";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // import mongoose from "mongoose";
-import { Request, Response } from "express";
-import { IUser, StandardResponse, TokenResponse } from "../BackendTypes";
+import {Request, Response} from "express";
+import {IUser, StandardResponse, TokenResponse} from "../BackendTypes";
 
 const login = async (req: Request, res: Response) => {
 	try {
@@ -12,12 +12,12 @@ const login = async (req: Request, res: Response) => {
 		const {
 			email,
 			password,
-		}: { email: string | undefined; password: string | undefined } = req.body;
+		}: {email: string | undefined; password: string | undefined} = req.body;
 
 		//If email and password exist
 		if (email && password) {
 			//Try to get the email from the database
-			let user = (await userModel.findOne({ email: email })) as IUser;
+			let user = (await userModel.findOne({email: email})) as IUser;
 
 			//If the database does not returns the data of the user
 			if (!user) {
@@ -43,7 +43,7 @@ const login = async (req: Request, res: Response) => {
 			}
 
 			//Create a jwt token
-			let token = jwt.sign({ email: email }, process.env.JWT_SECRET!);
+			let token = jwt.sign({email: email}, process.env.JWT_SECRET!);
 
 			//Send the message to the frontend that the user is now logged in
 			const response: TokenResponse = {
@@ -65,7 +65,7 @@ const login = async (req: Request, res: Response) => {
 		console.log("There is some error in login controller");
 
 		//Logging the error
-		console.log((e as Error));
+		console.log(e as Error);
 
 		//Send the message to the frontend that the user is not logged in
 		const response: StandardResponse = {
