@@ -85,16 +85,16 @@
 
 //Chatgpt version
 
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express";
-import { MiddlewareResponse, StandardResponse } from "../BackendTypes";
+import jwt, {JwtPayload} from "jsonwebtoken";
+import {NextFunction, Request, Response} from "express";
+import {MiddlewareResponse, StandardResponse} from "../BackendTypes";
 
 // Utility function to verify token
 const verifyToken = (req: Request): MiddlewareResponse => {
 	const token = req.headers.authorization?.split("Bearer ")[1];
 
 	if (!token) {
-		return { success: false, message: "User not authenticated" };
+		return {success: false, message: "User not authenticated"};
 	}
 
 	try {
@@ -109,13 +109,13 @@ const verifyToken = (req: Request): MiddlewareResponse => {
 			decodedToken,
 		};
 	} catch (error) {
-		return { success: false, message: "User not authenticated" };
+		return {success: false, message: "User not authenticated"};
 	}
 };
 
 // Define the cookieChecker function
 export const cookieCheckerFunction = (req: Request, res: Response) => {
-	const { success, message, decodedToken } = verifyToken(req);
+	const {success, message, decodedToken} = verifyToken(req);
 
 	if (success) {
 		const response: MiddlewareResponse = {
@@ -141,13 +141,13 @@ export const cookieCheckerMiddleware = (
 	res: Response,
 	next: NextFunction,
 ) => {
-	const { success, message, decodedToken } = verifyToken(req);
+	const {success, message, decodedToken} = verifyToken(req);
 
 	if (success) {
 		(req as any).decodedToken = decodedToken;
 
 		return next();
 	} else {
-		res.status(401).json({ message, success });
+		res.status(401).json({message, success});
 	}
 };
