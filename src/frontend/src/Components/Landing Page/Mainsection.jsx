@@ -1,19 +1,19 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 // import Button from "./Button";
-import agreementSvg from "../utils/pics/agreement2.svg";
-import Buttonone from "./Buttonone";
-import Buttonborder from "./Buttonborder";
+import agreementSvg from "../../utils/pics/agreement2.svg";
+import Buttonone from "../Buttons/Buttonone";
+import Buttonborder from "../Buttons/Buttonborder";
 import { animate, motion, transform } from "framer-motion";
-import ScrollX from "../utils/ScrollX";
-import ScrollXMinus from "../utils/ScrollXMinus";
-import ScrollReveal from "../utils/ScrollReveal";
+import ScrollX from "../../utils/Alerts & animations/ScrollX";
+import ScrollXMinus from "../../utils/Alerts & animations/ScrollXMinus";
+import ScrollReveal from "../../utils/Alerts & animations/ScrollReveal";
 
 function Mainsection() {
   return (
     <>
       <div className="  md:flex justify-between h-full overflow-x-hidden">
-        <div className="md:w-[50%] my-32 md:mt-0 left mx-2">
+        <div className="md:w-[50%] my-32 md:mt-0 left mx-2 ">
           <motion.div
             className=" left heading text-center  text-blue-dark font-bold text-5xl 
           sm:mt-44 sm:text-7xl 

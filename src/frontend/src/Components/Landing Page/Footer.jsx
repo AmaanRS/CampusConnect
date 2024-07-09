@@ -4,9 +4,9 @@ import { FaLinkedin } from "react-icons/fa6";
 import { BsInstagram } from "react-icons/bs";
 import { FaGithub } from "react-icons/fa";
 import { motion } from "framer-motion";
-import ScrollReveal from "../utils/ScrollReveal";
-import ScrollXMinus from "../utils/ScrollXMinus";
-import ScrollX from "../utils/ScrollX";
+import ScrollReveal from "../../utils/Alerts & animations/ScrollReveal";
+import ScrollXMinus from "../../utils/Alerts & animations/ScrollXMinus";
+import ScrollX from "../../utils/Alerts & animations/ScrollX";
 
 function Footer() {
   return (

@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Modal from "react-modal";
-import errorImg from "../utils/pics/error.svg";
+import errorImg from "../../utils/pics/error.svg";
 
 const customStyles = {
   content: {

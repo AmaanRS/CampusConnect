@@ -1,17 +1,25 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-undef */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
-import signupImg from "../utils/pics/signupwhite.svg";
+import loginImg from "../../utils/pics/loginwhite.svg";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
-import AccCreated from "../utils/AccCreated";
-import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
+import CustomAlert from "../../utils/Alerts & animations/Alert";
+import Cookies from "js-cookie";
+import axiosInstance from "../Axios/AxiosInstance";
+import { useLoaderData } from "react-router-dom";
+import Cookie from "js-cookie";
+import ErrorPage from "../../utils/Alerts & animations/ErrorPage";
 
+// Schema
 const schema = yup.object({
   email: yup
     .string()
@@ -23,47 +31,72 @@ const schema = yup.object({
   password: yup
     .string()
     .required("Password is required")
-    .matches(/^.{8,}$/, "Password must be at least 8 characters long"),
+    .matches(/^.{5,}$/, "Password must be at least 5 characters long"), /// to be checked
   // /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/ high complexity Password must be at least 8 characters long, include letters, numbers, and special characters
 });
 
-function Signup() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
+function Login() {
   const navigate = useNavigate();
+  const isLoggedIn = useLoaderData();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      return navigate("/dashboard", { replace: true });
+    }
+  }, [isLoggedIn]);
+
+  //form handling
 
   const { handleSubmit, register, formState, reset } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const formSubmit = (data) => {
-    setEmail(data.email);
-    setPassword(data.password);
-    // variables set for accessing the input
-    reset();
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-    // pop up
-    setShowPopup(true);
-    setTimeout(() => {
-      setShowPopup(false);
-      navigate("/login");
-    }, 2000);
+  const formSubmit = async (data) => {
+    try {
+      const res = await axiosInstance.post("/login", {
+        email: data.email,
+        password: data.password,
+      });
+
+      if (res.data.token) {
+        Cookies.set("token", res.data.token);
+        navigate("/dashboard");
+      } else {
+        setErrorMessage("Either Email or Password is wrong");
+        setIsError(true);
+      }
+    } catch (error) {
+      console.log(error);
+      let errorMsg = "An error occurred";
+      if (error.response) {
+        errorMsg = error.response.data?.message || error.message || errorMsg;
+      } else {
+        errorMsg = error.message || errorMsg;
+      }
+      setErrorMessage(errorMsg);
+      setIsError(true);
+      navigate("/error");
+    } finally {
+      reset();
+    }
   };
 
-  useEffect(() => {
-    const Signup = (async () => {
-      const res = await axios.post("http://127.0.0.1:8000/signup", {
-        email,
-        password,
-      });
-      console.log(res);
-      console.log(email, password);
-    })();
-  }, [email, password]);
+  if (isError) {
+    return <ErrorPage error={errorMessage} />;
+  }
 
   return (
     <div className="relative bg-blue-lightone w-full h-screen flex items-center justify-center text-blue-dark">
+      <CustomAlert
+        isOpen={isAlertOpen}
+        onRequestClose={() => setIsAlertOpen(false)}
+        message={alertMessage}
+      />
       <div className="absolute top-2 text-2xl left-0 p-3 md:text-4xl">
         <FaArrowCircleLeft onClick={() => navigate("/")} />
       </div>
@@ -72,7 +105,7 @@ function Signup() {
         {/* Img Div  */}
         <div className="hidden md:flex w-[40%] lg:w-1/2 justify-center bg-blue-light">
           <motion.img
-            src={signupImg}
+            src={loginImg}
             alt=""
             className="w-[80%] lg:w-2/3 xl:w-1/2"
             initial={{ x: -400 }}
@@ -91,7 +124,7 @@ function Signup() {
             animate={{ x: 0 }}
             transition={{ ease: [0.12, 0, 0.39, 0], duration: 0.4 }}
           >
-            Sign up
+            Log In
           </motion.h1>
           <motion.label
             htmlFor="email"
@@ -106,11 +139,11 @@ function Signup() {
             type="text"
             name="email"
             id="email"
-            className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl"
+            className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light"
             placeholder="Enter Email"
             {...register("email")}
           />
-          <span className="text-red-500 text-sm mt-1 lg:mt-2">
+          <span className="text-red-500 text-xs md:text-sm mt-1 lg:mt-2">
             {formState.errors.email?.message}
           </span>
           <motion.label
@@ -126,11 +159,11 @@ function Signup() {
             type="password"
             name="password"
             id="password"
-            className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl"
+            className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light focus:border-red-600"
             placeholder="Enter Password"
             {...register("password")}
           />
-          <span className="text-red-500 text-sm mt-1 lg:mt-2">
+          <span className="text-red-500 text-xs md:text-sm mt-1 lg:mt-2">
             {formState.errors.password?.message}
           </span>
           <div className="btn flex flex-col items-center justify-center mt-12 ">
@@ -141,21 +174,28 @@ function Signup() {
               className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
   lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
             >
-              Create Account
+              Log in
             </motion.button>
             <NavLink
               className="underline tracking-tighter text-sm lg:text-base my-4 text-blue-light"
-              to="/login"
+              to="/signup"
             >
-              Already have an Account ?
+              Don't have an Account ?
             </NavLink>
           </div>
         </form>
       </div>
-
-      {showPopup && <AccCreated />}
     </div>
   );
 }
 
-export default Signup;
+export const loginLoader = () => {
+  var token = Cookie.get("token");
+  if (token) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export default Login;

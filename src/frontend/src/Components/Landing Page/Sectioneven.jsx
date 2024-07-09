@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React from "react";
-import imgTwo from "../utils/pics/alumni_network.svg";
+import imgTwo from "../../utils/pics/alumni_network.svg";
 import Subsections from "./Subsections";
 import { motion } from "framer-motion";
-import ScrollReveal from "../utils/ScrollReveal";
-import ScrollXMinus from "../utils/ScrollXMinus";
+import ScrollReveal from "../../utils/Alerts & animations/ScrollReveal";
+import ScrollXMinus from "../../utils/Alerts & animations/ScrollXMinus";
 
 function Sectioneven({ val }) {
   var dataOne = {

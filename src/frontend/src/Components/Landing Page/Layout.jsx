@@ -4,11 +4,13 @@ import Sectioneven from "./Sectioneven";
 import Sectionodd from "./Sectionodd";
 import Mainsection from "./Mainsection";
 import Footer from "./Footer";
+import Nav from "./Nav";
 
 function Layout() {
   return (
     <>
       <div className="h-full">
+        <Nav />
         <Mainsection />
       </div>
       <div className="flex justify-center items-center flex-col m-5 h-full">

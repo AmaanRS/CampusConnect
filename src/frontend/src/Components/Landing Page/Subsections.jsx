@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import React from "react";
-import ImgOne from "../utils/pics/undraw_fingerprint_login_re_t71l.svg";
-import ImgTwo from "../utils/pics/connect.svg";
-import ImgThree from "../utils/pics/participate.svg";
+import ImgOne from "../../utils/pics/undraw_fingerprint_login_re_t71l.svg";
+import ImgTwo from "../../utils/pics/connect.svg";
+import ImgThree from "../../utils/pics/participate.svg";
 import { animate, motion } from "framer-motion";
 
 var dataOne = {

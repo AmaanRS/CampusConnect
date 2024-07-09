@@ -1,13 +1,11 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React from "react";
-import connectImg from "../utils/pics/about.svg";
-import imgOne from "../utils/pics/about.svg";
-import imgTwo from "../utils/pics/eventmanagement.svg";
+import connectImg from "../../utils/pics/about.svg";
+import imgOne from "../../utils/pics/about.svg";
+import imgTwo from "../../utils/pics/eventmanagement.svg";
 import { motion, useAnimation } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import ScrollReveal from "../utils/ScrollReveal";
-import ScrollX from "../utils/ScrollX";
+import ScrollX from "../../utils/Alerts & animations/ScrollX";
 
 function Sectionodd({ val }) {
   var dataOne = {
