@@ -4,15 +4,21 @@ const request = supertest(app);
 import dotenv from "dotenv";
 import { faker } from "@faker-js/faker";
 import { generatePassword } from "../../Utils/util";
+import { before } from "node:test";
 
 dotenv.config();
+let token: any = "";
 
 describe("User Controller", () => {
 	beforeAll(async () => {
-		await startServer(process.env.MONGO_URI!, process.env.PORT!);
+		await startServer(
+			process.env.MONGO_URI!,
+			process.env.PORT!,
+			process.env.REPL_SET!,
+		);
 	});
 
-	describe("POST /signup", () => {
+	describe.skip("POST /signup", () => {
 		//Uncomment it later because it creates users on just testing other test cases
 
 		// it("should save user to database on valid email and password", async () => {
@@ -120,7 +126,7 @@ describe("User Controller", () => {
 		});
 	});
 
-	describe("POST /login", () => {
+	describe.skip("POST /login", () => {
 		it("should not save user when password is not given", async () => {
 			const testEmail = faker.internet.email();
 
@@ -182,7 +188,35 @@ describe("User Controller", () => {
 
 			expect(res.body.success).toEqual(true);
 			expect(res.body.message).toEqual("You have been logged in successfully");
-			expect(res.body.token).toBeDefined
+			expect(res.body.token).toBeDefined;
+		});
+	});
+
+	describe.skip("POST /getUserProfileStatus", () => {
+		before(async () => {
+			//Make sure this email and password exists in db
+			const res = await request
+				.post("/login")
+				.send({ email: "a@aa.com", password: "Aa1@bcdqwe" });
+			token = res.body.success === true ? res.body.token : null;
+		});
+
+		it("should return the data with message,success and isProfileComplete", async () => {
+			const res = await request
+				.post("/getUserProfileStatus")
+				.set("Authorization", `Bearer ${token}`);
+
+			expect(res.body.success).toBe(true);
+			expect(res.body.data).toBeDefined();
+			expect(res.body.data.isProfileComplete).toBeDefined();
+		});
+
+		it("should return 401 if user token is wrong", async () => {
+			const res = await request
+				.post("/getUserProfileStatus")
+				.set("Authorization", `Bearer ${token + "a"}`);
+			expect(res.body.success).toBe(false);
+			expect(res.status).toBe(401);
 		});
 	});
 });

@@ -25,9 +25,17 @@ describe("Express Server", () => {
 
 		(mongoose.connect as jest.Mock) = mockConnection;
 
-		await startServer(process.env.MONGO_URI!, process.env.PORT!);
+		await startServer(
+			process.env.MONGO_URI!,
+			process.env.PORT!,
+			process.env.REPL_SET!,
+		);
 
-		expect(mongoose.connect).toHaveBeenCalledWith(process.env.MONGO_URI);
+		expect(mongoose.connect).toHaveBeenCalledWith(process.env.MONGO_URI, {
+			readPreference: "primary",
+			replicaSet: process.env.REPL_SET!,
+			retryWrites: true,
+		});
 		expect(mongoose.connect).toHaveBeenCalledTimes(1);
 	});
 });

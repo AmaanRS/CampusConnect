@@ -2,8 +2,14 @@ import { userModel } from "../Models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import { IUser, StandardResponse, TokenResponse } from "../BackendTypes";
-import { MongooseError } from "mongoose";
+import {
+	DataResponse,
+	IUser,
+	StandardResponse,
+	TokenResponse,
+	UpdateRequest,
+} from "../BackendTypes";
+import mongoose, { MongooseError } from "mongoose";
 
 const login = async (req: Request, res: Response) => {
 	try {
@@ -160,6 +166,189 @@ const signup = async (req: Request, res: Response) => {
 			success: false,
 		};
 
+		return res.json(response);
+	}
+};
+
+const profileStatus = async (req: Request, res: Response) => {
+	try {
+		//This check is necessary because if their is some other middleware interfering with the req and token does'nt get here
+		const { decodedToken } = req.body;
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.json(response);
+		}
+		const isProfileComplete = await userModel.findOne(
+			{
+				email: decodedToken.email,
+			},
+			{ isProfileComplete: 1 },
+		);
+		if (!isProfileComplete) {
+			throw new Error(
+				"isProfileComplete does not exists on this user's model check it",
+			);
+		}
+		const response: DataResponse = {
+			message: "Fetched data successfully",
+			success: true,
+			data: isProfileComplete,
+		};
+
+		return res.json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while getting the user's profile status" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.json(response);
+	}
+};
+
+//Password should not be updated using this endpoint
+const updateUserProfile = async (req: UpdateRequest, res: Response) => {
+	const session = await mongoose.startSession();
+	const maxRetries = 4;
+	let retryCount = 0;
+
+	try {
+		//Validate the data before creating the model check for User model for validations if already existing validations work then good
+		const { decodedToken, data } = req.body;
+		console.log("Received Data ");
+		console.log(data);
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.json(response);
+		}
+
+		if (!data) {
+			const response: StandardResponse = {
+				message: "Send data to be used for updating",
+				success: false,
+			};
+			return res.json(response);
+		}
+
+		// Runtime check to ensure 'password' field is not present
+		if ("password" in data) {
+			const response: StandardResponse = {
+				message: "Password should not be updated using this endpoint",
+				success: false,
+			};
+			return res.json(response);
+		}
+
+		// Email sent in data and decodedToken.email should be same
+		if (decodedToken.email !== data.email) {
+			const response: StandardResponse = {
+				message:
+					"The email of the user sending the request and the email in the data sent for updation is different",
+				success: false,
+			};
+
+			return res.json(response);
+		}
+		let successful = false;
+
+		while (retryCount < maxRetries && !successful) {
+			try {
+				session.startTransaction();
+
+				const oldUser = await userModel
+					.findOne({ email: decodedToken.email })
+					.session(session);
+
+				if (!oldUser) {
+					const response: StandardResponse = {
+						message: "Cannot find the user",
+						success: false,
+					};
+					await session.abortTransaction();
+					await session.endSession();
+					return res.json(response);
+				}
+
+				const isDeleted = await oldUser
+					.deleteOne({ email: oldUser.email })
+					.session(session);
+
+				if (!isDeleted.acknowledged) {
+					await session.abortTransaction();
+					await session.endSession();
+					throw new Error("Could not delete user's data while updating");
+				}
+
+				// Set the password from the oldUser as a password for the newUser
+				const dataToCreateUserFrom = { ...data, password: oldUser.password };
+
+				const updatedUser = await userModel.create([dataToCreateUserFrom], {
+					session,
+				});
+
+				if (!updatedUser) {
+					await session.abortTransaction();
+					await session.endSession();
+					const response: StandardResponse = {
+						message: "Could not recreate the user while updating",
+						success: false,
+					};
+					return res.json(response);
+				}
+
+				await session.commitTransaction();
+				await session.endSession();
+
+				const response: StandardResponse = {
+					message: "User updated successfully",
+					success: true,
+				};
+
+				return res.json(response);
+			} catch (e: any) {
+				console.log((e as Error).message);
+
+				if (session.inTransaction()) {
+					await session.abortTransaction();
+				}
+
+				//Ony for Write Conflict
+				// 112 is the MongoDB WriteConflict error code
+				if ((e as Error).name === "MongoError" && e.code === 112) {
+					retryCount++;
+					console.log(`Retry ${retryCount}/${maxRetries}`);
+				} else {
+					throw e;
+				}
+				await new Promise((resolve) =>
+					setTimeout(resolve, Math.pow(2, retryCount) * 100),
+				); // Exponential backoff
+			}
+		}
+	} catch (e) {
+		console.log(e as Error);
+
+		if (session.inTransaction()) {
+			await session.abortTransaction();
+		}
+		await session.endSession();
+
+		const response: StandardResponse = {
+			message:
+				"There is some problem while updating the user's profile " +
+				(e as Error).message,
+			success: false,
+		};
 		return res.json(response);
 	}
 };
@@ -524,6 +713,8 @@ const signup = async (req: Request, res: Response) => {
 export {
 	login,
 	signup,
+	profileStatus,
+	updateUserProfile,
 	// mainPage,
 	// getUserData,
 	// getAllUsersEmail,

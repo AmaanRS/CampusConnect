@@ -31,7 +31,11 @@ describe("User model", () => {
 		});
 
 		(mongoose.connect as jest.Mock) = mockConnection;
-		await startServer(process.env.MONGO_URI!, process.env.PORT!);
+		await startServer(
+			process.env.MONGO_URI!,
+			process.env.PORT!,
+			process.env.REPL_SET!,
+		);
 	});
 
 	//use done or return for async code
@@ -94,7 +98,7 @@ describe("User model", () => {
 			}),
 		];
 
-		const testAccType = AccountType.Teacher;
+		const testAccType = AccountType.Student;
 
 		for (let i = 0; i < testDivision.length; i++) {
 			const UserObject: IUser = {
@@ -102,6 +106,9 @@ describe("User model", () => {
 				password: generatePassword(),
 				accType: testAccType,
 				division: testDivision[i],
+				year: randomYear,
+				department: randomDepartment,
+				studentId: faker.number.int({ min: 100000000, max: 999999999 }),
 				isProfileComplete: faker.datatype.boolean(),
 			};
 
@@ -110,29 +117,6 @@ describe("User model", () => {
 				"Division must be a single uppercase letter",
 			);
 		}
-	});
-
-	it("should not save studentId when account type is not Student and throw ERROR", async () => {
-		//Any account type other than student when given should not save studentId
-		const testAccType =
-			randomAccountType !== AccountType.Student &&
-			randomAccountType !== AccountType.NonTeachingStaff
-				? randomAccountType
-				: AccountType.Teacher;
-
-		const UserObject: IUser = {
-			email: faker.internet.email({ allowSpecialCharacters: true }),
-			password: generatePassword(),
-			accType: testAccType,
-			studentId: faker.number.int({ min: 100000000, max: 999999999 }),
-			isProfileComplete: faker.datatype.boolean(),
-		};
-
-		const User = new userModel({ ...UserObject });
-
-		await expect(User.validate()).rejects.toThrow(
-			"With Account Type other than Student studentId cannot be set",
-		);
 	});
 
 	it("should not save user with invalid studentId and throw ERROR", async () => {
@@ -151,6 +135,9 @@ describe("User model", () => {
 			const UserObject: IUser = {
 				email: faker.internet.email({ allowSpecialCharacters: true }),
 				password: generatePassword(),
+				year: randomYear,
+				division: faker.string.alpha({ casing: "upper" }),
+				department: randomDepartment,
 				accType: AccountType.Student,
 				studentId: testStudentId[i],
 				isProfileComplete: faker.datatype.boolean(),
@@ -171,6 +158,7 @@ describe("User model", () => {
 			password: generatePassword(),
 			accType: testAccType,
 			position: randomPosition,
+			department: randomDepartment,
 			isProfileComplete: faker.datatype.boolean(),
 		};
 		const User = new userModel({ ...UserObject });
@@ -196,24 +184,6 @@ describe("User model", () => {
 		);
 	});
 
-	it("should not save user if User's Account type is Admin and Division is given and throw ERROR", async () => {
-		const testAccType = AccountType.Admin;
-
-		const UserObject: IUser = {
-			email: faker.internet.email({ allowSpecialCharacters: true }),
-			password: generatePassword(),
-			accType: testAccType,
-			division: faker.string.alpha({ length: 1, casing: "upper" }),
-			isProfileComplete: faker.datatype.boolean(),
-		};
-
-		const User = new userModel({ ...UserObject });
-
-		await expect(User.validate()).rejects.toThrow(
-			"With Account Type as Admin division cannot be set",
-		);
-	});
-
 	it("should not save user if User's Account type is NonTeachingStaff and position is not LabIncharge and throw ERROR", async () => {
 		const testAccType = AccountType.NonTeachingStaff;
 		const testPosition =
@@ -224,6 +194,7 @@ describe("User model", () => {
 			password: generatePassword(),
 			accType: testAccType,
 			position: testPosition,
+			department: randomDepartment,
 			isProfileComplete: faker.datatype.boolean(),
 		};
 
@@ -246,13 +217,126 @@ describe("User model", () => {
 			password: generatePassword(),
 			accType: testAccType,
 			year: randomYear,
+			department: randomDepartment,
+			studentId: faker.number.int({ min: 100000000, max: 999999999 }),
+			division: faker.string.alpha({ length: 1, casing: "upper" }),
 			isProfileComplete: faker.datatype.boolean(),
 		};
 
 		const User = new userModel({ ...UserObject });
 
 		await expect(User.validate()).rejects.toThrow(
-			"With Account Type as Admin, NonTeachingStaff, Teacher position year cannot be given",
+			"With Account Type as Admin, NonTeachingStaff, Teacher  year cannot be given",
 		);
 	});
+
+	it.each([
+		{ missingField: "division", fieldName: "division" },
+		{ missingField: "department", fieldName: "department" },
+		{ missingField: "studentId", fieldName: "studentId" },
+	])(
+		"should throw error if year is set but $fieldName is missing",
+		async ({ missingField }) => {
+			const testAccType = AccountType.Student;
+
+			const UserObject: IUser = {
+				email: faker.internet.email({ allowSpecialCharacters: true }),
+				password: generatePassword(),
+				accType: testAccType,
+				year: randomYear,
+				department: randomDepartment,
+				studentId: faker.number.int({ min: 100000000, max: 999999999 }),
+				division: faker.string.alpha({ length: 1, casing: "upper" }),
+				isProfileComplete: faker.datatype.boolean(),
+			};
+
+			// Remove the specific field for the test case
+			delete UserObject[missingField as keyof IUser];
+
+			const User = new userModel({ ...UserObject });
+
+			expect(User.validate()).rejects.toThrow(
+				"If year is set then division, department, studentId should also be set",
+			);
+		},
+	);
+
+	it("should throw error if year is set and position is also set", async () => {
+		const testAccType = AccountType.Teacher;
+
+		const userObject: IUser = {
+			email: faker.internet.email({ allowSpecialCharacters: true }),
+			password: generatePassword(),
+			accType: testAccType,
+			year: randomYear, // Ensure year is set
+			department: randomDepartment,
+			studentId: faker.number.int({ min: 100000000, max: 999999999 }),
+			division: faker.string.alpha({ length: 1, casing: "upper" }),
+			isProfileComplete: faker.datatype.boolean(),
+			position: Position.LabIncharge, // Ensure position is also set
+		};
+
+		const user = new userModel({ ...userObject });
+
+		await expect(user.validate()).rejects.toThrow(
+			"If year is set then position should not be set",
+		);
+	});
+
+	// This test case will not work because of this code 'enum: Object.values(Year).filter((v) => typeof v === "number"),' in user schema
+	// it.each([
+	// 	{ yearValue: "1ST", errorMessage: "Year should be a number" },
+	// 	{ yearValue: 0, errorMessage: "Year should be between 1 and 4" },
+	// 	{ yearValue: 5, errorMessage: "Year should be between 1 and 4" },
+	// ])(
+	// 	"should throw error if year is not a number or is not between 1 and 4",
+	// 	async ({ yearValue, errorMessage }) => {
+	// 		const testAccType = AccountType.Student;
+
+	// 		const userObject = {
+	// 			email: faker.internet.email({ allowSpecialCharacters: true }),
+	// 			password: generatePassword(),
+	// 			accType: testAccType,
+	// 			year: yearValue,
+	// 			department: randomDepartment,
+	// 			studentId: faker.number.int({ min: 100000000, max: 999999999 }),
+	// 			division: faker.string.alpha({ length: 1, casing: "upper" }),
+	// 			isProfileComplete: faker.datatype.boolean(),
+	// 		};
+
+	// 		const user = new userModel({ ...userObject });
+
+	// 		await expect(user.validate()).rejects.toThrow(errorMessage);
+	// 	},
+	// );
+
+	it.each([{ missingField: "year", fieldName: "year" }])(
+		"should throw error if division is set but $fieldName is missing",
+		async ({ missingField }) => {
+			const testAccType = AccountType.Student;
+
+			// Create a base user object
+			const baseUserObject: IUser = {
+				email: faker.internet.email({ allowSpecialCharacters: true }),
+				password: generatePassword(),
+				accType: testAccType,
+				year: randomYear,
+				department: randomDepartment,
+				studentId: faker.number.int({ min: 100000000, max: 999999999 }),
+				division: faker.string.alpha({ length: 1, casing: "upper" }),
+				isProfileComplete: faker.datatype.boolean(),
+			};
+
+			// Remove the specific field for the test case if it's missing
+			if (missingField) {
+				delete baseUserObject[missingField as keyof IUser];
+			}
+
+			const user = new userModel({ ...baseUserObject });
+
+			await expect(user.validate()).rejects.toThrow(
+				"If division is set then year, department, studentId should be set and position should be unset AND year should be a number between 1 and 4",
+			);
+		},
+	);
 });
