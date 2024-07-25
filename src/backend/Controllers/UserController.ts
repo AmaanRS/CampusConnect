@@ -120,10 +120,6 @@ const signup = async (req: Request, res: Response) => {
 			const hashedPassword: string = await bcrypt.hash(password, 8);
 
 			try {
-				// This throws error from mongoose validation
-				// This will throw error for duplicate email
-				// This will throw error for invalid email or random error found while creation of document
-
 				await userModel.create({
 					email: email,
 					password: hashedPassword,
@@ -212,7 +208,7 @@ const profileStatus = async (req: Request, res: Response) => {
 	}
 };
 
-//Password should not be updated using this endpoint
+//Password and email should not be updated using this endpoint
 const updateUserProfile = async (req: UpdateRequest, res: Response) => {
 	const session = await mongoose.startSession();
 	const maxRetries = 4;
@@ -221,8 +217,6 @@ const updateUserProfile = async (req: UpdateRequest, res: Response) => {
 	try {
 		//Validate the data before creating the model check for User model for validations if already existing validations work then good
 		const { decodedToken, data } = req.body;
-		console.log("Received Data ");
-		console.log(data);
 
 		if (!decodedToken) {
 			const response: StandardResponse = {
@@ -274,6 +268,7 @@ const updateUserProfile = async (req: UpdateRequest, res: Response) => {
 						message: "Cannot find the user",
 						success: false,
 					};
+
 					await session.abortTransaction();
 					await session.endSession();
 					return res.json(response);
@@ -283,19 +278,27 @@ const updateUserProfile = async (req: UpdateRequest, res: Response) => {
 					.deleteOne({ email: oldUser.email })
 					.session(session);
 
+				// COULD NOT SIMULATE AS TEST
 				if (!isDeleted.acknowledged) {
 					await session.abortTransaction();
 					await session.endSession();
-					throw new Error("Could not delete user's data while updating");
+					throw new Error(
+						"Could not delete user's data while updating user's profile",
+					);
 				}
 
-				// Set the password from the oldUser as a password for the newUser
-				const dataToCreateUserFrom = { ...data, password: oldUser.password };
+				// Set the password and email from the oldUser as a password and email for the newUser
+				const dataToCreateUserFrom = {
+					...data,
+					password: oldUser.password,
+					email: oldUser.email,
+				};
 
 				const updatedUser = await userModel.create([dataToCreateUserFrom], {
 					session,
 				});
 
+				// COULD NOT SIMULATE AS TEST
 				if (!updatedUser) {
 					await session.abortTransaction();
 					await session.endSession();
@@ -322,6 +325,7 @@ const updateUserProfile = async (req: UpdateRequest, res: Response) => {
 					await session.abortTransaction();
 				}
 
+				// COULD NOT SIMULATE AS TEST
 				//Ony for Write Conflict
 				// 112 is the MongoDB WriteConflict error code
 				if ((e as Error).name === "MongoError" && e.code === 112) {
@@ -338,6 +342,7 @@ const updateUserProfile = async (req: UpdateRequest, res: Response) => {
 	} catch (e) {
 		console.log(e as Error);
 
+		// COULD NOT SIMULATE AS TEST
 		if (session.inTransaction()) {
 			await session.abortTransaction();
 		}

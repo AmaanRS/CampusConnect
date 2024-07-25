@@ -4,7 +4,8 @@ const request = supertest(app);
 import dotenv from "dotenv";
 import { faker } from "@faker-js/faker";
 import { generatePassword } from "../../Utils/util";
-import { before } from "node:test";
+import { userModel } from "../../Models/User";
+import { AccountType, Department } from "../../BackendTypes";
 
 dotenv.config();
 let token: any = "";
@@ -18,7 +19,7 @@ describe("User Controller", () => {
 		);
 	});
 
-	describe.skip("POST /signup", () => {
+	describe("POST /signup", () => {
 		//Uncomment it later because it creates users on just testing other test cases
 
 		// it("should save user to database on valid email and password", async () => {
@@ -126,7 +127,7 @@ describe("User Controller", () => {
 		});
 	});
 
-	describe.skip("POST /login", () => {
+	describe("POST /login", () => {
 		it("should not save user when password is not given", async () => {
 			const testEmail = faker.internet.email();
 
@@ -192,8 +193,8 @@ describe("User Controller", () => {
 		});
 	});
 
-	describe.skip("POST /getUserProfileStatus", () => {
-		before(async () => {
+	describe("POST /getUserProfileStatus", () => {
+		beforeAll(async () => {
 			//Make sure this email and password exists in db
 			const res = await request
 				.post("/login")
@@ -217,6 +218,120 @@ describe("User Controller", () => {
 				.set("Authorization", `Bearer ${token + "a"}`);
 			expect(res.body.success).toBe(false);
 			expect(res.status).toBe(401);
+		});
+	});
+
+	describe("POST /updateUserProfile", () => {
+		let token: any;
+		let newAccToken: any;
+
+		beforeAll(async () => {
+			//Make sure this email and password exists in db
+			const res = await request
+				.post("/login")
+				.send({ email: "a@aa.com", password: "Aa1@bcdqwe" });
+			token = res.body.success === true ? res.body.token : null;
+		});
+
+		beforeEach(async () => {
+			// Create a new user after every test because test cases may change the user in the db
+			await request
+				.post("/signup")
+				.send({ email: "new@aa.com", password: "Pass123%" });
+
+			const newAccRes = await request
+				.post("/login")
+				.send({ email: "new@aa.com", password: "Pass123%" });
+
+			newAccToken =
+				newAccRes.body.success === true ? newAccRes.body.token : null;
+		});
+
+		afterEach(async () => {
+			// Delete user after every test so that new user can be created
+			// Clean up test user after each test
+			await userModel.deleteOne({ email: "new@aa.com" });
+		});
+
+		it("should return 401 if user token is wrong", async () => {
+			const res = await request
+				.post("/updateUserProfile")
+				.set("Authorization", `Bearer ${token + "a"}`);
+			expect(res.body.success).toBe(false);
+			expect(res.status).toBe(401);
+		});
+
+		it.each([
+			{
+				scenario: "data is not given",
+				data: undefined,
+				expectedMessage: "Send data to be used for updating",
+				success: false,
+			},
+			{
+				scenario: "password field is present in the data",
+				data: { data: { password: "newPord12#" } },
+				expectedMessage:
+					"Password should not be updated using this endpoint",
+				success: false,
+			},
+			{
+				scenario: "email in data and decodedToken.email do not match",
+				data: { data: { email: "differentemail@domain.com" } },
+				expectedMessage:
+					"The email of the user sending the request and the email in the data sent for updation is different",
+				success: false,
+			},
+		])(
+			"should return appropriate message if $scenario",
+			async ({ data, expectedMessage, success }) => {
+				const res = await request
+					.post("/updateUserProfile")
+					.set("Authorization", `Bearer ${token}`)
+					.send(data);
+
+				expect(res.body.success).toBe(success);
+				expect(res.body.message).toBe(expectedMessage);
+			},
+		);
+
+		it("should update user successfully", async () => {
+			const data = {
+				email: "new@aa.com",
+				accType: AccountType.Student,
+				year: 2,
+				division: "A",
+				studentId: 123456789,
+				department: Department.AIDS,
+				isProfileComplete: false,
+			};
+
+			const res = await request
+				.post("/updateUserProfile")
+				.set("Authorization", `Bearer ${newAccToken}`)
+				.send({ data: data });
+
+			expect(res.body.success).toBe(true);
+			expect(res.body.message).toBe("User updated successfully");
+
+			// Verify the user is updated
+			const updatedUser = await userModel.findOne({ email: "new@aa.com" });
+			expect(updatedUser).not.toBeNull();
+		});
+
+		it("should return error if user not found", async () => {
+			// Ensure the user does not exist
+			await userModel.deleteOne({ email: "new@aa.com" });
+
+			const res = await request
+				.post("/updateUserProfile")
+				.set("Authorization", `Bearer ${newAccToken}`)
+				.send({
+					data: { email: "new@aa.com" },
+				});
+
+			expect(res.body.success).toBe(false);
+			expect(res.body.message).toBe("Cannot find the user");
 		});
 	});
 });
