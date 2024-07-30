@@ -1,20 +1,26 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import LocomotiveScroll from "locomotive-scroll";
-import Nav from "./Components/Landing Page/Nav";
-// import Routing from "./utils/Routes/Routing";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  useLocation,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import About from "./Components/Landing Page/About";
 import Contact from "./Components/Landing Page/Contact";
 import Login, { loginLoader } from "./Components/Auth & Authorization/Login";
 import Signup, { SignupLoader } from "./Components/Auth & Authorization/Signup";
-import Dashboard from "./Components/Landing Page/Dashboard";
 import Layout from "./Components/Landing Page/Layout";
 import ErrorPage from "./utils/Alerts & animations/ErrorPage";
+import UserProfile from "./Components/User Profile/UserProfile";
+import StudentForm from "./Components/User Profile/StudentForm";
+import TeachingStaffForm from "./Components/User Profile/TeachingStaffForm";
+import NTeachingStaffForm from "./Components/User Profile/NTeachingStaffForm";
+import ProfileCompleted from "./Components/User Profile/ProfileCompleted";
+import Dashboard, { dashboardLoader } from "./Components/Dashboard/Dashboard";
+import {
+  AuthContext,
+  AuthProvider,
+} from "./Components/Auth & Authorization/AuthContext";
+import MainProfile from "./Components/Dashboard/MainProfile";
+import SearchProfile from "./Components/Dashboard/SearchProfile";
+import Home from "./Components/Dashboard/Home";
 
 function App() {
   const locomotiveScroll = new LocomotiveScroll();
@@ -30,11 +36,6 @@ function App() {
           // action: homeAction,
           // loader: homeLoader,
         },
-        // {
-        //   // path: "main",
-        //   // element: <MainPage />,
-        //   // loader: mainLoader,
-        // },
         {
           path: "about",
           element: <About />,
@@ -54,23 +55,51 @@ function App() {
           loader: SignupLoader,
         },
         {
-          path: "dashboard",
-          element: <Dashboard />,
+          path: "userprofile",
+          element: <UserProfile />,
+          children: [
+            {
+              path: "sform",
+              element: <StudentForm />,
+            },
+            {
+              path: "tform",
+              element: <TeachingStaffForm />,
+            },
+            {
+              path: "ntform",
+              element: <NTeachingStaffForm />,
+            },
+            {
+              path: "profilecompleted",
+              element: <ProfileCompleted />,
+            },
+          ],
         },
         {
           path: "error",
           element: <ErrorPage />,
+        },
+        {
+          path: "dashboard",
+          element: <Dashboard />,
+          loader: dashboardLoader,
+          children: [
+            { path: "home", element: <Home /> },
+            { path: "userprof", element: <MainProfile /> },
+            { path: "searchprof", element: <SearchProfile /> },
+          ],
         },
       ],
     },
   ]);
 
   return (
-    <div className=" bg-blue-extralight w-full font-openSans overflow-x-hidden">
-      {/* <ConditionalNav /> */}
-
-      <RouterProvider router={router}></RouterProvider>
-    </div>
+    <AuthProvider>
+      <div className="bg-blue-extralight w-full font-openSans overflow-x-hidden h-full">
+        <RouterProvider router={router} />
+      </div>
+    </AuthProvider>
   );
 }
 

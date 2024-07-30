@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-undef */
 /* eslint-disable react/no-unescaped-entities */
@@ -7,7 +8,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import loginImg from "../../utils/pics/loginwhite.svg";
-import { useForm } from "react-hook-form";
+import { get, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
@@ -18,6 +19,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 import { useLoaderData } from "react-router-dom";
 import Cookie from "js-cookie";
 import ErrorPage from "../../utils/Alerts & animations/ErrorPage";
+import { AuthContext } from "./AuthContext";
 
 // Schema
 const schema = yup.object({
@@ -31,17 +33,21 @@ const schema = yup.object({
   password: yup
     .string()
     .required("Password is required")
-    .matches(/^.{5,}$/, "Password must be at least 5 characters long"), /// to be checked
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/,
+      "Password must be at least 8 to 10 characters long"
+    ), /// to be checked
   // /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/ high complexity Password must be at least 8 characters long, include letters, numbers, and special characters
 });
 
 function Login() {
   const navigate = useNavigate();
   const isLoggedIn = useLoaderData();
+  const { setUser } = useContext(AuthContext);
 
   useEffect(() => {
     if (isLoggedIn) {
-      return navigate("/dashboard", { replace: true });
+      return navigate("/userprofile", { replace: true });
     }
   }, [isLoggedIn]);
 
@@ -62,25 +68,35 @@ function Login() {
         email: data.email,
         password: data.password,
       });
-
+      console.log(res);
       if (res.data.token) {
+        console.log(res.data.token);
         Cookies.set("token", res.data.token);
-        navigate("/dashboard");
+        const userData = { email: data.email };
+        setUser(userData);
+        navigate("/userprofile");
       } else {
-        setErrorMessage("Either Email or Password is wrong");
-        setIsError(true);
+        setAlertMessage("Either Email or Password is wrong");
+        setIsAlertOpen(true);
       }
     } catch (error) {
-      console.log(error);
       let errorMsg = "An error occurred";
       if (error.response) {
-        errorMsg = error.response.data?.message || error.message || errorMsg;
+        errorMsg =
+          error.response.data?.message ||
+          error.message ||
+          errorMsg ||
+          error.response.message;
       } else {
         errorMsg = error.message || errorMsg;
       }
       setErrorMessage(errorMsg);
+      console.log(setErrorMessage);
+      console.log(errorMessage);
+      console.log(errorMsg);
+
       setIsError(true);
-      navigate("/error");
+      // navigate("/error");
     } finally {
       reset();
     }

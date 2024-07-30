@@ -23,6 +23,14 @@ function Buttonborder({ name, val, burger = false, togglebtn }) {
         >
           {name}
         </NavLink>
+      ) : val === "Edit" ? (
+        <NavLink
+          className={`px-6 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
+  lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down`}
+          to="/editprof"
+        >
+          {name}
+        </NavLink>
       ) : val === "createAcc" ? (
         <NavLink
           className={`px-6 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold

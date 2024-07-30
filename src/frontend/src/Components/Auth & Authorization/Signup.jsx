@@ -40,7 +40,7 @@ function Signup() {
 
   useEffect(() => {
     if (isSignedUp) {
-      return navigate("/dashboard", { replace: true });
+      return navigate("/userprofile", { replace: true });
     }
   }, [isSignedUp]);
 
@@ -82,16 +82,18 @@ function Signup() {
         console.log(res.data.success);
       }
     } catch (error) {
-      console.log(error);
       let errorMsg = "An error occurred";
       if (error.response) {
-        errorMsg = error.response.data?.message || error.message || errorMsg;
+        errorMsg =
+          error.response.data?.message ||
+          error.message ||
+          errorMsg ||
+          error.response.message;
       } else {
         errorMsg = error.message || errorMsg;
       }
       setErrorMessage(errorMsg);
       setIsError(true);
-      navigate("/error");
     }
 
     if (isError) {
