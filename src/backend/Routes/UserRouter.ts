@@ -9,7 +9,7 @@ import {
 	login,
 	signup,
 	profileStatus,
-	updateUserProfile,
+	// updateUserProfile,
 } from "../Controllers/UserController";
 // import { getAllEvents, createEvent } from "../Controllers/CommitteeController";
 
@@ -17,7 +17,7 @@ import {
 Router.route("/login").post(login);
 Router.route("/signup").post(signup);
 Router.route("/getUserProfileStatus").post(cookieCheckerMiddleware, profileStatus);
-Router.route("/updateUserProfile").post(cookieCheckerMiddleware, updateUserProfile);
+// Router.route("/updateUserProfile").post(cookieCheckerMiddleware, updateUserProfile);
 // Router.route("/validateUser").post(cookieCheckerFunction);
 
 //CommitteeController Routes

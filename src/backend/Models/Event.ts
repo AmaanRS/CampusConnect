@@ -1,5 +1,5 @@
 import { Model, Schema, model } from "mongoose";
-import { IEvent } from "../BackendTypes";
+import { IEvent } from "../Types/GeneralTypes";
 // import { committeeModel } from "./Committee";
 
 const eventSchema = new Schema<IEvent>(
@@ -42,7 +42,4 @@ const eventSchema = new Schema<IEvent>(
 	},
 );
 
-export const eventModel: Model<IEvent> = model<IEvent>(
-	"eventModel",
-	eventSchema,
-);
+export const eventModel: Model<IEvent> = model<IEvent>("eventModel", eventSchema);

@@ -1,15 +1,15 @@
-import { userModel } from "../Models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import {
 	DataResponse,
-	IUser,
 	StandardResponse,
 	TokenResponse,
-	UpdateRequest,
-} from "../BackendTypes";
-import mongoose, { MongooseError } from "mongoose";
+} from "../Types/GeneralTypes";
+import { MongooseError } from "mongoose";
+import { userModel } from "../Models/User";
+import { IUser } from "../Types/ModelTypes";
+import { checkPassAgainstDbPass } from "../Utils/util";
 
 const login = async (req: Request, res: Response) => {
 	try {
@@ -35,13 +35,20 @@ const login = async (req: Request, res: Response) => {
 			}
 
 			//Check the user input password against the password from the database
-			let matchPassword = await bcrypt.compare(password, user.password);
+			// let matchPassword = await bcrypt.compare(password, user.password);
+
+			let matchPassword = await checkPassAgainstDbPass(
+				password,
+				user.password,
+			);
 
 			//If the passwords do not match
-			if (!matchPassword) {
+			if (!matchPassword?.success) {
 				const response: StandardResponse = {
-					message: "Either email or password entered is wrong",
-					success: false,
+					message:
+						matchPassword?.message ??
+						"Either email or password entered is wrong",
+					success: matchPassword?.success ?? false,
 				};
 
 				return res.json(response);
@@ -96,6 +103,12 @@ const signup = async (req: Request, res: Response) => {
 		if (email && password) {
 			//Validation for Email is in User model
 
+			//
+			//
+			// Check if validation and hashing is being done on the password or not
+			//
+			//
+
 			// Validation for Password
 			// Validation is done here because hashed password is being stored rather than plain text
 
@@ -104,29 +117,31 @@ const signup = async (req: Request, res: Response) => {
 			// At least one digit
 			// At least one special character
 			// Total length between 8 and 10 characters
-			const passwordRegex =
-				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
-			const isPassValid = passwordRegex.test(password);
+			// const passwordRegex =
+			// 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
+			// const isPassValid = passwordRegex.test(password);
 
-			if (!isPassValid) {
-				const response: StandardResponse = {
-					message:
-						"Password must have at least one lowercase letter, one uppercase letter, one digit, one special character, and be between 8 to 10 characters long",
-					success: false,
-				};
-				return res.json(response);
-			}
+			// if (!isPassValid) {
+			// 	const response: StandardResponse = {
+			// 		message:
+			// 			"Password must have at least one lowercase letter, one uppercase letter, one digit, one special character, and be between 8 to 10 characters long",
+			// 		success: false,
+			// 	};
+			// 	return res.json(response);
+			// }
 
-			const hashedPassword: string = await bcrypt.hash(password, 8);
+			// const hashedPassword: string = await bcrypt.hash(password, 8);
 
 			try {
 				await userModel.create({
 					email: email,
-					password: hashedPassword,
+					password: password,
 				});
 			} catch (error) {
+
 				const response: StandardResponse = {
-					message: (error as MongooseError).message.split(":")[2].trim(),
+					// message: (error as MongooseError).message.split(":")[2].trim(),
+					message: (error as MongooseError).message,
 					success: false,
 				};
 				return res.json(response);
@@ -209,154 +224,154 @@ const profileStatus = async (req: Request, res: Response) => {
 };
 
 //Password and email should not be updated using this endpoint
-const updateUserProfile = async (req: UpdateRequest, res: Response) => {
-	const session = await mongoose.startSession();
-	const maxRetries = 4;
-	let retryCount = 0;
+// const updateUserProfile = async (req: UpdateRequest, res: Response) => {
+// 	const session = await mongoose.startSession();
+// 	const maxRetries = 4;
+// 	let retryCount = 0;
 
-	try {
-		//Validate the data before creating the model check for User model for validations if already existing validations work then good
-		const { decodedToken, data } = req.body;
+// 	try {
+// 		//Validate the data before creating the model check for User model for validations if already existing validations work then good
+// 		const { decodedToken, data } = req.body;
 
-		if (!decodedToken) {
-			const response: StandardResponse = {
-				message: "User is not authenticated",
-				success: false,
-			};
-			return res.json(response);
-		}
+// 		if (!decodedToken) {
+// 			const response: StandardResponse = {
+// 				message: "User is not authenticated",
+// 				success: false,
+// 			};
+// 			return res.json(response);
+// 		}
 
-		if (!data) {
-			const response: StandardResponse = {
-				message: "Send data to be used for updating",
-				success: false,
-			};
-			return res.json(response);
-		}
+// 		if (!data) {
+// 			const response: StandardResponse = {
+// 				message: "Send data to be used for updating",
+// 				success: false,
+// 			};
+// 			return res.json(response);
+// 		}
 
-		// Runtime check to ensure 'password' field is not present
-		if ("password" in data) {
-			const response: StandardResponse = {
-				message: "Password should not be updated using this endpoint",
-				success: false,
-			};
-			return res.json(response);
-		}
+// 		// Runtime check to ensure 'password' field is not present
+// 		if ("password" in data) {
+// 			const response: StandardResponse = {
+// 				message: "Password should not be updated using this endpoint",
+// 				success: false,
+// 			};
+// 			return res.json(response);
+// 		}
 
-		// Email sent in data and decodedToken.email should be same
-		if (decodedToken.email !== data.email) {
-			const response: StandardResponse = {
-				message:
-					"The email of the user sending the request and the email in the data sent for updation is different",
-				success: false,
-			};
+// 		// Email sent in data and decodedToken.email should be same
+// 		if (decodedToken.email !== data.email) {
+// 			const response: StandardResponse = {
+// 				message:
+// 					"The email of the user sending the request and the email in the data sent for updation is different",
+// 				success: false,
+// 			};
 
-			return res.json(response);
-		}
-		let successful = false;
+// 			return res.json(response);
+// 		}
+// 		let successful = false;
 
-		while (retryCount < maxRetries && !successful) {
-			try {
-				session.startTransaction();
+// 		while (retryCount < maxRetries && !successful) {
+// 			try {
+// 				session.startTransaction();
 
-				const oldUser = await userModel
-					.findOne({ email: decodedToken.email })
-					.session(session);
+// 				const oldUser = await userModel
+// 					.findOne({ email: decodedToken.email })
+// 					.session(session);
 
-				if (!oldUser) {
-					const response: StandardResponse = {
-						message: "Cannot find the user",
-						success: false,
-					};
+// 				if (!oldUser) {
+// 					const response: StandardResponse = {
+// 						message: "Cannot find the user",
+// 						success: false,
+// 					};
 
-					await session.abortTransaction();
-					await session.endSession();
-					return res.json(response);
-				}
+// 					await session.abortTransaction();
+// 					await session.endSession();
+// 					return res.json(response);
+// 				}
 
-				const isDeleted = await oldUser
-					.deleteOne({ email: oldUser.email })
-					.session(session);
+// 				const isDeleted = await oldUser
+// 					.deleteOne({ email: oldUser.email })
+// 					.session(session);
 
-				// COULD NOT SIMULATE AS TEST
-				if (!isDeleted.acknowledged) {
-					await session.abortTransaction();
-					await session.endSession();
-					throw new Error(
-						"Could not delete user's data while updating user's profile",
-					);
-				}
+// 				// COULD NOT SIMULATE AS TEST
+// 				if (!isDeleted.acknowledged) {
+// 					await session.abortTransaction();
+// 					await session.endSession();
+// 					throw new Error(
+// 						"Could not delete user's data while updating user's profile",
+// 					);
+// 				}
 
-				// Set the password and email from the oldUser as a password and email for the newUser
-				const dataToCreateUserFrom = {
-					...data,
-					password: oldUser.password,
-					email: oldUser.email,
-				};
+// 				// Set the password and email from the oldUser as a password and email for the newUser
+// 				const dataToCreateUserFrom = {
+// 					...data,
+// 					password: oldUser.password,
+// 					email: oldUser.email,
+// 				};
 
-				const updatedUser = await userModel.create([dataToCreateUserFrom], {
-					session,
-				});
+// 				const updatedUser = await userModel.create([dataToCreateUserFrom], {
+// 					session,
+// 				});
 
-				// COULD NOT SIMULATE AS TEST
-				if (!updatedUser) {
-					await session.abortTransaction();
-					await session.endSession();
-					const response: StandardResponse = {
-						message: "Could not recreate the user while updating",
-						success: false,
-					};
-					return res.json(response);
-				}
+// 				// COULD NOT SIMULATE AS TEST
+// 				if (!updatedUser) {
+// 					await session.abortTransaction();
+// 					await session.endSession();
+// 					const response: StandardResponse = {
+// 						message: "Could not recreate the user while updating",
+// 						success: false,
+// 					};
+// 					return res.json(response);
+// 				}
 
-				await session.commitTransaction();
-				await session.endSession();
+// 				await session.commitTransaction();
+// 				await session.endSession();
 
-				const response: StandardResponse = {
-					message: "User updated successfully",
-					success: true,
-				};
+// 				const response: StandardResponse = {
+// 					message: "User updated successfully",
+// 					success: true,
+// 				};
 
-				return res.json(response);
-			} catch (e: any) {
-				console.log((e as Error).message);
+// 				return res.json(response);
+// 			} catch (e: any) {
+// 				console.log((e as Error).message);
 
-				if (session.inTransaction()) {
-					await session.abortTransaction();
-				}
+// 				if (session.inTransaction()) {
+// 					await session.abortTransaction();
+// 				}
 
-				// COULD NOT SIMULATE AS TEST
-				//Ony for Write Conflict
-				// 112 is the MongoDB WriteConflict error code
-				if ((e as Error).name === "MongoError" && e.code === 112) {
-					retryCount++;
-					console.log(`Retry ${retryCount}/${maxRetries}`);
-				} else {
-					throw e;
-				}
-				await new Promise((resolve) =>
-					setTimeout(resolve, Math.pow(2, retryCount) * 100),
-				); // Exponential backoff
-			}
-		}
-	} catch (e) {
-		console.log(e as Error);
+// 				// COULD NOT SIMULATE AS TEST
+// 				//Ony for Write Conflict
+// 				// 112 is the MongoDB WriteConflict error code
+// 				if ((e as Error).name === "MongoError" && e.code === 112) {
+// 					retryCount++;
+// 					console.log(`Retry ${retryCount}/${maxRetries}`);
+// 				} else {
+// 					throw e;
+// 				}
+// 				await new Promise((resolve) =>
+// 					setTimeout(resolve, Math.pow(2, retryCount) * 100),
+// 				); // Exponential backoff
+// 			}
+// 		}
+// 	} catch (e) {
+// 		console.log(e as Error);
 
-		// COULD NOT SIMULATE AS TEST
-		if (session.inTransaction()) {
-			await session.abortTransaction();
-		}
-		await session.endSession();
+// 		// COULD NOT SIMULATE AS TEST
+// 		if (session.inTransaction()) {
+// 			await session.abortTransaction();
+// 		}
+// 		await session.endSession();
 
-		const response: StandardResponse = {
-			message:
-				"There is some problem while updating the user's profile " +
-				(e as Error).message,
-			success: false,
-		};
-		return res.json(response);
-	}
-};
+// 		const response: StandardResponse = {
+// 			message:
+// 				"There is some problem while updating the user's profile " +
+// 				(e as Error).message,
+// 			success: false,
+// 		};
+// 		return res.json(response);
+// 	}
+// };
 
 // const mainPage = async (req, res) => {
 // 	//The user is not authenticated
@@ -719,7 +734,7 @@ export {
 	login,
 	signup,
 	profileStatus,
-	updateUserProfile,
+	// updateUserProfile,
 	// mainPage,
 	// getUserData,
 	// getAllUsersEmail,

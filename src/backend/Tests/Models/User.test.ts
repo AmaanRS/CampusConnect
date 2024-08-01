@@ -1,7 +1,13 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { startServer } from "../../app";
-import { AccountType, Department, IUser, Position, Year } from "../../BackendTypes";
+import {
+	// AccountType,
+	// Department,
+	// IUser,
+	// Position,
+	// Year,
+} from "../../Types/GeneralTypes";
 import { faker } from "@faker-js/faker";
 import {
 	getRandomEnumValue,

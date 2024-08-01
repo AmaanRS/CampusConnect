@@ -87,7 +87,7 @@
 
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
-import { MiddlewareResponse, StandardResponse } from "../BackendTypes";
+import { MiddlewareResponse, StandardResponse } from "../Types/GeneralTypes";
 
 // Utility function to verify token
 const verifyToken = (req: Request): MiddlewareResponse => {

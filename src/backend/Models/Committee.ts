@@ -1,5 +1,5 @@
 import { Model, Schema, model } from "mongoose";
-import { ICommittee } from "../BackendTypes";
+import { ICommittee } from "../Types/GeneralTypes";
 // import { eventModel } from './Event';
 // import { userModel } from "./User";
 
@@ -13,27 +13,27 @@ const committeeSchema = new Schema<ICommittee>(
 		head: {
 			type: Schema.Types.ObjectId,
 			ref: "userModel",
-            required: true,
+			required: true,
 		},
 		viceHead: {
 			type: Schema.Types.ObjectId,
 			ref: "userModel",
-            required: true,
+			required: true,
 		},
 		teacherIncharge: {
 			type: Schema.Types.ObjectId,
 			ref: "userModel",
-            required: true,
+			required: true,
 		},
 		description: {
 			type: String,
-            required: true,
+			required: true,
 		},
 		members: [
 			{
 				type: Schema.Types.ObjectId,
 				ref: "userModel",
-                required: true,
+				required: true,
 			},
 		],
 		events: [

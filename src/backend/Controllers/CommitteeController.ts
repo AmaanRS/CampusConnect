@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { EventResponse, IEvent, StandardResponse } from "../BackendTypes";
+import { EventResponse, IEvent, StandardResponse } from "../Types/GeneralTypes";
 import { eventModel } from "../Models/Event";
 
 const getAllEvents = async (res: Response) => {
@@ -117,7 +117,4 @@ const createEvent = async (req: Request, res: Response) => {
 	}
 };
 
-export {
-	getAllEvents,
-	createEvent
-};
+export { getAllEvents, createEvent };
