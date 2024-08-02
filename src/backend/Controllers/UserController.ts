@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import {
@@ -192,11 +191,11 @@ const profileStatus = async (req: Request, res: Response) => {
 			};
 			return res.json(response);
 		}
-		const isProfileComplete = await userModel.findOne(
+		const isProfileComplete:IUser|null = await userModel.findOne(
 			{
 				email: decodedToken.email,
 			},
-			{ isProfileComplete: 1 },
+			{ password:0 },
 		);
 		if (!isProfileComplete) {
 			throw new Error(

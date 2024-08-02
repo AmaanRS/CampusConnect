@@ -49,7 +49,7 @@ describe.only("Student Model Tests", () => {
 		department: Department.IT,
 		studentId: 123456789,
 		accType: AccountType.Student,
-		position: new Set([StudentPosition.Student]),
+		position: [...new Set([StudentPosition.Student])],
 		isProfileComplete: false,
 	};
 
@@ -184,15 +184,18 @@ describe.only("Student Model Tests", () => {
 		},
 	];
 
-	testCases.forEach(({ name, student, shouldThrow }) => {
-		it(`should ${shouldThrow ? "fail" : "pass"} when ${name}`, async () => {
-			const createStudent = () => studentModel.create(student);
+	it.each(testCases)(
+		"should $shouldThrow ? 'fail' : 'pass' when $name",
+		async ({ student, shouldThrow }) => {
+			const createStudent = async () => {
+				await studentModel.create(student);
+			};
 
 			if (shouldThrow) {
-				await expect(createStudent()).rejects.toThrow();
+				await expect(await createStudent()).rejects.toThrow();
 			} else {
-				await expect(createStudent()).resolves.toBeDefined();
+				await expect(await createStudent()).resolves.toBeDefined();
 			}
-		});
-	});
+		},
+	);
 });

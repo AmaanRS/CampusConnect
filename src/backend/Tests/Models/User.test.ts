@@ -15,6 +15,7 @@ import {
 	getRandomEnumValueFromYear,
 } from "../../Utils/util";
 import { userModel } from "../../Models/User";
+import { AccountType, IUser } from "../../Types/ModelTypes";
 dotenv.config();
 
 jest.mock("mongoose");

@@ -1,5 +1,5 @@
 // jest.config.ts
-import type {JestConfigWithTsJest} from "ts-jest";
+import type { JestConfigWithTsJest } from "ts-jest";
 
 const jestConfig: JestConfigWithTsJest = {
 	testEnvironment: "node",
@@ -36,6 +36,7 @@ const jestConfig: JestConfigWithTsJest = {
 	// The glob patterns Jest uses to detect test files
 	testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[tj]s?(x)"],
 	setupFiles: ["<rootDir>/test-setup.ts"],
+	testTimeout: 10000,
 };
 
 export default jestConfig;

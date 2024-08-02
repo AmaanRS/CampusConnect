@@ -231,9 +231,12 @@ studentSchema.pre("validate", async function (next) {
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];
 
-		this.isInChargeOfCommittees = [...new Set(this.isInChargeOfCommittees)];
-
-		this.isMemberOfCommittees = [...new Set(this.isMemberOfCommittees)];
+		this.isInChargeOfCommittees = this.isInChargeOfCommittees
+			? [...new Set(this.isInChargeOfCommittees)]
+			: undefined;
+		this.isMemberOfCommittees = this.isMemberOfCommittees
+			? [...new Set(this.isMemberOfCommittees)]
+			: undefined;
 
 		next();
 	} catch (err) {
