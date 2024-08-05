@@ -11,19 +11,8 @@ import {
 import mongoose from "mongoose";
 dotenv.config();
 
-jest.mock("mongoose");
-
 describe.only("Student Model Tests", () => {
 	beforeAll(async () => {
-		const mockConnection = jest.fn().mockResolvedValueOnce({
-			connection: {
-				db: {
-					databaseName: "CampusConnectSelf",
-				},
-			},
-		});
-
-		(mongoose.connect as jest.Mock) = mockConnection;
 		await startServer(
 			process.env.MONGO_URI!,
 			process.env.PORT!,
@@ -31,25 +20,18 @@ describe.only("Student Model Tests", () => {
 		);
 	});
 
-	//use done or return for async code
-	// afterAll((done) => {
-	// 	mongoose.disconnect();
-	// 	jest.clearAllMocks();
-	// 	done();
-	// });
-
 	afterEach(async () => {
-		await studentModel.deleteMany({});
+		await studentModel.deleteOne({});
 	});
 
 	const validStudent: IStudent = {
-		email: "student@example.com",
-		password: "securePassword123",
+		email: "student.123456789@vcet.edu.in",
+		password: "secPd@123",
 		year: Year["1ST"],
 		department: Department.IT,
 		studentId: 123456789,
 		accType: AccountType.Student,
-		position: [...new Set([StudentPosition.Student])],
+		position: [StudentPosition.Student],
 		isProfileComplete: false,
 	};
 
@@ -59,7 +41,7 @@ describe.only("Student Model Tests", () => {
 			name: "valid single position student",
 			student: {
 				...validStudent,
-				position: new Set([StudentPosition.Student]),
+				position: [StudentPosition.Student],
 			},
 			shouldThrow: false,
 		},
@@ -67,8 +49,8 @@ describe.only("Student Model Tests", () => {
 			name: "valid single position student incharge",
 			student: {
 				...validStudent,
-				position: new Set([StudentPosition.StudentIncharge]),
-				isInChargeOfCommittees: new Set(),
+				position: [StudentPosition.StudentIncharge],
+				isInChargeOfCommittees: [new mongoose.Types.ObjectId()],
 			},
 			shouldThrow: false,
 		},
@@ -76,8 +58,8 @@ describe.only("Student Model Tests", () => {
 			name: "valid single position committee member",
 			student: {
 				...validStudent,
-				position: new Set([StudentPosition.CommitteeMember]),
-				isMemberOfCommittees: new Set(),
+				position: [StudentPosition.CommitteeMember],
+				isMemberOfCommittees: [new mongoose.Types.ObjectId()],
 			},
 			shouldThrow: false,
 		},
@@ -85,12 +67,12 @@ describe.only("Student Model Tests", () => {
 			name: "valid multiple positions (StudentIncharge and CommitteeMember)",
 			student: {
 				...validStudent,
-				position: new Set([
+				position: [
 					StudentPosition.StudentIncharge,
 					StudentPosition.CommitteeMember,
-				]),
-				isInChargeOfCommittees: new Set(),
-				isMemberOfCommittees: new Set(),
+				],
+				isInChargeOfCommittees: [new mongoose.Types.ObjectId()],
+				isMemberOfCommittees: [new mongoose.Types.ObjectId()],
 			},
 			shouldThrow: false,
 		},
@@ -99,8 +81,8 @@ describe.only("Student Model Tests", () => {
 			name: "invalid single position student with committees",
 			student: {
 				...validStudent,
-				position: new Set([StudentPosition.Student]),
-				isInChargeOfCommittees: new Set(),
+				position: [StudentPosition.Student],
+				isInChargeOfCommittees: [new mongoose.Types.ObjectId()],
 			},
 			shouldThrow: true,
 		},
@@ -108,8 +90,8 @@ describe.only("Student Model Tests", () => {
 			name: "invalid single position student with member of committees",
 			student: {
 				...validStudent,
-				position: new Set([StudentPosition.Student]),
-				isMemberOfCommittees: new Set(),
+				position: [StudentPosition.Student],
+				isMemberOfCommittees: [new mongoose.Types.ObjectId()],
 			},
 			shouldThrow: true,
 		},
@@ -117,7 +99,7 @@ describe.only("Student Model Tests", () => {
 			name: "invalid single position student incharge without in charge committees",
 			student: {
 				...validStudent,
-				position: new Set([StudentPosition.StudentIncharge]),
+				position: [StudentPosition.StudentIncharge],
 			},
 			shouldThrow: true,
 		},
@@ -125,8 +107,8 @@ describe.only("Student Model Tests", () => {
 			name: "invalid single position student incharge with isMemberOfCommittees",
 			student: {
 				...validStudent,
-				position: new Set([StudentPosition.StudentIncharge]),
-				isMemberOfCommittees: new Set(),
+				position: [StudentPosition.StudentIncharge],
+				isMemberOfCommittees: [new mongoose.Types.ObjectId()],
 			},
 			shouldThrow: true,
 		},
@@ -134,7 +116,7 @@ describe.only("Student Model Tests", () => {
 			name: "invalid single position committee member without member committees",
 			student: {
 				...validStudent,
-				position: new Set([StudentPosition.CommitteeMember]),
+				position: [StudentPosition.CommitteeMember],
 			},
 			shouldThrow: true,
 		},
@@ -142,8 +124,8 @@ describe.only("Student Model Tests", () => {
 			name: "invalid single position committee member with member isInChargeOfCommittees",
 			student: {
 				...validStudent,
-				position: new Set([StudentPosition.CommitteeMember]),
-				isInChargeOfCommittees: new Set(),
+				position: [StudentPosition.CommitteeMember],
+				isInChargeOfCommittees: [new mongoose.Types.ObjectId()],
 			},
 			shouldThrow: true,
 		},
@@ -151,10 +133,10 @@ describe.only("Student Model Tests", () => {
 			name: "invalid multiple positions (StudentIncharge and CommitteeMember) without isInChargeOfCommittees and isMemberOfCommittees",
 			student: {
 				...validStudent,
-				position: new Set([
+				position: [
 					StudentPosition.StudentIncharge,
 					StudentPosition.CommitteeMember,
-				]),
+				],
 			},
 			shouldThrow: true,
 		},
@@ -162,11 +144,11 @@ describe.only("Student Model Tests", () => {
 			name: "invalid multiple positions (StudentIncharge and CommitteeMember) without isMemberOfCommittees",
 			student: {
 				...validStudent,
-				position: new Set([
+				position: [
 					StudentPosition.StudentIncharge,
 					StudentPosition.CommitteeMember,
-				]),
-				isInChargeOfCommittees: new Set(),
+				],
+				isInChargeOfCommittees: [new mongoose.Types.ObjectId()],
 			},
 			shouldThrow: true,
 		},
@@ -174,28 +156,27 @@ describe.only("Student Model Tests", () => {
 			name: "invalid multiple positions (StudentIncharge and CommitteeMember) without isInChargeOfCommittees",
 			student: {
 				...validStudent,
-				position: new Set([
+				position: [
 					StudentPosition.StudentIncharge,
 					StudentPosition.CommitteeMember,
-				]),
-				isMemberOfCommittees: new Set(),
+				],
+				isMemberOfCommittees: [new mongoose.Types.ObjectId()],
 			},
 			shouldThrow: true,
 		},
 	];
 
-	it.each(testCases)(
-		"should $shouldThrow ? 'fail' : 'pass' when $name",
-		async ({ student, shouldThrow }) => {
-			const createStudent = async () => {
-				await studentModel.create(student);
-			};
+	it.each(testCases)("$name", async ({ student, shouldThrow }) => {
+		const createStudent = async () => {
+			const isStudentCreated = await studentModel.create(student);
 
-			if (shouldThrow) {
-				await expect(await createStudent()).rejects.toThrow();
-			} else {
-				await expect(await createStudent()).resolves.toBeDefined();
-			}
-		},
-	);
+			return isStudentCreated ? true : false;
+		};
+
+		if (shouldThrow) {
+			await expect(createStudent()).rejects.toThrow();
+		} else {
+			await expect(createStudent()).resolves.toBeDefined();
+		}
+	});
 });

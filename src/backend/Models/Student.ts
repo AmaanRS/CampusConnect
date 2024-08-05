@@ -7,7 +7,7 @@ import {
 	StudentPosition,
 	IStudent,
 } from "../Types/ModelTypes";
-import { emailRegex, validateAndHash } from "../Utils/util";
+import { studentEmailRegex, validateAndHash } from "../Utils/util";
 
 const studentSchema = new Schema<IStudentDocument>(
 	{
@@ -17,7 +17,7 @@ const studentSchema = new Schema<IStudentDocument>(
 			unique: true,
 			validate: {
 				validator: function (value: string) {
-					return emailRegex.test(value);
+					return studentEmailRegex.test(value);
 				},
 				message: "Invalid email format",
 			},
@@ -49,7 +49,7 @@ const studentSchema = new Schema<IStudentDocument>(
 		accType: {
 			type: String,
 			required: true,
-			enum: Object.values(AccountType.Student),
+			enum: Object.values(AccountType),
 		},
 		position: [
 			{
@@ -80,60 +80,6 @@ const studentSchema = new Schema<IStudentDocument>(
 	},
 );
 
-// studentSchema.post("validate", async function (next) {
-// 	if (this.position.length >= 3) {
-// 		throw new MongooseError("Do not give more than two positions to student");
-// 	}
-
-// 	if (this.position.length === 1) {
-// 		let e = this.position[0];
-
-// 		// If position is student then isInChargeOfCommittees and isMemberOfCommittees cannot be given
-// 		if (
-// 			e === StudentPosition.Student &&
-// 			(this.isInChargeOfCommittees || this.isMemberOfCommittees)
-// 		) {
-// 			throw new MongooseError(
-// 				"If position is student then isInChargeOfCommittees and isMemberOfCommittees cannot be given",
-// 			);
-// 		}
-// 		// If position is StudentIncharge then isMemberOfCommittees cannot be given and isInChargeOfCommittees should be given
-// 		else if (
-// 			e === StudentPosition.StudentIncharge &&
-// 			(this.isMemberOfCommittees || !this.isInChargeOfCommittees)
-// 		) {
-// 			throw new MongooseError(
-// 				"If position is StudentIncharge then isMemberOfCommittees cannot be given and isInChargeOfCommittees should be given",
-// 			);
-// 		}
-// 		// If position is CommitteeMember then isInChargeOfCommittees cannot be given and isMemberOfCommittees should be given
-// 		else if (
-// 			e === StudentPosition.CommitteeMember &&
-// 			(this.isInChargeOfCommittees || !this.isMemberOfCommittees)
-// 		) {
-// 			throw new MongooseError(
-// 				"If position is CommitteeMember then isInChargeOfCommittees cannot be given and isMemberOfCommittees should be given",
-// 			);
-// 		}
-// 	}
-// 	if (this.position.length === 2) {
-// 		// If position is both StudentIncharge and CommitteeMember and not Student then both isInChargeOfCommittees and isMemberOfCommittees should be given
-// 		if (
-// 			this.position.includes(StudentPosition.CommitteeMember) &&
-// 			this.position.includes(StudentPosition.StudentIncharge) &&
-// 			!StudentPosition.Student &&
-// 			(!this.isInChargeOfCommittees || !this.isMemberOfCommittees)
-// 		) {
-// 			throw new MongooseError(
-// 				"If position is both StudentIncharge and CommitteeMember and not Student then both isInChargeOfCommittees and isMemberOfCommittees should be given",
-// 			);
-// 		}
-// 	}
-// 	next
-// });
-
-// Modify this code
-
 function validatePosition(this: IStudent) {
 	// User cannot give more than two positions but i am adding student to the positions set and it is not a bug
 	// if (this.position.size > 2) {
@@ -143,18 +89,14 @@ function validatePosition(this: IStudent) {
 	// }
 
 	if (this.position === undefined) {
-		this.position = [];
+		throw new MongooseError("Position cannot be empty");
 	}
 
 	if (this.position.length === 1) {
 		validateSinglePosition(this);
-	}
-
-	if (this.position.length === 2) {
+	} else if (this.position.length === 2) {
 		validateMultiplePositions(this);
-	}
-
-	if (
+	} else if (
 		this.position.length > 2 &&
 		this.position.length !== Object.keys(StudentPosition).length
 	) {
@@ -169,7 +111,14 @@ function validateSinglePosition(student: IStudent) {
 
 	switch (position) {
 		case StudentPosition.Student:
-			if (student.isInChargeOfCommittees || student.isMemberOfCommittees) {
+			if (
+				//If isInChargeOfCommittees is given
+				(student.isInChargeOfCommittees &&
+					student.isInChargeOfCommittees?.length > 0) ||
+				//If isMemberOfCommittees is given
+				(student.isMemberOfCommittees &&
+					student.isMemberOfCommittees?.length > 0)
+			) {
 				throw new MongooseError(
 					"If position is student then isInChargeOfCommittees and isMemberOfCommittees cannot be given",
 				);
@@ -179,7 +128,14 @@ function validateSinglePosition(student: IStudent) {
 			// Add position student to the set of positions since a studentincharge is also a student
 			student.position.push(StudentPosition.Student);
 
-			if (student.isMemberOfCommittees || !student.isInChargeOfCommittees) {
+			if (
+				//If isMemberOfCommittees is given
+				(student.isMemberOfCommittees &&
+					student.isMemberOfCommittees?.length > 0) ||
+				//If isInChargeOfCommittees is not given
+				(student.isInChargeOfCommittees &&
+					student.isInChargeOfCommittees?.length <= 0)
+			) {
 				throw new MongooseError(
 					"If position is StudentIncharge then isMemberOfCommittees cannot be given and isInChargeOfCommittees should be given",
 				);
@@ -189,7 +145,14 @@ function validateSinglePosition(student: IStudent) {
 			// Add position student to the set of positions since a CommitteeMember is also a student
 			student.position.push(StudentPosition.Student);
 
-			if (student.isInChargeOfCommittees || !student.isMemberOfCommittees) {
+			if (
+				//If isInChargeOfCommittees is given
+				(student.isInChargeOfCommittees &&
+					student.isInChargeOfCommittees.length > 0) ||
+				//If isMemberOfCommittees is not given
+				(student.isMemberOfCommittees &&
+					student.isMemberOfCommittees.length <= 0)
+			) {
 				throw new MongooseError(
 					"If position is CommitteeMember then isInChargeOfCommittees cannot be given and isMemberOfCommittees should be given",
 				);
@@ -209,23 +172,28 @@ function validateMultiplePositions(student: IStudent) {
 	// Add position student to the set of positions since a StudentIncharge and CommitteeMember is also a student
 	student.position.push(StudentPosition.Student);
 
+	// Check this if it works
 	if (
 		position.includes(StudentPosition.StudentIncharge) &&
 		position.includes(StudentPosition.CommitteeMember) &&
-		(!isInChargeOfCommittees || !isMemberOfCommittees)
+		((isInChargeOfCommittees && isInChargeOfCommittees.length <= 0) ||
+			(isMemberOfCommittees && isMemberOfCommittees.length <= 0))
 	) {
 		throw new MongooseError(
 			"If position is both StudentIncharge and CommitteeMember, then both isInChargeOfCommittees and isMemberOfCommittees should be given",
 		);
 	}
 }
-//
-// Remember to check for duplicates when testing
-//
+
 studentSchema.pre("validate", async function (next) {
 	try {
 		const hashedPassword = await validateAndHash(this.password);
 		this.password = hashedPassword;
+
+		if (this.position.length === 0) {
+			throw new MongooseError("Position for student cannot be empty");
+		}
+
 		validatePosition.call(this);
 
 		// Converted set to array because i need position to be unique but mongodb supports array not set

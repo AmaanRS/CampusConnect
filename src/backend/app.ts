@@ -43,7 +43,11 @@ async function startServer(
 
 // Checks if the file was ran using commandline and not by any other means eg testing (If run by testing don't run the server)
 if (process.argv[1] === new URL(import.meta.url).pathname) {
-	await startServer(process.env.MONGO_URI!, process.env.PORT!, process.env.REPL_SET!);
+	await startServer(
+		process.env.MONGO_URI!,
+		process.env.PORT!,
+		process.env.REPL_SET!,
+	);
 }
 
 export { app, startServer };

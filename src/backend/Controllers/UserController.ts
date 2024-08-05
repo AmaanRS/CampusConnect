@@ -33,9 +33,6 @@ const login = async (req: Request, res: Response) => {
 				return res.json(response);
 			}
 
-			//Check the user input password against the password from the database
-			// let matchPassword = await bcrypt.compare(password, user.password);
-
 			let matchPassword = await checkPassAgainstDbPass(
 				password,
 				user.password,

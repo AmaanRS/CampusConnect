@@ -2,8 +2,8 @@ import { Model, MongooseError, Schema, model } from "mongoose";
 import {
 	AccountType,
 	INonTeachingStaffDocument,
-	AdminPosition,
 	Department,
+	NonTeachingStaffPosition,
 } from "../Types/ModelTypes";
 import { emailRegex, validateAndHash } from "../Utils/util";
 
@@ -32,13 +32,13 @@ const nonTeachingStaffSchema = new Schema<INonTeachingStaffDocument>(
 		accType: {
 			type: String,
 			required: true,
-			enum: Object.values(AccountType.NonTeachingStaff),
+			enum: Object.values(AccountType),
 		},
 		position: [
 			{
 				type: String,
 				required: true,
-				enum: Object.values(AdminPosition),
+				enum: Object.values(NonTeachingStaffPosition),
 			},
 		],
 		isProfileComplete: {
@@ -51,15 +51,20 @@ const nonTeachingStaffSchema = new Schema<INonTeachingStaffDocument>(
 	},
 );
 
-// Middleware to validate and hash password before saving the user
 nonTeachingStaffSchema.pre("validate", async function (next) {
 	try {
 		if (this.position === undefined) {
-			this.position = []
+			this.position = [];
 		}
-		
+
 		const hashedPassword = await validateAndHash(this.password);
 		this.password = hashedPassword;
+
+		if (this.position.length === 0) {
+			throw new MongooseError(
+				"Position for non teaching staff cannot be empty",
+			);
+		}
 
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];

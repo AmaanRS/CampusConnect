@@ -22,7 +22,7 @@ const adminSchema = new Schema<IAdminDocument>(
 		accType: {
 			type: String,
 			required: true,
-			enum: Object.values(AccountType.Admin),
+			enum: Object.values(AccountType),
 		},
 		position: [
 			{
@@ -40,7 +40,7 @@ const adminSchema = new Schema<IAdminDocument>(
 		timestamps: true,
 	},
 );
-// Middleware to validate and hash password before saving the user
+
 adminSchema.pre("validate", async function (next) {
 	try {
 		if (this.position === undefined) {
@@ -49,6 +49,10 @@ adminSchema.pre("validate", async function (next) {
 
 		const hashedPassword = await validateAndHash(this.password);
 		this.password = hashedPassword;
+
+		if (this.position.length === 0) {
+			throw new MongooseError("Position for admin cannot be empty");
+		}
 
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];

@@ -47,6 +47,14 @@ export function generatePassword(): string {
 
 export const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+export const userEmailRegex =
+	/^(hod_[a-zA-Z]+|[a-z]+\.[a-z]+|[a-z]+\.[0-9]{9})@vcet\.edu\.in$/;
+
+export const studentEmailRegex: RegExp = /^([a-z]+\.[0-9]{9})@vcet\.edu\.in$/;
+
+export const teacherEmailRegex: RegExp =
+	/^(hod_[a-zA-Z]+|[a-z]+\.[a-z]+)@vcet\.edu\.in$/;
+
 // At least one lowercase letter
 // At least one uppercase letter
 // At least one digit
@@ -82,7 +90,9 @@ async function validatePassword(password: string) {
 	return response;
 }
 
-async function createHashValue(text: string):Promise<StandardResponse | DataResponse> {
+async function createHashValue(
+	text: string,
+): Promise<StandardResponse | DataResponse> {
 	if (!text) {
 		const response: StandardResponse = {
 			message: "Cannot create a hash of null,undefined,empty string",
@@ -107,14 +117,14 @@ export async function validateAndHash(text: string) {
 		throw new MongooseError(isPassValid.message);
 	}
 
-	let isHashCreated = await createHashValue(text) as DataResponse;
+	let isHashCreated = (await createHashValue(text)) as DataResponse;
 
 	if (!isHashCreated.success) {
 		throw new MongooseError(isHashCreated.message);
 	}
 
 	// Here the data is gaurenteed to be string
-	return isHashCreated.data as string
+	return isHashCreated.data as string;
 }
 
 export async function checkPassAgainstDbPass(password: string, dbPassword: string) {
@@ -125,6 +135,7 @@ export async function checkPassAgainstDbPass(password: string, dbPassword: strin
 		};
 		return response;
 	}
+
 	let matchPassword = await bcrypt.compare(password, dbPassword);
 
 	if (!matchPassword) {
@@ -135,4 +146,11 @@ export async function checkPassAgainstDbPass(password: string, dbPassword: strin
 
 		return response;
 	}
+
+	const response: StandardResponse = {
+		message: "The password matches",
+		success: true,
+	};
+
+	return response;
 }

@@ -18,5 +18,6 @@
 	"tabWidth": 4,
 	"useTabs": true,
 	"embeddedLanguageFormatting": "auto",
-	"cursorOffset": -1
+	"cursorOffset": -1,
+	"removeParens": false
 }

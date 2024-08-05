@@ -6,7 +6,7 @@ import {
 	StudentPosition,
 	TeacherPosition,
 } from "../Types/ModelTypes";
-import { emailRegex, validateAndHash } from "../Utils/util";
+import { emailRegex, userEmailRegex, validateAndHash } from "../Utils/util";
 
 const userSchema = new Schema<IUserDocument>(
 	{
@@ -61,6 +61,14 @@ userSchema.pre("validate", async function (next) {
 		this.accType = undefined;
 		// @ts-ignore
 		this.position = undefined;
+		// @ts-ignore
+		this.isProfileComplete = false;
+
+		
+
+		if (!userEmailRegex.test(this.email)) {
+			throw new MongooseError("The email should be a vcet email");
+		}
 
 		//throws Mongoose error it something wrong
 		const hashedPassword = await validateAndHash(this.password);
@@ -101,6 +109,10 @@ userSchema.pre("validate", async function (next) {
 			// Assign department
 			// @ts-ignore // This is important
 			this.department = Department[departmentPart.toUpperCase()];
+
+			if (this.department === undefined) {
+				throw new MongooseError("Give a valid vcet email");
+			}
 		}
 		// Student email format: an.212254101@vcet.edu.in
 		// The second part should be a number
@@ -131,11 +143,20 @@ userSchema.pre("validate", async function (next) {
 		// The second part should be a string
 		else if (
 			typeof emailPrefix.split(".")[1] === "string" &&
-			Number.isNaN(Number(emailPrefix.split(".")[1]))
+			Number.isNaN(Number(emailPrefix.split(".")[1])) &&
+			!emailPrefix.includes("_")
 		) {
+			if (
+				emailPrefix.split(".")[0].length === 0 ||
+				emailPrefix.split(".")[1].length === 0
+			) {
+				throw new MongooseError("Give a valid vcet email");
+			}
 			// Assign teacher position and account type
 			this.position = [TeacherPosition.Teacher];
 			this.accType = AccountType.Teacher;
+		} else {
+			throw new MongooseError("There is some problem with the given email");
 		}
 
 		// Converted set to array because i need position to be unique but mongodb supports array not set

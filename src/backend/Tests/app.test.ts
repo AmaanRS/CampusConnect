@@ -1,6 +1,4 @@
 import { startServer } from "../app";
-// import supertest from "supertest";
-// const request = supertest(app)
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
