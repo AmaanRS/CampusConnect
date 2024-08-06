@@ -30,7 +30,7 @@ const login = async (req: Request, res: Response) => {
 					success: false,
 				};
 
-				return res.json(response);
+				return res.status(401).json(response);
 			}
 
 			let matchPassword = await checkPassAgainstDbPass(
@@ -47,7 +47,7 @@ const login = async (req: Request, res: Response) => {
 					success: matchPassword?.success ?? false,
 				};
 
-				return res.json(response);
+				return res.status(401).json(response);
 			}
 
 			//Create a jwt token
@@ -60,7 +60,7 @@ const login = async (req: Request, res: Response) => {
 				token: token,
 			};
 
-			return res.json(response);
+			return res.status(201).json(response);
 		}
 		//If either email or password does not exist
 		else {
@@ -68,7 +68,7 @@ const login = async (req: Request, res: Response) => {
 				message: "Enter both email and password",
 				success: false,
 			};
-			return res.json(response);
+			return res.status(401).json(response);
 		}
 	} catch (e) {
 		console.log("There is some error while logging in");
@@ -82,7 +82,7 @@ const login = async (req: Request, res: Response) => {
 			success: false,
 		};
 
-		return res.json(response);
+		return res.status(401).json(response);
 	}
 };
 
@@ -134,26 +134,25 @@ const signup = async (req: Request, res: Response) => {
 					password: password,
 				});
 			} catch (error) {
-
 				const response: StandardResponse = {
 					// message: (error as MongooseError).message.split(":")[2].trim(),
 					message: (error as MongooseError).message,
 					success: false,
 				};
-				return res.json(response);
+				return res.status(401).json(response);
 			}
 
 			const response: StandardResponse = {
 				message: "Your account has been created now you can login",
 				success: true,
 			};
-			return res.json(response);
+			return res.status(201).json(response);
 		} else {
 			const response: StandardResponse = {
 				message: "Enter both email and password",
 				success: false,
 			};
-			return res.json(response);
+			return res.status(401).json(response);
 		}
 	} catch (e) {
 		//Logging the error
@@ -173,7 +172,7 @@ const signup = async (req: Request, res: Response) => {
 			success: false,
 		};
 
-		return res.json(response);
+		return res.status(401).json(response);
 	}
 };
 
@@ -186,13 +185,13 @@ const profileStatus = async (req: Request, res: Response) => {
 				message: "User is not authenticated",
 				success: false,
 			};
-			return res.json(response);
+			return res.status(401).json(response);
 		}
-		const isProfileComplete:IUser|null = await userModel.findOne(
+		const isProfileComplete: IUser | null = await userModel.findOne(
 			{
 				email: decodedToken.email,
 			},
-			{ password:0 },
+			{ password: 0 },
 		);
 		if (!isProfileComplete) {
 			throw new Error(
@@ -205,7 +204,7 @@ const profileStatus = async (req: Request, res: Response) => {
 			data: isProfileComplete,
 		};
 
-		return res.json(response);
+		return res.status(201).json(response);
 	} catch (e) {
 		console.log((e as Error).message);
 		const response: StandardResponse = {
@@ -215,7 +214,7 @@ const profileStatus = async (req: Request, res: Response) => {
 			success: false,
 		};
 
-		return res.json(response);
+		return res.status(401).json(response);
 	}
 };
 

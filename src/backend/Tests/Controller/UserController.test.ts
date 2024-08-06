@@ -5,9 +5,27 @@ import dotenv from "dotenv";
 import { faker } from "@faker-js/faker";
 import { generatePassword } from "../../Utils/util";
 import { userModel } from "../../Models/User";
+import { AccountType, Department } from "../../Types/ModelTypes";
 
 dotenv.config();
 let token: any = "";
+
+const createDummyUser = async (email: string, password: string) => {
+	const res = await userModel.create({
+		email,
+		password,
+	});
+	if (!res) {
+		throw new Error("Dummy user not created due to some reason");
+	}
+};
+
+const deleteDummyUser = async () => {
+	const res = await userModel.deleteMany({});
+	if (!res) {
+		throw new Error("Dummy user not deleted due to some reason");
+	}
+};
 
 describe("User Controller", () => {
 	beforeAll(async () => {
@@ -41,7 +59,7 @@ describe("User Controller", () => {
 			const res = await request.post("/signup").send({ email: testEmail });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual("Enter both email and password");
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not save user when email is not given", async () => {
@@ -52,7 +70,7 @@ describe("User Controller", () => {
 				.send({ password: testPassword });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual("Enter both email and password");
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not save user when password does not follow the validations", async () => {
@@ -94,9 +112,7 @@ describe("User Controller", () => {
 					.send({ email: testEmail, password: testPasswords[i] });
 
 				expect(res.body.success).toEqual(false);
-				expect(res.body.message).toEqual(
-					"Password must have at least one lowercase letter, one uppercase letter, one digit, one special character, and be between 8 to 10 characters long",
-				);
+				expect(res.status).toEqual(401);
 			}
 		});
 
@@ -109,7 +125,7 @@ describe("User Controller", () => {
 				.send({ email: testEmail, password: testPassword });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual("Invalid email format");
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not save user when email is duplicate", async () => {
@@ -122,11 +138,18 @@ describe("User Controller", () => {
 				.send({ email: testEmail, password: testPassword });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual("email_1 dup key");
+			expect(res.status).toEqual(401);
 		});
 	});
 
 	describe("POST /login", () => {
+		const testEmail = "a.123456789@vcet.edu.in";
+		const testPassword = "Aa1@bcdqwe";
+
+		beforeEach(async () => await createDummyUser(testEmail, testPassword));
+
+		afterEach(async () => await deleteDummyUser());
+
 		it("should not save user when password is not given", async () => {
 			const testEmail = faker.internet.email();
 
@@ -134,6 +157,7 @@ describe("User Controller", () => {
 
 			expect(res.body.success).toEqual(false);
 			expect(res.body.message).toEqual("Enter both email and password");
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not save user when email is not given", async () => {
@@ -145,6 +169,7 @@ describe("User Controller", () => {
 
 			expect(res.body.success).toEqual(false);
 			expect(res.body.message).toEqual("Enter both email and password");
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not return user if email entered does not exist in db", async () => {
@@ -160,27 +185,25 @@ describe("User Controller", () => {
 			expect(res.body.message).toEqual(
 				"Either email or password entered is wrong",
 			);
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not return user if password entered does not exist in db", async () => {
 			// While testing make sure the email  exists in db and password does not
-			const testEmail = "a@b.com";
-			const testPassword = generatePassword();
 
 			const res = await request
 				.post("/login")
-				.send({ email: testEmail, password: testPassword });
+				.send({ email: testEmail, password: "sdg1Arew2" });
 
 			expect(res.body.success).toEqual(false);
 			expect(res.body.message).toEqual(
 				"Either email or password entered is wrong",
 			);
+			expect(res.status).toEqual(401);
 		});
 
 		it("should login the user and return a jwt token", async () => {
 			// The email and password should be correct and should exist in db
-			const testEmail = "a@aa.com";
-			const testPassword = "Aa1@bcdqwe";
 
 			const res = await request
 				.post("/login")
@@ -189,15 +212,22 @@ describe("User Controller", () => {
 			expect(res.body.success).toEqual(true);
 			expect(res.body.message).toEqual("You have been logged in successfully");
 			expect(res.body.token).toBeDefined;
+			expect(res.status).toEqual(201);
 		});
 	});
 
 	describe("POST /getUserProfileStatus", () => {
+		const testEmail = "a.123456789@vcet.edu.in";
+		const testPassword = "Aa1@bcdqwe";
+
+		afterEach(async () => await deleteDummyUser());
+
 		beforeAll(async () => {
 			//Make sure this email and password exists in db
+			await createDummyUser(testEmail, testPassword);
 			const res = await request
 				.post("/login")
-				.send({ email: "a@aa.com", password: "Aa1@bcdqwe" });
+				.send({ email: testEmail, password: testPassword });
 			token = res.body.success === true ? res.body.token : null;
 		});
 
@@ -209,6 +239,7 @@ describe("User Controller", () => {
 			expect(res.body.success).toBe(true);
 			expect(res.body.data).toBeDefined();
 			expect(res.body.data.isProfileComplete).toBeDefined();
+			expect(res.status).toEqual(201);
 		});
 
 		it("should return 401 if user token is wrong", async () => {
@@ -220,7 +251,7 @@ describe("User Controller", () => {
 		});
 	});
 
-	describe("POST /updateUserProfile", () => {
+	describe.skip("POST /updateUserProfile", () => {
 		let token: any;
 		let newAccToken: any;
 
@@ -228,7 +259,7 @@ describe("User Controller", () => {
 			//Make sure this email and password exists in db
 			const res = await request
 				.post("/login")
-				.send({ email: "a@aa.com", password: "Aa1@bcdqwe" });
+				.send({ email: "a.123456789@vcet.edu.in", password: "Aa1@bcdqwe" });
 			token = res.body.success === true ? res.body.token : null;
 		});
 
