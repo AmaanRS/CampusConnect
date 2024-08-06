@@ -52,6 +52,7 @@ describe.only("Teacher Model Tests", () => {
 				...validTeacherData,
 				position: [TeacherPosition.FacultyIncharge, TeacherPosition.Teacher],
 				isInChargeOfCommittees: [new mongoose.Types.ObjectId()],
+				isInTeamOfCommittees: [new mongoose.Types.ObjectId()],
 			},
 			shouldThrow: false,
 		},

@@ -51,7 +51,6 @@ const userSchema = new Schema<IUserDocument>(
 
 //
 // For admin and non-teaching staff, logic is not specified (I dont know) for now admin will be hard coded and non-teaching staff will be same as teacher
-// Make specific email regex for every model
 //
 userSchema.pre("validate", async function (next) {
 	try {

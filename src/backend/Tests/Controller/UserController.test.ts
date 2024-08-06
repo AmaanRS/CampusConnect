@@ -5,7 +5,6 @@ import dotenv from "dotenv";
 import { faker } from "@faker-js/faker";
 import { generatePassword } from "../../Utils/util";
 import { userModel } from "../../Models/User";
-import { AccountType, Department } from "../../Types/GeneralTypes";
 
 dotenv.config();
 let token: any = "";

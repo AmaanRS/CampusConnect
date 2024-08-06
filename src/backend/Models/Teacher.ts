@@ -76,6 +76,20 @@ teacherSchema.pre("validate", async function (next) {
 			throw new MongooseError("Position for Teacher cannot be empty");
 		}
 
+		// If faculty incharge is given as position then add isInChargeOfCommittees to isInTeamOfCommittees
+		if (
+			this.position.includes(TeacherPosition.FacultyIncharge) &&
+			this.isInChargeOfCommittees?.length !== 0
+		) {
+			for (
+				let index = 0;
+				index < this.isInChargeOfCommittees?.length!;
+				index++
+			) {
+				this.isInTeamOfCommittees?.push(this.isInChargeOfCommittees![index]);
+			}
+		}
+
 		// If position is teacher and isInChargeOfCommittees or isInTeamOfCommittees is given, throw error
 		if (
 			this.position.includes(TeacherPosition.Teacher) &&
@@ -131,43 +145,43 @@ teacherSchema.pre("validate", async function (next) {
 			);
 		}
 
-		// If position is both Teacher and FacultyIncharge, and isInChargeOfCommittees is not given or isInTeamOfCommittees is given, throw error
+		// If position is both Teacher and FacultyIncharge, and isInChargeOfCommittees is not given, throw error
 		if (
 			this.position.includes(TeacherPosition.Teacher) &&
 			this.position.includes(TeacherPosition.FacultyIncharge) &&
 			this.position.length === 2 &&
 			(this.isInChargeOfCommittees?.length === 0 ||
-				this.isInTeamOfCommittees?.length !== 0)
+				this.isInTeamOfCommittees?.length === 0)
 		) {
 			throw new MongooseError(
-				"With positions Teacher and FacultyIncharge, isInChargeOfCommittees should be given and isInTeamOfCommittees cannot be given",
+				"With positions Teacher and FacultyIncharge, isInChargeOfCommittees should be given",
 			);
 		}
 
-		// If position is both HOD and FacultyIncharge, and isInChargeOfCommittees is not given or isInTeamOfCommittees is given, throw error
+		// If position is both HOD and FacultyIncharge, and isInChargeOfCommittees , throw error
 		if (
 			this.position.includes(TeacherPosition.HOD) &&
 			this.position.includes(TeacherPosition.FacultyIncharge) &&
 			this.position.length === 2 &&
 			(this.isInChargeOfCommittees?.length === 0 ||
-				this.isInTeamOfCommittees?.length !== 0)
+				this.isInTeamOfCommittees?.length === 0)
 		) {
 			throw new MongooseError(
-				"With positions HOD and FacultyIncharge, isInChargeOfCommittees should be given and isInTeamOfCommittees cannot be given",
+				"With positions HOD and FacultyIncharge, isInChargeOfCommittees should be given",
 			);
 		}
 
-		// If position is HOD, FacultyIncharge, and Teacher, and isInChargeOfCommittees is not given or isInTeamOfCommittees is given, throw error
+		// If position is HOD, FacultyIncharge, and Teacher, and isInChargeOfCommittees or isInTeamOfCommittees is not given, throw error
 		if (
 			this.position.includes(TeacherPosition.HOD) &&
 			this.position.includes(TeacherPosition.FacultyIncharge) &&
 			this.position.includes(TeacherPosition.Teacher) &&
 			this.position.length === 3 &&
 			(this.isInChargeOfCommittees?.length === 0 ||
-				this.isInTeamOfCommittees?.length !== 0)
+				this.isInTeamOfCommittees?.length === 0)
 		) {
 			throw new MongooseError(
-				"With positions HOD, FacultyIncharge, and Teacher, isInChargeOfCommittees should be given and isInTeamOfCommittees cannot be given",
+				"With positions HOD, FacultyIncharge, and Teacher, isInChargeOfCommittees should be given",
 			);
 		}
 
@@ -278,6 +292,11 @@ teacherSchema.pre("validate", async function (next) {
 			throw new MongooseError(
 				"With positions FacultyTeam and FacultyIncharge, HOD or Teacher must be given and isInChargeOfCommittees and isInTeamOfCommittees should not be empty",
 			);
+		}
+
+		// If position is HOD add teacher to the position array
+		if (this.position.includes(TeacherPosition.HOD)) {
+			this.position.push(TeacherPosition.Teacher);
 		}
 
 		// Converted set to array because i need position to be unique but mongodb supports array not set
