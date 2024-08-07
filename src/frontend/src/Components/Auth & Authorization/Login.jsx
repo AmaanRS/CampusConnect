@@ -44,6 +44,7 @@ function Login() {
   const navigate = useNavigate();
   const isLoggedIn = useLoaderData();
   const { setUser } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -64,6 +65,7 @@ function Login() {
 
   const formSubmit = async (data) => {
     try {
+      setIsLoading(true);
       const res = await axiosInstance.post("/login", {
         email: data.email,
         password: data.password,
@@ -98,6 +100,7 @@ function Login() {
       setIsError(true);
       // navigate("/error");
     } finally {
+      setIsLoading(false);
       reset();
     }
   };
@@ -184,13 +187,14 @@ function Login() {
           </span>
           <div className="btn flex flex-col items-center justify-center mt-12 ">
             <motion.button
+              disabled={isLoading}
               initial={{ x: 400 }}
               animate={{ x: 0 }}
               transition={{ ease: [0.12, 0, 0.39, 0], duration: 0.4 }}
               className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
   lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
             >
-              Log in
+              {isLoading ? "Logging in" : "Log in"}
             </motion.button>
             <NavLink
               className="underline tracking-tighter text-sm lg:text-base my-4 text-blue-light"

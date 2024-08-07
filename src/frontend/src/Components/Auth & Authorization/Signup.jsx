@@ -49,6 +49,7 @@ function Signup() {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const { handleSubmit, register, formState, reset } = useForm({
@@ -61,6 +62,7 @@ function Signup() {
 
     try {
       {
+        setIsLoading(true);
         const res = await axiosInstance.post("/signup", {
           email: data.email,
           password: data.password,
@@ -80,6 +82,7 @@ function Signup() {
         reset();
         console.log(res);
         console.log(res.data.success);
+        setIsLoading(false);
       }
     } catch (error) {
       let errorMsg = "An error occurred";
@@ -94,6 +97,7 @@ function Signup() {
       }
       setErrorMessage(errorMsg);
       setIsError(true);
+      setIsLoading(false);
     }
 
     if (isError) {
@@ -185,13 +189,14 @@ function Signup() {
           </span>
           <div className="btn flex flex-col items-center justify-center mt-12 ">
             <motion.button
+              disabled={isLoading}
               initial={{ x: 400 }}
               animate={{ x: 0 }}
               transition={{ ease: [0.12, 0, 0.39, 0], duration: 0.4 }}
               className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
   lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
             >
-              Create Account
+              Creat{isLoading ? "ing" : "e"} Account
             </motion.button>
             <NavLink
               className="underline tracking-tighter text-sm lg:text-base my-4 text-blue-light"
