@@ -85,7 +85,7 @@ function App() {
           element: <Dashboard />,
           loader: dashboardLoader,
           children: [
-            { path: "home", element: <Home /> },
+            // { path: "home", element: <Home /> },
             { path: "userprof", element: <MainProfile /> },
             { path: "searchprof", element: <SearchProfile /> },
           ],

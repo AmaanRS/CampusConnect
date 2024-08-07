@@ -41,7 +41,7 @@ const Dashboard = () => {
         justify-evenly gap-10 w-full bg-blue-extralight"
       >
         <NavLink
-          to="/dashboard/home"
+          to="/dashboard  "
           className={({ isActive }) =>
             `w-full h-full flex items-center justify-center p-2 rounded-lg transition-colors ${
               isActive
