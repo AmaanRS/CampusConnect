@@ -6,7 +6,7 @@ import {
 	StudentPosition,
 	TeacherPosition,
 } from "../Types/ModelTypes";
-import { emailRegex, userEmailRegex, validateAndHash } from "../Utils/util";
+import { userEmailRegex, validateAndHash } from "../Utils/util";
 
 const userSchema = new Schema<IUserDocument>(
 	{
@@ -16,7 +16,7 @@ const userSchema = new Schema<IUserDocument>(
 			unique: true,
 			validate: {
 				validator: function (value: string) {
-					return emailRegex.test(value);
+					return userEmailRegex.test(value);
 				},
 				message: "Invalid email format",
 			},
@@ -60,10 +60,8 @@ userSchema.pre("validate", async function (next) {
 		this.accType = undefined;
 		// @ts-ignore
 		this.position = undefined;
-		// @ts-ignore
 		this.isProfileComplete = false;
-
-		
+		this.department = undefined
 
 		if (!userEmailRegex.test(this.email)) {
 			throw new MongooseError("The email should be a vcet email");

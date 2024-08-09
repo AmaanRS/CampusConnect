@@ -60,15 +60,38 @@ nonTeachingStaffSchema.pre("validate", async function (next) {
 		const hashedPassword = await validateAndHash(this.password);
 		this.password = hashedPassword;
 
+		//By default
+		this.isProfileComplete = false;
+
 		if (this.position.length === 0) {
 			throw new MongooseError(
 				"Position for non teaching staff cannot be empty",
 			);
 		}
 
+		this.accType = AccountType.NonTeachingStaff;
+
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];
 
+		next();
+	} catch (err) {
+		next(err as MongooseError);
+	}
+});
+
+nonTeachingStaffSchema.pre("save", async function (next) {
+	try {
+		// If all fields are given except the optional fields then set isProfileComplete to true
+		if (
+			this.email &&
+			this.password &&
+			this.department &&
+			this.accType &&
+			this.position
+		) {
+			this.isProfileComplete = true;
+		}
 		next();
 	} catch (err) {
 		next(err as MongooseError);

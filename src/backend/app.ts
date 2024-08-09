@@ -26,6 +26,7 @@ async function startServer(
 				replicaSet: REPL_SET,
 				retryWrites: true,
 				readPreference: "primary",
+				ignoreUndefined: true,
 			})
 			.then(() => {
 				console.log("Database is connected");

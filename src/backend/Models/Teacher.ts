@@ -76,6 +76,9 @@ teacherSchema.pre("validate", async function (next) {
 			throw new MongooseError("Position for Teacher cannot be empty");
 		}
 
+		// By default
+		this.isProfileComplete = false;
+
 		// If faculty incharge is given as position then add isInChargeOfCommittees to isInTeamOfCommittees
 		if (
 			this.position.includes(TeacherPosition.FacultyIncharge) &&
@@ -299,6 +302,8 @@ teacherSchema.pre("validate", async function (next) {
 			this.position.push(TeacherPosition.Teacher);
 		}
 
+		this.accType = AccountType.Teacher;
+
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];
 
@@ -311,6 +316,23 @@ teacherSchema.pre("validate", async function (next) {
 			: undefined;
 
 		next();
+	} catch (err) {
+		next(err as MongooseError);
+	}
+});
+
+teacherSchema.pre("save", async function (next) {
+	try {
+		// If all fields are given except the optional fields then set isProfileComplete to true
+		if (
+			this.email &&
+			this.password &&
+			this.department &&
+			this.accType &&
+			this.position
+		) {
+			this.isProfileComplete = true;
+		}
 	} catch (err) {
 		next(err as MongooseError);
 	}

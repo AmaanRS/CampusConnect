@@ -8,6 +8,7 @@ import {
 	IStudent,
 } from "../Types/ModelTypes";
 import { studentEmailRegex, validateAndHash } from "../Utils/util";
+import { userModel } from "./User";
 
 const studentSchema = new Schema<IStudentDocument>(
 	{
@@ -194,7 +195,12 @@ studentSchema.pre("validate", async function (next) {
 			throw new MongooseError("Position for student cannot be empty");
 		}
 
+		//By default
+		this.isProfileComplete = false;
+
 		validatePosition.call(this);
+
+		this.accType = AccountType.Student;
 
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];
@@ -205,6 +211,43 @@ studentSchema.pre("validate", async function (next) {
 		this.isMemberOfCommittees = this.isMemberOfCommittees
 			? [...new Set(this.isMemberOfCommittees)]
 			: undefined;
+
+		next();
+	} catch (err) {
+		next(err as MongooseError);
+	}
+});
+
+studentSchema.pre("save", async function (next) {
+	try {
+		const user = await userModel.findOne({ email: this.email });
+
+		if (!user) {
+			throw new MongooseError("Send the correct email id");
+		}
+
+		const stuId = Number(user.email.split("@")[0].split(".")[1]);
+
+		if (!Number.isInteger(stuId)) {
+			throw new MongooseError(
+				"Send the correct email id cannot recognize the student id",
+			);
+		}
+
+		this.studentId = stuId;
+
+		// If all fields are given except the optional fields then set isProfileComplete to true
+		if (
+			this.email &&
+			this.password &&
+			this.department &&
+			this.year &&
+			this.studentId &&
+			this.accType &&
+			this.position
+		) {
+			this.isProfileComplete = true;
+		}
 
 		next();
 	} catch (err) {

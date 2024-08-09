@@ -218,6 +218,17 @@ const profileStatus = async (req: Request, res: Response) => {
 	}
 };
 
+
+// Check the logic which works better
+// If the user successfully completes his profile using update profile then delete the user from userModel and set isProfile complete to true some other model
+//
+// OR
+//
+// If the user successfully completes his profile using update profile then set isProfileComplete in user model to true, in frontend take the email from token and check using regex if it is a student/teacher/... and search for the user in that model
+//
+//
+
+
 //Password and email should not be updated using this endpoint
 // const updateUserProfile = async (req: UpdateRequest, res: Response) => {
 // 	const session = await mongoose.startSession();
