@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { Router } from "./Routes/UserRouter";
+import UserRouter from "./Routes/UserRouter";
+import AdminRouter from "./Routes/AdminRoutes";
 
 dotenv.config();
 const app = express();
@@ -13,7 +14,8 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use("/", Router);
+app.use("/", UserRouter);
+app.use("/admin", AdminRouter);
 
 async function startServer(
 	MONGO_URI: string,

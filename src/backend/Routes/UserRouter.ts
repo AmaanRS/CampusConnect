@@ -1,5 +1,5 @@
 import express from "express";
-export const Router = express.Router();
+const Router = express.Router();
 import {
 	cookieCheckerMiddleware,
 	// cookieCheckerFunction,
@@ -41,3 +41,5 @@ Router.route("/getUserProfileStatus").post(cookieCheckerMiddleware, profileStatu
 // Router.route("/getAllUsersEmail").post(cookieChecker, getAllUsersEmail);
 // Router.route("/addFriendBothWays").post(cookieChecker, addFriendBothWays);
 // Router.route("/getUserConversation").post(cookieChecker, getUserConversation);
+
+export default Router;

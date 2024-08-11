@@ -224,6 +224,7 @@ const profileStatus = async (req: Request, res: Response) => {
 //
 // OR
 //
+// Use this one
 // If the user successfully completes his profile using update profile then set isProfileComplete in user model to true, in frontend take the email from token and check using regex if it is a student/teacher/... and search for the user in that model
 //
 //

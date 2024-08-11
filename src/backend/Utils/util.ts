@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import bcrypt from "bcrypt";
 import { DataResponse, StandardResponse } from "../Types/GeneralTypes";
-import { MongooseError } from "mongoose";
+import mongoose, { MongooseError, ClientSession } from "mongoose";
 
 // Function for returning a random value from enum
 export function getRandomEnumValue<T extends { [key: string]: string | number }>(
@@ -45,6 +45,10 @@ export function generatePassword(): string {
 	return passwordArray.join("");
 }
 
+// This is bcrypt specific regex for hash
+export const hashStringRegex =
+	/^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{22}[./A-Za-z0-9]{31}$/;
+
 export const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const userEmailRegex =
@@ -63,11 +67,22 @@ export const teacherEmailRegex: RegExp =
 export const passwordRegex: RegExp =
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
 
-async function validatePassword(password: string) {
+async function validatePassword(
+	password: string,
+): Promise<StandardResponse | DataResponse> {
 	if (!password) {
 		const response: StandardResponse = {
 			message: "Password should be given for validation",
 			success: false,
+		};
+		return response;
+	}
+
+	if (hashStringRegex.test(password)) {
+		const response: DataResponse = {
+			message: "Password is already hashed",
+			success: true,
+			data: password,
 		};
 		return response;
 	}
@@ -117,14 +132,19 @@ export async function validateAndHash(text: string) {
 		throw new MongooseError(isPassValid.message);
 	}
 
-	let isHashCreated = (await createHashValue(text)) as DataResponse;
+	if ("data" in isPassValid && isPassValid.data && isPassValid.success) {
+		// Since password is already hashed
+		return isPassValid.data as string;
+	} else {
+		let isHashCreated = (await createHashValue(text)) as DataResponse;
 
-	if (!isHashCreated.success) {
-		throw new MongooseError(isHashCreated.message);
+		if (!isHashCreated.success) {
+			throw new MongooseError(isHashCreated.message);
+		}
+
+		// Here the data is gaurenteed to be string
+		return isHashCreated.data as string;
 	}
-
-	// Here the data is gaurenteed to be string
-	return isHashCreated.data as string;
 }
 
 export async function checkPassAgainstDbPass(password: string, dbPassword: string) {
@@ -154,3 +174,66 @@ export async function checkPassAgainstDbPass(password: string, dbPassword: strin
 
 	return response;
 }
+
+export const runWithRetrySession = async (
+	operation: (session: ClientSession) => Promise<any>,
+	maxRetries: number = 4,
+) => {
+	const session = await mongoose.startSession();
+	let retryCount = 0;
+	let successful = false;
+	let result: StandardResponse;
+
+	while (retryCount < maxRetries && !successful) {
+		try {
+			session.startTransaction();
+			result = await operation(session);
+
+			if (!result.success) {
+				await session.abortTransaction();
+				await session.endSession();
+				return result;
+			}
+
+			await session.commitTransaction();
+			await session.endSession();
+
+			successful = true;
+		} catch (e) {
+			console.log((e as Error).message);
+			if (session.inTransaction()) {
+				await session.abortTransaction();
+			}
+
+			// Only for Write Conflict
+			// 112 is the MongoDB WriteConflict error code
+			if (e instanceof mongoose.mongo.MongoError && e.code === 112) {
+				retryCount++;
+				console.log(`Retry ${retryCount}/${maxRetries}`);
+
+				// Exponential backoff
+				await new Promise((resolve) =>
+					setTimeout(resolve, Math.pow(2, retryCount) * 500),
+				);
+			} else {
+				await session.endSession();
+				throw e;
+			}
+		}
+	}
+	const response: StandardResponse = {
+		message: "Operation failed after maximum retries",
+		success: false,
+	};
+
+	if (session.inTransaction()) {
+		await session.abortTransaction();
+	}
+	await session.endSession();
+
+	if (!successful) {
+		throw new Error("Operation failed after maximum retries");
+	}
+
+	return response;
+};

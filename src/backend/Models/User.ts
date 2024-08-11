@@ -60,7 +60,6 @@ userSchema.pre("validate", async function (next) {
 		this.accType = undefined;
 		// @ts-ignore
 		this.position = undefined;
-		this.isProfileComplete = false;
 		this.department = undefined
 
 		if (!userEmailRegex.test(this.email)) {

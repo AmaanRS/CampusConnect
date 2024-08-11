@@ -5,7 +5,7 @@ import {
 	Department,
 	NonTeachingStaffPosition,
 } from "../Types/ModelTypes";
-import { emailRegex, validateAndHash } from "../Utils/util";
+import { userEmailRegex, validateAndHash } from "../Utils/util";
 
 const nonTeachingStaffSchema = new Schema<INonTeachingStaffDocument>(
 	{
@@ -15,7 +15,7 @@ const nonTeachingStaffSchema = new Schema<INonTeachingStaffDocument>(
 			unique: true,
 			validate: {
 				validator: function (value: string) {
-					return emailRegex.test(value);
+					return userEmailRegex.test(value);
 				},
 				message: "Invalid email format",
 			},

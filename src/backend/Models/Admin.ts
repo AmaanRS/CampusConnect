@@ -1,6 +1,6 @@
 import { Model, MongooseError, Schema, model } from "mongoose";
 import { AccountType, IAdminDocument, AdminPosition } from "../Types/ModelTypes";
-import { emailRegex, validateAndHash } from "../Utils/util";
+import { userEmailRegex, validateAndHash } from "../Utils/util";
 
 const adminSchema = new Schema<IAdminDocument>(
 	{
@@ -10,7 +10,7 @@ const adminSchema = new Schema<IAdminDocument>(
 			unique: true,
 			validate: {
 				validator: function (value: string) {
-					return emailRegex.test(value);
+					return userEmailRegex.test(value);
 				},
 				message: "Invalid email format",
 			},
@@ -47,17 +47,19 @@ adminSchema.pre("validate", async function (next) {
 			this.position = [];
 		}
 
+		if (this.position.length === 0) {
+			throw new MongooseError("Position for admin cannot be empty");
+		}
+
 		const hashedPassword = await validateAndHash(this.password);
 		this.password = hashedPassword;
 
 		//By default
 		this.isProfileComplete = false;
 
-		if (this.position.length === 0) {
-			throw new MongooseError("Position for admin cannot be empty");
-		}
-
 		this.accType = AccountType.Admin;
+
+		this.position = [AdminPosition.Admin]
 
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];
