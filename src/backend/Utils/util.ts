@@ -175,6 +175,7 @@ export async function checkPassAgainstDbPass(password: string, dbPassword: strin
 	return response;
 }
 
+// Wrapper function for session management
 export const runWithRetrySession = async (
 	operation: (session: ClientSession) => Promise<any>,
 	maxRetries: number = 4,
@@ -199,7 +200,7 @@ export const runWithRetrySession = async (
 			await session.endSession();
 
 			successful = true;
-			return result
+			return result;
 		} catch (e) {
 			console.log((e as Error).message);
 			if (session.inTransaction()) {
