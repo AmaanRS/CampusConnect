@@ -199,6 +199,7 @@ export const runWithRetrySession = async (
 			await session.endSession();
 
 			successful = true;
+			return result
 		} catch (e) {
 			console.log((e as Error).message);
 			if (session.inTransaction()) {

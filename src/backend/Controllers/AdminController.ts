@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { DataResponse, StandardResponse } from "../Types/GeneralTypes";
 import { userModel } from "../Models/User";
 import { adminModel } from "../Models/Admin";
-import mongoose from "mongoose";
 import { AccountType, AdminPosition } from "../Types/ModelTypes";
 import { runWithRetrySession } from "../Utils/util";
 
@@ -151,11 +150,8 @@ const getAdmin = async (req: Request, res: Response) => {
 
 // Cannot update email or password through this function
 const updateAdmin = async (req: Request, res: Response) => {
-	const session = await mongoose.startSession();
-	const maxRetries = 4;
-	let retryCount = 0;
 	try {
-		const { decodedToken, adminData } = req.body;
+		const { decodedToken, position } = req.body;
 		if (!decodedToken) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",
@@ -174,7 +170,7 @@ const updateAdmin = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if (!adminData || !adminData?.position) {
+		if (position.length === 0) {
 			const response: StandardResponse = {
 				message: "Send admin data for updation",
 				success: false,
@@ -182,105 +178,61 @@ const updateAdmin = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const { position } = adminData;
+		const result = await runWithRetrySession(async (session) => {
+			// Get the old admin data
+			const oldAdmin = await adminModel
+				.findOne({ email }, { _id: 0, __v: 0 })
+				.session(session).lean();
 
-		let successful = false;
-
-		while (retryCount < maxRetries && !successful) {
-			try {
-				session.startTransaction();
-
-				// Get the old admin data
-				const oldAdmin = await adminModel
-					.findOne({ email })
-					.session(session);
-
-				if (!oldAdmin) {
-					const response: StandardResponse = {
-						message: "Could not find the admin",
-						success: false,
-					};
-					await session.abortTransaction();
-					await session.endSession();
-
-					return res.status(401).json(response);
-				}
-
-				const isOldAdminDeleted = await adminModel
-					.deleteOne({ email })
-					.session(session);
-
-				if (!isOldAdminDeleted.acknowledged) {
-					const response: StandardResponse = {
-						message: "Could not delete the admin while updating",
-						success: false,
-					};
-					await session.abortTransaction();
-					await session.endSession();
-
-					return res.status(401).json(response);
-				}
-
-				// Password will be getting hashed two times so the password entered will not be usable so correct this
-				const dataForUpdatedAdmin = { ...oldAdmin, position: position };
-
-				// This returns an array
-				const updatedAdmin = await adminModel.create([dataForUpdatedAdmin], {
-					session,
-				});
-
-				if (!updatedAdmin || updatedAdmin.length === 0) {
-					const response: StandardResponse = {
-						message: "Could not update the admin while updating",
-						success: false,
-					};
-					await session.abortTransaction();
-					await session.endSession();
-
-					return res.status(401).json(response);
-				}
-
+			if (!oldAdmin) {
 				const response: StandardResponse = {
-					message: "Updating admin successfull",
-					success: true,
+					message: "Could not find the admin",
+					success: false,
 				};
-				await session.commitTransaction();
-				await session.endSession();
-				successful = true;
 
-				return res.status(201).json(response);
-			} catch (e) {
-				console.log((e as Error).message);
-				if (session.inTransaction()) {
-					await session.abortTransaction();
-				}
-
-				//Ony for Write Conflict
-				// 112 is the MongoDB WriteConflict error code
-				if (e instanceof mongoose.mongo.MongoError && e.code === 112) {
-					retryCount++;
-					console.log(`Retry ${retryCount}/${maxRetries}`);
-				} else {
-					throw e;
-				}
-
-				// Exponential backoff
-				await new Promise((resolve) =>
-					setTimeout(resolve, Math.pow(2, retryCount) * 500),
-				);
+				return response;
 			}
-		}
-		const response: StandardResponse = {
-			message: "Could not update the admin while updating",
-			success: false,
-		};
-		if (session.inTransaction()) {
-			await session.abortTransaction();
-		}
 
-		await session.endSession();
+			const isOldAdminDeleted = await adminModel
+				.deleteOne({ email })
+				.session(session);
 
-		return res.status(401).json(response);
+			if (!isOldAdminDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not delete the admin while updating",
+					success: false,
+				};
+
+				return response;
+			}
+
+			oldAdmin.position = position;
+
+			const dataForUpdatedAdmin = oldAdmin;
+
+			// This returns an array
+			const updatedAdmin = await adminModel.create([dataForUpdatedAdmin], {
+				session,
+			});
+
+			if (!updatedAdmin || updatedAdmin.length === 0) {
+				const response: StandardResponse = {
+					message: "Could not update the admin while updating",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const response: StandardResponse = {
+				message: "Updating admin successfull",
+				success: true,
+			};
+
+			return response;
+		});
+
+		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
 		const response: StandardResponse = {
