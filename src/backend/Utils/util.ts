@@ -2,6 +2,10 @@ import { faker } from "@faker-js/faker";
 import bcrypt from "bcrypt";
 import { DataResponse, StandardResponse } from "../Types/GeneralTypes";
 import mongoose, { MongooseError, ClientSession } from "mongoose";
+import {
+	connectToTestDbAndStartTestServer,
+	stopTestServerRunning,
+} from "../Tests/TestServer";
 
 // Function for returning a random value from enum
 export function getRandomEnumValue<T extends { [key: string]: string | number }>(
@@ -147,7 +151,10 @@ export async function validateAndHash(text: string) {
 	}
 }
 
-export async function checkPassAgainstDbPass(password: string, dbPassword: string) {
+export async function checkPassAgainstDbPass(
+	password: string,
+	dbPassword: string,
+): Promise<StandardResponse> {
 	if (!password || !dbPassword) {
 		const response: StandardResponse = {
 			message: "Password cannot be null,undefined or empty string",
@@ -239,3 +246,19 @@ export const runWithRetrySession = async (
 
 	return response;
 };
+
+const runTestServer = async () => {
+	await connectToTestDbAndStartTestServer(
+		process.env.MONGO_URI!,
+		process.env.PORT!,
+		process.env.REPL_SET!,
+	);
+};
+
+const stopTestServer = async () => {
+	await mongoose.connection.dropDatabase();
+	await mongoose.connection.close();
+	await stopTestServerRunning();
+};
+
+export { runTestServer, stopTestServer };

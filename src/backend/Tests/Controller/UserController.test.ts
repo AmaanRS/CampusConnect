@@ -1,13 +1,11 @@
-import { app, startServer } from "../../app";
+import { app } from "../../app";
 import supertest from "supertest";
 const request = supertest(app);
-import dotenv from "dotenv";
 import { faker } from "@faker-js/faker";
-import { generatePassword } from "../../Utils/util";
+import { generatePassword, runTestServer, stopTestServer } from "../../Utils/util";
 import { userModel } from "../../Models/User";
 import { AccountType, Department } from "../../Types/ModelTypes";
 
-dotenv.config();
 let token: any = "";
 
 const createDummyUser = async (email: string, password: string) => {
@@ -29,11 +27,11 @@ const deleteDummyUser = async () => {
 
 describe("User Controller", () => {
 	beforeAll(async () => {
-		await startServer(
-			process.env.MONGO_URI!,
-			process.env.PORT!,
-			process.env.REPL_SET!,
-		);
+		await runTestServer();
+	});
+
+	afterAll(async () => {
+		await stopTestServer();
 	});
 
 	describe("POST /signup", () => {

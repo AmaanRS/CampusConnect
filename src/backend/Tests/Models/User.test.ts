@@ -1,6 +1,4 @@
 import { MongooseError } from "mongoose";
-import dotenv from "dotenv";
-import { startServer } from "../../app";
 import {} from // AccountType,
 // Department,
 // IUser,
@@ -13,41 +11,20 @@ import {} from // AccountType,
 // } from "../../Utils/util";
 import { userModel } from "../../Models/User";
 import { TeacherPosition } from "../../Types/ModelTypes";
-dotenv.config();
+import { runTestServer, stopTestServer } from "../../Utils/util";
 
 // jest.mock("mongoose");
 
 //In all the test cases below i have checked if invalid cases throw error but have not checked if valid cases work write it in github issues
 
 describe("User model", () => {
-	// let randomYear: Year;
-	// let randomDepartment: Department;
-	// let randomAccountType: AccountType;
-	// let randomPosition: Position;
-
 	beforeAll(async () => {
-		// const mockConnection = jest.fn().mockResolvedValueOnce({
-		// 	connection: {
-		// 		db: {
-		// 			databaseName: "CampusConnectSelf",
-		// 		},
-		// 	},
-		// });
-
-		// (mongoose.connect as jest.Mock) = mockConnection;
-		await startServer(
-			process.env.MONGO_URI!,
-			process.env.PORT!,
-			process.env.REPL_SET!,
-		);
+		await runTestServer();
 	});
 
-	//use done or return for async code
-	// afterAll((done) => {
-	// 	mongoose.disconnect();
-	// 	jest.clearAllMocks();
-	// 	done();
-	// });
+	afterAll(async () => {
+		await stopTestServer();
+	});
 
 	beforeEach(() => {
 		// randomYear = getRandomEnumValueFromYear(Year);

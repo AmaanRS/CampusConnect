@@ -1,13 +1,18 @@
 import { Request, Response } from "express";
-import { DataResponse, StandardResponse } from "../Types/GeneralTypes";
+import {
+	DataResponse,
+	decodedTokenFromBody,
+	StandardResponse,
+} from "../Types/GeneralTypes";
 import { userModel } from "../Models/User";
 import { adminModel } from "../Models/Admin";
-import { AccountType, AdminPosition } from "../Types/ModelTypes";
+import { AccountType, AdminPosition, IAdmin } from "../Types/ModelTypes";
 import { runWithRetrySession } from "../Utils/util";
 
 const createAdmin = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken } = req.body;
+		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
+
 		if (!decodedToken) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",
@@ -63,7 +68,7 @@ const createAdmin = async (req: Request, res: Response) => {
 			}
 
 			// This will return an array
-			const newAdmin = await adminModel.create([dataForNewAdmin], {
+			const newAdmin: IAdmin[] = await adminModel.create([dataForNewAdmin], {
 				session,
 			});
 
@@ -83,9 +88,11 @@ const createAdmin = async (req: Request, res: Response) => {
 
 			return response;
 		});
+
 		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
+
 		const response: StandardResponse = {
 			message:
 				"There is some problem while creating the admin's account" +
@@ -99,7 +106,8 @@ const createAdmin = async (req: Request, res: Response) => {
 
 const getAdmin = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken } = req.body;
+		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
+
 		if (!decodedToken) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",
@@ -118,7 +126,10 @@ const getAdmin = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const admin = await adminModel.findOne({ email }, { password: 0 });
+		const admin: IAdmin | null = await adminModel.findOne(
+			{ email },
+			{ password: 0 },
+		);
 
 		if (!admin) {
 			const response: StandardResponse = {
@@ -151,7 +162,12 @@ const getAdmin = async (req: Request, res: Response) => {
 // Cannot update email or password through this function
 const updateAdmin = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken, position } = req.body;
+		const {
+			decodedToken,
+			position,
+		}: { decodedToken: decodedTokenFromBody; position: AdminPosition[] } =
+			req.body;
+
 		if (!decodedToken) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",
@@ -182,7 +198,8 @@ const updateAdmin = async (req: Request, res: Response) => {
 			// Get the old admin data
 			const oldAdmin = await adminModel
 				.findOne({ email }, { _id: 0, __v: 0 })
-				.session(session).lean();
+				.session(session)
+				.lean();
 
 			if (!oldAdmin) {
 				const response: StandardResponse = {
@@ -211,9 +228,12 @@ const updateAdmin = async (req: Request, res: Response) => {
 			const dataForUpdatedAdmin = oldAdmin;
 
 			// This returns an array
-			const updatedAdmin = await adminModel.create([dataForUpdatedAdmin], {
-				session,
-			});
+			const updatedAdmin: IAdmin[] = await adminModel.create(
+				[dataForUpdatedAdmin],
+				{
+					session,
+				},
+			);
 
 			if (!updatedAdmin || updatedAdmin.length === 0) {
 				const response: StandardResponse = {
@@ -248,7 +268,8 @@ const updateAdmin = async (req: Request, res: Response) => {
 
 const deleteAdmin = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken } = req.body;
+		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
+
 		if (!decodedToken) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",

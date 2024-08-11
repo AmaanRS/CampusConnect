@@ -1,17 +1,15 @@
-import dotenv from "dotenv";
-import { startServer } from "../../app";
 import { AccountType, Department, TeacherPosition } from "../../Types/ModelTypes";
 import mongoose, { MongooseError } from "mongoose";
 import { teacherModel } from "../../Models/Teacher";
-dotenv.config();
+import { runTestServer, stopTestServer } from "../../Utils/util";
 
 describe.only("Teacher Model Tests", () => {
 	beforeAll(async () => {
-		await startServer(
-			process.env.MONGO_URI!,
-			process.env.PORT!,
-			process.env.REPL_SET!,
-		);
+		await runTestServer();
+	});
+
+	afterAll(async () => {
+		await stopTestServer();
 	});
 
 	afterEach(async () => {
