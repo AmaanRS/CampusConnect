@@ -290,11 +290,23 @@ const deleteAdmin = async (req: Request, res: Response) => {
 
 		const isAdminDeleted = await adminModel.deleteOne({ email: email });
 
+		console.log(isAdminDeleted);
+
 		if (!isAdminDeleted.acknowledged) {
 			const response: StandardResponse = {
 				message: "Could not delete the user",
 				success: false,
 			};
+
+			return res.status(401).json(response);
+		}
+
+		if (isAdminDeleted.deletedCount === 0) {
+			const response: StandardResponse = {
+				message: "Could not find the user to delete",
+				success: false,
+			};
+
 			return res.status(401).json(response);
 		}
 

@@ -10,7 +10,7 @@ import {
 } from "../Controllers/AdminController";
 
 Router.route("/createAdmin").post(cookieCheckerMiddleware,createAdmin)
-Router.route("/getAdmin").post(cookieCheckerMiddleware, getAdmin);
+Router.route("/getAdmin").get(cookieCheckerMiddleware, getAdmin);
 Router.route("/updateAdmin").post(cookieCheckerMiddleware, updateAdmin);
 Router.route("/deleteAdmin").post(cookieCheckerMiddleware, deleteAdmin);
 

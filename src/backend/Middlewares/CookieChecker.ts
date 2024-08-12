@@ -146,6 +146,11 @@ export const cookieCheckerMiddleware = (
 	const { success, message, decodedToken } = verifyToken(req);
 
 	if (success) {
+		// Even though if decodedToken with email is sent in the request it will get overrided, but i am keeping this here for extra safety
+		if (req.body.decodedToken) {
+			delete req.body.decodedToken;
+		}
+
 		(req as any).body.decodedToken = decodedToken;
 
 		return next();
