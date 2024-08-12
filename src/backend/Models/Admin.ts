@@ -1,6 +1,7 @@
 import { Model, MongooseError, Schema, model } from "mongoose";
 import { AccountType, IAdminDocument, AdminPosition } from "../Types/ModelTypes";
-import { userEmailRegex, validateAndHash } from "../Utils/util";
+import { userEmailRegex } from "../Utils/regexUtils";
+import { validateAndHash } from "../Utils/passwordUtils";
 
 const adminSchema = new Schema<IAdminDocument>(
 	{

@@ -7,8 +7,9 @@ import {
 	StudentPosition,
 	IStudent,
 } from "../Types/ModelTypes";
-import { studentEmailRegex, validateAndHash } from "../Utils/util";
 import { userModel } from "./User";
+import { studentEmailRegex } from "../Utils/regexUtils";
+import { validateAndHash } from "../Utils/passwordUtils";
 
 const studentSchema = new Schema<IStudentDocument>(
 	{

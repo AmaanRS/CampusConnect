@@ -1,6 +1,7 @@
 import { adminModel } from "../../Models/Admin";
 import { AccountType, AdminPosition } from "../../Types/ModelTypes";
-import { checkPassAgainstDbPass, runTestServer, stopTestServer } from "../../Utils/util";
+import { checkPassAgainstDbPass } from "../../Utils/passwordUtils";
+import { runTestServer, stopTestServer } from "../../Utils/util";
 
 describe.only("Admin Model Tests", () => {
 	beforeAll(async () => {

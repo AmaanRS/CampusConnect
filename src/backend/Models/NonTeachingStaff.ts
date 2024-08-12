@@ -5,7 +5,8 @@ import {
 	Department,
 	NonTeachingStaffPosition,
 } from "../Types/ModelTypes";
-import { userEmailRegex, validateAndHash } from "../Utils/util";
+import { userEmailRegex } from "../Utils/regexUtils";
+import { validateAndHash } from "../Utils/passwordUtils";
 
 const nonTeachingStaffSchema = new Schema<INonTeachingStaffDocument>(
 	{

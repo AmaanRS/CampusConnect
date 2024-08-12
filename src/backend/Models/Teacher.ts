@@ -5,7 +5,8 @@ import {
 	ITeacherDocument,
 	TeacherPosition,
 } from "../Types/ModelTypes";
-import { teacherEmailRegex, validateAndHash } from "../Utils/util";
+import { teacherEmailRegex } from "../Utils/regexUtils";
+import { validateAndHash } from "../Utils/passwordUtils";
 
 const teacherSchema = new Schema<ITeacherDocument>(
 	{

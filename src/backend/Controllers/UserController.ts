@@ -9,7 +9,7 @@ import {
 import { MongooseError } from "mongoose";
 import { userModel } from "../Models/User";
 import { IUser } from "../Types/ModelTypes";
-import { checkPassAgainstDbPass } from "../Utils/util";
+import { checkPassAgainstDbPass } from "../Utils/passwordUtils";
 
 const login = async (req: Request, res: Response) => {
 	try {
