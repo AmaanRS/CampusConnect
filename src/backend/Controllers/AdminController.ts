@@ -33,7 +33,9 @@ const createAdmin = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
+		// Use session so that transaction is atomic
 		const result = await runWithRetrySession(async (session) => {
+			// Get the user from db
 			const user = await userModel
 				.findOne({ email }, { department: 0, __v: 0 })
 				.lean()
@@ -50,6 +52,7 @@ const createAdmin = async (req: Request, res: Response) => {
 
 			const { _id: userId, ...dataForNewAdmin } = user;
 
+			// Now that the user is complete set isProfileComplete to true
 			const changedUser = await userModel.updateOne(
 				{ _id: userId },
 				{
@@ -214,6 +217,7 @@ const updateAdmin = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			// Delete the old admin from db
 			const isOldAdminDeleted = await adminModel
 				.deleteOne({ email })
 				.session(session);
@@ -227,6 +231,7 @@ const updateAdmin = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			// Set the new position
 			oldAdmin.position = position;
 
 			const dataForUpdatedAdmin = oldAdmin;

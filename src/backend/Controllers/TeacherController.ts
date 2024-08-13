@@ -59,12 +59,14 @@ const createTeacher = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		//Use retry with session to first get the user then create a new teacher with the data from the user and req.body then update the user as profileComplete
-
 		const result = await runWithRetrySession(async (session) => {
-			const user = await userModel.findOne({ email }).session(session).lean();
+			// Get the user from db
+			const userFromDb = await userModel
+				.findOne({ email }, { __v: 0 })
+				.session(session)
+				.lean();
 
-			if (!user) {
+			if (!userFromDb) {
 				const response: StandardResponse = {
 					message: "User is not signed up",
 					success: false,
@@ -73,9 +75,28 @@ const createTeacher = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			const { _id: userId, ...user } = userFromDb;
+
+			const changedUser = await userModel.updateOne(
+				{ _id: userId },
+				{
+					isProfileComplete: true,
+				},
+				{ session },
+			);
+
+			if (!changedUser.acknowledged) {
+				const response: StandardResponse = {
+					message: "User not updated for isProfileCompleted",
+					success: false,
+				};
+
+				return response;
+			}
+
 			let newTeacherData = user;
 
-			//If department exists ie user is teacher
+			//If department property does not exists on user in db then user is teacher else if department property exists then user is hod
 			if (!user.department) newTeacherData.department = department;
 
 			const newTeacher: ITeacher[] = await teacherModel.create(
@@ -220,6 +241,7 @@ const updateTeacher = async (req: Request, res: Response) => {
 		}
 
 		const result = await runWithRetrySession(async (session) => {
+			//Get the teacher from db
 			const oldTeacher = await teacherModel
 				.findOne({ email }, { __v: 0, _id: 0 })
 				.session(session)
@@ -234,6 +256,7 @@ const updateTeacher = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			// Delete the old one
 			const isOldTeacherDeleted = await teacherModel
 				.deleteOne({ email })
 				.session(session);

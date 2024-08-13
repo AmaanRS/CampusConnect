@@ -39,6 +39,7 @@ const login = async (req: Request, res: Response) => {
 				return res.status(401).json(response);
 			}
 
+			// Check if password given and password from db matches
 			let matchPassword: StandardResponse = await checkPassAgainstDbPass(
 				password,
 				user.password,
@@ -147,16 +148,17 @@ const signup = async (req: Request, res: Response) => {
 			// const hashedPassword: string = await bcrypt.hash(password, 8);
 
 			try {
+				// Create a user
 				await userModel.create({
 					email: email,
 					password: password,
 				});
 			} catch (error) {
 				const response: StandardResponse = {
-					// message: (error as MongooseError).message.split(":")[2].trim(),
 					message: (error as MongooseError).message,
 					success: false,
 				};
+
 				return res.status(401).json(response);
 			}
 
@@ -164,6 +166,7 @@ const signup = async (req: Request, res: Response) => {
 				message: "Your account has been created now you can login",
 				success: true,
 			};
+
 			return res.status(201).json(response);
 		} else {
 			const response: StandardResponse = {
@@ -207,6 +210,7 @@ const profileStatus = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
+		// Get the user from db
 		const isProfileComplete: IUser | null | undefined = await userModel.findOne(
 			{
 				email: decodedToken.email,
