@@ -6,6 +6,7 @@ import cors from "cors";
 import UserRouter from "./Routes/UserRouter";
 import AdminRouter from "./Routes/AdminRoutes";
 import TeacherRouter from "./Routes/TeacherRoutes";
+import StudentRouter from "./Routes/StudentRoutes";
 import { fileURLToPath } from "url";
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/", UserRouter);
 app.use("/admin", AdminRouter);
 app.use("/teacher", TeacherRouter);
+app.use("/student", StudentRouter);
 
 // Connects with db then express server
 async function connectToDbAndStartServer(

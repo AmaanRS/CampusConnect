@@ -1,13 +1,13 @@
 import { app } from "../../app";
 import supertest from "supertest";
 const request = supertest(app);
-import { teacherModel } from "../../Models/Teacher";
 import { userModel } from "../../Models/User";
 import { runTestServer, stopTestServer } from "../../Utils/util";
-import { Department } from "../../Types/ModelTypes";
+import { Department, Year } from "../../Types/ModelTypes";
+import { studentModel } from "../../Models/Student";
 
-const createTeacherAndReturnToken = async () => {
-	const email = "test.t@vcet.edu.in";
+const createStudentAndReturnToken = async () => {
+	const email = "test.123456789@vcet.edu.in";
 	const password = "Aa@123456";
 
 	await userModel.create({ email, password });
@@ -16,14 +16,14 @@ const createTeacherAndReturnToken = async () => {
 
 	// Create a default admin for testing purposes
 	await request
-		.post("/teacher/createTeacher")
+		.post("/student/createStudent")
 		.set("Authorization", `Bearer ${response.body.token}`)
-		.send({ department: Department.IT });
+		.send({ department: Department.IT, year: Year["1ST"] });
 
 	return response.body.token;
 };
 
-describe("Teacher Controller", () => {
+describe("Student Controller", () => {
 	beforeAll(async () => {
 		await runTestServer();
 	});
@@ -34,19 +34,19 @@ describe("Teacher Controller", () => {
 
 	afterEach(async () => {
 		await userModel.deleteMany({});
-		await teacherModel.deleteMany({});
+		await studentModel.deleteMany({});
 	});
 
-	describe.skip("POST /createTeacher", () => {
+	describe.skip("POST /createStudent", () => {
 		let token: string | undefined;
 
 		beforeEach(async () => {
-			token = await createTeacherAndReturnToken();
+			token = await createStudentAndReturnToken();
 		});
 
 		afterEach(async () => {
 			await userModel.deleteMany({});
-			await teacherModel.deleteMany({});
+			await studentModel.deleteMany({});
 		});
 
 		const testCases = [
@@ -60,47 +60,45 @@ describe("Teacher Controller", () => {
 				},
 			},
 			{
-				name: "Department not provided for teacher",
+				name: "Department not provided for Student",
 				data: {
 					department: undefined,
+					year: Year["1ST"],
 				},
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {},
 			},
 			{
-				name: "HOD email with department provided",
-				data: {
-					department: "someDepartment",
-				},
-				expectedStatus: 201,
-				expectedResponse: { success: true },
-				setup: async () => {
-					const email = "hod_it@vcet.edu.in";
-					const password = "Pword123@";
-
-					await userModel.create({
-						email,
-						password,
-					});
-
-					const response = await request.post("/login").send({
-						email,
-						password,
-					});
-
-					return response.body.token;
-				},
-			},
-			{
-				name: "Successful teacher creation",
+				name: "Year not provided for Student",
 				data: {
 					department: Department.AIDS,
+					year: undefined,
+				},
+				expectedStatus: 401,
+				expectedResponse: { success: false },
+				setup: async () => {},
+			},
+			{
+				name: "Year and Department not provided for Student",
+				data: {
+					department: undefined,
+					year: undefined,
+				},
+				expectedStatus: 401,
+				expectedResponse: { success: false },
+				setup: async () => {},
+			},
+			{
+				name: "Successful student creation",
+				data: {
+					department: Department.AIDS,
+					year: Year["1ST"],
 				},
 				expectedStatus: 201,
 				expectedResponse: { success: true },
 				setup: async () => {
-					await teacherModel.deleteMany({});
+					await studentModel.deleteMany({});
 				},
 			},
 		];
@@ -109,13 +107,10 @@ describe("Teacher Controller", () => {
 			"$name",
 			//@ts-ignore
 			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
-				if (setup) {
-					let returnValue = await setup();
-					returnValue ? (token = returnValue) : undefined;
-				}
+				if (setup) await setup();
 
 				const response = await request
-					.post("/teacher/createTeacher")
+					.post("/student/createStudent")
 					.set("Authorization", `Bearer ${token}`)
 					.send(data);
 
@@ -127,31 +122,31 @@ describe("Teacher Controller", () => {
 		);
 	});
 
-	describe.skip("POST /getTeacher", () => {
+	describe.skip("POST /getStudent", () => {
 		let token: string | undefined;
 
 		beforeEach(async () => {
-			token = await createTeacherAndReturnToken();
+			token = await createStudentAndReturnToken();
 		});
 
 		afterEach(async () => {
 			await userModel.deleteMany({});
-			await teacherModel.deleteMany({});
+			await studentModel.deleteMany({});
 		});
 
 		const testCases = [
 			{
-				name: "Teacher not found",
+				name: "Student not found",
 				data: {},
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {
-					// Delete the teacher so it doesnt exist
-					await teacherModel.deleteMany({});
+					// Delete the student so it doesnt exist
+					await studentModel.deleteMany({});
 				},
 			},
 			{
-				name: "Successful Teacher retrieval",
+				name: "Successful student retrieval",
 				data: {},
 				expectedStatus: 201,
 				expectedResponse: { success: true },
@@ -166,7 +161,7 @@ describe("Teacher Controller", () => {
 				if (setup) await setup();
 
 				const response = await request
-					.post("/teacher/getTeacher")
+					.post("/student/getStudent")
 					.set("Authorization", `Bearer ${token}`)
 					.send(data);
 
@@ -179,38 +174,45 @@ describe("Teacher Controller", () => {
 		);
 	});
 
-	describe.skip("POST /updateTeacher", () => {
+	describe.skip("POST /updateStudent", () => {
 		let token: string | undefined;
 
 		beforeEach(async () => {
-			token = await createTeacherAndReturnToken();
+			token = await createStudentAndReturnToken();
 		});
 
 		afterEach(async () => {
 			await userModel.deleteMany({});
-			await teacherModel.deleteMany({});
+			await studentModel.deleteMany({});
 		});
 
 		const testCases = [
 			{
 				name: "User not authenticated",
-				data: { department: Department.IT },
+				data: { department: Department.IT, year: Year["1ST"] },
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {
-					await teacherModel.deleteMany({});
+					await studentModel.deleteMany({});
 				},
 			},
 			{
-				name: "Department not provided",
+				name: "Department and year not provided",
 				data: {},
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {},
 			},
 			{
-				name: "Successful teacher update",
+				name: "Successful Student update with department",
 				data: { department: Department.AIDS },
+				expectedStatus: 201,
+				expectedResponse: { success: true },
+				setup: async () => {},
+			},
+			{
+				name: "Successful Student update with year",
+				data: { year: Year["3RD"] },
 				expectedStatus: 201,
 				expectedResponse: { success: true },
 				setup: async () => {},
@@ -224,7 +226,7 @@ describe("Teacher Controller", () => {
 				if (setup) await setup();
 
 				const response = await request
-					.post("/teacher/updateTeacher")
+					.post("/student/updateStudent")
 					.set("Authorization", `Bearer ${token}`)
 					.send(data);
 
@@ -236,16 +238,16 @@ describe("Teacher Controller", () => {
 		);
 	});
 
-	describe.skip("POST /deleteTeacher", () => {
+	describe.skip("POST /deleteStudent", () => {
 		let token: string | undefined;
 
 		beforeEach(async () => {
-			token = await createTeacherAndReturnToken();
+			token = await createStudentAndReturnToken();
 		});
 
 		afterEach(async () => {
 			await userModel.deleteMany({});
-			await teacherModel.deleteMany({});
+			await studentModel.deleteMany({});
 		});
 
 		const testCases = [
@@ -255,11 +257,11 @@ describe("Teacher Controller", () => {
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {
-					await teacherModel.deleteMany({});
+					await studentModel.deleteMany({});
 				},
 			},
 			{
-				name: "Successful teacher deletion",
+				name: "Successful student deletion",
 				data: {},
 				expectedStatus: 201,
 				expectedResponse: { success: true },
@@ -274,7 +276,7 @@ describe("Teacher Controller", () => {
 				if (setup) await setup();
 
 				const response = await request
-					.post("/teacher/deleteTeacher")
+					.post("/student/deleteStudent")
 					.set("Authorization", `Bearer ${token}`)
 					.send(data);
 

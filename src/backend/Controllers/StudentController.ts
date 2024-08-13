@@ -1,21 +1,25 @@
 import { Request, Response } from "express";
+import { Department, IStudent, Year } from "../Types/ModelTypes";
 import {
 	DataResponse,
 	decodedTokenFromBody,
 	StandardResponse,
 } from "../Types/GeneralTypes";
-import { onlyHodEmailRegex, onlyTeacherEmailRegex } from "../Utils/regexUtils";
 import { runWithRetrySession } from "../Utils/util";
 import { userModel } from "../Models/User";
-import { teacherModel } from "../Models/Teacher";
-import { Department, ITeacher } from "../Types/ModelTypes";
+import { studentModel } from "../Models/Student";
 
-// Creates teacher using user jwt token
-const createTeacher = async (req: Request, res: Response) => {
+const createStudent = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
-
-		let department: Department | undefined = req.body.department;
+		const {
+			decodedToken,
+			department,
+			year,
+		}: {
+			decodedToken: decodedTokenFromBody;
+			department: Department;
+			year: Year;
+		} = req.body;
 
 		if (!decodedToken) {
 			const response: StandardResponse = {
@@ -32,30 +36,16 @@ const createTeacher = async (req: Request, res: Response) => {
 				message: "User is not authenticated",
 				success: false,
 			};
+
 			return res.status(401).json(response);
 		}
 
-		// If user is hod remove department given from user since it should already exist in user
-		if (onlyHodEmailRegex.test(email)) {
-			department = undefined;
-		}
-		// If the user is teacher and department is not given or department is not string
-		else if (onlyTeacherEmailRegex.test(email)) {
-			if (!department || typeof department !== "string") {
-				const response: StandardResponse = {
-					message: "Give department",
-					success: false,
-				};
-				return res.status(401).json(response);
-			}
-		}
-		// If the user is not teacher
-		else if (!onlyTeacherEmailRegex.test(email)) {
+		if (!department || !year) {
 			const response: StandardResponse = {
-				message:
-					"The email should be of hod or teacher to signup as a teacher",
+				message: "Give department and year",
 				success: false,
 			};
+
 			return res.status(401).json(response);
 		}
 
@@ -94,21 +84,19 @@ const createTeacher = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			let newTeacherData = user;
+			let newStudentData = { ...user, year: year };
+			newStudentData.department = department;
 
-			//If department property does not exists on user in db then user is teacher else if department property exists then user is hod
-			if (!user.department) newTeacherData.department = department;
-
-			const newTeacher: ITeacher[] = await teacherModel.create(
-				[newTeacherData],
+			const newStudent: IStudent[] = await studentModel.create(
+				[newStudentData],
 				{
 					session,
 				},
 			);
 
-			if (!newTeacher || newTeacher.length === 0) {
+			if (!newStudent || newStudent.length === 0) {
 				const response: StandardResponse = {
-					message: "Could not create new teacher while creating teacher",
+					message: "Could not create new student while creating stuent",
 					success: false,
 				};
 
@@ -116,7 +104,7 @@ const createTeacher = async (req: Request, res: Response) => {
 			}
 
 			const response: StandardResponse = {
-				message: "Teacher creation successfull",
+				message: "Student creation successfull",
 				success: true,
 			};
 
@@ -129,7 +117,7 @@ const createTeacher = async (req: Request, res: Response) => {
 
 		const response: StandardResponse = {
 			message:
-				"There is some problem while creating the teacher's account" +
+				"There is some problem while creating the student's account" +
 				(e as Error).message,
 			success: false,
 		};
@@ -138,8 +126,7 @@ const createTeacher = async (req: Request, res: Response) => {
 	}
 };
 
-// Gets the teacher whose jwt token is given
-const getTeacher = async (req: Request, res: Response) => {
+const getStudent = async (req: Request, res: Response) => {
 	try {
 		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
 
@@ -161,23 +148,23 @@ const getTeacher = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const teacher: ITeacher | null = await teacherModel.findOne(
+		const student: IStudent | null = await studentModel.findOne(
 			{ email },
 			{ password: 0 },
 		);
 
-		if (!teacher) {
+		if (!student) {
 			const response: StandardResponse = {
-				message: "Could not find teacher",
+				message: "Could not find student",
 				success: false,
 			};
 			return res.status(401).json(response);
 		}
 
 		const response: DataResponse = {
-			message: "Found teacher successfully",
+			message: "Found student successfully",
 			success: true,
-			data: teacher,
+			data: student,
 		};
 
 		return res.status(201).json(response);
@@ -186,7 +173,7 @@ const getTeacher = async (req: Request, res: Response) => {
 
 		const response: StandardResponse = {
 			message:
-				"There is some problem while fetching the teacher's account" +
+				"There is some problem while fetching the student's account" +
 				(e as Error).message,
 			success: false,
 		};
@@ -195,21 +182,16 @@ const getTeacher = async (req: Request, res: Response) => {
 	}
 };
 
-//
-// position, isInChargeOfCommittees, isInTeamOfCommittees will be updated using create committee, delete committee and some other api's
-//
-
-// Use nanoid as isInChargeOfCommittees, isInTeamOfCommittees id since exposing mongodb objectid can raise security issues
-// Cannot update email or password through this function
-// Updates the teacher whose jwt token is given
-const updateTeacher = async (req: Request, res: Response) => {
+const updateStudent = async (req: Request, res: Response) => {
 	try {
 		const {
 			decodedToken,
 			department,
+			year,
 		}: {
 			decodedToken: decodedTokenFromBody;
 			department: Department;
+			year: Year;
 		} = req.body;
 
 		if (!decodedToken) {
@@ -230,24 +212,25 @@ const updateTeacher = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if (!department) {
+		if (!department && !year) {
 			const response: StandardResponse = {
-				message: "Give department",
+				message: "Give department or year to update",
 				success: false,
 			};
+
 			return res.status(401).json(response);
 		}
 
 		const result = await runWithRetrySession(async (session) => {
-			//Get the teacher from db
-			const oldTeacher = await teacherModel
+			//Get the student from db
+			const oldStudent = await studentModel
 				.findOne({ email }, { __v: 0, _id: 0 })
 				.session(session)
 				.lean();
 
-			if (!oldTeacher) {
+			if (!oldStudent) {
 				const response: StandardResponse = {
-					message: "Could not find the teacher",
+					message: "Could not find the student",
 					success: false,
 				};
 
@@ -255,29 +238,35 @@ const updateTeacher = async (req: Request, res: Response) => {
 			}
 
 			// Delete the old one
-			const isOldTeacherDeleted = await teacherModel
+			const isoldStudentDeleted = await studentModel
 				.deleteOne({ email })
 				.session(session);
 
-			if (!isOldTeacherDeleted.acknowledged) {
+			if (!isoldStudentDeleted.acknowledged) {
 				const response: StandardResponse = {
-					message: "Could not delete the teacher while updating",
+					message: "Could not delete the student while updating",
 					success: false,
 				};
 
 				return response;
 			}
 
-			const dataForUpdatedTeacher = oldTeacher;
+			const dataForUpdatedStudent = oldStudent;
 
-			const updatedTeacher = await teacherModel.create(
-				[dataForUpdatedTeacher],
+			// If department exists then set it
+			if (department) dataForUpdatedStudent.department = department;
+
+			// If year exists then set it
+			if (year) dataForUpdatedStudent.year = year;
+
+			const updatedStudent = await studentModel.create(
+				[dataForUpdatedStudent],
 				{ session },
 			);
 
-			if (!updatedTeacher || updatedTeacher.length === 0) {
+			if (!updatedStudent || updatedStudent.length === 0) {
 				const response: StandardResponse = {
-					message: "Could not update the teacher while updating",
+					message: "Could not update the student while updating",
 					success: false,
 				};
 
@@ -285,7 +274,7 @@ const updateTeacher = async (req: Request, res: Response) => {
 			}
 
 			const response: StandardResponse = {
-				message: "Updated teacher successfull",
+				message: "Updated student successfull",
 				success: true,
 			};
 
@@ -297,7 +286,7 @@ const updateTeacher = async (req: Request, res: Response) => {
 		console.log((e as Error).message);
 		const response: StandardResponse = {
 			message:
-				"There is some problem while updating the teacher's account" +
+				"There is some problem while updating the studnet's account" +
 				(e as Error).message,
 			success: false,
 		};
@@ -306,8 +295,7 @@ const updateTeacher = async (req: Request, res: Response) => {
 	}
 };
 
-// Deletes the teacher whose jwt token is given
-const deleteTeacher = async (req: Request, res: Response) => {
+const deleteStudent = async (req: Request, res: Response) => {
 	try {
 		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
 
@@ -329,20 +317,20 @@ const deleteTeacher = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const isTeacherDeleted = await teacherModel.deleteOne({ email: email });
+		const isStudentDeleted = await studentModel.deleteOne({ email: email });
 
-		if (!isTeacherDeleted.acknowledged) {
+		if (!isStudentDeleted.acknowledged) {
 			const response: StandardResponse = {
-				message: "Could not delete the teacher",
+				message: "Could not delete the student",
 				success: false,
 			};
 
 			return res.status(401).json(response);
 		}
 
-		if (isTeacherDeleted.deletedCount === 0) {
+		if (isStudentDeleted.deletedCount === 0) {
 			const response: StandardResponse = {
-				message: "Could not find the teacher to delete",
+				message: "Could not find the student to delete",
 				success: false,
 			};
 
@@ -350,7 +338,7 @@ const deleteTeacher = async (req: Request, res: Response) => {
 		}
 
 		const response: StandardResponse = {
-			message: "Teacher deleted successfully",
+			message: "Student deleted successfully",
 			success: true,
 		};
 
@@ -359,7 +347,7 @@ const deleteTeacher = async (req: Request, res: Response) => {
 		console.log((e as Error).message);
 		const response: StandardResponse = {
 			message:
-				"There is some problem while deleting teachers's account" +
+				"There is some problem while deleting student's account" +
 				(e as Error).message,
 			success: false,
 		};
@@ -368,4 +356,4 @@ const deleteTeacher = async (req: Request, res: Response) => {
 	}
 };
 
-export { createTeacher, getTeacher, updateTeacher, deleteTeacher };
+export { createStudent, getStudent, updateStudent, deleteStudent };
