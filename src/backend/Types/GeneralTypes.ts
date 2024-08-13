@@ -38,4 +38,8 @@ export interface EventResponse extends StandardResponse {
 	events: IEvent[];
 }
 
-export type decodedTokenFromBody = { email: string };
+export type decodedTokenFromBody = {
+	email: string;
+	position: string[];
+	accountType: string;
+};

@@ -12,6 +12,12 @@ export const studentEmailRegex: RegExp = /^([a-z]+\.[0-9]{9})@vcet\.edu\.in$/;
 export const teacherEmailRegex: RegExp =
 	/^(hod_[a-zA-Z]+|[a-z]+\.[a-z]+)@vcet\.edu\.in$/;
 
+export const onlyTeacherEmailRegex: RegExp =
+	/^([a-z]+\.[a-z]+)@vcet\.edu\.in$/;
+
+export const onlyHodEmailRegex: RegExp =
+	/^(hod_[a-zA-Z]+)@vcet\.edu\.in$/;
+
 // At least one lowercase letter
 // At least one uppercase letter
 // At least one digit

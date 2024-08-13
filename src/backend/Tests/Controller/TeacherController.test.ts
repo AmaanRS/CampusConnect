@@ -1,12 +1,12 @@
 import { app } from "../../app";
 import supertest from "supertest";
 const request = supertest(app);
+import { teacherModel } from "../../Models/Teacher";
 import { userModel } from "../../Models/User";
-import { adminModel } from "../../Models/Admin";
 import { runTestServer, stopTestServer } from "../../Utils/util";
-import { AdminPosition } from "../../Types/ModelTypes";
+import { Department } from "../../Types/ModelTypes";
 
-const createAdminAndReturnToken = async () => {
+const createTeacherAndReturnToken = async () => {
 	const email = "test.t@vcet.edu.in";
 	const password = "Aa@123456";
 
@@ -16,14 +16,14 @@ const createAdminAndReturnToken = async () => {
 
 	// Create a default admin for testing purposes
 	await request
-		.post("/admin/createAdmin")
+		.post("/teacher/createTeacher")
 		.set("Authorization", `Bearer ${response.body.token}`)
-		.send();
+		.send({ department: Department.IT });
 
 	return response.body.token;
 };
 
-describe("Admin Controller", () => {
+describe("Teacher Controller", () => {
 	beforeAll(async () => {
 		await runTestServer();
 	});
@@ -34,45 +34,73 @@ describe("Admin Controller", () => {
 
 	afterEach(async () => {
 		await userModel.deleteMany({});
-		await adminModel.deleteMany({});
+		await teacherModel.deleteMany({});
 	});
 
-	describe.skip("POST /createAdmin", () => {
+	describe.skip("POST /createTeacher", () => {
+		let token: string | undefined;
+
+		beforeEach(async () => {
+			token = await createTeacherAndReturnToken();
+		});
+
+		afterEach(async () => {
+			await userModel.deleteMany({});
+			await teacherModel.deleteMany({});
+		});
+
 		const testCases = [
 			{
-				name: "Missing decodedToken",
+				name: "User not authenticated",
 				data: {},
 				expectedStatus: 401,
 				expectedResponse: { success: false },
-				shouldThrow: false,
-			},
-			{
-				name: "User not found",
-				data: {},
-				expectedStatus: 401,
-				expectedResponse: { success: false },
-				shouldThrow: false,
 				setup: async () => {
-					await adminModel.deleteMany({});
+					await userModel.deleteMany({});
 				},
 			},
 			{
-				name: "Successful admin creation",
-				data: {},
+				name: "Department not provided for teacher",
+				data: {
+					department: undefined,
+				},
+				expectedStatus: 401,
+				expectedResponse: { success: false },
+				setup: async () => {},
+			},
+			{
+				name: "HOD email with department provided",
+				data: {
+					department: "someDepartment",
+				},
 				expectedStatus: 201,
 				expectedResponse: { success: true },
-				shouldThrow: false,
 				setup: async () => {
-					const email = "test.t@vcet.edu.in";
-					const password = "Aa@123456";
+					const email = "hod_it@vcet.edu.in";
+					const password = "Pword123@";
+
 					await userModel.create({
 						email,
 						password,
 					});
-					const response = await request
-						.post("/login")
-						.send({ email, password });
+
+					const response = await request.post("/login").send({
+						email,
+						password,
+					});
+
 					return response.body.token;
+				},
+			},
+			{
+				name: "Successful teacher creation",
+				data: {
+					department: Department.AIDS,
+				},
+				expectedStatus: 201,
+				expectedResponse: { success: true },
+				setup: async () => {
+					await teacherModel.deleteMany({});
 				},
 			},
 		];
@@ -81,54 +109,55 @@ describe("Admin Controller", () => {
 			"$name",
 			//@ts-ignore
 			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
-				let token: string | null = null;
-				let response;
-
 				if (setup) {
-					token = await setup();
+					let returnValue = await setup();
+					returnValue ? (token = returnValue) : undefined;
 				}
 
-				if (token) {
-					response = await request
-						.post("/admin/createAdmin")
-						.set("Authorization", `Bearer ${token}`)
-						.send(data);
-				} else {
-					response = await request.post("/admin/createAdmin").send(data);
-				}
+				// const res = await request
+				// 	.post("/teacher/getTeacher")
+				// 	.set("Authorization", `Bearer ${token}`)
+				// 	.send();
+				// console.log(res);
+
+				const response = await request
+					.post("/teacher/createTeacher")
+					.set("Authorization", `Bearer ${token}`)
+					.send(data);
 
 				delete response.body.message;
+
 				expect(response.status).toBe(expectedStatus);
 				expect(response.body).toEqual(expectedResponse);
 			},
 		);
 	});
 
-	describe.skip("POST /getAdmin", () => {
+	describe.skip("POST /getTeacher", () => {
 		let token: string | undefined;
 
 		beforeEach(async () => {
-			token = await createAdminAndReturnToken();
+			token = await createTeacherAndReturnToken();
 		});
 
 		afterEach(async () => {
 			await userModel.deleteMany({});
-			await adminModel.deleteMany({});
+			await teacherModel.deleteMany({});
 		});
 
 		const testCases = [
 			{
-				name: "Admin not found",
+				name: "Teacher not found",
 				data: {},
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {
 					// Delete the admin so it doesnt exist
-					await adminModel.deleteMany({});
+					await teacherModel.deleteMany({});
 				},
 			},
 			{
-				name: "Successful admin retrieval",
+				name: "Successful Teacher retrieval",
 				data: {},
 				expectedStatus: 201,
 				expectedResponse: { success: true },
@@ -143,9 +172,11 @@ describe("Admin Controller", () => {
 				if (setup) await setup();
 
 				const response = await request
-					.post("/admin/getAdmin")
+					.post("/teacher/getTeacher")
 					.set("Authorization", `Bearer ${token}`)
 					.send(data);
+
+				console.log(response.body.message);
 
 				delete response.body.message;
 				delete response.body.data;
@@ -156,43 +187,38 @@ describe("Admin Controller", () => {
 		);
 	});
 
-	describe.skip("POST /updateAdmin", () => {
-		let token: string;
+	describe.skip("POST /updateTeacher", () => {
+		let token: string | undefined;
 
 		beforeEach(async () => {
-			token = await createAdminAndReturnToken();
+			token = await createTeacherAndReturnToken();
 		});
 
 		afterEach(async () => {
 			await userModel.deleteMany({});
-			await adminModel.deleteMany({});
+			await teacherModel.deleteMany({});
 		});
 
 		const testCases = [
 			{
-				name: "Empty positions array",
-				data: {
-					position: [],
-				},
-				expectedStatus: 401,
-				expectedResponse: { success: false },
-			},
-			{
-				name: "Admin not found",
-				data: {
-					position: [AdminPosition.Admin],
-				},
+				name: "User not authenticated",
+				data: { department: Department.IT },
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {
-					await adminModel.deleteMany({});
+					await teacherModel.deleteMany({});
 				},
 			},
 			{
-				name: "Successful admin update",
-				data: {
-					position: [AdminPosition.Admin],
-				},
+				name: "Department not provided",
+				data: {},
+				expectedStatus: 401,
+				expectedResponse: { success: false },
+				setup: async () => {},
+			},
+			{
+				name: "Successful teacher update",
+				data: { department: Department.AIDS },
 				expectedStatus: 201,
 				expectedResponse: { success: true },
 				setup: async () => {},
@@ -206,56 +232,42 @@ describe("Admin Controller", () => {
 				if (setup) await setup();
 
 				const response = await request
-					.post("/admin/updateAdmin")
+					.post("/teacher/updateTeacher")
 					.set("Authorization", `Bearer ${token}`)
 					.send(data);
 
 				delete response.body.message;
+
 				expect(response.status).toBe(expectedStatus);
 				expect(response.body).toEqual(expectedResponse);
 			},
 		);
 	});
 
-	describe.skip("POST /deleteAdmin", () => {
-		let token: string;
+	describe.skip("POST /deleteTeacher", () => {
+		let token: string | undefined;
 
 		beforeEach(async () => {
-			token = await createAdminAndReturnToken();
+			token = await createTeacherAndReturnToken();
 		});
 
 		afterEach(async () => {
 			await userModel.deleteMany({});
-			await adminModel.deleteMany({});
-			jest.restoreAllMocks();
+			await teacherModel.deleteMany({});
 		});
 
 		const testCases = [
 			{
-				name: "Admin not found (Admin does not exist)",
+				name: "User not authenticated",
 				data: {},
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {
-					await adminModel.deleteMany({});
-					console.log(await adminModel.find({}));
+					await teacherModel.deleteMany({});
 				},
 			},
 			{
-				name: "Unsuccessful deletion (Admin exists but deletion fails)",
-				data: { decodedToken: { email: "test.t@vcet.edu.in" } },
-				expectedStatus: 401,
-				expectedResponse: { success: false },
-				setup: async () => {
-					// Mocking an unsuccessful deletion scenario
-					jest.spyOn(adminModel, "deleteOne").mockResolvedValueOnce({
-						deletedCount: 0,
-						acknowledged: false,
-					});
-				},
-			},
-			{
-				name: "Successful deletion",
+				name: "Successful teacher deletion",
 				data: {},
 				expectedStatus: 201,
 				expectedResponse: { success: true },
@@ -270,11 +282,12 @@ describe("Admin Controller", () => {
 				if (setup) await setup();
 
 				const response = await request
-					.post("/admin/deleteAdmin")
+					.post("/teacher/deleteTeacher")
 					.set("Authorization", `Bearer ${token}`)
 					.send(data);
 
 				delete response.body.message;
+
 				expect(response.status).toBe(expectedStatus);
 				expect(response.body).toEqual(expectedResponse);
 			},

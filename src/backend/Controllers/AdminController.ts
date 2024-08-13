@@ -9,6 +9,8 @@ import { adminModel } from "../Models/Admin";
 import { AccountType, AdminPosition, IAdmin } from "../Types/ModelTypes";
 import { runWithRetrySession } from "../Utils/util";
 
+// When changing from any accountType to admin all the previous data will be lost so be careful
+// Creates admin using user jwt token
 const createAdmin = async (req: Request, res: Response) => {
 	try {
 		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
@@ -104,6 +106,7 @@ const createAdmin = async (req: Request, res: Response) => {
 	}
 };
 
+// Gets the admin whose jwt token is given
 const getAdmin = async (req: Request, res: Response) => {
 	try {
 		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
@@ -150,7 +153,7 @@ const getAdmin = async (req: Request, res: Response) => {
 		console.log((e as Error).message);
 		const response: StandardResponse = {
 			message:
-				"There is some problem while creating the admin's account" +
+				"There is some problem while fetching the admin's account" +
 				(e as Error).message,
 			success: false,
 		};
@@ -160,6 +163,7 @@ const getAdmin = async (req: Request, res: Response) => {
 };
 
 // Cannot update email or password through this function
+// Updates the admin whose jwt token is given
 const updateAdmin = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -257,7 +261,7 @@ const updateAdmin = async (req: Request, res: Response) => {
 		console.log((e as Error).message);
 		const response: StandardResponse = {
 			message:
-				"There is some problem while creating the admin's account" +
+				"There is some problem while updating the admin's account" +
 				(e as Error).message,
 			success: false,
 		};
@@ -266,6 +270,7 @@ const updateAdmin = async (req: Request, res: Response) => {
 	}
 };
 
+// Deletes the admin whose jwt token is given
 const deleteAdmin = async (req: Request, res: Response) => {
 	try {
 		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
@@ -294,7 +299,7 @@ const deleteAdmin = async (req: Request, res: Response) => {
 
 		if (!isAdminDeleted.acknowledged) {
 			const response: StandardResponse = {
-				message: "Could not delete the user",
+				message: "Could not delete the admin",
 				success: false,
 			};
 
@@ -303,7 +308,7 @@ const deleteAdmin = async (req: Request, res: Response) => {
 
 		if (isAdminDeleted.deletedCount === 0) {
 			const response: StandardResponse = {
-				message: "Could not find the user to delete",
+				message: "Could not find the admin to delete",
 				success: false,
 			};
 
@@ -311,7 +316,7 @@ const deleteAdmin = async (req: Request, res: Response) => {
 		}
 
 		const response: StandardResponse = {
-			message: "User deleted successfully",
+			message: "Admin deleted successfully",
 			success: true,
 		};
 
@@ -320,7 +325,7 @@ const deleteAdmin = async (req: Request, res: Response) => {
 		console.log((e as Error).message);
 		const response: StandardResponse = {
 			message:
-				"There is some problem while creating the admin's account" +
+				"There is some problem while deleting the admin's account" +
 				(e as Error).message,
 			success: false,
 		};

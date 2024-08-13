@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import UserRouter from "./Routes/UserRouter";
 import AdminRouter from "./Routes/AdminRoutes";
+import TeacherRouter from "./Routes/TeacherRoutes";
 import { fileURLToPath } from "url";
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use("/", UserRouter);
 app.use("/admin", AdminRouter);
+app.use("/teacher", TeacherRouter);
 
 // Connects with db then express server
 async function connectToDbAndStartServer(

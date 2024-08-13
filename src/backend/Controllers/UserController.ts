@@ -20,7 +20,12 @@ const login = async (req: Request, res: Response) => {
 		}: { email: string | undefined; password: string | undefined } = req.body;
 
 		//If email and password exist
-		if (email && password) {
+		if (
+			email &&
+			password &&
+			typeof email === "string" &&
+			typeof password === "string"
+		) {
 			//Try to get the document from the database using email
 			let user: IUser | null = await userModel.findOne({ email: email });
 
@@ -52,7 +57,14 @@ const login = async (req: Request, res: Response) => {
 			}
 
 			//Create a jwt token
-			let token: string = jwt.sign({ email: email }, process.env.JWT_SECRET!);
+			let token: string = jwt.sign(
+				{
+					email: email,
+					position: [...user.position],
+					accountType: user.accType,
+				},
+				process.env.JWT_SECRET!,
+			);
 
 			//Send the message to the frontend that the user is now logged in
 			const response: TokenResponse = {
@@ -97,7 +109,12 @@ const signup = async (req: Request, res: Response) => {
 			password: string | undefined;
 		} = req.body;
 
-		if (email && password) {
+		if (
+			email &&
+			password &&
+			typeof email === "string" &&
+			typeof password === "string"
+		) {
 			//Validation for Email is in User model
 
 			//
