@@ -11,6 +11,7 @@ import {
   Settings,
 } from "lucide-react";
 import BottomBar from "./BottomBar";
+import { Outlet } from "react-router-dom";
 
 export default function AdminLayout() {
   const [globalOpen, setGlobalOpen] = useState(true);
@@ -34,12 +35,7 @@ export default function AdminLayout() {
         </Sidebar>
       </div>
       <div className={`mr-4 ${globalOpen ? "sm:ml-72" : "sm:ml-16"} `}>
-        <div className="h-screen border-2 border-black m-2 w-full flex justify-center items-center">
-          <p>Main Content</p>
-        </div>
-        <div className="h-screen border-2 border-black m-2 w-full flex justify-center items-center">
-          <p>Main Content</p>
-        </div>
+        <Outlet />
       </div>
       <BottomBar />
     </>

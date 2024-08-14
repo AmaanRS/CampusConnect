@@ -13,7 +13,8 @@ import StudentForm from "./Components/User Profile/StudentForm";
 import TeachingStaffForm from "./Components/User Profile/TeachingStaffForm";
 import NTeachingStaffForm from "./Components/User Profile/NTeachingStaffForm";
 import ProfileCompleted from "./Components/User Profile/ProfileCompleted";
-import Dashboard, { dashboardLoader } from "./Components/Dashboard/Dashboard";
+// import Dashboard, { dashboardLoader } from "./Components/Dashboard/Dashboard";
+
 import {
   AuthContext,
   AuthProvider,
@@ -23,6 +24,7 @@ import SearchProfile from "./Components/Dashboard/SearchProfile";
 import Home from "./Components/Dashboard/Home";
 import ProtectedRoutes from "./Components/Auth & Authorization/ProtectedRoutes";
 import AdminLayout from "./Pages/Admin/AdminLayout/AdminLayout";
+import Dashboard from "./Pages/Admin/Dashboard/Dashboard";
 
 function App() {
   const locomotiveScroll = new LocomotiveScroll();
@@ -89,6 +91,12 @@ function App() {
             {
               path: "admin",
               element: <AdminLayout />,
+              children: [
+                {
+                  path: "dashboard",
+                  element: <Dashboard />,
+                },
+              ],
             },
           ],
         },
