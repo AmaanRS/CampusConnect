@@ -21,6 +21,8 @@ import {
 import MainProfile from "./Components/Dashboard/MainProfile";
 import SearchProfile from "./Components/Dashboard/SearchProfile";
 import Home from "./Components/Dashboard/Home";
+import ProtectedRoutes from "./Components/Auth & Authorization/ProtectedRoutes";
+import AdminLayout from "./Pages/Admin/AdminLayout";
 
 function App() {
   const locomotiveScroll = new LocomotiveScroll();
@@ -81,15 +83,25 @@ function App() {
           element: <ErrorPage />,
         },
         {
-          path: "dashboard",
-          element: <Dashboard />,
-          loader: dashboardLoader,
+          path: "/u",
+          element: <ProtectedRoutes />,
           children: [
-            { path: "home", element: <Home /> },
-            { path: "userprof", element: <MainProfile /> },
-            { path: "searchprof", element: <SearchProfile /> },
+            {
+              path: "admin",
+              element: <AdminLayout />,
+            },
           ],
         },
+        // {
+        //   path: "dashboard",
+        //   element: <Dashboard />,
+        //   loader: dashboardLoader,
+        //   children: [
+        //     { path: "home", element: <Home /> },
+        //     { path: "userprof", element: <MainProfile /> },
+        //     { path: "searchprof", element: <SearchProfile /> },
+        //   ],
+        // },
       ],
     },
   ]);
