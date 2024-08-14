@@ -22,7 +22,7 @@ import MainProfile from "./Components/Dashboard/MainProfile";
 import SearchProfile from "./Components/Dashboard/SearchProfile";
 import Home from "./Components/Dashboard/Home";
 import ProtectedRoutes from "./Components/Auth & Authorization/ProtectedRoutes";
-import AdminLayout from "./Pages/Admin/AdminLayout";
+import AdminLayout from "./Pages/Admin/AdminLayout/AdminLayout";
 
 function App() {
   const locomotiveScroll = new LocomotiveScroll();
