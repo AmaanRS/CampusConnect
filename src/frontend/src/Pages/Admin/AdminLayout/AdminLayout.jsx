@@ -10,6 +10,7 @@ import {
   LifeBuoy,
   Settings,
 } from "lucide-react";
+import BottomBar from "./BottomBar";
 
 export default function AdminLayout() {
   const [globalOpen, setGlobalOpen] = useState(true);
@@ -32,7 +33,7 @@ export default function AdminLayout() {
           <SidebarItem icon={<LifeBuoy size={20} />} text="Help" />
         </Sidebar>
       </div>
-      <div className={` ${globalOpen ? "sm:ml-72" : "sm:ml-16"} `}>
+      <div className={`mr-4 ${globalOpen ? "sm:ml-72" : "sm:ml-16"} `}>
         <div className="h-screen border-2 border-black m-2 w-full flex justify-center items-center">
           <p>Main Content</p>
         </div>
@@ -40,6 +41,7 @@ export default function AdminLayout() {
           <p>Main Content</p>
         </div>
       </div>
+      <BottomBar />
     </>
   );
 }
