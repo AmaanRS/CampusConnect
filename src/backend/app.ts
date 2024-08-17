@@ -8,6 +8,7 @@ import AdminRouter from "./Routes/AdminRoutes";
 import TeacherRouter from "./Routes/TeacherRoutes";
 import StudentRouter from "./Routes/StudentRoutes";
 import { fileURLToPath } from "url";
+import { isAccountActive } from "./Middlewares/AccountStatus";
 
 dotenv.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(isAccountActive);
 
 app.use("/", UserRouter);
 app.use("/admin", AdminRouter);

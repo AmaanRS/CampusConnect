@@ -1,6 +1,6 @@
 // import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
-import { IEvent } from "./ModelTypes";
+import { AccountType, IEvent, UserPosition } from "./ModelTypes";
 
 export interface StandardResponse {
 	message: string;
@@ -30,16 +30,16 @@ export interface TokenResponse extends StandardResponse {
 	token: string;
 }
 
-export interface MiddlewareResponse extends StandardResponse {
-	decodedToken?: JwtPayload;
+export interface JwtDataResponse extends StandardResponse {
+	decodedToken: decodedTokenPayload;
 }
 
 export interface EventResponse extends StandardResponse {
 	events: IEvent[];
 }
 
-export type decodedTokenFromBody = {
+export interface decodedTokenPayload extends JwtPayload {
 	email: string;
-	position: string[];
-	accountType: string;
-};
+	position: UserPosition[];
+	accountType: AccountType;
+}

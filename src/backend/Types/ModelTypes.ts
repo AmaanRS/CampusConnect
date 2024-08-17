@@ -41,11 +41,21 @@ export enum NonTeachingStaffPosition {
 	NonTeachingStaff = "NON_TEACHING_STAFF",
 }
 
-type UserPosition =
+export type UserPosition =
 	| TeacherPosition
 	| StudentPosition
 	| AdminPosition
 	| NonTeachingStaffPosition;
+
+// Mapping between AccountType and UserPosition
+type PositionMap = {
+	[AccountType.Student]: StudentPosition[];
+	[AccountType.Teacher]: TeacherPosition[];
+	[AccountType.Admin]: AdminPosition[];
+	[AccountType.NonTeachingStaff]: NonTeachingStaffPosition[];
+};
+
+export type PositionByAccountType<T extends AccountType> = PositionMap[T];
 
 export interface IUser {
 	email: string;
@@ -54,6 +64,7 @@ export interface IUser {
 	accType: AccountType;
 	position: UserPosition[];
 	isProfileComplete: boolean;
+	isAccountActive: boolean;
 }
 
 export interface IUserDocument extends IUser, Document {}
@@ -66,9 +77,11 @@ export interface IStudent {
 	studentId: number;
 	accType: AccountType;
 	position: StudentPosition[];
-	isInChargeOfCommittees?: ICommittee[];
-	isMemberOfCommittees?: ICommittee[];
+	// Use nanoid here to store the data
+	isInChargeOfCommittees?: ICommittee[] | undefined;
+	isMemberOfCommittees?: ICommittee[] | undefined;
 	isProfileComplete: boolean;
+	isAccountActive: boolean;
 }
 
 export interface IStudentDocument extends IStudent, Document {}
@@ -79,9 +92,11 @@ export interface ITeacher {
 	department: Department;
 	accType: AccountType;
 	position: TeacherPosition[];
-	isInChargeOfCommittees?: ICommittee[];
-	isInTeamOfCommittees?: ICommittee[];
+	// Use nanoid here to store the data
+	isInChargeOfCommittees?: ICommittee[] | undefined;
+	isInTeamOfCommittees?: ICommittee[] | undefined;
 	isProfileComplete: boolean;
+	isAccountActive: boolean;
 }
 
 export interface ITeacherDocument extends ITeacher, Document {}
@@ -92,6 +107,7 @@ export interface IAdmin {
 	accType: AccountType;
 	position: AdminPosition[];
 	isProfileComplete: boolean;
+	isAccountActive: boolean;
 }
 
 export interface IAdminDocument extends IAdmin, Document {}
@@ -103,19 +119,43 @@ export interface INonTeachingStaff {
 	accType: AccountType;
 	position: NonTeachingStaffPosition[];
 	isProfileComplete: boolean;
+	isAccountActive: boolean;
 }
 
 export interface INonTeachingStaffDocument extends INonTeachingStaff, Document {}
 
-export interface ICommittee extends Document {
-	name: string;
-	head: Types.ObjectId;
-	viceHead: Types.ObjectId;
-	teacherIncharge: Types.ObjectId;
-	description: string;
-	members: Types.ObjectId[];
-	events?: Types.ObjectId[];
+export interface IUniqueIdDocument extends Document {
+	uniqueIds: string[];
 }
+
+export interface ICommittee {
+	committeeId: String;
+	name: string;
+	description: string;
+	studentIncharge: Types.ObjectId;
+	facultyIncharge: Types.ObjectId;
+	facultyTeam?: Types.ObjectId[] | undefined;
+	members?: Types.ObjectId[] | undefined;
+	events?: Types.ObjectId[] | undefined;
+	isAccountActive: boolean;
+	committeeOfDepartment: Department[];
+}
+
+//
+// I don't know why i did'nt use this
+//
+// export interface ICommittee {
+// 	name: string;
+// 	description: string;
+// 	studentIncharge: IUser;
+// 	facultyIncharge: ITeacher;
+// 	facultyTeam?: ITeacher[];
+// 	members?: IUser[];
+// 	events?: IEvent[];
+// 	isAccountActive: boolean;
+// }"
+
+export interface ICommitteeDocument extends ICommittee, Document {}
 
 export interface IEvent extends Document {
 	name: string;

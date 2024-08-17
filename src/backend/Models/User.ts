@@ -44,6 +44,10 @@ const userSchema = new Schema<IUserDocument>(
 			default: false,
 			type: Boolean,
 		},
+		isAccountActive: {
+			default: true,
+			type: Boolean,
+		},
 	},
 	{
 		timestamps: true,

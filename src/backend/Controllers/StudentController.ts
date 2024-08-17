@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Department, IStudent, Year } from "../Types/ModelTypes";
 import {
 	DataResponse,
-	decodedTokenFromBody,
+	decodedTokenPayload,
 	StandardResponse,
 } from "../Types/GeneralTypes";
 import { runWithRetrySession } from "../Utils/util";
@@ -16,7 +16,7 @@ const createStudent = async (req: Request, res: Response) => {
 			department,
 			year,
 		}: {
-			decodedToken: decodedTokenFromBody;
+			decodedToken: decodedTokenPayload;
 			department: Department;
 			year: Year;
 		} = req.body;
@@ -65,7 +65,11 @@ const createStudent = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			const { _id: userId, ...user } = userFromDb;
+			// const { _id: userId, ...user } = userFromDb;
+
+			// Passing old objectId ensures that objectid remains same
+			const userId = userFromDb._id;
+			const { ...user } = userFromDb;
 
 			const changedUser = await userModel.updateOne(
 				{ _id: userId },
@@ -128,7 +132,7 @@ const createStudent = async (req: Request, res: Response) => {
 
 const getStudent = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
+		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
 
 		if (!decodedToken) {
 			const response: StandardResponse = {
@@ -189,7 +193,7 @@ const updateStudent = async (req: Request, res: Response) => {
 			department,
 			year,
 		}: {
-			decodedToken: decodedTokenFromBody;
+			decodedToken: decodedTokenPayload;
 			department: Department;
 			year: Year;
 		} = req.body;
@@ -224,7 +228,7 @@ const updateStudent = async (req: Request, res: Response) => {
 		const result = await runWithRetrySession(async (session) => {
 			//Get the student from db
 			const oldStudent = await studentModel
-				.findOne({ email }, { __v: 0, _id: 0 })
+				.findOne({ email }, { __v: 0 })
 				.session(session)
 				.lean();
 
@@ -297,7 +301,7 @@ const updateStudent = async (req: Request, res: Response) => {
 
 const deleteStudent = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
+		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
 
 		if (!decodedToken) {
 			const response: StandardResponse = {

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import {
 	DataResponse,
-	decodedTokenFromBody,
+	decodedTokenPayload,
 	StandardResponse,
 } from "../Types/GeneralTypes";
 import { onlyHodEmailRegex, onlyTeacherEmailRegex } from "../Utils/regexUtils";
@@ -13,7 +13,7 @@ import { Department, ITeacher } from "../Types/ModelTypes";
 // Creates teacher using user jwt token
 const createTeacher = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
+		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
 
 		let department: Department | undefined = req.body.department;
 
@@ -75,7 +75,11 @@ const createTeacher = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			const { _id: userId, ...user } = userFromDb;
+			// const { _id: userId, ...user } = userFromDb;
+
+			// Passing old objectId ensures that objectid remains same
+			const userId = userFromDb._id;
+			const { ...user } = userFromDb;
 
 			const changedUser = await userModel.updateOne(
 				{ _id: userId },
@@ -141,7 +145,7 @@ const createTeacher = async (req: Request, res: Response) => {
 // Gets the teacher whose jwt token is given
 const getTeacher = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
+		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
 
 		if (!decodedToken) {
 			const response: StandardResponse = {
@@ -208,7 +212,7 @@ const updateTeacher = async (req: Request, res: Response) => {
 			decodedToken,
 			department,
 		}: {
-			decodedToken: decodedTokenFromBody;
+			decodedToken: decodedTokenPayload;
 			department: Department;
 		} = req.body;
 
@@ -241,7 +245,7 @@ const updateTeacher = async (req: Request, res: Response) => {
 		const result = await runWithRetrySession(async (session) => {
 			//Get the teacher from db
 			const oldTeacher = await teacherModel
-				.findOne({ email }, { __v: 0, _id: 0 })
+				.findOne({ email }, { __v: 0 })
 				.session(session)
 				.lean();
 
@@ -309,7 +313,7 @@ const updateTeacher = async (req: Request, res: Response) => {
 // Deletes the teacher whose jwt token is given
 const deleteTeacher = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
+		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
 
 		if (!decodedToken) {
 			const response: StandardResponse = {

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import {
 	DataResponse,
-	decodedTokenFromBody,
+	decodedTokenPayload,
 	StandardResponse,
 	TokenResponse,
 } from "../Types/GeneralTypes";
@@ -200,7 +200,7 @@ const signup = async (req: Request, res: Response) => {
 const profileStatus = async (req: Request, res: Response) => {
 	try {
 		//This check is necessary because if their is some other middleware interfering with the req and token does'nt get here
-		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
+		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
 
 		if (!decodedToken) {
 			const response: StandardResponse = {

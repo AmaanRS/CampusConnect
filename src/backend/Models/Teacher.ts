@@ -58,6 +58,10 @@ const teacherSchema = new Schema<ITeacherDocument>(
 			default: false,
 			type: Boolean,
 		},
+		isAccountActive: {
+			default: true,
+			type: Boolean,
+		},
 	},
 	{
 		timestamps: true,

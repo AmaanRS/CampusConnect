@@ -1,6 +1,6 @@
 // import jwt, { JwtPayload } from "jsonwebtoken";
 // import { NextFunction, Request, Response } from "express";
-// import { MiddlewareResponse, StandardResponse } from "../BackendTypes";
+// import { JwtDataResponse, StandardResponse } from "../BackendTypes";
 
 // // Define the cookieChecker function
 // export const cookieCheckerFunction = (req: Request, res: Response) => {
@@ -25,7 +25,7 @@
 // 		) as JwtPayload;
 
 // 		// Return a response indicating user is authenticated along with decoded token
-// 		const response: MiddlewareResponse = {
+// 		const response: JwtDataResponse = {
 // 			message: "The user is authenticated",
 // 			success: true,
 // 			decodedToken: decodedToken.email,
@@ -66,7 +66,7 @@
 // 		) as JwtPayload;
 
 // 		// Return a response indicating user is authenticated along with decoded token
-// 		const response: MiddlewareResponse = {
+// 		const response: JwtDataResponse = {
 // 			message: "The user is authenticated",
 // 			success: true,
 // 			decodedToken: decodedToken.email,
@@ -84,13 +84,16 @@
 // };
 
 //Chatgpt version
-
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
-import { MiddlewareResponse, StandardResponse } from "../Types/GeneralTypes";
+import {
+	decodedTokenPayload,
+	JwtDataResponse,
+	StandardResponse,
+} from "../Types/GeneralTypes";
 
 // Utility function to verify token
-const verifyToken = (req: Request): MiddlewareResponse => {
+const verifyToken = (req: Request): JwtDataResponse | StandardResponse => {
 	const token = req.headers.authorization?.split("Bearer ")[1];
 
 	if (!token) {
@@ -101,7 +104,7 @@ const verifyToken = (req: Request): MiddlewareResponse => {
 		const decodedToken = jwt.verify(
 			token,
 			process.env.JWT_SECRET!,
-		) as JwtPayload;
+		) as decodedTokenPayload;
 
 		return {
 			success: true,
@@ -114,25 +117,31 @@ const verifyToken = (req: Request): MiddlewareResponse => {
 };
 
 // Define the cookieChecker function
-export const cookieCheckerFunction = (req: Request, res: Response) => {
-	const { success, message, decodedToken } = verifyToken(req);
+export const cookieCheckerFunction = (
+	req: Request,
+): JwtDataResponse | StandardResponse => {
+	const tokenResponse = verifyToken(req);
 
-	if (success) {
-		const response: MiddlewareResponse = {
-			message,
-			success,
-			decodedToken: decodedToken!.email,
-		};
+	const { success, message } = tokenResponse;
 
-		return res.json(response);
-	} else {
+	if (!success || !("decodedToken" in tokenResponse)) {
 		const response: StandardResponse = {
 			message,
 			success,
 		};
 
-		return res.json(response);
+		return response;
 	}
+
+	const { decodedToken } = tokenResponse as JwtDataResponse;
+
+	const response: JwtDataResponse = {
+		message,
+		success,
+		decodedToken: decodedToken,
+	};
+
+	return response;
 };
 
 //Write tests for middlewares//
@@ -143,18 +152,27 @@ export const cookieCheckerMiddleware = (
 	res: Response,
 	next: NextFunction,
 ) => {
-	const { success, message, decodedToken } = verifyToken(req);
+	const tokenResponse = verifyToken(req);
 
-	if (success) {
-		// Even though if decodedToken with email is sent in the request it will get overrided, but i am keeping this here for extra safety
-		if (req.body.decodedToken) {
-			delete req.body.decodedToken;
-		}
+	const { success, message } = tokenResponse;
 
-		(req as any).body.decodedToken = decodedToken;
+	if (!success) {
+		const response: StandardResponse = {
+			message,
+			success,
+		};
 
-		return next();
-	} else {
-		return res.status(401).json({ message, success });
+		return res.status(401).json(response);
 	}
+
+	const { decodedToken } = tokenResponse as JwtDataResponse;
+
+	// Even though if decodedToken with email is sent in the request it will get overrided, but i am keeping this here for extra safety
+	if (req.body.decodedToken) {
+		delete req.body.decodedToken;
+	}
+
+	(req as any).body.decodedToken = decodedToken;
+
+	return next();
 };

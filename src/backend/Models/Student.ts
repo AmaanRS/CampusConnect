@@ -75,6 +75,10 @@ const studentSchema = new Schema<IStudentDocument>(
 			default: false,
 			type: Boolean,
 		},
+		isAccountActive: {
+			default: true,
+			type: Boolean,
+		},
 	},
 	{
 		timestamps: true,
@@ -219,6 +223,7 @@ studentSchema.pre("validate", async function (next) {
 		this.isInChargeOfCommittees = this.isInChargeOfCommittees
 			? [...new Set(this.isInChargeOfCommittees)]
 			: undefined;
+
 		this.isMemberOfCommittees = this.isMemberOfCommittees
 			? [...new Set(this.isMemberOfCommittees)]
 			: undefined;
