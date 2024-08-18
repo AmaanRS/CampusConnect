@@ -5,6 +5,9 @@ import { userModel } from "../../Models/User";
 import { adminModel } from "../../Models/Admin";
 import { runTestServer, stopTestServer } from "../../Utils/util";
 import { AdminPosition } from "../../Types/ModelTypes";
+// import { studentModel } from "../../Models/Student";
+// import { teacherModel } from "../../Models/Teacher";
+// import { nonTeachingStaffModel } from "../../Models/NonTeachingStaff";
 
 const createAdminAndReturnToken = async () => {
 	const email = "test.t@vcet.edu.in";
@@ -273,6 +276,127 @@ describe("Admin Controller", () => {
 					.post("/admin/deleteAdmin")
 					.set("Authorization", `Bearer ${token}`)
 					.send(data);
+
+				delete response.body.message;
+				expect(response.status).toBe(expectedStatus);
+				expect(response.body).toEqual(expectedResponse);
+			},
+		);
+	});
+
+	describe.skip("POST /deleteUserByEmail", () => {
+		let token: string | undefined;
+		let adminEmail: string = "admin.qtt@vcet.edu.in";
+		let adminPassword: string = "Aa@123456";
+		let userEmail: string = "a.b@vcet.edu.in";
+		let userPassword: string = "Ab@123456";
+
+		beforeAll(async () => {
+			await request
+				.post("/signup")
+				.send({ email: adminEmail, password: adminPassword });
+
+			const response = await request.post("/login").send({
+				email: adminEmail,
+				password: adminPassword,
+			});
+
+			token = response.body.token;
+
+			await request
+				.post("/admin/createAdmin")
+				.set("Authorization", `Bearer ${token}`)
+				.send();
+
+			const res = await request.post("/login").send({
+				email: adminEmail,
+				password: adminPassword,
+			});
+
+			token = res.body.token;
+		});
+
+		const testCases = [
+			{
+				name: "User email not given",
+				data: {
+					userEmail: undefined,
+					toggle: undefined,
+				},
+				expectedStatus: 401,
+				expectedResponse: { success: false },
+			},
+			{
+				name: "Toggle not given",
+				data: {
+					userEmail: userEmail,
+					toggle: undefined,
+				},
+				expectedStatus: 401,
+				expectedResponse: { success: false },
+			},
+			{
+				name: "Invalid user email",
+				data: {
+					userEmail: "invalid-email",
+					toggle: true,
+				},
+				expectedStatus: 401,
+				expectedResponse: { success: false },
+			},
+			{
+				name: "Successful activation of user account",
+				data: {
+					userEmail: userEmail,
+					toggle: true,
+				},
+				expectedStatus: 201,
+				expectedResponse: { success: true },
+				setup: async () => {
+					await request.post("/signup").send({
+						email: userEmail,
+						password: userPassword,
+					});
+				},
+			},
+			{
+				name: "Successful deactivation of user account",
+				data: {
+					userEmail: userEmail,
+					toggle: false,
+				},
+				expectedStatus: 201,
+				expectedResponse: { success: true },
+				setup: async () => {
+					await request.post("/signup").send({
+						email: userEmail,
+						password: userPassword,
+					});
+				},
+			},
+			{
+				name: "User not found",
+				data: {
+					userEmail: "a.bc@vcet.edu.in",
+					toggle: true,
+				},
+				expectedStatus: 401,
+				expectedResponse: { success: false },
+			},
+		];
+
+		it.each(testCases)(
+			"$name",
+			//@ts-ignore
+			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+				if (setup) await setup();
+
+				const response = await request
+					.post("/admin/deleteUserByEmail")
+					.set("Authorization", `Bearer ${token}`)
+					.send(data);
+
+				console.log(response.body.message);
 
 				delete response.body.message;
 				expect(response.status).toBe(expectedStatus);

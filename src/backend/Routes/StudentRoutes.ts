@@ -1,6 +1,17 @@
 import express from "express";
-export const Router = express.Router();
+const Router = express.Router();
+import { cookieCheckerMiddleware } from "../Middlewares/CookieChecker";
+
 import {
-	cookieCheckerMiddleware,
-} from "../Middlewares/CookieChecker";
-// Router.route("/signup").post(signup);
+	createStudent,
+	getStudent,
+	updateStudent,
+	deleteStudent,
+} from "../Controllers/StudentController";
+
+Router.route("/createStudent").post(cookieCheckerMiddleware, createStudent);
+Router.route("/getStudent").post(cookieCheckerMiddleware, getStudent);
+Router.route("/updateStudent").post(cookieCheckerMiddleware, updateStudent);
+Router.route("/deleteStudent").post(cookieCheckerMiddleware, deleteStudent);
+
+export default Router;

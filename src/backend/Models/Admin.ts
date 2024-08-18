@@ -36,6 +36,10 @@ const adminSchema = new Schema<IAdminDocument>(
 			default: false,
 			type: Boolean,
 		},
+		isAccountActive: {
+			default: true,
+			type: Boolean,
+		},
 	},
 	{
 		timestamps: true,
@@ -62,6 +66,7 @@ adminSchema.pre("validate", async function (next) {
 
 		this.position = [AdminPosition.Admin];
 
+		// this.position = this.position ? [...new Set(this.position)] : undefined;
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];
 

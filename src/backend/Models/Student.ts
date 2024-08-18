@@ -7,7 +7,6 @@ import {
 	StudentPosition,
 	IStudent,
 } from "../Types/ModelTypes";
-import { userModel } from "./User";
 import { studentEmailRegex } from "../Utils/regexUtils";
 import { validateAndHash } from "../Utils/passwordUtils";
 
@@ -74,6 +73,10 @@ const studentSchema = new Schema<IStudentDocument>(
 		],
 		isProfileComplete: {
 			default: false,
+			type: Boolean,
+		},
+		isAccountActive: {
+			default: true,
 			type: Boolean,
 		},
 	},
@@ -203,12 +206,24 @@ studentSchema.pre("validate", async function (next) {
 
 		this.accType = AccountType.Student;
 
+		// Get the studentId from email
+		const stuId = Number(this.email.split("@")[0].split(".")[1]);
+
+		if (!Number.isInteger(stuId)) {
+			throw new MongooseError(
+				"Send the correct email id cannot recognize the student id",
+			);
+		}
+
+		this.studentId = stuId;
+
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];
 
 		this.isInChargeOfCommittees = this.isInChargeOfCommittees
 			? [...new Set(this.isInChargeOfCommittees)]
 			: undefined;
+
 		this.isMemberOfCommittees = this.isMemberOfCommittees
 			? [...new Set(this.isMemberOfCommittees)]
 			: undefined;
@@ -221,22 +236,6 @@ studentSchema.pre("validate", async function (next) {
 
 studentSchema.pre("save", async function (next) {
 	try {
-		const user = await userModel.findOne({ email: this.email });
-
-		if (!user) {
-			throw new MongooseError("Send the correct email id");
-		}
-
-		const stuId = Number(user.email.split("@")[0].split(".")[1]);
-
-		if (!Number.isInteger(stuId)) {
-			throw new MongooseError(
-				"Send the correct email id cannot recognize the student id",
-			);
-		}
-
-		this.studentId = stuId;
-
 		// If all fields are given except the optional fields then set isProfileComplete to true
 		if (
 			this.email &&

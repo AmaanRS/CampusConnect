@@ -77,7 +77,7 @@ describe("User model", () => {
 	// 			length: { min: 2, max: 3 },
 	// 			casing: "upper",
 	// 		}),
-	// 		//String not uppercase case
+	// 		//string not uppercase case
 	// 		faker.string.alpha({
 	// 			length: 1,
 	// 			casing: "lower",
