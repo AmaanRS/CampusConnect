@@ -46,17 +46,17 @@ export const AuthProvider = ({ children }) => {
 
   // Getting the profile status of the user
 
-  async function getProfileStatus() {
-    const res = await axiosInstance.post("/getUserProfileStatus");
-    console.log(res);
-    let accountType = res.data.data.accType;
-    console.log(accType);
-    setAccType(accountType);
-  }
+  // async function getProfileStatus() {
+  //   const res = await axiosInstance.post("/getUserProfileStatus");
+  //   console.log(res);
+  //   let accountType = res.data.data.accType;
+  //   console.log(accType);
+  //   setAccType(accountType);
+  // }
 
-  useEffect(() => {
-    getProfileStatus();
-  });
+  // useEffect(() => {
+  //   getProfileStatus();
+  // });
 
   return (
     <AuthContext.Provider
