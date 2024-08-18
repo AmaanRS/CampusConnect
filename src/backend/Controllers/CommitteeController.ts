@@ -135,7 +135,7 @@ const getCommittee = async (req: Request, res: Response) => {
 			committeeId,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
-			committeeId: String | undefined;
+			committeeId: string | undefined;
 		} = req.body;
 
 		if (!decodedToken) {
@@ -208,7 +208,7 @@ const updateCommittee = async (req: Request, res: Response) => {
 			studentIncharge: studentInchargeEmail,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
-			committeeId: String | undefined;
+			committeeId: string | undefined;
 			description: string | undefined;
 			studentIncharge: string | undefined;
 		} = req.body;
@@ -362,7 +362,7 @@ const deleteCommittee = async (req: Request, res: Response) => {
 			committeeId,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
-			committeeId: String | undefined;
+			committeeId: string | undefined;
 		} = req.body;
 
 		if (!decodedToken) {

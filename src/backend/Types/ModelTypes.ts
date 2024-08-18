@@ -77,7 +77,7 @@ export interface IStudent {
 	studentId: number;
 	accType: AccountType;
 	position: StudentPosition[];
-	// Use nanoid here to store the data
+	// Use nanoid here to store the data ie committeeId
 	isInChargeOfCommittees?: ICommittee[] | undefined;
 	isMemberOfCommittees?: ICommittee[] | undefined;
 	isProfileComplete: boolean;
@@ -92,7 +92,7 @@ export interface ITeacher {
 	department: Department;
 	accType: AccountType;
 	position: TeacherPosition[];
-	// Use nanoid here to store the data
+	// Use nanoid here to store the data ie committeeId
 	isInChargeOfCommittees?: ICommittee[] | undefined;
 	isInTeamOfCommittees?: ICommittee[] | undefined;
 	isProfileComplete: boolean;
@@ -129,13 +129,14 @@ export interface IUniqueIdDocument extends Document {
 }
 
 export interface ICommittee {
-	committeeId: String;
+	committeeId: string;
 	name: string;
 	description: string;
 	studentIncharge: Types.ObjectId;
 	facultyIncharge: Types.ObjectId;
 	facultyTeam?: Types.ObjectId[] | undefined;
 	members?: Types.ObjectId[] | undefined;
+	// Use nanoid here ie eventId
 	events?: Types.ObjectId[] | undefined;
 	isAccountActive: boolean;
 	committeeOfDepartment: Department[];
@@ -157,12 +158,17 @@ export interface ICommittee {
 
 export interface ICommitteeDocument extends ICommittee, Document {}
 
-export interface IEvent extends Document {
+export interface IEvent {
+	eventId: string;
 	name: string;
 	description: string;
-	hostingCommittees: Types.ObjectId[];
+	// Use nanoId here ie committeeId
+	hostingCommittees: Types.ObjectId[] | undefined;
 	startDate: Date;
 	endDate: Date;
 	startTime: Date;
 	endTime: Date;
+	venue: string;
 }
+
+export interface IEventDocument extends IEvent, Document {}

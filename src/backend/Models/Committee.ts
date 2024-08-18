@@ -97,7 +97,7 @@ committeeSchema.pre("validate", async function (next) {
 			while (true) {
 				const uniqueId = await generateUniqueId();
 				if (uniqueId.success && "data" in uniqueId) {
-					this.committeeId = (uniqueId as DataResponse).data as String;
+					this.committeeId = (uniqueId as DataResponse).data as string;
 					break;
 				}
 			}

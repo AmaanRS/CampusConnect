@@ -16,14 +16,14 @@ export interface StandardResponse {
 // export interface UpdateRequest extends Request {
 // 	body: {
 // 		decodedToken: {
-// 			email: String;
+// 			email: string;
 // 		};
 // 		data: IUserWithoutPassword;
 // 	};
 // }
 
 export interface DataResponse extends StandardResponse {
-	data: Object | String;
+	data: Object | string;
 }
 
 export interface TokenResponse extends StandardResponse {
