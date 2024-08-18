@@ -9,9 +9,6 @@ import Signup, { SignupLoader } from "./Components/Auth & Authorization/Signup";
 import Layout from "./Components/Landing Page/Layout";
 import ErrorPage from "./utils/Alerts & animations/ErrorPage";
 import UserProfile from "./Components/User Profile/UserProfile";
-import StudentForm from "./Components/User Profile/StudentForm";
-import TeachingStaffForm from "./Components/User Profile/TeachingStaffForm";
-import NTeachingStaffForm from "./Components/User Profile/NTeachingStaffForm";
 import ProfileCompleted from "./Components/User Profile/ProfileCompleted";
 // import Dashboard, { dashboardLoader } from "./Components/Dashboard/Dashboard";
 
@@ -61,29 +58,17 @@ function App() {
         {
           path: "userprofile",
           element: <UserProfile />,
-          children: [
-            {
-              path: "sform",
-              element: <StudentForm />,
-            },
-            {
-              path: "tform",
-              element: <TeachingStaffForm />,
-            },
-            {
-              path: "ntform",
-              element: <NTeachingStaffForm />,
-            },
-            {
-              path: "profilecompleted",
-              element: <ProfileCompleted />,
-            },
-          ],
+          // children: [
+          //   {
+          //     path: "completed",
+          //     element: <ProfileCompleted />,
+          //   },
+          // ],
         },
-        {
-          path: "error",
-          element: <ErrorPage />,
-        },
+        // {
+        //   path: "completed",
+        //   element: <ProfileCompleted />,
+        // },
         {
           path: "/u",
           element: <ProtectedRoutes />,

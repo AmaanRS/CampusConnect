@@ -9,23 +9,33 @@ const schema = yup.object({});
 
 const StudentForm = () => {
   const navigate = useNavigate();
+  const { user, setUser, profCompleted, setProfCompleted } =
+    useContext(AuthContext);
   const { handleSubmit, register, formState } = useForm({
     // resolver: yupResolver(schema),
   });
 
   const formSubmit = (data) => {
-    console.log(data);
-    navigate("/userprofile/profilecompleted");
-    const userData = {
-      email: data.email,
-      department: data.department,
-      position: data.position,
-    };
-    setUser(userData);
+    try {
+      console.log(data);
+      // navigate("/completed");
+      setProfCompleted(true);
+      const userData = {
+        email: data.email,
+        department: data.department,
+        position: data.position,
+      };
+      setUser(userData);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setTimeout(() => {
+        setProfCompleted(false);
+      }, 3000);
+    }
   };
-  const { user, setUser } = useContext(AuthContext);
   return (
-    <div className="mt-14 flex flex-col items-center justify-center w-full h-full overflow-y-hidden sm:overflow-y-auto">
+    <div className="flex flex-col items-center justify-center w-full h-full overflow-y-hidden sm:overflow-y-auto">
       <form
         className="p-5 flex flex-col justify-center w-full max-w-lg"
         onSubmit={handleSubmit(formSubmit)}
@@ -85,13 +95,14 @@ const StudentForm = () => {
           {...register("position")}
           id="position"
           className="xl:text-xl text-blue-dark custom-select border border-blue-dark rounded-md mt-1 block w-full pl-3 pr-10 py-1 md:py-3 text-base"
+          value={user?.email.includes("hod") ? "HOD" : ""}
         >
-          <option value="PROFESSOR" className="p-3">
-            PROFESSOR
+          <option value="TEACHER" className="p-3">
+            TEACHER
           </option>
-          <option value="ASSISTANT_PROFESSOR" className="p-3">
+          {/* <option value="ASSISTANT_PROFESSOR" className="p-3">
             ASSISTANT_PROFESSOR
-          </option>
+          </option> */}
           <option value="HOD" className="p-3">
             HOD
           </option>
@@ -99,7 +110,7 @@ const StudentForm = () => {
 
         <div className="btn flex gap-4 items-center justify-center mt-12">
           <NavLink
-            to="/userprofile"
+            to="/"
             className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
             lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
           >

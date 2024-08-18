@@ -92,12 +92,14 @@ function Login() {
       } else {
         errorMsg = error.message || errorMsg;
       }
-      setErrorMessage(errorMsg);
-      console.log(setErrorMessage);
-      console.log(errorMessage);
+      // setErrorMessage(errorMsg);
+      // console.log(setErrorMessage);
+      // console.log(errorMessage);
       console.log(errorMsg);
+      setIsAlertOpen(true);
+      setAlertMessage(errorMsg);
 
-      setIsError(true);
+      // setIsError(true);
       // navigate("/error");
     } finally {
       setIsLoading(false);

@@ -17,3 +17,27 @@
 .custom-select::-ms-expand {
   display: none;
 }
+
+.bg-custom {
+  background: hsla(217, 92%, 80%, 1);
+
+  background: linear-gradient(
+    45deg,
+    rgba(157, 193, 251, 0.2) 38%,
+    rgba(112, 147, 245, 0.5) 78%
+  );
+
+  background: -moz-linear-gradient(
+    45deg,
+    rgb(157, 193, 251) 38%,
+    rgb(112, 147, 245) 78%
+  );
+
+  background: -webkit-linear-gradient(
+    45deg,
+    hsla(217, 92%, 80%, 0.6) 38%,
+    hsla(224, 87%, 70%, 0.7) 78%
+  );
+
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#9EC2FB", endColorstr="#7194F5", GradientType=1 );
+}
