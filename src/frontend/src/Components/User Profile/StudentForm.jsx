@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Auth & Authorization/AuthContext";
+import axiosInstance from "../Axios/AxiosInstance";
+import ProfileCompleted from "./ProfileCompleted";
 
 const schema = yup.object({
   year: yup
@@ -23,14 +25,33 @@ const schema = yup.object({
 
 const StudentForm = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, profCompleted, setProfCompleted, decodedToken } =
+    useContext(AuthContext);
+
   const { handleSubmit, register, formState } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const formSubmit = (data) => {
+  const formSubmit = async (data) => {
+    try {
+      const res = await axiosInstance.post("/getUserProfileStatus", {
+        decodedToken: decodedToken,
+        email: data.email,
+      });
+      console.log(res);
+      setProfCompleted(true);
+
+      // let position = res.data.data.position.toString().toUpperCase();
+      // console.log(position);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setTimeout(() => {
+        setProfCompleted(false);
+      }, 3000);
+    }
     console.log(data);
-    navigate("/userprofile/profilecompleted");
+    // navigate("/completed");
     const userData = {
       email: data.email,
       year: data.year,
@@ -40,8 +61,12 @@ const StudentForm = () => {
     setUser(userData);
   };
 
+  // const email = user?.email;
+  // const studentIdNumber = email.match(/\d+/)[0];
+  // console.log(studentIdNumber); // Output: 212124102
+
   return (
-    <div className="mt-14 flex flex-col items-center justify-center w-full h-full overflow-y-hidden">
+    <div className="flex flex-col items-center justify-center w-full h-full overflow-y-hidden">
       <form
         className="p-5 flex flex-col justify-center w-full max-w-lg"
         onSubmit={handleSubmit(formSubmit)}
@@ -118,6 +143,7 @@ const StudentForm = () => {
           type="number"
           name="studentid"
           id="studentid"
+          // value={""}
           className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light focus:border-red-600"
           placeholder="Enter Student ID"
           {...register("studentid")}
@@ -128,7 +154,7 @@ const StudentForm = () => {
 
         <div className="btn flex gap-4 items-center justify-center mt-12">
           <NavLink
-            to="/userprofile"
+            to="/"
             className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
             lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
           >

@@ -7,8 +7,4 @@ import Modal from "react-modal";
 // Set the app element for accessibility
 Modal.setAppElement("#root"); // Assuming your root element has an id of 'root'
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);

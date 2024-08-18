@@ -9,18 +9,12 @@ import Signup, { SignupLoader } from "./Components/Auth & Authorization/Signup";
 import Layout from "./Components/Landing Page/Layout";
 import ErrorPage from "./utils/Alerts & animations/ErrorPage";
 import UserProfile from "./Components/User Profile/UserProfile";
-import StudentForm from "./Components/User Profile/StudentForm";
-import TeachingStaffForm from "./Components/User Profile/TeachingStaffForm";
-import NTeachingStaffForm from "./Components/User Profile/NTeachingStaffForm";
 import ProfileCompleted from "./Components/User Profile/ProfileCompleted";
 import Dashboard, { dashboardLoader } from "./Components/Dashboard/Dashboard";
 import {
   AuthContext,
   AuthProvider,
 } from "./Components/Auth & Authorization/AuthContext";
-import MainProfile from "./Components/Dashboard/MainProfile";
-import SearchProfile from "./Components/Dashboard/SearchProfile";
-import Home from "./Components/Dashboard/Home";
 
 function App() {
   const locomotiveScroll = new LocomotiveScroll();
@@ -57,38 +51,21 @@ function App() {
         {
           path: "userprofile",
           element: <UserProfile />,
-          children: [
-            {
-              path: "sform",
-              element: <StudentForm />,
-            },
-            {
-              path: "tform",
-              element: <TeachingStaffForm />,
-            },
-            {
-              path: "ntform",
-              element: <NTeachingStaffForm />,
-            },
-            {
-              path: "profilecompleted",
-              element: <ProfileCompleted />,
-            },
-          ],
+          // children: [
+          //   {
+          //     path: "completed",
+          //     element: <ProfileCompleted />,
+          //   },
+          // ],
         },
-        {
-          path: "error",
-          element: <ErrorPage />,
-        },
+        // {
+        //   path: "completed",
+        //   element: <ProfileCompleted />,
+        // },
         {
           path: "dashboard",
           element: <Dashboard />,
           loader: dashboardLoader,
-          children: [
-            // { path: "home", element: <Home /> },
-            { path: "userprof", element: <MainProfile /> },
-            { path: "searchprof", element: <SearchProfile /> },
-          ],
         },
       ],
     },

@@ -18,16 +18,19 @@ app.use("/", Router);
 async function startServer(
 	MONGO_URI: string,
 	PORT: string,
-	REPL_SET: string,
+	// REPL_SET: string,
 ): Promise<void> {
 	try {
 		await mongoose
-			.connect(MONGO_URI, {
-				replicaSet: REPL_SET,
-				retryWrites: true,
-				readPreference: "primary",
-				ignoreUndefined: true,
-			})
+			.connect(
+				MONGO_URI,
+				// 	{
+				// 	replicaSet: REPL_SET,
+				// 	retryWrites: true,
+				// 	readPreference: "primary",
+				// 	ignoreUndefined: true,
+				// }
+			)
 			.then(() => {
 				console.log("Database is connected");
 				app.listen(PORT, () => {
@@ -43,12 +46,12 @@ async function startServer(
 }
 
 // Checks if the file was ran using commandline and not by any other means eg testing (If run by testing don't run the server)
-if (process.argv[1] === new URL(import.meta.url).pathname) {
-	await startServer(
-		process.env.MONGO_URI!,
-		process.env.PORT!,
-		process.env.REPL_SET!,
-	);
-}
+// if (process.argv[1] === new URL(import.meta.url).pathname) {
+await startServer(
+	process.env.MONGO_URI!,
+	process.env.PORT!,
+	// process.env.REPL_SET!,
+);
+// }
 
 export { app, startServer };

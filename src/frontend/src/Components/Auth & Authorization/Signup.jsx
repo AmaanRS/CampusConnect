@@ -48,43 +48,53 @@ function Signup() {
   const [showPopup, setShowPopup] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-  const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const { handleSubmit, register, formState, reset } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const Popup = () => {};
   const formSubmit = async (data) => {
     // variables set for accessing the input
 
     try {
-      {
-        setIsLoading(true);
-        const res = await axiosInstance.post("/signup", {
-          email: data.email,
-          password: data.password,
-        });
+      setIsLoading(true);
+      // axiosInstance
+      //   .post("/signup", {
+      //     email: data.email,
+      //     password: data.password,
+      //   })
+      //   .then((res) => {
+      //     console.log(res);
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //     console.log("inside catch");
+      //   });
 
-        res.data.success
-          ? (setShowPopup(true),
-            setTimeout(() => {
-              setShowPopup(false);
-              navigate("/login");
-            }, 2000))
-          : (setAlertMessage("Email Already Exists !"),
-            setIsAlertOpen(true),
-            navigate("/signup"),
-            setShowPopup(false));
+      const res = await axiosInstance.post("/signup", {
+        email: data.email,
+        password: data.password,
+      });
+      console.log(res);
 
-        reset();
-        console.log(res);
-        console.log(res.data.success);
-        setIsLoading(false);
-      }
+      res.data.success
+        ? (setShowPopup(true),
+          setTimeout(() => {
+            setShowPopup(false);
+            navigate("/login");
+          }, 2000))
+        : (setAlertMessage("Email Already Exists !"),
+          setIsAlertOpen(true),
+          navigate("/signup"),
+          setShowPopup(false));
+
+      reset();
+      console.log(res);
+      console.log(res.data.success);
+      setIsLoading(false);
     } catch (error) {
+      console.log(error);
       let errorMsg = "An error occurred";
       if (error.response) {
         errorMsg =
@@ -95,13 +105,14 @@ function Signup() {
       } else {
         errorMsg = error.message || errorMsg;
       }
-      setErrorMessage(errorMsg);
-      setIsError(true);
+      // setErrorMessage(errorMsg);
+      // setIsError(true);
       setIsLoading(false);
-    }
-
-    if (isError) {
-      return <ErrorPage error={errorMessage} />;
+      setIsAlertOpen(true);
+      setAlertMessage(errorMsg);
+      console.log(errorMsg, "Inside Catch");
+    } finally {
+      reset();
     }
 
     // pop up
