@@ -1,7 +1,10 @@
 import { faker } from "@faker-js/faker";
-import bcrypt from "bcrypt";
-import { DataResponse, StandardResponse } from "../Types/GeneralTypes";
-import { MongooseError } from "mongoose";
+import { StandardResponse } from "../Types/GeneralTypes";
+import mongoose, { ClientSession } from "mongoose";
+import {
+	connectToTestDbAndStartTestServer,
+	stopTestServerRunning,
+} from "../Tests/TestServer";
 
 // Function for returning a random value from enum
 export function getRandomEnumValue<T extends { [key: string]: string | number }>(
@@ -45,112 +48,83 @@ export function generatePassword(): string {
 	return passwordArray.join("");
 }
 
-export const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Wrapper function for session management
+export const runWithRetrySession = async (
+	operation: (session: ClientSession) => Promise<any>,
+	maxRetries: number = 4,
+) => {
+	const session = await mongoose.startSession();
+	let retryCount = 0;
+	let successful = false;
+	let result: StandardResponse;
 
-export const userEmailRegex =
-	/^(hod_[a-zA-Z]+|[a-z]+\.[a-z]+|[a-z]+\.[0-9]{9})@vcet\.edu\.in$/;
+	while (retryCount < maxRetries && !successful) {
+		try {
+			session.startTransaction();
+			result = await operation(session);
 
-export const studentEmailRegex: RegExp = /^([a-z]+\.[0-9]{9})@vcet\.edu\.in$/;
+			if (!result.success) {
+				await session.abortTransaction();
+				await session.endSession();
+				return result;
+			}
 
-export const teacherEmailRegex: RegExp =
-	/^(hod_[a-zA-Z]+|[a-z]+\.[a-z]+)@vcet\.edu\.in$/;
+			await session.commitTransaction();
+			await session.endSession();
 
-// At least one lowercase letter
-// At least one uppercase letter
-// At least one digit
-// At least one special character
-// Total length between 8 and 10 characters
-export const passwordRegex: RegExp =
-	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/;
+			successful = true;
+			return result;
+		} catch (e) {
+			console.log((e as Error).message);
+			if (session.inTransaction()) {
+				await session.abortTransaction();
+			}
 
-async function validatePassword(password: string) {
-	if (!password) {
-		const response: StandardResponse = {
-			message: "Password should be given for validation",
-			success: false,
-		};
-		return response;
+			// Only for Write Conflict
+			// 112 is the MongoDB WriteConflict error code
+			if (e instanceof mongoose.mongo.MongoError && e.code === 112) {
+				retryCount++;
+				console.log(`Retry ${retryCount}/${maxRetries}`);
+
+				// Exponential backoff
+				await new Promise((resolve) =>
+					setTimeout(resolve, Math.pow(2, retryCount) * 500),
+				);
+			} else {
+				await session.endSession();
+				throw e;
+			}
+		}
 	}
-
-	const isPassValid = passwordRegex.test(password);
-
-	if (!isPassValid) {
-		const response: StandardResponse = {
-			message:
-				"Password must have at least one lowercase letter, one uppercase letter, one digit, one special character, and be between 8 to 10 characters long",
-			success: false,
-		};
-		return response;
-	}
-
 	const response: StandardResponse = {
-		message: "Password is valid",
-		success: true,
-	};
-	return response;
-}
-
-async function createHashValue(
-	text: string,
-): Promise<StandardResponse | DataResponse> {
-	if (!text) {
-		const response: StandardResponse = {
-			message: "Cannot create a hash of null,undefined,empty string",
-			success: false,
-		};
-		return response;
-	}
-	const hashedText: string = await bcrypt.hash(text, 8);
-
-	const response: DataResponse = {
-		message: "Hash created successfully",
-		success: true,
-		data: hashedText,
-	};
-	return response;
-}
-
-export async function validateAndHash(text: string) {
-	const isPassValid = await validatePassword(text);
-
-	if (!isPassValid.success) {
-		throw new MongooseError(isPassValid.message);
-	}
-
-	let isHashCreated = (await createHashValue(text)) as DataResponse;
-
-	if (!isHashCreated.success) {
-		throw new MongooseError(isHashCreated.message);
-	}
-
-	// Here the data is gaurenteed to be string
-	return isHashCreated.data as string;
-}
-
-export async function checkPassAgainstDbPass(password: string, dbPassword: string) {
-	if (!password || !dbPassword) {
-		const response: StandardResponse = {
-			message: "Password cannot be null,undefined or empty string",
-			success: false,
-		};
-		return response;
-	}
-
-	let matchPassword = await bcrypt.compare(password, dbPassword);
-
-	if (!matchPassword) {
-		const response: StandardResponse = {
-			message: "Either email or password entered is wrong",
-			success: false,
-		};
-
-		return response;
-	}
-
-	const response: StandardResponse = {
-		message: "The password matches",
-		success: true,
+		message: "Operation failed after maximum retries",
+		success: false,
 	};
 
+	if (session.inTransaction()) {
+		await session.abortTransaction();
+	}
+	await session.endSession();
+
+	if (!successful) {
+		throw new Error("Operation failed after maximum retries");
+	}
+
 	return response;
-}
+};
+
+const runTestServer = async () => {
+	await connectToTestDbAndStartTestServer(
+		process.env.MONGO_URI!,
+		process.env.PORT!,
+		process.env.REPL_SET!,
+	);
+};
+
+const stopTestServer = async () => {
+	await mongoose.connection.dropDatabase();
+	await mongoose.connection.close();
+	await stopTestServerRunning();
+};
+
+export { runTestServer, stopTestServer };

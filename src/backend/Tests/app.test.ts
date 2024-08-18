@@ -1,4 +1,4 @@
-import { startServer } from "../app";
+import { connectToDbAndStartServer } from "../app";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
@@ -23,7 +23,7 @@ describe("Express Server", () => {
 
 		(mongoose.connect as jest.Mock) = mockConnection;
 
-		await startServer(
+		await connectToDbAndStartServer(
 			process.env.MONGO_URI!,
 			process.env.PORT!,
 			process.env.REPL_SET!,

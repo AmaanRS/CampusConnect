@@ -3,7 +3,10 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { Router } from "./Routes/UserRouter";
+import UserRouter from "./Routes/UserRouter";
+import AdminRouter from "./Routes/AdminRoutes";
+import TeacherRouter from "./Routes/TeacherRoutes";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 const app = express();
@@ -13,28 +16,28 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use("/", Router);
+app.use("/", UserRouter);
+app.use("/admin", AdminRouter);
+app.use("/teacher", TeacherRouter);
 
-async function startServer(
+// Connects with db then express server
+async function connectToDbAndStartServer(
 	MONGO_URI: string,
 	PORT: string,
-	// REPL_SET: string,
+	REPL_SET: string,
 ): Promise<void> {
 	try {
 		await mongoose
-			.connect(
-				MONGO_URI,
-				// 	{
-				// 	replicaSet: REPL_SET,
-				// 	retryWrites: true,
-				// 	readPreference: "primary",
-				// 	ignoreUndefined: true,
-				// }
-			)
+			.connect(MONGO_URI, {
+				replicaSet: REPL_SET,
+				retryWrites: true,
+				readPreference: "primary",
+				ignoreUndefined: true,
+			})
 			.then(() => {
 				console.log("Database is connected");
 				app.listen(PORT, () => {
-					console.log(`Express app running on port ${process.env.PORT}`);
+					console.log(`Express app running on port ${PORT}`);
 				});
 			})
 			.catch((err) => {
@@ -47,11 +50,31 @@ async function startServer(
 
 // Checks if the file was ran using commandline and not by any other means eg testing (If run by testing don't run the server)
 // if (process.argv[1] === new URL(import.meta.url).pathname) {
-await startServer(
-	process.env.MONGO_URI!,
-	process.env.PORT!,
-	// process.env.REPL_SET!,
-);
+// 	console.log("Connecting from app.ts");
+
+// 	await connectToDbAndStartServer(
+// 		process.env.MONGO_URI!,
+// 		process.env.PORT!,
+// 		process.env.REPL_SET!,
+// 	);
 // }
 
-export { app, startServer };
+//
+// Check if this works for windows
+//
+const __filename = fileURLToPath(import.meta.url);
+
+// Checks if the file was ran using commandline and not by any other means eg testing (If run by testing don't run the server)
+
+// If the file was executed directly (not imported as a module)
+if (process.argv[1] === __filename) {
+	console.log("Connecting from app.ts");
+
+	await connectToDbAndStartServer(
+		process.env.MONGO_URI!,
+		process.env.PORT!,
+		process.env.REPL_SET!,
+	);
+}
+
+export { app, connectToDbAndStartServer };

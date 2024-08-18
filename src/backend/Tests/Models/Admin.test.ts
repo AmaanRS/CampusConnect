@@ -1,15 +1,15 @@
 import { adminModel } from "../../Models/Admin";
 import { AccountType, AdminPosition } from "../../Types/ModelTypes";
-import { checkPassAgainstDbPass } from "../../Utils/util";
-import { startServer } from "../../app";
+import { checkPassAgainstDbPass } from "../../Utils/passwordUtils";
+import { runTestServer, stopTestServer } from "../../Utils/util";
 
 describe.only("Admin Model Tests", () => {
 	beforeAll(async () => {
-		await startServer(
-			process.env.MONGO_URI!,
-			process.env.PORT!,
-			process.env.REPL_SET!,
-		);
+		await runTestServer();
+	});
+
+	afterAll(async () => {
+		await stopTestServer();
 	});
 
 	afterEach(async () => {

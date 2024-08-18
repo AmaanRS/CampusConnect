@@ -6,7 +6,8 @@ import {
 	StudentPosition,
 	TeacherPosition,
 } from "../Types/ModelTypes";
-import { userEmailRegex, validateAndHash } from "../Utils/util";
+import { userEmailRegex } from "../Utils/regexUtils";
+import { validateAndHash } from "../Utils/passwordUtils";
 
 const userSchema = new Schema<IUserDocument>(
 	{
@@ -60,8 +61,7 @@ userSchema.pre("validate", async function (next) {
 		this.accType = undefined;
 		// @ts-ignore
 		this.position = undefined;
-		this.isProfileComplete = false;
-		this.department = undefined
+		this.department = undefined;
 
 		if (!userEmailRegex.test(this.email)) {
 			throw new MongooseError("The email should be a vcet email");

@@ -2,13 +2,14 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import {
 	DataResponse,
+	decodedTokenFromBody,
 	StandardResponse,
 	TokenResponse,
 } from "../Types/GeneralTypes";
 import { MongooseError } from "mongoose";
 import { userModel } from "../Models/User";
 import { IUser } from "../Types/ModelTypes";
-import { checkPassAgainstDbPass } from "../Utils/util";
+import { checkPassAgainstDbPass } from "../Utils/passwordUtils";
 
 const login = async (req: Request, res: Response) => {
 	try {
@@ -19,7 +20,12 @@ const login = async (req: Request, res: Response) => {
 		}: { email: string | undefined; password: string | undefined } = req.body;
 
 		//If email and password exist
-		if (email && password) {
+		if (
+			email &&
+			password &&
+			typeof email === "string" &&
+			typeof password === "string"
+		) {
 			//Try to get the document from the database using email
 			let user: IUser | null = await userModel.findOne({ email: email });
 
@@ -33,13 +39,13 @@ const login = async (req: Request, res: Response) => {
 				return res.status(401).json(response);
 			}
 
-			let matchPassword = await checkPassAgainstDbPass(
+			let matchPassword: StandardResponse = await checkPassAgainstDbPass(
 				password,
 				user.password,
 			);
 
 			//If the passwords do not match
-			if (!matchPassword?.success) {
+			if (!matchPassword.success) {
 				const response: StandardResponse = {
 					message:
 						matchPassword?.message ??
@@ -51,7 +57,14 @@ const login = async (req: Request, res: Response) => {
 			}
 
 			//Create a jwt token
-			let token: string = jwt.sign({ email: email }, process.env.JWT_SECRET!);
+			let token: string = jwt.sign(
+				{
+					email: email,
+					position: [...user.position],
+					accountType: user.accType,
+				},
+				process.env.JWT_SECRET!,
+			);
 
 			//Send the message to the frontend that the user is now logged in
 			const response: TokenResponse = {
@@ -96,7 +109,12 @@ const signup = async (req: Request, res: Response) => {
 			password: string | undefined;
 		} = req.body;
 
-		if (email && password) {
+		if (
+			email &&
+			password &&
+			typeof email === "string" &&
+			typeof password === "string"
+		) {
 			//Validation for Email is in User model
 
 			//
@@ -179,7 +197,8 @@ const signup = async (req: Request, res: Response) => {
 const profileStatus = async (req: Request, res: Response) => {
 	try {
 		//This check is necessary because if their is some other middleware interfering with the req and token does'nt get here
-		const { decodedToken } = req.body;
+		const { decodedToken }: { decodedToken: decodedTokenFromBody } = req.body;
+
 		if (!decodedToken) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",
@@ -187,17 +206,20 @@ const profileStatus = async (req: Request, res: Response) => {
 			};
 			return res.status(401).json(response);
 		}
-		const isProfileComplete: IUser | null = await userModel.findOne(
+
+		const isProfileComplete: IUser | null | undefined = await userModel.findOne(
 			{
 				email: decodedToken.email,
 			},
 			{ password: 0 },
 		);
+
 		if (!isProfileComplete) {
 			throw new Error(
 				"isProfileComplete does not exists on this user's model check it",
 			);
 		}
+
 		const response: DataResponse = {
 			message: "Fetched data successfully",
 			success: true,
@@ -207,6 +229,7 @@ const profileStatus = async (req: Request, res: Response) => {
 		return res.status(201).json(response);
 	} catch (e) {
 		console.log((e as Error).message);
+
 		const response: StandardResponse = {
 			message:
 				"There is some problem while getting the user's profile status" +
@@ -218,16 +241,15 @@ const profileStatus = async (req: Request, res: Response) => {
 	}
 };
 
-
 // Check the logic which works better
 // If the user successfully completes his profile using update profile then delete the user from userModel and set isProfile complete to true some other model
 //
 // OR
 //
+// Use this one
 // If the user successfully completes his profile using update profile then set isProfileComplete in user model to true, in frontend take the email from token and check using regex if it is a student/teacher/... and search for the user in that model
 //
 //
-
 
 //Password and email should not be updated using this endpoint
 // const updateUserProfile = async (req: UpdateRequest, res: Response) => {

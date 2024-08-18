@@ -1,5 +1,3 @@
-import dotenv from "dotenv";
-import { startServer } from "../../app";
 import { studentModel } from "../../Models/Student";
 import {
 	AccountType,
@@ -9,15 +7,15 @@ import {
 	Year,
 } from "../../Types/ModelTypes";
 import mongoose from "mongoose";
-dotenv.config();
+import { runTestServer, stopTestServer } from "../../Utils/util";
 
 describe.only("Student Model Tests", () => {
 	beforeAll(async () => {
-		await startServer(
-			process.env.MONGO_URI!,
-			process.env.PORT!,
-			process.env.REPL_SET!,
-		);
+		await runTestServer();
+	});
+
+	afterAll(async () => {
+		await stopTestServer();
 	});
 
 	afterEach(async () => {
