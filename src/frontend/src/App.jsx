@@ -23,6 +23,7 @@ import {
   AuthProvider,
 } from "./Pages/Auth & Authorization/AuthContext";
 import ProtectedRoutes from "./Pages/Auth & Authorization/ProtectedRoutes";
+import { UserContextProvider } from "./store/UserContextProvider";
 
 function App() {
   const locomotiveScroll = new LocomotiveScroll();
@@ -102,9 +103,11 @@ function App() {
 
   return (
     <AuthProvider>
-      <div className="bg-blue-extralight w-full font-openSans overflow-x-hidden h-full">
-        <RouterProvider router={router} />
-      </div>
+      <UserContextProvider>
+        <div className="bg-blue-extralight w-full font-openSans overflow-x-hidden h-full">
+          <RouterProvider router={router} />
+        </div>
+      </UserContextProvider>
     </AuthProvider>
   );
 }

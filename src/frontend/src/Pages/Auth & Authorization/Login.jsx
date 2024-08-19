@@ -4,6 +4,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable no-unused-vars */
+
 import React, { useContext, useEffect, useState } from "react";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -21,6 +22,8 @@ import Cookie from "js-cookie";
 import { AuthContext } from "./AuthContext";
 import CustomAlert from "../../Components/Alerts & animations/Alert";
 import ErrorPage from "../../Components/Alerts & animations/ErrorPage";
+import { UserContext } from "../../store/UserContextProvider";
+import { jwtDecode } from "jwt-decode";
 
 // Schema
 const schema = yup.object({
@@ -44,8 +47,9 @@ const schema = yup.object({
 function Login() {
   const navigate = useNavigate();
   const isLoggedIn = useLoaderData();
-  const { setUser } = useContext(AuthContext);
+  // const { setUser } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
+  const { setUserState, userState } = useContext(UserContext);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -75,14 +79,15 @@ function Login() {
       if (res.data.token) {
         console.log(res.data.token);
         Cookies.set("token", res.data.token);
-        const userData = { email: data.email };
-        setUser(userData);
+        const decodedToken = jwtDecode(res.data.token);
+        setUserState(decodedToken);
         navigate("/userprofile");
       } else {
         setAlertMessage("Either Email or Password is wrong");
         setIsAlertOpen(true);
       }
     } catch (error) {
+      console.log(error);
       let errorMsg = "An error occurred";
       if (error.response) {
         errorMsg =
@@ -99,7 +104,6 @@ function Login() {
       console.log(errorMsg);
       setIsAlertOpen(true);
       setAlertMessage(errorMsg);
-
       // setIsError(true);
       // navigate("/error");
     } finally {

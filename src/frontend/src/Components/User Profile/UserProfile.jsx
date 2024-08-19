@@ -12,17 +12,20 @@ import { PiPlugsConnectedDuotone } from "react-icons/pi";
 import ProfileCompleted from "./ProfileCompleted";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
 import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
+import { UserContext } from "../../store/UserContextProvider";
 
 function UserProfile() {
   const { accType, profCompleted } = useContext(AuthContext);
+  const { deleteUserState } = useContext(UserContext);
   // console.log(accType);
-
+  console.log(accType);
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = () => {
     Cookie.remove("token");
-    localStorage.removeItem("userRole");
+    deleteUserState();
+
     return navigate("/login");
   };
 

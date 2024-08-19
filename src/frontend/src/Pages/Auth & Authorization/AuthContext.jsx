@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   // Load user data from local storage when the component mounts
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUser = JSON.parse(localStorage.getItem("userold"));
     if (storedUser) {
       setUser(storedUser);
     }
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   // Save user data to local storage whenever it changes
   useEffect(() => {
     if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("userold", JSON.stringify(user));
     } else {
       localStorage.removeItem("user");
     }

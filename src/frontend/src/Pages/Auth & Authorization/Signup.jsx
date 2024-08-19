@@ -76,7 +76,6 @@ function Signup() {
         email: data.email,
         password: data.password,
       });
-      console.log(res);
 
       res.data.success
         ? (setShowPopup(true),
