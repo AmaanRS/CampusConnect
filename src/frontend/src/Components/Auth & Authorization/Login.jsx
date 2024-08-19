@@ -14,13 +14,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
-import CustomAlert from "../../utils/Alerts & animations/Alert";
 import Cookies from "js-cookie";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
 import { useLoaderData } from "react-router-dom";
 import Cookie from "js-cookie";
-import ErrorPage from "../../utils/Alerts & animations/ErrorPage";
 import { AuthContext } from "./AuthContext";
+import CustomAlert from "../Alerts & animations/Alert";
+import ErrorPage from "../Alerts & animations/ErrorPage";
 
 // Schema
 const schema = yup.object({

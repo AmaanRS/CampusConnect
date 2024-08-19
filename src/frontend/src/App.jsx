@@ -8,7 +8,6 @@ import Contact from "./Pages/Landing Page/Contact";
 import Login, { loginLoader } from "./Components/Auth & Authorization/Login";
 import Signup, { SignupLoader } from "./Components/Auth & Authorization/Signup";
 import Layout from "./Pages/Landing Page/Layout";
-import ErrorPage from "./utils/Alerts & animations/ErrorPage";
 import UserProfile from "./Components/User Profile/UserProfile";
 import ProfileCompleted from "./Components/User Profile/ProfileCompleted";
 // import Dashboard, { dashboardLoader } from "./Components/Dashboard/Dashboard";
@@ -23,6 +22,7 @@ import {
 import ProtectedRoutes from "./Components/Auth & Authorization/ProtectedRoutes";
 import AdminLayout from "./Pages/Admin/AdminLayout/AdminLayout";
 import Dashboard from "./Pages/Admin/Dashboard/Dashboard";
+import ErrorPage from "./Components/Alerts & animations/ErrorPage";
 
 function App() {
   const locomotiveScroll = new LocomotiveScroll();

@@ -4,8 +4,8 @@ import React from "react";
 import imgTwo from "../../assets/pics/alumni_network.svg";
 import Subsections from "./Subsections";
 import { motion } from "framer-motion";
-import ScrollXMinus from "../../Components/Alerts & animations/ScrollXMinus";
-import ScrollReveal from "../../Components/Alerts & animations/ScrollReveal";
+import ScrollReveal from "../Alerts & animations/ScrollReveal";
+import ScrollXMinus from "../Alerts & animations/ScrollXMinus";
 
 function Sectioneven({ val }) {
   var dataOne = {

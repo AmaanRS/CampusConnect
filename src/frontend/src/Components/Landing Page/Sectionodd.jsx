@@ -4,7 +4,7 @@ import React from "react";
 import imgOne from "../../assets/pics/about.svg";
 import imgTwo from "../../assets/pics/eventmanagement.svg";
 import { motion, useAnimation } from "framer-motion";
-import ScrollX from "../../Components/Alerts & animations/ScrollX";
+import ScrollX from "../Alerts & animations/ScrollX";
 
 function Sectionodd({ val }) {
   var dataOne = {

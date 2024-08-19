@@ -9,11 +9,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
-import AccCreated from "../../utils/Alerts & animations/AccCreated";
-import CustomAlert from "../../utils/Alerts & animations/Alert";
 import Cookie from "js-cookie";
-import ErrorPage from "../../utils/Alerts & animations/ErrorPage";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
+import AccCreated from "../Alerts & animations/AccCreated";
+import CustomAlert from "../Alerts & animations/Alert";
+import ErrorPage from "../Alerts & animations/ErrorPage";
 
 // schema
 const schema = yup.object({

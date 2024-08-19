@@ -4,9 +4,9 @@ import React from "react";
 import agreementSvg from "../../assets/pics/agreement2.svg";
 
 import { animate, motion, transform } from "framer-motion";
-import ScrollX from "../../utils/Alerts & animations/ScrollX";
-import ScrollXMinus from "../../utils/Alerts & animations/ScrollXMinus";
-import ScrollReveal from "../../utils/Alerts & animations/ScrollReveal";
+import ScrollX from "../../Components/Alerts & animations/ScrollX";
+import ScrollXMinus from "../../Components/Alerts & animations/ScrollXMinus";
+import ScrollReveal from "../../Components/Alerts & animations/ScrollReveal";
 import Buttonone from "../../Components/Buttons/Buttonone";
 import Buttonborder from "../../Components/Buttons/Buttonborder";
 
