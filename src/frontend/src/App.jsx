@@ -16,9 +16,9 @@ import {
   AuthContext,
   AuthProvider,
 } from "./Components/Auth & Authorization/AuthContext";
-import MainProfile from "./Components/Dashboard/MainProfile";
-import SearchProfile from "./Components/Dashboard/SearchProfile";
-import Home from "./Components/Dashboard/Home";
+// import MainProfile from "./Components/Dashboard/MainProfile";
+// import SearchProfile from "./Components/Dashboard/SearchProfile";
+// import Home from "./Components/Dashboard/Home";
 import ProtectedRoutes from "./Components/Auth & Authorization/ProtectedRoutes";
 import AdminLayout from "./Pages/Admin/AdminLayout/AdminLayout";
 import Dashboard from "./Pages/Admin/Dashboard/Dashboard";
