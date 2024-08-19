@@ -4,14 +4,14 @@ import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import Cookie from "js-cookie";
 import TeachingStaffForm from "./TeachingStaffForm";
 import { TbLogout2 } from "react-icons/tb";
-import axiosInstance from "../Axios/AxiosInstance";
 import StudentForm from "./StudentForm";
-import { AuthContext } from "../Auth & Authorization/AuthContext";
 import { MdOutlineConnectWithoutContact } from "react-icons/md";
 import { FcCollaboration } from "react-icons/fc";
 import { PiStudentDuotone } from "react-icons/pi";
 import { PiPlugsConnectedDuotone } from "react-icons/pi";
 import ProfileCompleted from "./ProfileCompleted";
+import axiosInstance from "../../utils/Axios/AxiosInstance";
+import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
 
 function UserProfile() {
   const { accType, profCompleted } = useContext(AuthContext);
