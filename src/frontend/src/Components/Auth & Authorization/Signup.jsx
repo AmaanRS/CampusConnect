@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
-import signupImg from "../../utils/pics/signupwhite.svg";
+import signupImg from "../../assets/pics/signupwhite.svg";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";

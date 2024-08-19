@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
-import ErrorImg from "../pics/404page.svg";
+import ErrorImg from "../../assets/pics/404page.svg";
+
 import { useNavigate } from "react-router-dom";
 
 function ErrorPage({ error }) {

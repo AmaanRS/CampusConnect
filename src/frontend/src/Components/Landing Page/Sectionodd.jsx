@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React from "react";
-import connectImg from "../../utils/pics/about.svg";
-import imgOne from "../../utils/pics/about.svg";
-import imgTwo from "../../utils/pics/eventmanagement.svg";
+import imgOne from "../../assets/pics/about.svg";
+import imgTwo from "../../assets/pics/eventmanagement.svg";
 import { motion, useAnimation } from "framer-motion";
 import ScrollX from "../../utils/Alerts & animations/ScrollX";
 

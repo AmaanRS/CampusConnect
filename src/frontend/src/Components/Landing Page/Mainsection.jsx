@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 // import Button from "./Button";
-import agreementSvg from "../../utils/pics/agreement2.svg";
+import agreementSvg from "../../assets/pics/agreement2.svg";
+
 import Buttonone from "../Buttons/Buttonone";
 import Buttonborder from "../Buttons/Buttonborder";
 import { animate, motion, transform } from "framer-motion";

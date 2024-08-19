@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
-import accCreatedImg from "../../utils/pics/accCreated.svg";
+// import accCreatedImg from "../../utils/pics/accCreated.svg";
+import accCreatedImg from "../../assets/pics/accCreated.svg";
 
 function AccCreated() {
   return (

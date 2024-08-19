@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React from "react";
-import imgTwo from "../../utils/pics/alumni_network.svg";
+import imgTwo from "../../assets/pics/alumni_network.svg";
 import Subsections from "./Subsections";
 import { motion } from "framer-motion";
 import ScrollReveal from "../../utils/Alerts & animations/ScrollReveal";

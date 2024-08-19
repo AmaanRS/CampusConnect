@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
-import imgcom from "../../utils/pics/profilecompleted.svg";
+import imgcom from "../../assets/pics/profilecompleted.svg";
+
 import { useNavigate } from "react-router-dom";
 
 const ProfileCompleted = () => {
