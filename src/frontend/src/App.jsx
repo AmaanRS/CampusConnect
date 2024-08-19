@@ -5,24 +5,24 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import About from "./Pages/Landing Page/About";
 
 import Contact from "./Pages/Landing Page/Contact";
-import Login, { loginLoader } from "./Components/Auth & Authorization/Login";
-import Signup, { SignupLoader } from "./Components/Auth & Authorization/Signup";
 import Layout from "./Pages/Landing Page/Layout";
 import UserProfile from "./Components/User Profile/UserProfile";
 import ProfileCompleted from "./Components/User Profile/ProfileCompleted";
 // import Dashboard, { dashboardLoader } from "./Components/Dashboard/Dashboard";
 
-import {
-  AuthContext,
-  AuthProvider,
-} from "./Components/Auth & Authorization/AuthContext";
 // import MainProfile from "./Components/Dashboard/MainProfile";
 // import SearchProfile from "./Components/Dashboard/SearchProfile";
 // import Home from "./Components/Dashboard/Home";
-import ProtectedRoutes from "./Components/Auth & Authorization/ProtectedRoutes";
 import AdminLayout from "./Pages/Admin/AdminLayout/AdminLayout";
 import Dashboard from "./Pages/Admin/Dashboard/Dashboard";
 import ErrorPage from "./Components/Alerts & animations/ErrorPage";
+import Login, { loginLoader } from "./Pages/Auth & Authorization/Login";
+import Signup, { SignupLoader } from "./Pages/Auth & Authorization/Signup";
+import {
+  AuthContext,
+  AuthProvider,
+} from "./Pages/Auth & Authorization/AuthContext";
+import ProtectedRoutes from "./Pages/Auth & Authorization/ProtectedRoutes";
 
 function App() {
   const locomotiveScroll = new LocomotiveScroll();

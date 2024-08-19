@@ -19,8 +19,8 @@ import axiosInstance from "../../utils/Axios/AxiosInstance";
 import { useLoaderData } from "react-router-dom";
 import Cookie from "js-cookie";
 import { AuthContext } from "./AuthContext";
-import CustomAlert from "../Alerts & animations/Alert";
-import ErrorPage from "../Alerts & animations/ErrorPage";
+import CustomAlert from "../../Components/Alerts & animations/Alert";
+import ErrorPage from "../../Components/Alerts & animations/ErrorPage";
 
 // Schema
 const schema = yup.object({

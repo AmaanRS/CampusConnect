@@ -11,9 +11,9 @@ import * as yup from "yup";
 import { motion } from "framer-motion";
 import Cookie from "js-cookie";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
-import AccCreated from "../Alerts & animations/AccCreated";
-import CustomAlert from "../Alerts & animations/Alert";
-import ErrorPage from "../Alerts & animations/ErrorPage";
+import AccCreated from "../../Components/Alerts & animations/AccCreated";
+import CustomAlert from "../../Components/Alerts & animations/Alert";
+import ErrorPage from "../../Components/Alerts & animations/ErrorPage";
 
 // schema
 const schema = yup.object({

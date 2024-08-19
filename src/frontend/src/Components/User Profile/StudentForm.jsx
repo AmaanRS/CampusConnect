@@ -4,9 +4,9 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate } from "react-router-dom";
-import { AuthContext } from "../Auth & Authorization/AuthContext";
 import ProfileCompleted from "./ProfileCompleted";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
+import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
 
 const schema = yup.object({
   year: yup
