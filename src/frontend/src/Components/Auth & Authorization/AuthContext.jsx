@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 // src/contexts/AuthContext.js
 import React, { createContext, useState, useEffect } from "react";
-import axiosInstance from "../Axios/AxiosInstance";
+import axiosInstance from "../../utils/Axios/AxiosInstance";
 import { jwtDecode } from "jwt-decode";
 import Cookie from "js-cookie";
 // Create the context

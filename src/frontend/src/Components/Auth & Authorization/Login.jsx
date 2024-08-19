@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
 import CustomAlert from "../../utils/Alerts & animations/Alert";
 import Cookies from "js-cookie";
-import axiosInstance from "../Axios/AxiosInstance";
+import axiosInstance from "../../utils/Axios/AxiosInstance";
 import { useLoaderData } from "react-router-dom";
 import Cookie from "js-cookie";
 import ErrorPage from "../../utils/Alerts & animations/ErrorPage";
