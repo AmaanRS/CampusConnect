@@ -2,11 +2,12 @@
 import React from "react";
 import LocomotiveScroll from "locomotive-scroll";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import About from "./Components/Landing Page/About";
-import Contact from "./Components/Landing Page/Contact";
+import About from "./Pages/Landing Page/About";
+
+import Contact from "./Pages/Landing Page/Contact";
 import Login, { loginLoader } from "./Components/Auth & Authorization/Login";
 import Signup, { SignupLoader } from "./Components/Auth & Authorization/Signup";
-import Layout from "./Components/Landing Page/Layout";
+import Layout from "./Pages/Landing Page/Layout";
 import ErrorPage from "./utils/Alerts & animations/ErrorPage";
 import UserProfile from "./Components/User Profile/UserProfile";
 import ProfileCompleted from "./Components/User Profile/ProfileCompleted";

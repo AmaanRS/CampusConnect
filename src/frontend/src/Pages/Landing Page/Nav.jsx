@@ -3,10 +3,11 @@ import React, { useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 
 import { RxCross2 } from "react-icons/rx";
-import Buttonone from "../Buttons/Buttonone";
-import Buttonborder from "../Buttons/Buttonborder";
+
 import { animate, motion } from "framer-motion";
 import { NavLink, Route, Routes } from "react-router-dom";
+import Buttonborder from "../../Components/Buttons/Buttonborder";
+import Buttonone from "../../Components/Buttons/Buttonone";
 
 function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

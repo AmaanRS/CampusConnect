@@ -3,12 +3,12 @@ import React from "react";
 // import Button from "./Button";
 import agreementSvg from "../../assets/pics/agreement2.svg";
 
-import Buttonone from "../Buttons/Buttonone";
-import Buttonborder from "../Buttons/Buttonborder";
 import { animate, motion, transform } from "framer-motion";
 import ScrollX from "../../utils/Alerts & animations/ScrollX";
 import ScrollXMinus from "../../utils/Alerts & animations/ScrollXMinus";
 import ScrollReveal from "../../utils/Alerts & animations/ScrollReveal";
+import Buttonone from "../../Components/Buttons/Buttonone";
+import Buttonborder from "../../Components/Buttons/Buttonborder";
 
 function Mainsection() {
   return (
