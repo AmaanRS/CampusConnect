@@ -26,7 +26,7 @@ function Mainsection() {
       navRoute = "/teacher/dashboard";
       break;
     case AccountType.Admin:
-      navRoute = "/admin/dashboard";
+      navRoute = "/admin";
       break;
 
     default:

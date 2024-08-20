@@ -28,7 +28,7 @@ function UserProfile() {
       return navigate("/login");
     }
     if (userState.accountType === AccountType.Admin) {
-      return navigate("/admin/dashboard");
+      return navigate("/admin");
     }
     if (userState.isProfileComplete) {
       if (userState.accountType === AccountType.Student) {

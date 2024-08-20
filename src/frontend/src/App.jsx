@@ -20,6 +20,9 @@ import Login from "./Pages/Auth & Authorization/Login";
 import Signup from "./Pages/Auth & Authorization/Signup";
 import ProtectedRoutes from "./Pages/Auth & Authorization/ProtectedRoutes";
 import { UserContextProvider } from "./store/UserContextProvider";
+import Demo1 from "./Demo1";
+import Demo2 from "./Demo2";
+import Demo3 from "./Demo3";
 
 function App() {
   const locomotiveScroll = new LocomotiveScroll();
@@ -71,8 +74,20 @@ function App() {
               element: <AdminLayout />,
               children: [
                 {
-                  path: "dashboard",
+                  index: true,
                   element: <Dashboard />,
+                },
+                {
+                  path: "demo1",
+                  element: <Demo1 />,
+                },
+                {
+                  path: "demo2",
+                  element: <Demo2 />,
+                },
+                {
+                  path: "demo3",
+                  element: <Demo3 />,
                 },
               ],
             },

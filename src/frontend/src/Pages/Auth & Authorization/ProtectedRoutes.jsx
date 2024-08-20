@@ -15,7 +15,7 @@ export default function ProtectedRoutes() {
       return navigate("/", { replace: false });
     }
     if (userState.accountType === AccountType.Admin) {
-      return navigate("/admin/dashboard");
+      // return navigate("/admin/");
     }
     if (userState.accountType === AccountType.Teacher) {
       return navigate("/teacher/dashboard");
