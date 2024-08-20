@@ -15,7 +15,7 @@ import { AccountType } from "../../utils/enum";
 function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isLoggedIn } = getToken();
-  const { userState } = useContext(UserContext);
+  const { userState, logOutUser } = useContext(UserContext);
 
   let navTitle;
   let navRoute;
@@ -79,6 +79,17 @@ function Nav() {
             <Buttonone name={"Sign Up"} burger={true} togglebtn={togglebtn} />
           </div>
         )}
+        {isLoggedIn && (
+          <>
+            <button
+              className={`px-8 mt-4 py-2 bg-blue-dark text-white rounded-lg font-semibold 
+  lg:text-xl lg:px-10 lg:py-3`}
+              onClick={() => logOutUser()}
+            >
+              Logout
+            </button>
+          </>
+        )}
       </motion.div>
       {/* Actual Navbar */}
       <motion.nav
@@ -117,6 +128,17 @@ function Nav() {
                 <motion.div className="transition transform hover:animate-shift-up active:animate-shift-down">
                   <Buttonone name={"Sign Up"} val={"signup"} />
                 </motion.div>
+              </>
+            )}
+            {isLoggedIn && (
+              <>
+                <button
+                  className={`px-8 py-2 bg-blue-dark text-white rounded-lg font-semibold 
+  lg:text-xl lg:px-10 lg:py-3`}
+                  onClick={() => logOutUser()}
+                >
+                  Logout
+                </button>
               </>
             )}
           </div>

@@ -11,6 +11,7 @@ const initialState = {
   accountType: "",
   iat: 0,
   isProfileComplete: "",
+  isAccountActive: "",
 };
 
 function getInitialState() {
