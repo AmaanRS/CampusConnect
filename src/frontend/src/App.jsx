@@ -17,7 +17,7 @@ import AdminLayout from "./Pages/Admin/AdminLayout/AdminLayout";
 import Dashboard from "./Pages/Admin/Dashboard/Dashboard";
 import ErrorPage from "./Components/Alerts & animations/ErrorPage";
 import Login from "./Pages/Auth & Authorization/Login";
-import Signup, { SignupLoader } from "./Pages/Auth & Authorization/Signup";
+import Signup from "./Pages/Auth & Authorization/Signup";
 import ProtectedRoutes from "./Pages/Auth & Authorization/ProtectedRoutes";
 import { UserContextProvider } from "./store/UserContextProvider";
 
@@ -32,8 +32,6 @@ function App() {
         {
           index: true,
           element: <Layout />,
-          // action: homeAction,
-          // loader: homeLoader,
         },
         {
           path: "about",
@@ -50,7 +48,6 @@ function App() {
         {
           path: "signup",
           element: <Signup />,
-          loader: SignupLoader,
         },
         {
           path: "userprofile",

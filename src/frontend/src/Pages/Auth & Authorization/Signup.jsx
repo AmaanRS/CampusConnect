@@ -35,14 +35,13 @@ const schema = yup.object({
 });
 
 function Signup() {
-  //loader
-  const isSignedUp = useLoaderData();
+  const { isLoggedIn } = getToken();
 
   useEffect(() => {
-    if (isSignedUp) {
-      return navigate("/userprofile", { replace: true });
+    if (isLoggedIn) {
+      return navigate("/", { replace: true });
     }
-  }, [isSignedUp]);
+  }, [isLoggedIn]);
 
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
@@ -222,14 +221,5 @@ function Signup() {
     </div>
   );
 }
-
-export const SignupLoader = () => {
-  var { token } = getToken();
-  if (token) {
-    return true;
-  } else {
-    return false;
-  }
-};
 
 export default Signup;
