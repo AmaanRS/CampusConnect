@@ -32,11 +32,11 @@ function UserProfile() {
     }
     if (userState.isProfileComplete) {
       if (userState.accountType === AccountType.Student) {
-        navigate("/student/home");
+        navigate("/student");
       }
 
       if (userState.accountType === AccountType.Teacher) {
-        navigate("/student/dashboard");
+        navigate("/student");
       }
     }
   }, [token, navigate]);

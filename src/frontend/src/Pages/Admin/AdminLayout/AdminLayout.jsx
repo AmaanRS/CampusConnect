@@ -11,15 +11,16 @@ import {
   Settings,
 } from "lucide-react";
 import BottomBar from "./BottomBar";
-import { Outlet, redirect } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../store/UserContextProvider";
 import { AccountType } from "../../../utils/enum";
 
 export default function AdminLayout() {
   const { userState } = useContext(UserContext);
+  const navigate = useNavigate();
   useEffect(() => {
     if (userState.accountType !== AccountType.Admin) {
-      redirect("/");
+      navigate("/");
     }
   }, []);
   const [globalOpen, setGlobalOpen] = useState(true);
