@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useContext } from "react";
 // import Button from "./Button";
 import agreementSvg from "../../assets/pics/agreement2.svg";
 
@@ -9,8 +9,29 @@ import ScrollXMinus from "../../Components/Alerts & animations/ScrollXMinus";
 import ScrollReveal from "../../Components/Alerts & animations/ScrollReveal";
 import Buttonone from "../../Components/Buttons/Buttonone";
 import Buttonborder from "../../Components/Buttons/Buttonborder";
+import { getToken } from "../../utils/getToken";
+import { Link } from "react-router-dom";
+import { UserContext } from "../../store/UserContextProvider";
+import { AccountType } from "../../utils/enum";
 
 function Mainsection() {
+  const { isLoggedIn } = getToken();
+  const { userState } = useContext(UserContext);
+  let navRoute;
+  switch (userState.accountType) {
+    case AccountType.Student:
+      navRoute = "/student/home";
+      break;
+    case AccountType.Teacher:
+      navRoute = "/teacher/dashboard";
+      break;
+    case AccountType.Admin:
+      navRoute = "/admin/dashboard";
+      break;
+
+    default:
+      break;
+  }
   return (
     <>
       <div className="  md:flex justify-between h-full overflow-x-hidden">
@@ -37,22 +58,38 @@ function Mainsection() {
             </ScrollReveal>
           </motion.div>
           <div className="buttons flex items-center justify-center gap-5 mt-20">
-            <ScrollXMinus>
-              <motion.div
-                className="transition transform
+            {!isLoggedIn ? (
+              <>
+                <ScrollXMinus>
+                  <motion.div
+                    className="transition transform
                          hover:animate-shift-up active:animate-shift-down"
-              >
-                <Buttonone name={"Log In"} val={"login"} />
-              </motion.div>
-            </ScrollXMinus>
-            <ScrollX>
-              <motion.div
-                className="transition transform
+                  >
+                    <Buttonone name={"Log In"} val={"login"} />
+                  </motion.div>
+                </ScrollXMinus>
+                <ScrollX>
+                  <motion.div
+                    className="transition transform
                          hover:animate-shift-up active:animate-shift-down"
-              >
-                <Buttonborder name={"Sign Up"} val={"signup"} />
-              </motion.div>
-            </ScrollX>
+                  >
+                    <Buttonborder name={"Sign Up"} val={"signup"} />
+                  </motion.div>
+                </ScrollX>
+              </>
+            ) : (
+              <>
+                <Link
+                  to={navRoute}
+                  className="underline text-2xl font-semibold text-blue-800"
+                >
+                  Go to{" "}
+                  {userState.accountType === AccountType.Student
+                    ? "Home Page"
+                    : "Dashboard"}
+                </Link>
+              </>
+            )}
           </div>
         </div>
         <div className="relative hidden md:flex items-center justify-center w-[40%] mr-10 overflow-x-hidden">
