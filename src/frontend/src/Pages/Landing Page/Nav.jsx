@@ -17,6 +17,26 @@ function Nav() {
   const { isLoggedIn } = getToken();
   const { userState } = useContext(UserContext);
 
+  let navTitle;
+  let navRoute;
+  switch (userState.accountType) {
+    case AccountType.Admin:
+      navTitle = "Dashboard";
+      navRoute = "/admin/dashboard";
+      break;
+    case AccountType.Teacher:
+      navTitle = "Dashboard";
+      navRoute = "/teacher/dashboard";
+      break;
+    case AccountType.Student:
+      navTitle = "Home";
+      navRoute = "/student/home";
+      break;
+
+    default:
+      break;
+  }
+
   const togglebtn = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -35,22 +55,30 @@ function Nav() {
           <NavLink to="/about" onClick={togglebtn}>
             About
           </NavLink>
-          <NavLink to="/" onClick={togglebtn}>
+          {/* <NavLink to="/" onClick={togglebtn}>
             Home
-          </NavLink>
+          </NavLink> */}
           <NavLink to="/contact" onClick={togglebtn}>
             Contact
           </NavLink>
+          {isLoggedIn && (
+            <NavLink to={navRoute} onClick={togglebtn}>
+              {" "}
+              {navTitle}{" "}
+            </NavLink>
+          )}
         </div>
-        <div className="text-center buttons border-blue-dark mt-10 flex flex-col gap-4 ">
-          <Buttonborder
-            name={"Log In"}
-            burger={true}
-            togglebtn={togglebtn}
-            val={"login"}
-          />
-          <Buttonone name={"Sign Up"} burger={true} togglebtn={togglebtn} />
-        </div>
+        {!isLoggedIn && (
+          <div className="text-center buttons border-blue-dark mt-10 flex flex-col gap-4 ">
+            <Buttonborder
+              name={"Log In"}
+              burger={true}
+              togglebtn={togglebtn}
+              val={"login"}
+            />
+            <Buttonone name={"Sign Up"} burger={true} togglebtn={togglebtn} />
+          </div>
+        )}
       </motion.div>
       {/* Actual Navbar */}
       <motion.nav
@@ -75,8 +103,8 @@ function Nav() {
         >
           <div className="flex gap-5 items-center justify-center">
             <NavLink to="/about">About</NavLink>
-            <NavLink to="/">Home</NavLink>
             <NavLink to="/contact">Contact</NavLink>
+            {isLoggedIn && <NavLink to={navRoute}>{navTitle}</NavLink>}
           </div>
 
           <div
