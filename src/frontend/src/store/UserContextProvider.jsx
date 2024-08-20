@@ -44,9 +44,10 @@ const reducer = (state, action) => {
 
 export const UserContextProvider = ({ children }) => {
   const [userState, dispatch] = useReducer(reducer, getInitialState());
+  console.log(userState, getToken().isLoggedIn);
+  const { token } = getToken();
 
   useEffect(() => {
-    const { token } = getToken();
     if (!token) {
       logOutUser();
     }
@@ -70,7 +71,6 @@ export const UserContextProvider = ({ children }) => {
       type: "logOutUser",
     });
   }
-  console.log(userState);
   const value = { userState, setUserState, logOutUser };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

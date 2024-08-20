@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 
 import { RxCross2 } from "react-icons/rx";
@@ -8,9 +8,15 @@ import { animate, motion } from "framer-motion";
 import { NavLink, Route, Routes } from "react-router-dom";
 import Buttonborder from "../../Components/Buttons/Buttonborder";
 import Buttonone from "../../Components/Buttons/Buttonone";
+import { getToken } from "../../utils/getToken";
+import { UserContext } from "../../store/UserContextProvider";
+import { AccountType } from "../../utils/enum";
 
 function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isLoggedIn } = getToken();
+  const { userState } = useContext(UserContext);
+
   const togglebtn = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -77,10 +83,14 @@ function Nav() {
             className="button flex gap-5 items-center sm:hidden sm:text-lg md:flex justify-between
           lg:text-xl"
           >
-            <NavLink to="/login">Login</NavLink>
-            <motion.div className="transition transform hover:animate-shift-up active:animate-shift-down">
-              <Buttonone name={"Sign Up"} val={"signup"} />
-            </motion.div>
+            {!isLoggedIn && (
+              <>
+                <NavLink to="/login">Login</NavLink>
+                <motion.div className="transition transform hover:animate-shift-up active:animate-shift-down">
+                  <Buttonone name={"Sign Up"} val={"signup"} />
+                </motion.div>
+              </>
+            )}
           </div>
         </div>
       </motion.nav>

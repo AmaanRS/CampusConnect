@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate } from "react-router-dom";
 import ProfileCompleted from "./ProfileCompleted";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
-import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
+// import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
 
 const schema = yup.object({
   year: yup
@@ -25,8 +25,8 @@ const schema = yup.object({
 
 const StudentForm = () => {
   const navigate = useNavigate();
-  const { user, setUser, profCompleted, setProfCompleted, decodedToken } =
-    useContext(AuthContext);
+  // const { user, setUser, profCompleted, setProfCompleted, decodedToken } =
+  //   useContext(AuthContext);
 
   const { handleSubmit, register, formState } = useForm({
     resolver: yupResolver(schema),
@@ -35,11 +35,11 @@ const StudentForm = () => {
   const formSubmit = async (data) => {
     try {
       const res = await axiosInstance.post("/getUserProfileStatus", {
-        decodedToken: decodedToken,
+        // decodedToken: decodedToken,
         email: data.email,
       });
       console.log(res);
-      setProfCompleted(true);
+      // setProfCompleted(true);
 
       // let position = res.data.data.position.toString().toUpperCase();
       // console.log(position);
@@ -47,7 +47,7 @@ const StudentForm = () => {
       console.log(error);
     } finally {
       setTimeout(() => {
-        setProfCompleted(false);
+        // setProfCompleted(false);
       }, 3000);
     }
     console.log(data);
@@ -58,7 +58,7 @@ const StudentForm = () => {
       studentid: data.studentid,
       department: data.department,
     };
-    setUser(userData);
+    // setUser(userData);
   };
 
   // const email = user?.email;
@@ -82,7 +82,7 @@ const StudentForm = () => {
           type="text"
           name="email"
           id="email"
-          value={user?.email || ""}
+          // value={user?.email || ""}
           readOnly
           className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light"
           {...register("email")}

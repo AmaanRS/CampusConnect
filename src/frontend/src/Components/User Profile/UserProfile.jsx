@@ -10,7 +10,6 @@ import { PiStudentDuotone } from "react-icons/pi";
 import { PiPlugsConnectedDuotone } from "react-icons/pi";
 import ProfileCompleted from "./ProfileCompleted";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
-import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
 import { UserContext } from "../../store/UserContextProvider";
 import Cookies from "js-cookie";
 import { getToken } from "../../utils/getToken";
@@ -29,15 +28,15 @@ function UserProfile() {
       return navigate("/login");
     }
     if (userState.accountType === AccountType.Admin) {
-      return navigate("/u/admin/dashboard");
+      return navigate("/admin/dashboard");
     }
     if (userState.isProfileComplete) {
       if (userState.accountType === AccountType.Student) {
-        return navigate("/u/student/home");
+        return navigate("/student/home");
       }
 
       if (userState.accountType === AccountType.Teacher) {
-        return navigate("/u/student/dashboard");
+        return navigate("/student/dashboard");
       }
     }
   }, [token, navigate]);

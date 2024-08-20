@@ -15,7 +15,7 @@ export default function ProtectedRoutes() {
       return navigate("/", { replace: false });
     }
     if (userState.accountType === AccountType.Admin) {
-      navigate("/u/admin/dashboard");
+      navigate("/admin/dashboard");
     }
   }, [isLoggedIn, userState]);
 

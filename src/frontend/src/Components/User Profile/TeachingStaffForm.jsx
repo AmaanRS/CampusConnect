@@ -4,13 +4,13 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
+// import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
 const schema = yup.object({});
 
 const StudentForm = () => {
   const navigate = useNavigate();
-  const { user, setUser, profCompleted, setProfCompleted } =
-    useContext(AuthContext);
+  // const { user, setUser, profCompleted, setProfCompleted } =
+  //   useContext(AuthContext);
   const { handleSubmit, register, formState } = useForm({
     // resolver: yupResolver(schema),
   });
@@ -19,18 +19,18 @@ const StudentForm = () => {
     try {
       console.log(data);
       // navigate("/completed");
-      setProfCompleted(true);
+      // setProfCompleted(true);
       const userData = {
         email: data.email,
         department: data.department,
         position: data.position,
       };
-      setUser(userData);
+      // setUser(userData);
     } catch (error) {
       console.log(error);
     } finally {
       setTimeout(() => {
-        setProfCompleted(false);
+        // setProfCompleted(false);
       }, 3000);
     }
   };
@@ -51,7 +51,7 @@ const StudentForm = () => {
           type="text"
           name="email"
           id="email"
-          value={user?.email}
+          // value={user?.email}
           readOnly
           className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light"
           placeholder="Enter Email"
@@ -95,7 +95,7 @@ const StudentForm = () => {
           {...register("position")}
           id="position"
           className="xl:text-xl text-blue-dark custom-select border border-blue-dark rounded-md mt-1 block w-full pl-3 pr-10 py-1 md:py-3 text-base"
-          value={user?.email.includes("hod") ? "HOD" : ""}
+          // value={user?.email.includes("hod") ? "HOD" : ""}
         >
           <option value="TEACHER" className="p-3">
             TEACHER

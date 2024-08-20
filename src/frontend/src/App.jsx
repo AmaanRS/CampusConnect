@@ -18,10 +18,6 @@ import Dashboard from "./Pages/Admin/Dashboard/Dashboard";
 import ErrorPage from "./Components/Alerts & animations/ErrorPage";
 import Login from "./Pages/Auth & Authorization/Login";
 import Signup, { SignupLoader } from "./Pages/Auth & Authorization/Signup";
-import {
-  AuthContext,
-  AuthProvider,
-} from "./Pages/Auth & Authorization/AuthContext";
 import ProtectedRoutes from "./Pages/Auth & Authorization/ProtectedRoutes";
 import { UserContextProvider } from "./store/UserContextProvider";
 
@@ -71,7 +67,6 @@ function App() {
         //   element: <ProfileCompleted />,
         // },
         {
-          path: "/u",
           element: <ProtectedRoutes />,
           children: [
             {
@@ -101,13 +96,11 @@ function App() {
   ]);
 
   return (
-    <AuthProvider>
-      <UserContextProvider>
-        <div className="bg-blue-extralight w-full font-openSans overflow-x-hidden h-full">
-          <RouterProvider router={router} />
-        </div>
-      </UserContextProvider>
-    </AuthProvider>
+    <UserContextProvider>
+      <div className="bg-blue-extralight w-full font-openSans overflow-x-hidden h-full">
+        <RouterProvider router={router} />
+      </div>
+    </UserContextProvider>
   );
 }
 
