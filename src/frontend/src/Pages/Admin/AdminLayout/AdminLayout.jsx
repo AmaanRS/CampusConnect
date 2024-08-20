@@ -15,9 +15,9 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 export default function AdminLayout() {
   const navigate = useNavigate();
-  useEffect(() => {
-    navigate("/admin/dashboard");
-  }, []);
+  // useEffect(() => {
+  //   navigate("/admin/dashboard");
+  // }, []);
   const [globalOpen, setGlobalOpen] = useState(true);
   return (
     <>

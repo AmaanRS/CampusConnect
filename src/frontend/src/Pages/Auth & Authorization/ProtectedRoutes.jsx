@@ -15,7 +15,13 @@ export default function ProtectedRoutes() {
       return navigate("/", { replace: false });
     }
     if (userState.accountType === AccountType.Admin) {
-      navigate("/admin/dashboard");
+      return navigate("/admin/dashboard");
+    }
+    if (userState.accountType === AccountType.Teacher) {
+      return navigate("/teacher/dashboard");
+    }
+    if (userState.accountType === AccountType.Student) {
+      return navigate("/student/home");
     }
   }, [isLoggedIn, userState]);
 
