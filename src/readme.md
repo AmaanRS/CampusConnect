@@ -39,6 +39,12 @@ replication:
 sudo systemctl restart mongod
 ```
 
+### In windows run the following command in command prompt
+
+```bash
+mongod --port 27018 --replSet "rs0Me" --dbpath "C:\data\db1" --bind_ip localhost
+```
+
 # Images of User Schema Logic
 
 ![Getting Started](./readmeImg/CC1.png)
