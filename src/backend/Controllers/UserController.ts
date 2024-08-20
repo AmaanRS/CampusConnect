@@ -10,6 +10,7 @@ import { MongooseError } from "mongoose";
 import { userModel } from "../Models/User";
 import { IUser } from "../Types/ModelTypes";
 import { checkPassAgainstDbPass } from "../Utils/passwordUtils";
+import { createJwtToken } from "../Utils/jwtToken";
 
 const login = async (req: Request, res: Response) => {
 	try {
@@ -58,23 +59,29 @@ const login = async (req: Request, res: Response) => {
 			}
 
 			//Create a jwt token
-			let token: string = jwt.sign(
-				{
-					email: email,
-					position: [...user.position],
-					accountType: user.accType,
-				},
-				process.env.JWT_SECRET!,
-			);
+			const isTokenCreated = createJwtToken(user);
 
-			//Send the message to the frontend that the user is now logged in
-			const response: TokenResponse = {
-				message: "You have been logged in successfully",
-				success: true,
-				token: token,
-			};
+			if (!isTokenCreated.success) {
+				const response: StandardResponse = {
+					message: "JWT token could not be created",
+					success: false,
+				};
 
-			return res.status(201).json(response);
+				return res.status(401).json(response);
+			}
+
+			if (isTokenCreated.success && "token" in isTokenCreated) {
+				let token: string = isTokenCreated.token;
+
+				//Send the message to the frontend that the user is now logged in
+				const response: TokenResponse = {
+					message: "You have been logged in successfully",
+					success: true,
+					token: token,
+				};
+
+				return res.status(201).json(response);
+			}
 		}
 		//If either email or password does not exist
 		else {

@@ -3,6 +3,7 @@ import {
 	DataResponse,
 	decodedTokenPayload,
 	StandardResponse,
+	TokenResponse,
 } from "../Types/GeneralTypes";
 import { userModel } from "../Models/User";
 import { adminModel } from "../Models/Admin";
@@ -13,6 +14,7 @@ import { studentModel } from "../Models/Student";
 import { teacherModel } from "../Models/Teacher";
 import { nonTeachingStaffModel } from "../Models/NonTeachingStaff";
 import { UpdateWriteOpResult } from "mongoose";
+import { createJwtToken } from "../Utils/jwtToken";
 
 // When changing from any accountType to admin all the previous data will be lost so be careful
 // Creates admin using user jwt token
@@ -55,8 +57,6 @@ const createAdmin = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			// const { _id: userId, ...dataForNewAdmin } = user;
-
 			// Passing old objectId ensures that objectid remains same
 			const userId = user._id;
 			const { ...dataForNewAdmin } = user;
@@ -95,9 +95,33 @@ const createAdmin = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			//Create a jwt token
+			const isTokenCreated = createJwtToken(newAdmin[0]);
+
+			if (!isTokenCreated.success) {
+				const response: StandardResponse = {
+					message: "JWT token could not be created",
+					success: false,
+				};
+
+				return response;
+			}
+
+			if (isTokenCreated.success && "token" in isTokenCreated) {
+				let token: string = isTokenCreated.token;
+
+				const response: TokenResponse = {
+					message: "Admin creation successfull",
+					success: true,
+					token: token,
+				};
+
+				return response;
+			}
+
 			const response: StandardResponse = {
-				message: "Admin creation successfull",
-				success: true,
+				message: "Token was created but could not be sent",
+				success: false,
 			};
 
 			return response;

@@ -3,12 +3,14 @@ import {
 	DataResponse,
 	decodedTokenPayload,
 	StandardResponse,
+	TokenResponse,
 } from "../Types/GeneralTypes";
 import { onlyHodEmailRegex, onlyTeacherEmailRegex } from "../Utils/regexUtils";
 import { runWithRetrySession } from "../Utils/util";
 import { userModel } from "../Models/User";
 import { teacherModel } from "../Models/Teacher";
 import { Department, ITeacher } from "../Types/ModelTypes";
+import { createJwtToken } from "../Utils/jwtToken";
 
 // Creates teacher using user jwt token
 const createTeacher = async (req: Request, res: Response) => {
@@ -119,9 +121,33 @@ const createTeacher = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			//Create a jwt token
+			const isTokenCreated = createJwtToken(newTeacher[0]);
+
+			if (!isTokenCreated.success) {
+				const response: StandardResponse = {
+					message: "JWT token could not be created",
+					success: false,
+				};
+
+				return response;
+			}
+
+			if (isTokenCreated.success && "token" in isTokenCreated) {
+				let token: string = isTokenCreated.token;
+
+				const response: TokenResponse = {
+					message: "Teacher creation successfull",
+					success: true,
+					token: token,
+				};
+
+				return response;
+			}
+
 			const response: StandardResponse = {
-				message: "Teacher creation successfull",
-				success: true,
+				message: "Token was created but could not be sent",
+				success: false,
 			};
 
 			return response;

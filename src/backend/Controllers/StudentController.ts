@@ -4,10 +4,12 @@ import {
 	DataResponse,
 	decodedTokenPayload,
 	StandardResponse,
+	TokenResponse,
 } from "../Types/GeneralTypes";
 import { runWithRetrySession } from "../Utils/util";
 import { userModel } from "../Models/User";
 import { studentModel } from "../Models/Student";
+import { createJwtToken } from "../Utils/jwtToken";
 
 const createStudent = async (req: Request, res: Response) => {
 	try {
@@ -107,9 +109,33 @@ const createStudent = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			//Create a jwt token
+			const isTokenCreated = createJwtToken(newStudent[0]);
+
+			if (!isTokenCreated.success) {
+				const response: StandardResponse = {
+					message: "JWT token could not be created",
+					success: false,
+				};
+
+				return response;
+			}
+
+			if (isTokenCreated.success && "token" in isTokenCreated) {
+				let token: string = isTokenCreated.token;
+
+				const response: TokenResponse = {
+					message: "Student creation successfull",
+					success: true,
+					token: token,
+				};
+
+				return response;
+			}
+
 			const response: StandardResponse = {
-				message: "Student creation successfull",
-				success: true,
+				message: "Token was created but could not be sent",
+				success: false,
 			};
 
 			return response;
