@@ -17,13 +17,12 @@ import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
-import { useLoaderData } from "react-router-dom";
-import Cookie from "js-cookie";
-import { AuthContext } from "./AuthContext";
 import CustomAlert from "../../Components/Alerts & animations/Alert";
 import ErrorPage from "../../Components/Alerts & animations/ErrorPage";
 import { UserContext } from "../../store/UserContextProvider";
 import { jwtDecode } from "jwt-decode";
+import { AccountType } from "../../utils/enum";
+import { getToken } from "../../utils/getToken";
 
 // Schema
 const schema = yup.object({
@@ -46,16 +45,25 @@ const schema = yup.object({
 
 function Login() {
   const navigate = useNavigate();
-  const isLoggedIn = useLoaderData();
-  // const { setUser } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
   const { setUserState, userState } = useContext(UserContext);
 
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     return navigate("/userprofile", { replace: true });
+  //   }
+  // }, [isLoggedIn]);
+
   useEffect(() => {
+    const { isLoggedIn } = getToken();
     if (isLoggedIn) {
-      return navigate("/userprofile", { replace: true });
+      if (userState.accountType === AccountType.Admin) {
+        return navigate("/u/admin/dashboard");
+      } else {
+        return navigate("/userprofile", { replace: true });
+      }
     }
-  }, [isLoggedIn]);
+  }, []);
 
   //form handling
 
@@ -81,7 +89,12 @@ function Login() {
         Cookies.set("token", res.data.token);
         const decodedToken = jwtDecode(res.data.token);
         setUserState(decodedToken);
-        navigate("/userprofile");
+        const accountType = decodedToken.accountType;
+        if (accountType === AccountType.Admin) {
+          return navigate("/u/admin/dashboard");
+        } else {
+          return navigate("/userprofile");
+        }
       } else {
         setAlertMessage("Either Email or Password is wrong");
         setIsAlertOpen(true);
@@ -215,14 +228,5 @@ function Login() {
     </div>
   );
 }
-
-export const loginLoader = () => {
-  var token = Cookie.get("token");
-  if (token) {
-    return true;
-  } else {
-    return false;
-  }
-};
 
 export default Login;

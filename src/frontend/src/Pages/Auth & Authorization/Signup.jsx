@@ -9,11 +9,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { motion } from "framer-motion";
-import Cookie from "js-cookie";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
 import AccCreated from "../../Components/Alerts & animations/AccCreated";
 import CustomAlert from "../../Components/Alerts & animations/Alert";
 import ErrorPage from "../../Components/Alerts & animations/ErrorPage";
+import { getToken } from "../../utils/getToken";
 
 // schema
 const schema = yup.object({
@@ -224,7 +224,7 @@ function Signup() {
 }
 
 export const SignupLoader = () => {
-  var token = Cookie.get("token");
+  var { token } = getToken();
   if (token) {
     return true;
   } else {

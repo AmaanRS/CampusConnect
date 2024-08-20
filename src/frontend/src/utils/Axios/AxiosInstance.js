@@ -1,5 +1,5 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+import { getToken } from "../getToken";
 
 const axiosInstance = axios.create({
   baseURL: "http://127.0.0.1:8000", // Set your base URL here
@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = Cookies.get("token");
+    const { token } = getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

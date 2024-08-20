@@ -16,7 +16,7 @@ import ProfileCompleted from "./Components/User Profile/ProfileCompleted";
 import AdminLayout from "./Pages/Admin/AdminLayout/AdminLayout";
 import Dashboard from "./Pages/Admin/Dashboard/Dashboard";
 import ErrorPage from "./Components/Alerts & animations/ErrorPage";
-import Login, { loginLoader } from "./Pages/Auth & Authorization/Login";
+import Login from "./Pages/Auth & Authorization/Login";
 import Signup, { SignupLoader } from "./Pages/Auth & Authorization/Signup";
 import {
   AuthContext,
@@ -50,7 +50,6 @@ function App() {
         {
           path: "login",
           element: <Login />,
-          loader: loginLoader,
         },
         {
           path: "signup",

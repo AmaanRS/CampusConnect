@@ -4,7 +4,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
 import { jwtDecode } from "jwt-decode";
-import Cookie from "js-cookie";
+import { getToken } from "../../utils/getToken";
 // Create the context
 export const AuthContext = createContext();
 
@@ -13,10 +13,8 @@ export const AuthProvider = ({ children }) => {
   const [accType, setAccType] = useState(null);
   const [profCompleted, setProfCompleted] = useState(false); // Dsiplays profile completion page for userprofile
 
-  const token = Cookie.get("token");
+  const { token } = getToken();
   // console.log(token, "jwt");
-
-  console.log(profCompleted);
 
   // setTimeout(() => {
   //   setProfCompleted(false);

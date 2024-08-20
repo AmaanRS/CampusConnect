@@ -2,18 +2,26 @@
 /* eslint-disable no-unused-vars */
 
 import { createContext, useEffect, useReducer } from "react";
+import Cookies from "js-cookie";
+import { getToken } from "../utils/getToken";
 
 const initialState = {
   email: "",
   position: [],
   accountType: "",
   iat: 0,
+  isProfileComplete: "",
 };
+
+function getInitialState() {
+  const res = JSON.parse(localStorage.getItem("user")) || initialState;
+  return res;
+}
 
 export const UserContext = createContext({
   userState: initialState,
   setUserState: () => {},
-  deleteUserState: () => {},
+  logOutUser: () => {},
 });
 
 const reducer = (state, action) => {
@@ -23,9 +31,10 @@ const reducer = (state, action) => {
       const newState = action.payload;
       return newState;
     }
-    case "deleteUserState": {
+    case "logOutUser": {
       localStorage.removeItem("user");
-      return null;
+      Cookies.remove("token");
+      return initialState;
     }
 
     default:
@@ -34,12 +43,12 @@ const reducer = (state, action) => {
 };
 
 export const UserContextProvider = ({ children }) => {
-  const [userState, dispatch] = useReducer(reducer, null);
+  const [userState, dispatch] = useReducer(reducer, getInitialState());
 
   useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("user"));
-    if (savedUser) {
-      setUserState(savedUser);
+    const { token } = getToken();
+    if (!token) {
+      logOutUser();
     }
   }, []);
 
@@ -50,19 +59,18 @@ export const UserContextProvider = ({ children }) => {
   }, [userState]);
 
   function setUserState(user) {
-    console.log("inside dispatch", user);
     dispatch({
       type: "setUserState",
       payload: user,
     });
   }
 
-  function deleteUserState() {
+  function logOutUser() {
     dispatch({
-      type: "deleteUserState",
+      type: "logOutUser",
     });
   }
-
-  const value = { userState, setUserState, deleteUserState };
+  console.log(userState);
+  const value = { userState, setUserState, logOutUser };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

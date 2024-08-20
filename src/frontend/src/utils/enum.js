@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 // Year Enum
-const Year = {
+export const Year = {
   "1ST": 1,
   "2ND": 2,
   "3RD": 3,
@@ -8,14 +8,14 @@ const Year = {
 };
 
 // Department Enum
-const Department = {
+export const Department = {
   IT: "IT",
   COMS: "COMS",
   AIDS: "AIDS",
 };
 
 // AccountType Enum
-const AccountType = {
+export const AccountType = {
   Admin: "ADMIN",
   NonTeachingStaff: "NON_TEACHING_STAFF",
   Student: "STUDENT",
@@ -23,14 +23,14 @@ const AccountType = {
 };
 
 // StudentPosition Enum
-const StudentPosition = {
+export const StudentPosition = {
   Student: "STUDENT",
   StudentIncharge: "STUDENT_INCHARGE",
   CommitteeMember: "COMMITTEE_MEMBER",
 };
 
 // TeacherPosition Enum
-const TeacherPosition = {
+export const TeacherPosition = {
   Teacher: "TEACHER",
   HOD: "HOD",
   FacultyIncharge: "FACULTY_INCHARGE",
@@ -38,16 +38,16 @@ const TeacherPosition = {
 };
 
 // AdminPosition Enum
-const AdminPosition = {
+export const AdminPosition = {
   Admin: "ADMIN",
 };
 
 // NonTeachingStaffPosition Enum
-const NonTeachingStaffPosition = {
+export const NonTeachingStaffPosition = {
   NonTeachingStaff: "NON_TEACHING_STAFF",
 };
 
 // Example usage
-console.log(Year["1ST"]); // 1
-console.log(Department.IT); // "IT"
-console.log(AccountType.Student); // "STUDENT"
+// console.log(Year["1ST"]); // 1
+// console.log(Department.IT); // "IT"
+// console.log(AccountType.Student); // "STUDENT"

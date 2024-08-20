@@ -1,19 +1,23 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 // import { AuthContext } from "./AuthContext";
-import Cookie from "js-cookie";
+import { getToken } from "../../utils/getToken";
+import { UserContext } from "../../store/UserContextProvider";
+import { AccountType } from "../../utils/enum";
 
 export default function ProtectedRoutes() {
-  // const { user } = useContext(AuthContext);
-  const isLoggedIn = Cookie.get("token");
   const navigate = useNavigate();
-
+  const { userState } = useContext(UserContext);
   // use this componet for redirecting unauthenticated users
+  const { isLoggedIn } = getToken();
   useEffect(() => {
     if (!isLoggedIn) {
       return navigate("/", { replace: false });
     }
-  }, [isLoggedIn]);
+    if (userState.accountType === AccountType.Admin) {
+      navigate("/u/admin/dashboard");
+    }
+  }, [isLoggedIn, userState]);
 
   return (
     <>

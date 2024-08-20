@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar, { SidebarItem } from "./Sidebar";
 import {
   LayoutDashboard,
@@ -11,9 +11,13 @@ import {
   Settings,
 } from "lucide-react";
 import BottomBar from "./BottomBar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function AdminLayout() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate("/u/admin/dashboard");
+  }, []);
   const [globalOpen, setGlobalOpen] = useState(true);
   return (
     <>

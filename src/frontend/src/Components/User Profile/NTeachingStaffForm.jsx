@@ -22,13 +22,13 @@ const StudentForm = () => {
 
   const formSubmit = (data) => {
     console.log(data);
-    navigate("/userprofile/profilecompleted");
     const userData = {
       email: data.email,
       department: data.department,
       position: data.position,
     };
     setUser(userData);
+    return navigate("/userprofile/profilecompleted");
   };
 
   return (

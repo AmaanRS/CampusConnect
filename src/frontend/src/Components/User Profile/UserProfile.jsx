@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
-import Cookie from "js-cookie";
 import TeachingStaffForm from "./TeachingStaffForm";
 import { TbLogout2 } from "react-icons/tb";
 import StudentForm from "./StudentForm";
@@ -13,29 +12,40 @@ import ProfileCompleted from "./ProfileCompleted";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
 import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
 import { UserContext } from "../../store/UserContextProvider";
+import Cookies from "js-cookie";
+import { getToken } from "../../utils/getToken";
+import { AccountType } from "../../utils/enum";
 
 function UserProfile() {
-  const { accType, profCompleted } = useContext(AuthContext);
-  const { deleteUserState } = useContext(UserContext);
-  // console.log(accType);
-  console.log(accType);
+  // const { accType, profCompleted } = useContext(AuthContext);
+  const { userState } = useContext(UserContext);
+  const { logOutUser } = useContext(UserContext);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const handleLogout = () => {
-    Cookie.remove("token");
-    deleteUserState();
-
-    return navigate("/login");
-  };
-
-  const token = Cookie.get("token");
+  const { token } = getToken();
 
   useEffect(() => {
     if (!token) {
-      navigate("/");
+      return navigate("/login");
+    }
+    if (userState.accountType === AccountType.Admin) {
+      return navigate("/u/admin/dashboard");
+    }
+    if (userState.isProfileComplete) {
+      if (userState.accountType === AccountType.Student) {
+        return navigate("/u/student/home");
+      }
+
+      if (userState.accountType === AccountType.Teacher) {
+        return navigate("/u/student/dashboard");
+      }
     }
   }, [token, navigate]);
+
+  const handleLogout = () => {
+    logOutUser();
+    return navigate("/login");
+  };
 
   // const [role, setRole] = useState(localStorage.getItem("userRole") || "");
   // const [position, setPosition] = useState("");
@@ -64,7 +74,7 @@ function UserProfile() {
       <div className="absolute bottom-0 m-5 left-0 text-2xl z-10 cursor-pointer">
         <TbLogout2 color="#243DDE" onClick={handleLogout} />
       </div>
-      {profCompleted === false ? (
+      {false === false ? (
         <div className="overflow-hidden md:rounded-3xl md:w-[95%] lg:w-[80%] w-full h-full md:h-[95%] bg-blue-extralight flex items-center justify-center md:shadow-3xl shadow-lg flex-col md:flex-row">
           <div
             className="left flex flex-col items-center justify-around m-6 p-2 md:m-0 md:w-1/2 h-full bg-custom bg-opacity-50
@@ -113,9 +123,10 @@ function UserProfile() {
             </h1>
           </div>
           <div className="right w-full md:w-1/2">
-            {accType === "HOD" || accType === "TEACHER" ? (
+            {userState?.accountType === AccountType.NonTeachingStaff ||
+            userState?.accountType === AccountType.Teacher ? (
               <TeachingStaffForm />
-            ) : accType === "STUDENT" ? (
+            ) : userState?.accountType === AccountType.Student ? (
               <StudentForm />
             ) : (
               // alert("Hii")
