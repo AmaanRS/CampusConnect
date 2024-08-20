@@ -9,7 +9,7 @@ function ErrorPage({ error }) {
   const navigate = useNavigate();
   useEffect(() => {
     const timer = setTimeout(() => {
-      return navigate("/");
+      navigate("/");
     }, 2000); // Redirect after 2 seconds
 
     return () => clearTimeout(timer); // Cleanup the timer on component unmount

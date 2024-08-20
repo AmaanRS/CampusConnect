@@ -58,9 +58,9 @@ function Login() {
     const { isLoggedIn } = getToken();
     if (isLoggedIn) {
       if (userState.accountType === AccountType.Admin) {
-        return navigate("/admin");
+        navigate("/admin");
       } else {
-        return navigate("/userprofile", { replace: true });
+        navigate("/userprofile", { replace: true });
       }
     }
   }, []);

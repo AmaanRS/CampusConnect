@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Sidebar, { SidebarItem } from "./Sidebar";
 import {
   LayoutDashboard,
@@ -11,12 +11,16 @@ import {
   Settings,
 } from "lucide-react";
 import BottomBar from "./BottomBar";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, redirect } from "react-router-dom";
+import { UserContext } from "../../../store/UserContextProvider";
+import { AccountType } from "../../../utils/enum";
 
 export default function AdminLayout() {
-  const navigate = useNavigate();
+  const { userState } = useContext(UserContext);
   useEffect(() => {
-    // navigate("/admin/");
+    if (userState.accountType !== AccountType.Admin) {
+      redirect("/");
+    }
   }, []);
   const [globalOpen, setGlobalOpen] = useState(true);
   return (

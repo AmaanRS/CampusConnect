@@ -39,7 +39,7 @@ function Signup() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      return navigate("/", { replace: true });
+      navigate("/", { replace: true });
     }
   }, [isLoggedIn]);
 

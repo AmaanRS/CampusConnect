@@ -25,25 +25,25 @@ function UserProfile() {
 
   useEffect(() => {
     if (!token) {
-      return navigate("/login");
+      navigate("/login");
     }
     if (userState.accountType === AccountType.Admin) {
-      return navigate("/admin");
+      navigate("/admin");
     }
     if (userState.isProfileComplete) {
       if (userState.accountType === AccountType.Student) {
-        return navigate("/student/home");
+        navigate("/student/home");
       }
 
       if (userState.accountType === AccountType.Teacher) {
-        return navigate("/student/dashboard");
+        navigate("/student/dashboard");
       }
     }
   }, [token, navigate]);
 
   const handleLogout = () => {
     logOutUser();
-    return navigate("/login");
+    navigate("/login");
   };
 
   // const [role, setRole] = useState(localStorage.getItem("userRole") || "");
