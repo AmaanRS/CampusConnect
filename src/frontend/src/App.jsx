@@ -23,7 +23,8 @@ import { UserContextProvider } from "./store/UserContextProvider";
 import Demo1 from "./Demo1";
 import Demo2 from "./Demo2";
 import Demo3 from "./Demo3";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
 function App() {
   const locomotiveScroll = new LocomotiveScroll();
   const router = createBrowserRouter([
@@ -108,11 +109,13 @@ function App() {
   ]);
 
   return (
-    <UserContextProvider>
-      <div className="bg-blue-extralight w-full font-openSans overflow-x-hidden h-full">
-        <RouterProvider router={router} />
-      </div>
-    </UserContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <UserContextProvider>
+        <div className="bg-blue-extralight w-full font-openSans overflow-x-hidden h-full">
+          <RouterProvider router={router} />
+        </div>
+      </UserContextProvider>
+    </QueryClientProvider>
   );
 }
 

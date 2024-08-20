@@ -4,9 +4,12 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate } from "react-router-dom";
-import ProfileCompleted from "./ProfileCompleted";
 import axiosInstance from "../../utils/Axios/AxiosInstance";
-// import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
+import { UserContext } from "../../store/UserContextProvider";
+import { useMutation } from "@tanstack/react-query";
+import { Department } from "../../utils/enum";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 const schema = yup.object({
   year: yup
@@ -25,45 +28,35 @@ const schema = yup.object({
 
 const StudentForm = () => {
   const navigate = useNavigate();
-  // const { user, setUser, profCompleted, setProfCompleted, decodedToken } =
-  //   useContext(AuthContext);
+  const { setUserState } = useContext(UserContext);
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: ({ department, year }) => {
+      return axiosInstance.post("/student/createStudent", { department, year });
+    },
+
+    onSuccess: (data) => {
+      const decodedToken = jwtDecode(data.data.token);
+      Cookies.set("token", data.data.token);
+      setUserState(decodedToken);
+      navigate("/student");
+    },
+
+    onError: (error) => console.log("an error occured", error),
+  });
+
+  const { userState } = useContext(UserContext);
 
   const { handleSubmit, register, formState } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const formSubmit = async (data) => {
-    try {
-      const res = await axiosInstance.post("/getUserProfileStatus", {
-        // decodedToken: decodedToken,
-        email: data.email,
-      });
-      console.log(res);
-      // setProfCompleted(true);
-
-      // let position = res.data.data.position.toString().toUpperCase();
-      // console.log(position);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setTimeout(() => {
-        // setProfCompleted(false);
-      }, 3000);
-    }
-    console.log(data);
-    // navigate("/completed");
-    const userData = {
-      email: data.email,
-      year: data.year,
-      studentid: data.studentid,
-      department: data.department,
-    };
-    // setUser(userData);
+  const formSubmit = async (dataObj) => {
+    const { year, department } = dataObj;
+    mutate({ year, department });
   };
 
-  // const email = user?.email;
-  // const studentIdNumber = email.match(/\d+/)[0];
-  // console.log(studentIdNumber); // Output: 212124102
+  // console.log(data, error);
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full overflow-y-hidden">
@@ -82,7 +75,7 @@ const StudentForm = () => {
           type="text"
           name="email"
           id="email"
-          // value={user?.email || ""}
+          value={userState.email || ""}
           readOnly
           className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light"
           {...register("email")}
@@ -99,8 +92,10 @@ const StudentForm = () => {
         <input
           type="number"
           name="year"
+          min={1}
+          max={4}
           id="year"
-          className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light focus:border-red-600"
+          className="rounded-md px-3  py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light focus:border-red-600"
           placeholder="Enter Year Eg: 1 for 1st Year"
           {...register("year")}
         />
@@ -121,13 +116,13 @@ const StudentForm = () => {
           id="department"
           className="xl:text-xl text-blue-dark custom-select border border-blue-dark rounded-md mt-1 block w-full pl-3 pr-10 py-1 md:py-3 text-base"
         >
-          <option value="IT" className="p-3">
+          <option value={Department.IT} className="p-3">
             IT (Information Technology)
           </option>
-          <option value="COMS" className="p-3">
+          <option value={Department.COMS} className="p-3">
             COMS (Computer Science)
           </option>
-          <option value="AIDS" className="p-3">
+          <option value={Department.AIDS} className="p-3">
             AIDS (Artificial Intelligence & Data Science)
           </option>
         </select>
@@ -161,13 +156,15 @@ const StudentForm = () => {
             Back
           </NavLink>
           <button
+            disabled={isPending}
             className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
             lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
           >
-            Confirm
+            {isPending ? "Confirming" : "Confirm"}
           </button>
         </div>
       </form>
+      {isError && <p className="text-red-600">{error.message}</p>}
     </div>
   );
 };

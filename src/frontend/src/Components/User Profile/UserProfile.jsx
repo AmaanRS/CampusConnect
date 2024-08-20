@@ -73,7 +73,7 @@ function UserProfile() {
       <div className="absolute bottom-0 m-5 left-0 text-2xl z-10 cursor-pointer">
         <TbLogout2 color="#243DDE" onClick={handleLogout} />
       </div>
-      {false === false ? (
+      {!userState.isProfileComplete ? (
         <div className="overflow-hidden md:rounded-3xl md:w-[95%] lg:w-[80%] w-full h-full md:h-[95%] bg-blue-extralight flex items-center justify-center md:shadow-3xl shadow-lg flex-col md:flex-row">
           <div
             className="left flex flex-col items-center justify-around m-6 p-2 md:m-0 md:w-1/2 h-full bg-custom bg-opacity-50
@@ -122,8 +122,7 @@ function UserProfile() {
             </h1>
           </div>
           <div className="right w-full md:w-1/2">
-            {userState?.accountType === AccountType.NonTeachingStaff ||
-            userState?.accountType === AccountType.Teacher ? (
+            {userState?.accountType === AccountType.Teacher ? (
               <TeachingStaffForm />
             ) : userState?.accountType === AccountType.Student ? (
               <StudentForm />
@@ -136,7 +135,8 @@ function UserProfile() {
           </div>
         </div>
       ) : (
-        <ProfileCompleted />
+        <></>
+        // <ProfileCompleted />
       )}
     </div>
   );

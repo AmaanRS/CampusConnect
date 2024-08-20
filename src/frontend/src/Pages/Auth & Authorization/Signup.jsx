@@ -110,7 +110,7 @@ function Signup() {
       setAlertMessage(errorMsg);
       console.log(errorMsg, "Inside Catch");
     } finally {
-      reset();
+      // reset();
     }
 
     // pop up
