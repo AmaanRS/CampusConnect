@@ -1,7 +1,6 @@
-import { ChevronFirst, ChevronLast, MoreVertical } from "lucide-react";
-import logo from "../../../assets/logo.png";
-import profile from "../../../assets/profile.png";
-import { createContext, useContext, useState } from "react";
+/* eslint-disable react/prop-types */
+import { ChevronFirst, ChevronLast } from "lucide-react";
+import { createContext, useContext } from "react";
 
 const SidebarContext = createContext();
 
@@ -11,12 +10,21 @@ export default function Sidebar({ children, setGlobalOpen, globalOpen }) {
       <aside className="h-screen">
         <nav className="h-full flex flex-col bg-white border-r shadow-sm">
           <div className="p-4 pb-2 flex justify-between items-center">
-            <img
+            {/* <img
               src={logo}
               className={`overflow-hidden transition-all ${
                 globalOpen ? "w-32" : "w-0"
               }`}
-            />
+            /> */}
+            <div className="logo ">
+              <h1
+                className={` overflow-hidden transition-all ${
+                  globalOpen ? "w-36" : "w-0"
+                } tracking-tighter text-lg font-semibold text-blue-dark`}
+              >
+                Campus<span className="text-blue-light">Connect</span>
+              </h1>
+            </div>
             <button
               onClick={() => {
                 setGlobalOpen((curr) => !curr);
@@ -31,7 +39,7 @@ export default function Sidebar({ children, setGlobalOpen, globalOpen }) {
             <ul className="flex-1 px-3">{children}</ul>
           </SidebarContext.Provider>
 
-          <div className="border-t flex p-3">
+          {/* <div className="border-t flex p-3">
             <img src={profile} className="w-10 h-10 rounded-md" />
             <div
               className={`flex justify-between items-center overflow-hidden transition-all ${
@@ -46,7 +54,7 @@ export default function Sidebar({ children, setGlobalOpen, globalOpen }) {
               </div>
               <MoreVertical size={20} />
             </div>
-          </div>
+          </div> */}
         </nav>
       </aside>
     </>

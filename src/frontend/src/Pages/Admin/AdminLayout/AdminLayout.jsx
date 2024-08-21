@@ -2,18 +2,19 @@ import { useContext, useEffect, useState } from "react";
 import Sidebar, { SidebarItem } from "./Sidebar";
 import {
   LayoutDashboard,
-  Home,
-  StickyNote,
-  Layers,
-  Flag,
-  Calendar,
-  LifeBuoy,
+  User,
+  Search,
   Settings,
+  LogOutIcon,
 } from "lucide-react";
 import BottomBar from "./BottomBar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../store/UserContextProvider";
 import { AccountType } from "../../../utils/enum";
+import { HiOutlineUserGroup } from "react-icons/hi2";
+import { LiaChalkboardTeacherSolid } from "react-icons/lia";
+import { PiStudent } from "react-icons/pi";
+import { TbDevicesQuestion } from "react-icons/tb";
 
 export default function AdminLayout() {
   const { userState } = useContext(UserContext);
@@ -29,19 +30,28 @@ export default function AdminLayout() {
     <>
       <div className="hidden sm:flex fixed left-0 top-0">
         <Sidebar setGlobalOpen={setGlobalOpen} globalOpen={globalOpen}>
-          <SidebarItem icon={<Home size={20} />} text="Home" alert />
+          {/* <SidebarItem icon={<Home size={20} />} text="Home" alert /> */}
           <SidebarItem
             icon={<LayoutDashboard size={20} />}
             text="Dashboard"
             active
           />
-          <SidebarItem icon={<StickyNote size={20} />} text="Projects" alert />
-          <SidebarItem icon={<Calendar size={20} />} text="Calendar" />
-          <SidebarItem icon={<Layers size={20} />} text="Tasks" />
-          <SidebarItem icon={<Flag size={20} />} text="Reporting" />
+          <SidebarItem icon={<Search size={20} />} text="Search" />
+          <SidebarItem
+            icon={<HiOutlineUserGroup size={20} />}
+            text="committees"
+          />
+          <SidebarItem
+            icon={<LiaChalkboardTeacherSolid size={20} />}
+            text="Teachers"
+          />
+          <SidebarItem icon={<PiStudent size={20} />} text="Students" />
+          <SidebarItem icon={<TbDevicesQuestion size={20} />} text="Requests" />
+
           <hr className="my-3" />
+          <SidebarItem icon={<User size={20} />} text="profile" />
           <SidebarItem icon={<Settings size={20} />} text="Settings" />
-          <SidebarItem icon={<LifeBuoy size={20} />} text="Help" />
+          <SidebarItem icon={<LogOutIcon size={20} />} text="Logout" />
         </Sidebar>
       </div>
       <BottomBar />
