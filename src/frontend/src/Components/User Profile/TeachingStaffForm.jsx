@@ -4,35 +4,42 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate } from "react-router-dom";
-// import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
-const schema = yup.object({});
+import { UserContext } from "../../store/UserContextProvider";
+import { useMutation } from "@tanstack/react-query";
+import axiosInstance from "../../utils/Axios/AxiosInstance";
+import { Department } from "../../utils/enum";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
-const StudentForm = () => {
+const schema = yup.object({});
+const TeachingStaffForm = () => {
   const navigate = useNavigate();
+  const { setUserState } = useContext(UserContext);
   // const { user, setUser, profCompleted, setProfCompleted } =
   //   useContext(AuthContext);
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: ({ department }) => {
+      return axiosInstance.post("/teacher/createTeacher", { department });
+    },
+    onSuccess: (data) => {
+      console.log(data);
+
+      const decodedToken = jwtDecode(data.data.token);
+      Cookies.set("token", data.data.token);
+      setUserState(decodedToken);
+      navigate("/teacher");
+    },
+    onError: (error) => console.log(error),
+  });
+  const { userState } = useContext(UserContext);
+
   const { handleSubmit, register, formState } = useForm({
     // resolver: yupResolver(schema),
   });
 
   const formSubmit = (data) => {
-    try {
-      console.log(data);
-      // navigate("/completed");
-      // setProfCompleted(true);
-      const userData = {
-        email: data.email,
-        department: data.department,
-        position: data.position,
-      };
-      // setUser(userData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setTimeout(() => {
-        // setProfCompleted(false);
-      }, 3000);
-    }
+    console.log("submission start");
+    mutate({ department: data.department });
   };
   return (
     <div className="flex flex-col items-center justify-center w-full h-full overflow-y-hidden sm:overflow-y-auto">
@@ -51,7 +58,7 @@ const StudentForm = () => {
           type="text"
           name="email"
           id="email"
-          // value={user?.email}
+          value={userState.email}
           readOnly
           className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light"
           placeholder="Enter Email"
@@ -72,19 +79,19 @@ const StudentForm = () => {
           id="department"
           className="xl:text-xl text-blue-dark custom-select border border-blue-dark rounded-md mt-1 block w-full pl-3 pr-10 py-1 md:py-3 text-base"
         >
-          <option value="IT" className="p-3">
+          <option value={Department.IT} className="p-3">
             IT (Information Technology)
           </option>
-          <option value="COMS" className="p-3">
+          <option value={Department.COMS} className="p-3">
             COMS (Computer Science)
           </option>
-          <option value="AIDS" className="p-3">
+          <option value={Department.AIDS} className="p-3">
             AIDS (Artificial Intelligence & Data Science)
           </option>
         </select>
 
         {/* Position Input */}
-        <label
+        {/* <label
           htmlFor="position"
           className="my-2 lg:my-3 font-medium text-blue-light text-lg xl:text-xl"
         >
@@ -99,14 +106,14 @@ const StudentForm = () => {
         >
           <option value="TEACHER" className="p-3">
             TEACHER
-          </option>
-          {/* <option value="ASSISTANT_PROFESSOR" className="p-3">
+          </option> */}
+        {/* <option value="ASSISTANT_PROFESSOR" className="p-3">
             ASSISTANT_PROFESSOR
           </option> */}
-          <option value="HOD" className="p-3">
+        {/* <option value="HOD" className="p-3">
             HOD
           </option>
-        </select>
+        </select> */}
 
         <div className="btn flex gap-4 items-center justify-center mt-12">
           <NavLink
@@ -117,15 +124,17 @@ const StudentForm = () => {
             Back
           </NavLink>
           <button
+            disabled={isPending}
             className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
             lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
           >
-            Confirm
+            {isPending ? "Confirming" : "Confirm"}
           </button>
         </div>
       </form>
+      {isError && <p className="text-red-600"> {error.message} </p>}
     </div>
   );
 };
 
-export default StudentForm;
+export default TeachingStaffForm;

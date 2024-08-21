@@ -28,7 +28,7 @@ const schema = yup.object({
 
 const StudentForm = () => {
   const navigate = useNavigate();
-  const { setUserState } = useContext(UserContext);
+  const { setUserState, userState } = useContext(UserContext);
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: ({ department, year }) => {
@@ -44,8 +44,6 @@ const StudentForm = () => {
 
     onError: (error) => console.log("an error occured", error),
   });
-
-  const { userState } = useContext(UserContext);
 
   const { handleSubmit, register, formState } = useForm({
     resolver: yupResolver(schema),
