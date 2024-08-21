@@ -36,7 +36,7 @@ function UserProfile() {
       }
 
       if (userState.accountType === AccountType.Teacher) {
-        navigate("/student");
+        navigate("/teacher");
       }
     }
   }, [token, navigate]);
