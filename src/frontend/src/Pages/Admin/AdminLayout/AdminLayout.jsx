@@ -24,6 +24,7 @@ export default function AdminLayout() {
     }
   }, []);
   const [globalOpen, setGlobalOpen] = useState(true);
+
   return (
     <>
       <div className="hidden sm:flex fixed left-0 top-0">
@@ -43,10 +44,10 @@ export default function AdminLayout() {
           <SidebarItem icon={<LifeBuoy size={20} />} text="Help" />
         </Sidebar>
       </div>
+      <BottomBar />
       <div className={`mr-4 ${globalOpen ? "sm:ml-72" : "sm:ml-16"} `}>
         <Outlet />
       </div>
-      <BottomBar />
     </>
   );
 }
