@@ -1,5 +1,5 @@
 import React from "react";
-import { BottomDrawer } from "./BottomDrawer";
+import BottomDrawer from "./BottomDrawer";
 
 export default function BottomBar() {
   const [openDraw, setOpenDraw] = React.useState(false);
