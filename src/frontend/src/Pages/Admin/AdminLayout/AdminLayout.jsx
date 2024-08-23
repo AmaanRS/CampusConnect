@@ -8,7 +8,7 @@ import {
   LogOutIcon,
 } from "lucide-react";
 import BottomBar from "./BottomBar";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../store/UserContextProvider";
 import { AccountType } from "../../../utils/enum";
 import { HiOutlineUserGroup } from "react-icons/hi2";
@@ -19,11 +19,11 @@ import { TbDevicesQuestion } from "react-icons/tb";
 export default function AdminLayout() {
   const { userState } = useContext(UserContext);
   const navigate = useNavigate();
-  useEffect(() => {
-    if (userState.accountType !== AccountType.Admin) {
-      navigate("/");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (userState.accountType !== AccountType.Admin) {
+  //     navigate("/");
+  //   }
+  // }, []);
   const [globalOpen, setGlobalOpen] = useState(true);
 
   return (
@@ -51,7 +51,9 @@ export default function AdminLayout() {
           <hr className="my-3" />
           <SidebarItem icon={<User size={20} />} text="profile" />
           <SidebarItem icon={<Settings size={20} />} text="Settings" />
-          <SidebarItem icon={<LogOutIcon size={20} />} text="Logout" />
+          <Link to={"/"}>
+            <SidebarItem icon={<LogOutIcon size={20} />} text="Logout" />
+          </Link>
         </Sidebar>
       </div>
       <BottomBar />

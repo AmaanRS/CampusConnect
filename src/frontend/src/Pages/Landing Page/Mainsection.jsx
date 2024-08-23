@@ -20,13 +20,13 @@ function Mainsection() {
   let navRoute;
   switch (userState.accountType) {
     case AccountType.Student:
-      navRoute = "/student/home";
+      navRoute = "/dashboard";
       break;
     case AccountType.Teacher:
-      navRoute = "/teacher/dashboard";
+      navRoute = "/dashboard";
       break;
     case AccountType.Admin:
-      navRoute = "/admin";
+      navRoute = "/dashboard";
       break;
 
     default:

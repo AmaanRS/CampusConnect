@@ -71,7 +71,7 @@ function App() {
           element: <ProtectedRoutes />,
           children: [
             {
-              path: "admin",
+              path: "dashboard",
               element: <AdminLayout />,
               children: [
                 {

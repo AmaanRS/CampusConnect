@@ -22,15 +22,15 @@ function Nav() {
   switch (userState.accountType) {
     case AccountType.Admin:
       navTitle = "Dashboard";
-      navRoute = "/admin";
+      navRoute = "/dashboard";
       break;
     case AccountType.Teacher:
       navTitle = "Dashboard";
-      navRoute = "/teacher/dashboard";
+      navRoute = "/dashboard";
       break;
     case AccountType.Student:
       navTitle = "Home";
-      navRoute = "/student/home";
+      navRoute = "/dashboard";
       break;
 
     default:
