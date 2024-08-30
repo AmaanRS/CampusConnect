@@ -8,15 +8,15 @@ let serverRef: Server;
 async function connectToTestDbAndStartTestServer(
 	MONGO_URI: string,
 	PORT: string,
-	REPL_SET: string,
+	// REPL_SET: string,
 ): Promise<void> {
 	try {
 		mongoose
 			.connect(MONGO_URI, {
-				replicaSet: REPL_SET,
-				retryWrites: true,
-				readPreference: "primary",
-				ignoreUndefined: true,
+				// replicaSet: REPL_SET,
+				// retryWrites: true,
+				// readPreference: "primary",
+				// ignoreUndefined: true,
 			})
 			.then(() => {
 				console.log("Database is connected");

@@ -26,7 +26,7 @@ describe("Express Server", () => {
 		await connectToDbAndStartServer(
 			process.env.MONGO_URI!,
 			process.env.PORT!,
-			process.env.REPL_SET!,
+			// process.env.REPL_SET!,
 		);
 
 		expect(mongoose.connect).toHaveBeenCalledWith(process.env.MONGO_URI, {

@@ -117,7 +117,7 @@ const runTestServer = async () => {
 	await connectToTestDbAndStartTestServer(
 		process.env.MONGO_URI!,
 		process.env.PORT!,
-		process.env.REPL_SET!,
+		// process.env.REPL_SET!,ww
 	);
 };
 

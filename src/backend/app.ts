@@ -28,15 +28,15 @@ app.use("/student", StudentRouter);
 async function connectToDbAndStartServer(
 	MONGO_URI: string,
 	PORT: string,
-	REPL_SET: string,
+	// REPL_SET: string,
 ): Promise<void> {
 	try {
 		await mongoose
 			.connect(MONGO_URI, {
-				replicaSet: REPL_SET,
-				retryWrites: true,
-				readPreference: "primary",
-				ignoreUndefined: true,
+				// replicaSet: REPL_SET,
+				// retryWrites: true,
+				// readPreference: "primary",
+				// ignoreUndefined: true,
 			})
 			.then(() => {
 				console.log("Database is connected");
@@ -77,7 +77,7 @@ if (process.argv[1] === __filename) {
 	await connectToDbAndStartServer(
 		process.env.MONGO_URI!,
 		process.env.PORT!,
-		process.env.REPL_SET!,
+		// process.env.REPL_SET!,
 	);
 }
 
