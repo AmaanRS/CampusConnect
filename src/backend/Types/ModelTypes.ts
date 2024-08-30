@@ -81,7 +81,7 @@ export interface IStudent {
 	isInChargeOfCommittees?: ICommittee[] | undefined;
 	isMemberOfCommittees?: ICommittee[] | undefined;
 	isProfileComplete: boolean;
-	isAccountActive: boolean;
+	isAccountActive?: boolean;
 }
 
 export interface IStudentDocument extends IStudent, Document {}
