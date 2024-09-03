@@ -4,7 +4,7 @@ import { checkRequestsForCreatingCommittees } from "../Utils/requests";
 import { adminModel } from "../Models/Admin";
 import { teacherModel } from "../Models/Teacher";
 import { ITeacher } from "../Types/ModelTypes";
-import { IAdmin } from "../dist/backend/Types/ModelTypes.d";
+import { IAdmin } from "../Types/ModelTypes";
 
 const getAllPendingCommittees = async (req: Request, res: Response) => {
 	try {
