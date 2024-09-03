@@ -7,6 +7,7 @@ import UserRouter from "./Routes/UserRouter";
 import AdminRouter from "./Routes/AdminRoutes";
 import TeacherRouter from "./Routes/TeacherRoutes";
 import StudentRouter from "./Routes/StudentRoutes";
+import GeneralRouter from "./Routes/GeneralRoutes";
 import { fileURLToPath } from "url";
 // import { isAccountActive } from "./Middlewares/AccountStatus";
 
@@ -19,7 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // app.use(isAccountActive);
 
-app.use("/", UserRouter);
+app.use("/", GeneralRouter);
+app.use("/user", UserRouter);
 app.use("/admin", AdminRouter);
 app.use("/teacher", TeacherRouter);
 app.use("/student", StudentRouter);

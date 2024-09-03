@@ -1,5 +1,9 @@
 import { Model, MongooseError, Schema, model } from "mongoose";
-import { Department, ICommitteeDocument } from "../Types/ModelTypes";
+import {
+	CommitteeStatus,
+	Department,
+	ICommitteeDocument,
+} from "../Types/ModelTypes";
 import { generateUniqueId } from "../Utils/uniqueId";
 import { DataResponse } from "../Types/GeneralTypes";
 
@@ -46,9 +50,11 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 				ref: "eventModel",
 			},
 		],
-		isAccountActive: {
-			type: Boolean,
-			default: false,
+		status: {
+			type: String,
+			required: true,
+			default:CommitteeStatus.PENDING,
+			enum: Object.values(CommitteeStatus),
 		},
 		// If committeeOfDepartment array length is greater than 1 then send committee creation request to admin else send it to respective hod
 		committeeOfDepartment: [

@@ -128,6 +128,12 @@ export interface IUniqueIdDocument extends Document {
 	uniqueIds: string[];
 }
 
+export enum CommitteeStatus {
+	PENDING = "PENDING",
+	REJECTED = "REJECTED",
+	ACCEPTED = "ACCEPTED",
+}
+
 export interface ICommittee {
 	committeeId: string;
 	name: string;
@@ -138,7 +144,7 @@ export interface ICommittee {
 	members?: Types.ObjectId[] | undefined;
 	// Use nanoid here ie eventId
 	events?: Types.ObjectId[] | undefined;
-	isAccountActive: boolean;
+	status: CommitteeStatus;
 	committeeOfDepartment: Department[];
 }
 
