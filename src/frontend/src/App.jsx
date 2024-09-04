@@ -24,6 +24,9 @@ import Demo1 from "./Demo1";
 import Demo2 from "./Demo2";
 import Demo3 from "./Demo3";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import StudentLayout from "./Pages/StudentPages/StudentLayout";
+import TeacherLayout from "./Pages/TeacherPages/TeacherLayout";
+
 const queryClient = new QueryClient();
 function App() {
   const locomotiveScroll = new LocomotiveScroll();
@@ -71,7 +74,7 @@ function App() {
           element: <ProtectedRoutes />,
           children: [
             {
-              path: "dashboard",
+              path: "admin",
               element: <AdminLayout />,
               children: [
                 {
@@ -92,18 +95,16 @@ function App() {
                 },
               ],
             },
+            {
+              path: "student",
+              element: <StudentLayout />,
+            },
+            {
+              path: "teacher",
+              element: <TeacherLayout />,
+            },
           ],
         },
-        // {
-        //   path: "dashboard",
-        //   element: <Dashboard />,
-        //   loader: dashboardLoader,
-        //   children: [
-        //     { path: "home", element: <Home /> },
-        //     { path: "userprof", element: <MainProfile /> },
-        //     { path: "searchprof", element: <SearchProfile /> },
-        //   ],
-        // },
       ],
     },
   ]);

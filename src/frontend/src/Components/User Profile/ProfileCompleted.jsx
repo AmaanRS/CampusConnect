@@ -9,7 +9,7 @@ const ProfileCompleted = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/dashboard");
+      navigate("/");
     }, 2000);
 
     return () => clearTimeout(timer);

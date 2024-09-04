@@ -39,7 +39,7 @@ const StudentForm = () => {
       const decodedToken = jwtDecode(data.data.token);
       Cookies.set("token", data.data.token);
       setUserState(decodedToken);
-      navigate("/dashboard");
+      navigate("/student");
     },
 
     onError: (error) => console.log("an error occured", error),

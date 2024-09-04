@@ -19,11 +19,11 @@ import { TbDevicesQuestion } from "react-icons/tb";
 export default function AdminLayout() {
   const { userState } = useContext(UserContext);
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (userState.accountType !== AccountType.Admin) {
-  //     navigate("/");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (userState.accountType !== AccountType.Admin) {
+      navigate("/");
+    }
+  }, []);
   const [globalOpen, setGlobalOpen] = useState(true);
 
   return (
@@ -51,9 +51,8 @@ export default function AdminLayout() {
           <hr className="my-3" />
           <SidebarItem icon={<User size={20} />} text="profile" />
           <SidebarItem icon={<Settings size={20} />} text="Settings" />
-          <Link to={"/"}>
-            <SidebarItem icon={<LogOutIcon size={20} />} text="Logout" />
-          </Link>
+
+          <SidebarItem icon={<LogOutIcon size={20} />} text="Logout" />
         </Sidebar>
       </div>
       <BottomBar />

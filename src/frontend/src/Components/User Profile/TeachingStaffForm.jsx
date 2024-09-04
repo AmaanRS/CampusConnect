@@ -27,7 +27,7 @@ const TeachingStaffForm = () => {
       const decodedToken = jwtDecode(data.data.token);
       Cookies.set("token", data.data.token);
       setUserState(decodedToken);
-      navigate("/dashboard");
+      navigate("/teacher");
     },
     onError: (error) => console.log(error),
   });

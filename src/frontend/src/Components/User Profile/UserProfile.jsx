@@ -28,15 +28,15 @@ function UserProfile() {
       navigate("/login");
     }
     if (userState.accountType === AccountType.Admin) {
-      navigate("/dashboard");
+      navigate("/admin");
     }
     if (userState.isProfileComplete) {
       if (userState.accountType === AccountType.Student) {
-        navigate("/dashboard");
+        navigate("/student");
       }
 
       if (userState.accountType === AccountType.Teacher) {
-        navigate("/dashboard");
+        navigate("/teacher");
       }
     }
   }, [token, navigate]);
