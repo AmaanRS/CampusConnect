@@ -12,7 +12,7 @@ const createTeacherAndReturnToken = async () => {
 
 	await userModel.create({ email, password });
 
-	const response = await request.post("/login").send({ email, password });
+	const response = await request.post("/user/login").send({ email, password });
 
 	// Create a default admin for testing purposes
 	await request
@@ -84,7 +84,7 @@ describe("Teacher Controller", () => {
 						password,
 					});
 
-					const response = await request.post("/login").send({
+					const response = await request.post("/user/login").send({
 						email,
 						password,
 					});

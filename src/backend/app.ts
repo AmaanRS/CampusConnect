@@ -7,6 +7,8 @@ import UserRouter from "./Routes/UserRouter";
 import AdminRouter from "./Routes/AdminRoutes";
 import TeacherRouter from "./Routes/TeacherRoutes";
 import StudentRouter from "./Routes/StudentRoutes";
+import CommitteeRouter from "./Routes/CommitteeRoutes";
+import GeneralRouter from "./Routes/GeneralRoutes";
 import { fileURLToPath } from "url";
 // import { isAccountActive } from "./Middlewares/AccountStatus";
 
@@ -19,24 +21,26 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // app.use(isAccountActive);
 
-app.use("/", UserRouter);
+app.use("/", GeneralRouter);
+app.use("/user", UserRouter);
 app.use("/admin", AdminRouter);
 app.use("/teacher", TeacherRouter);
 app.use("/student", StudentRouter);
+app.use("/committee", CommitteeRouter);
 
 // Connects with db then express server
 async function connectToDbAndStartServer(
 	MONGO_URI: string,
 	PORT: string,
-	REPL_SET: string,
+	// REPL_SET: string,
 ): Promise<void> {
 	try {
 		await mongoose
 			.connect(MONGO_URI, {
-				replicaSet: REPL_SET,
-				retryWrites: true,
-				readPreference: "primary",
-				ignoreUndefined: true,
+				// replicaSet: REPL_SET,
+				// retryWrites: true,
+				// readPreference: "primary",
+				// ignoreUndefined: true,
 			})
 			.then(() => {
 				console.log("Database is connected");
@@ -77,7 +81,7 @@ if (process.argv[1] === __filename) {
 	await connectToDbAndStartServer(
 		process.env.MONGO_URI!,
 		process.env.PORT!,
-		process.env.REPL_SET!,
+		// process.env.REPL_SET!,
 	);
 }
 

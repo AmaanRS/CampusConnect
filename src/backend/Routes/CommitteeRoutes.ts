@@ -8,36 +8,13 @@ import {
 	updateCommittee,
 	deleteCommittee,
 } from "../Controllers/CommitteeController";
-import { authorizationMiddlewareFactory } from "../Middlewares/Authorization";
-import { AccountType, TeacherPosition } from "../Types/ModelTypes";
 
-Router.route("/createCommittee").post(
-	cookieCheckerMiddleware,
-	authorizationMiddlewareFactory(
-		[TeacherPosition.HOD, TeacherPosition.HOD],
-		AccountType.Teacher,
-	),
-	createCommittee,
-);
+Router.route("/createCommittee").post(cookieCheckerMiddleware, createCommittee);
 
 Router.route("/getCommittee").post(cookieCheckerMiddleware, getCommittee);
 
-Router.route("/updateCommittee").post(
-	cookieCheckerMiddleware,
-	authorizationMiddlewareFactory(
-		[TeacherPosition.HOD, TeacherPosition.HOD],
-		AccountType.Teacher,
-	),
-	updateCommittee,
-);
+Router.route("/updateCommittee").post(cookieCheckerMiddleware, updateCommittee);
 
-Router.route("/deleteCommittee").post(
-	cookieCheckerMiddleware,
-	authorizationMiddlewareFactory(
-		[TeacherPosition.HOD, TeacherPosition.HOD],
-		AccountType.Teacher,
-	),
-	deleteCommittee,
-);
+Router.route("/deleteCommittee").post(cookieCheckerMiddleware, deleteCommittee);
 
 export default Router;

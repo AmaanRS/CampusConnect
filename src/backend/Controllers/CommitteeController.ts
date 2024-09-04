@@ -80,7 +80,7 @@ const createCommittee = async (req: Request, res: Response) => {
 
 			// Get the objectId from facultyIncharge
 			const teacherId = await teacherModel
-				.find({ email: facultyInchargeEmail }, { _id: 1 })
+				.findOne({ email: facultyInchargeEmail }, { _id: 1 })
 				.session(session)
 				.lean();
 
@@ -94,13 +94,15 @@ const createCommittee = async (req: Request, res: Response) => {
 			}
 
 			const newCommittee: ICommittee[] = await committeeModel.create(
-				{
-					name,
-					description,
-					studentIncharge: studentId,
-					facultyIncharge: teacherId,
-					committeeOfDepartment,
-				},
+				[
+					{
+						name,
+						description,
+						studentIncharge: studentId,
+						facultyIncharge: teacherId,
+						committeeOfDepartment,
+					},
+				],
 				{ session },
 			);
 
@@ -112,6 +114,13 @@ const createCommittee = async (req: Request, res: Response) => {
 
 				return response;
 			}
+
+			const response: StandardResponse = {
+				message: "Created committee successfull",
+				success: true,
+			};
+
+			return response;
 		});
 
 		return res.status(result.success ? 201 : 401).json(result);
