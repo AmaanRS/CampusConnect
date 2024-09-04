@@ -22,7 +22,7 @@ const checkRequestsForCreatingCommittees = async (
 			// Return all committees with committeeOfDepartment having length equal to 1
 
 			pendingCommittees = AllPendingCommittees.filter((e: ICommittee) => {
-				return e.committeeOfDepartment.length == 1;
+				return e.committeeOfDepartment.length === 1;
 			});
 		} else {
 			const response: StandardResponse = {
