@@ -6,18 +6,12 @@ let serverRef: Server;
 
 // Connects with db then express server
 async function connectToTestDbAndStartTestServer(
-	MONGO_URI: string,
+	TEST_MONGO_URI: string,
 	PORT: string,
-	// REPL_SET: string,
 ): Promise<void> {
 	try {
 		mongoose
-			.connect(MONGO_URI, {
-				// replicaSet: REPL_SET,
-				// retryWrites: true,
-				// readPreference: "primary",
-				// ignoreUndefined: true,
-			})
+			.connect(TEST_MONGO_URI)
 			.then(() => {
 				console.log("Database is connected");
 

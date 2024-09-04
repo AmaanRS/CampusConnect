@@ -115,9 +115,8 @@ export const runWithRetrySession = async (
 
 const runTestServer = async () => {
 	await connectToTestDbAndStartTestServer(
-		process.env.MONGO_URI!,
+		process.env.TEST_MONGO_URI!,
 		process.env.PORT!,
-		// process.env.REPL_SET!,ww
 	);
 };
 

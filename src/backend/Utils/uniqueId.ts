@@ -1,12 +1,13 @@
 import { uniqueIdModel } from "../Models/UniqueId";
 import { DataResponse, StandardResponse } from "../Types/GeneralTypes";
 
-let en = require("nanoid-good/locale/en");
-let customAlphabet = require("nanoid-good/async").customAlphabet(en);
+import { customAlphabet } from "nanoid";
 
-export const generateUniqueId = async () => {
+export const generateUniqueId = async (): Promise<
+	StandardResponse | DataResponse
+> => {
 	try {
-		const nanoid = await customAlphabet("1234567890abcdefghijklmno", 5);
+		const nanoid = customAlphabet("1234567890abcdefghijklmno", 5);
 		const uniqueId = nanoid();
 
 		// Check if the ID already exists before inserting

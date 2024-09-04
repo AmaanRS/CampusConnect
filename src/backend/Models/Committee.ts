@@ -53,7 +53,7 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 		status: {
 			type: String,
 			required: true,
-			default:CommitteeStatus.PENDING,
+			default: CommitteeStatus.PENDING,
 			enum: Object.values(CommitteeStatus),
 		},
 		// If committeeOfDepartment array length is greater than 1 then send committee creation request to admin else send it to respective hod
@@ -116,6 +116,8 @@ committeeSchema.pre("validate", async function (next) {
 		this.members = this.members ? [...new Set(this.members)] : undefined;
 
 		this.events = this.events ? [...new Set(this.events)] : undefined;
+
+		this.committeeOfDepartment = [...new Set(this.committeeOfDepartment)];
 	} catch (err) {
 		next(err as MongooseError);
 	}
