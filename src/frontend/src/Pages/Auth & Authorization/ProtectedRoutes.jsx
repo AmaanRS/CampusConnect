@@ -11,7 +11,7 @@ export default function ProtectedRoutes() {
   const { isLoggedIn } = getToken();
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate("/login", { replace: false });
+      navigate("/", { replace: false });
     }
   }, [isLoggedIn, userState]);
 
