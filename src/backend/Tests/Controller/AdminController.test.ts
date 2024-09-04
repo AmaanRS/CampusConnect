@@ -15,7 +15,7 @@ const createAdminAndReturnToken = async () => {
 
 	await userModel.create({ email, password });
 
-	const response = await request.post("/login").send({ email, password });
+	const response = await request.post("/user/login").send({ email, password });
 
 	// Create a default admin for testing purposes
 	await request
@@ -73,7 +73,7 @@ describe("Admin Controller", () => {
 						password,
 					});
 					const response = await request
-						.post("/login")
+						.post("/user/login")
 						.send({ email, password });
 					return response.body.token;
 				},
@@ -293,10 +293,10 @@ describe("Admin Controller", () => {
 
 		beforeAll(async () => {
 			await request
-				.post("/signup")
+				.post("/user/signup")
 				.send({ email: adminEmail, password: adminPassword });
 
-			const response = await request.post("/login").send({
+			const response = await request.post("/user/login").send({
 				email: adminEmail,
 				password: adminPassword,
 			});
@@ -308,7 +308,7 @@ describe("Admin Controller", () => {
 				.set("Authorization", `Bearer ${token}`)
 				.send();
 
-			const res = await request.post("/login").send({
+			const res = await request.post("/user/login").send({
 				email: adminEmail,
 				password: adminPassword,
 			});
@@ -353,7 +353,7 @@ describe("Admin Controller", () => {
 				expectedStatus: 201,
 				expectedResponse: { success: true },
 				setup: async () => {
-					await request.post("/signup").send({
+					await request.post("/user/signup").send({
 						email: userEmail,
 						password: userPassword,
 					});
@@ -368,7 +368,7 @@ describe("Admin Controller", () => {
 				expectedStatus: 201,
 				expectedResponse: { success: true },
 				setup: async () => {
-					await request.post("/signup").send({
+					await request.post("/user/signup").send({
 						email: userEmail,
 						password: userPassword,
 					});

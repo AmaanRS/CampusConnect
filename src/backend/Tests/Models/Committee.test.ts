@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { committeeModel } from "../../Models/Committee";
 import { Department, CommitteeStatus, ICommittee } from "../../Types/ModelTypes";
 import { runTestServer, stopTestServer } from "../../Utils/util";
-import { generateUniqueId } from "../../Utils/uniqueId";
 
 describe("Committee Model Tests", () => {
 	beforeAll(async () => {

@@ -34,7 +34,7 @@ describe("User Controller", () => {
 		await stopTestServer();
 	});
 
-	describe("POST /signup", () => {
+	describe("POST /user/signup", () => {
 		//Uncomment it later because it creates users on just testing other test cases
 
 		// it("should save user to database on valid email and password", async () => {
@@ -42,7 +42,7 @@ describe("User Controller", () => {
 		// 	const testPassword = generatePassword();
 
 		// 	const res = await request
-		// 		.post("/signup")
+		// 		.post("/user/signup")
 		// 		.send({ email: testEmail, password: testPassword });
 
 		// 	expect(res.body.success).toEqual(true);
@@ -54,7 +54,7 @@ describe("User Controller", () => {
 		it("should not save user when password is not given", async () => {
 			const testEmail = faker.internet.email();
 
-			const res = await request.post("/signup").send({ email: testEmail });
+			const res = await request.post("/user/signup").send({ email: testEmail });
 
 			expect(res.body.success).toEqual(false);
 			expect(res.status).toEqual(401);
@@ -64,7 +64,7 @@ describe("User Controller", () => {
 			const testPassword = generatePassword();
 
 			const res = await request
-				.post("/signup")
+				.post("/user/signup")
 				.send({ password: testPassword });
 
 			expect(res.body.success).toEqual(false);
@@ -106,7 +106,7 @@ describe("User Controller", () => {
 
 			for (let i = 0; i < testPasswords.length; i++) {
 				const res = await request
-					.post("/signup")
+					.post("/user/signup")
 					.send({ email: testEmail, password: testPasswords[i] });
 
 				expect(res.body.success).toEqual(false);
@@ -119,7 +119,7 @@ describe("User Controller", () => {
 			const testPassword = generatePassword();
 
 			const res = await request
-				.post("/signup")
+				.post("/user/signup")
 				.send({ email: testEmail, password: testPassword });
 
 			expect(res.body.success).toEqual(false);
@@ -132,7 +132,7 @@ describe("User Controller", () => {
 			const testPassword = generatePassword();
 
 			const res = await request
-				.post("/signup")
+				.post("/user/signup")
 				.send({ email: testEmail, password: testPassword });
 
 			expect(res.body.success).toEqual(false);
@@ -140,7 +140,7 @@ describe("User Controller", () => {
 		});
 	});
 
-	describe("POST /login", () => {
+	describe("POST /user/login", () => {
 		const testEmail = "a.123456789@vcet.edu.in";
 		const testPassword = "Aa1@bcdqwe";
 
@@ -151,7 +151,7 @@ describe("User Controller", () => {
 		it("should not save user when password is not given", async () => {
 			const testEmail = faker.internet.email();
 
-			const res = await request.post("/login").send({ email: testEmail });
+			const res = await request.post("/user/login").send({ email: testEmail });
 
 			expect(res.body.success).toEqual(false);
 			expect(res.body.message).toEqual("Enter both email and password");
@@ -162,7 +162,7 @@ describe("User Controller", () => {
 			const testPassword = generatePassword();
 
 			const res = await request
-				.post("/login")
+				.post("/user/login")
 				.send({ password: testPassword });
 
 			expect(res.body.success).toEqual(false);
@@ -176,7 +176,7 @@ describe("User Controller", () => {
 			const testPassword = generatePassword();
 
 			const res = await request
-				.post("/login")
+				.post("/user/login")
 				.send({ email: testEmail, password: testPassword });
 
 			expect(res.body.success).toEqual(false);
@@ -190,7 +190,7 @@ describe("User Controller", () => {
 			// While testing make sure the email  exists in db and password does not
 
 			const res = await request
-				.post("/login")
+				.post("/user/login")
 				.send({ email: testEmail, password: "sdg1Arew2" });
 
 			expect(res.body.success).toEqual(false);
@@ -204,7 +204,7 @@ describe("User Controller", () => {
 			// The email and password should be correct and should exist in db
 
 			const res = await request
-				.post("/login")
+				.post("/user/login")
 				.send({ email: testEmail, password: testPassword });
 
 			expect(res.body.success).toEqual(true);
@@ -224,7 +224,7 @@ describe("User Controller", () => {
 			//Make sure this email and password exists in db
 			await createDummyUser(testEmail, testPassword);
 			const res = await request
-				.post("/login")
+				.post("/user/login")
 				.send({ email: testEmail, password: testPassword });
 			token = res.body.success === true ? res.body.token : null;
 		});
@@ -256,7 +256,7 @@ describe("User Controller", () => {
 		beforeAll(async () => {
 			//Make sure this email and password exists in db
 			const res = await request
-				.post("/login")
+				.post("/user/login")
 				.send({ email: "a.123456789@vcet.edu.in", password: "Aa1@bcdqwe" });
 			token = res.body.success === true ? res.body.token : null;
 		});
@@ -264,11 +264,11 @@ describe("User Controller", () => {
 		beforeEach(async () => {
 			// Create a new user after every test because test cases may change the user in the db
 			await request
-				.post("/signup")
+				.post("/user/signup")
 				.send({ email: "new@aa.com", password: "Pass123%" });
 
 			const newAccRes = await request
-				.post("/login")
+				.post("/user/login")
 				.send({ email: "new@aa.com", password: "Pass123%" });
 
 			newAccToken =

@@ -7,6 +7,7 @@ import UserRouter from "./Routes/UserRouter";
 import AdminRouter from "./Routes/AdminRoutes";
 import TeacherRouter from "./Routes/TeacherRoutes";
 import StudentRouter from "./Routes/StudentRoutes";
+import CommitteeRouter from "./Routes/CommitteeRoutes";
 import GeneralRouter from "./Routes/GeneralRoutes";
 import { fileURLToPath } from "url";
 // import { isAccountActive } from "./Middlewares/AccountStatus";
@@ -25,6 +26,7 @@ app.use("/user", UserRouter);
 app.use("/admin", AdminRouter);
 app.use("/teacher", TeacherRouter);
 app.use("/student", StudentRouter);
+app.use("/committee", CommitteeRouter);
 
 // Connects with db then express server
 async function connectToDbAndStartServer(
