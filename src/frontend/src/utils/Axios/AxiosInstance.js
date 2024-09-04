@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "../getToken";
 
 const axiosInstance = axios.create({
-  baseURL: "http://127.0.0.1:8000", // Set your base URL here
+  baseURL: "https://campusconnect-wep1.onrender.com/", // Set your base URL here
   headers: {
     "Content-Type": "application/json",
   },

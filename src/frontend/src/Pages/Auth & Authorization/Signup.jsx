@@ -202,7 +202,7 @@ function Signup() {
               initial={{ x: 400 }}
               animate={{ x: 0 }}
               transition={{ ease: [0.12, 0, 0.39, 0], duration: 0.4 }}
-              className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
+              className="px-10 py-2  border border-blue-dark text-blue-dark rounded-lg font-semibold
   lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
             >
               Creat{isLoading ? "ing" : "e"} Account
