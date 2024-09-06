@@ -8,7 +8,7 @@ import {
   LogOutIcon,
 } from "lucide-react";
 import BottomBar from "./BottomBar";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../store/UserContextProvider";
 import { AccountType } from "../../../utils/enum";
 import { HiOutlineUserGroup } from "react-icons/hi2";
@@ -30,26 +30,35 @@ export default function TeacherLayout() {
     <>
       <div className="hidden sm:flex fixed left-0 top-0">
         <Sidebar setGlobalOpen={setGlobalOpen} globalOpen={globalOpen}>
-          {/* <SidebarItem icon={<Home size={20} />} text="Home" alert /> */}
-          <SidebarItem
-            icon={<LayoutDashboard size={20} />}
-            text="Dashboard"
-            active
-          />
+          <NavLink to={"/teacher"} end>
+            {({ isActive }) => {
+              return (
+                <SidebarItem
+                  active={isActive}
+                  icon={<LayoutDashboard size={20} />}
+                  text="Dashboard"
+                />
+              );
+            }}
+          </NavLink>
           <SidebarItem icon={<Search size={20} />} text="Search" />
-          <SidebarItem
-            icon={<HiOutlineUserGroup size={20} />}
-            text="committees"
-          />
+
+          <NavLink to={"createcommittee"}>
+            {({ isActive }) => {
+              return (
+                <SidebarItem
+                  active={isActive}
+                  icon={<HiOutlineUserGroup size={20} />}
+                  text="Create Committee"
+                />
+              );
+            }}
+          </NavLink>
           <SidebarItem
             icon={<LiaChalkboardTeacherSolid size={20} />}
             text="Teachers"
           />
-          <SidebarItem
-            active={true}
-            icon={<PiStudent size={20} />}
-            text="Students"
-          />
+          <SidebarItem icon={<PiStudent size={20} />} text="Students" />
           <SidebarItem
             alert={true}
             icon={<TbDevicesQuestion size={20} />}

@@ -26,6 +26,8 @@ import Demo3 from "./Demo3";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import StudentLayout from "./Pages/StudentPages/StudentLayout/StudentLayout";
 import TeacherLayout from "./Pages/TeacherPages/TeacherLayout/TeacherLayout";
+import CreateCommittee from "./Pages/TeacherPages/CreateCommittee/CreateCommittee";
+import TeacherDashboard from "./Pages/TeacherPages/Dashboard/TeacherDashboard";
 
 const queryClient = new QueryClient();
 function App() {
@@ -102,6 +104,13 @@ function App() {
             {
               path: "teacher",
               element: <TeacherLayout />,
+              children: [
+                { index: true, element: <TeacherDashboard /> },
+                {
+                  path: "createcommittee",
+                  element: <CreateCommittee />,
+                },
+              ],
             },
           ],
         },
