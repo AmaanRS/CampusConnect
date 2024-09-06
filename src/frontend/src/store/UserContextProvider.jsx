@@ -49,7 +49,7 @@ export const UserContextProvider = ({ children }) => {
   const { token } = getToken();
 
   useEffect(() => {
-    if (!token) {
+    if (!token || userState.email === "") {
       logOutUser();
     }
   }, []);
