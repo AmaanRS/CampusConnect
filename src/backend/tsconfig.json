@@ -3,34 +3,38 @@
 		"target": "ES2022",
 		"esModuleInterop": true,
 		"useDefineForClassFields": true,
-		"lib": ["ES2020", "DOM", "DOM.Iterable", "ES2022"],
+		"lib": ["ES2020", "ES2022"],
 		"module": "ES2022",
 		"skipLibCheck": true,
 		"outDir": "./dist",
 		"rootDir": "../",
 		"sourceMap": true,
 		"declaration": true,
-		"strictNullChecks": true,
-		"noImplicitAny": false,
+		"noImplicitAny": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"preserveConstEnums": true,
 
 		/* Bundler mode */
 		"moduleResolution": "Bundler",
-		"allowImportingTsExtensions": true,
-		"resolveJsonModule": true,
+		"allowImportingTsExtensions": false,
+		// "allowImportingTsExtensions": true,
+		// "emitDeclarationOnly": true,
 		"isolatedModules": true,
-		// "noEmit": true,
-		"emitDeclarationOnly": true,
-		"jsx": "react-jsx",
+		"noEmit": false,
 
 		/* Linting */
 		"strict": true,
+		"allowUnreachableCode": null,
+		"allowUnusedLabels": null,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"noFallthroughCasesInSwitch": true,
-		"types": ["jest"]
+		"noFallthroughCasesInSwitch": true
+		// "types": ["jest"]
 	},
 	"ts-node": {
-		// Tell ts-node CLI to install the --loader automatically
 		"esm": true
 	},
 	"include": ["**/*"],
