@@ -61,8 +61,8 @@ async function connectToDbAndStartServer(
 // 	console.log("Connecting from app.ts");
 
 // 	await connectToDbAndStartServer(
-// 		process.env.MONGO_URI!,
-// 		process.env.PORT!,
+// 		process.env["MONGO_URI"]!,
+// 		process.env["PORT"]!,
 // 		process.env.REPL_SET!,
 // 	);
 // }
@@ -79,8 +79,8 @@ if (process.argv[1] === __filename) {
 	console.log("Connecting from app.ts");
 
 	await connectToDbAndStartServer(
-		process.env.MONGO_URI!,
-		process.env.PORT!,
+		process.env["MONGO_URI"]!,
+		process.env["PORT"]!,
 		// process.env.REPL_SET!,
 	);
 }
