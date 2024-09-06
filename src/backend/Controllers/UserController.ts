@@ -81,6 +81,13 @@ const login = async (req: Request, res: Response) => {
 
 				return res.status(201).json(response);
 			}
+
+			const response: StandardResponse = {
+				message: "JWT token could not be sent due to some error",
+				success: false,
+			};
+
+			return res.status(401).json(response);
 		}
 		//If either email or password does not exist
 		else {

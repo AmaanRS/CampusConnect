@@ -22,7 +22,7 @@ export const isAccountActive = async (
 
 		// Paths to skip
 		if (req.path === "/signup") {
-			next();
+			return next();
 		}
 
 		const userAccountStatus = await userModel.findOne({

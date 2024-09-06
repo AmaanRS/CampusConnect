@@ -14,7 +14,7 @@ export const createJwtToken = (
 				isProfileComplete: user.isProfileComplete,
 				isAccountActive: user.isAccountActive,
 			},
-			process.env.JWT_SECRET!,
+			process.env["JWT_SECRET"]!,
 		);
 
 		const response: TokenResponse = {

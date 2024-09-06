@@ -21,7 +21,7 @@
 // 		// Check the token with secret key
 // 		const decodedToken: JwtPayload = jwt.verify(
 // 			token,
-// 			process.env.JWT_SECRET!,
+// 			process.env["JWT_SECRET"]!,
 // 		) as JwtPayload;
 
 // 		// Return a response indicating user is authenticated along with decoded token
@@ -62,7 +62,7 @@
 // 		// Check the token with secret key
 // 		const decodedToken: JwtPayload = jwt.verify(
 // 			token,
-// 			process.env.JWT_SECRET!,
+// 			process.env["JWT_SECRET"]!,
 // 		) as JwtPayload;
 
 // 		// Return a response indicating user is authenticated along with decoded token
@@ -103,7 +103,7 @@ const verifyToken = (req: Request): JwtDataResponse | StandardResponse => {
 	try {
 		const decodedToken = jwt.verify(
 			token,
-			process.env.JWT_SECRET!,
+			process.env["JWT_SECRET"]!,
 		) as decodedTokenPayload;
 
 		return {

@@ -25,7 +25,7 @@ const authorizationMiddlewareFactory = (
 				requiredAccType === decodedToken.accountType &&
 				_.isEqual(requiredPosition, decodedToken.position)
 			) {
-				next();
+				return next();
 			} else {
 				const response: StandardResponse = {
 					message: "User is unauthorized to do this action",
