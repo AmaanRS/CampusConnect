@@ -24,8 +24,8 @@ import Demo1 from "./Demo1";
 import Demo2 from "./Demo2";
 import Demo3 from "./Demo3";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import StudentLayout from "./Pages/StudentPages/StudentLayout";
-import TeacherLayout from "./Pages/TeacherPages/TeacherLayout";
+import StudentLayout from "./Pages/StudentPages/StudentLayout/StudentLayout";
+import TeacherLayout from "./Pages/TeacherPages/TeacherLayout/TeacherLayout";
 
 const queryClient = new QueryClient();
 function App() {
