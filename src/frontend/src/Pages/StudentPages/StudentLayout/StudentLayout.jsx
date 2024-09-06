@@ -68,7 +68,7 @@ export default function StudentLayout() {
         </Sidebar>
       </div>
       <BottomBar />
-      <div className={`mr-4 ${globalOpen ? "sm:ml-72" : "sm:ml-16"} `}>
+      <div className={`mr-4 ${globalOpen ? "sm:ml-72" : "sm:ml-20"} `}>
         <Outlet />
       </div>
     </>

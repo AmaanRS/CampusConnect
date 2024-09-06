@@ -60,7 +60,7 @@ export default function TeacherLayout() {
           />
           <SidebarItem icon={<PiStudent size={20} />} text="Students" />
           <SidebarItem
-            alert={true}
+            // alert={true}
             icon={<TbDevicesQuestion size={20} />}
             text="Requests"
           />
@@ -77,7 +77,7 @@ export default function TeacherLayout() {
         </Sidebar>
       </div>
       <BottomBar />
-      <div className={`mr-4 ${globalOpen ? "sm:ml-72" : "sm:ml-16"} `}>
+      <div className={` ${globalOpen ? "sm:ml-72" : "sm:ml-20"} `}>
         <Outlet />
       </div>
     </>

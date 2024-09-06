@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 "use client";
 
-import { Drawer, Sidebar, TextInput } from "flowbite-react";
+import { Button, Drawer, Sidebar, TextInput } from "flowbite-react";
 import {
   HiChartPie,
   HiClipboard,
@@ -13,15 +13,15 @@ import {
   HiShoppingBag,
   HiUsers,
 } from "react-icons/hi";
+import { NavLink } from "react-router-dom";
 
 export default function MobileDrawer({ isDrawerOpen, setIsDrawerOpen }) {
   const handleClose = () => setIsDrawerOpen(false);
+  const sidebarItemStyle =
+    "transition-colors group focus:bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-800";
 
   return (
     <>
-      {/* <div className="flex min-h-[50vh] items-center justify-center">
-        <Button onClick={}>Show navigation</Button>
-      </div> */}
       <Drawer open={isDrawerOpen} onClose={handleClose}>
         <Drawer.Header title="MENU" titleIcon={() => <></>} />
         <Drawer.Items>
@@ -42,32 +42,39 @@ export default function MobileDrawer({ isDrawerOpen, setIsDrawerOpen }) {
                 </form>
                 <Sidebar.Items>
                   <Sidebar.ItemGroup>
-                    <Sidebar.Item href="" icon={HiChartPie}>
+                    <Sidebar.Item
+                      className={sidebarItemStyle}
+                      as={NavLink}
+                      to="/teacher"
+                      icon={HiChartPie}
+                    >
                       Dashboard
                     </Sidebar.Item>
-                    <Sidebar.Item href="/" icon={HiShoppingBag}>
-                      Products
+                    <Sidebar.Item
+                      as={NavLink}
+                      className={sidebarItemStyle}
+                      to="createcommittee"
+                      icon={HiUsers}
+                    >
+                      Create Committee
                     </Sidebar.Item>
-                    <Sidebar.Item href="/" icon={HiUsers}>
+                    <Sidebar.Item
+                      className={sidebarItemStyle}
+                      icon={HiShoppingBag}
+                    >
                       Users list
                     </Sidebar.Item>
-                    <Sidebar.Item href="/" icon={HiLogin}>
+                    <Sidebar.Item className={sidebarItemStyle} icon={HiLogin}>
                       Sign in
                     </Sidebar.Item>
-                    <Sidebar.Item href="" icon={HiPencil}>
+                    <Sidebar.Item className={sidebarItemStyle} icon={HiPencil}>
                       Sign up
                     </Sidebar.Item>
                   </Sidebar.ItemGroup>
                   <Sidebar.ItemGroup>
-                    <Sidebar.Item href="" icon={HiClipboard}>
-                      Docs
-                    </Sidebar.Item>
-                    <Sidebar.Item href="" icon={HiCollection}>
-                      Components
-                    </Sidebar.Item>
-                    <Sidebar.Item href="" icon={HiInformationCircle}>
-                      Help
-                    </Sidebar.Item>
+                    <Sidebar.Item icon={HiClipboard}>Docs</Sidebar.Item>
+                    <Sidebar.Item icon={HiCollection}>Components</Sidebar.Item>
+                    <Sidebar.Item icon={HiInformationCircle}>Help</Sidebar.Item>
                   </Sidebar.ItemGroup>
                 </Sidebar.Items>
               </div>
