@@ -47,6 +47,7 @@ export default function MobileDrawer({ isDrawerOpen, setIsDrawerOpen }) {
                       as={NavLink}
                       to="/teacher"
                       icon={HiChartPie}
+                      onClick={() => handleClose()}
                     >
                       Dashboard
                     </Sidebar.Item>
@@ -55,6 +56,7 @@ export default function MobileDrawer({ isDrawerOpen, setIsDrawerOpen }) {
                       className={sidebarItemStyle}
                       to="createcommittee"
                       icon={HiUsers}
+                      onClick={() => handleClose()}
                     >
                       Create Committee
                     </Sidebar.Item>

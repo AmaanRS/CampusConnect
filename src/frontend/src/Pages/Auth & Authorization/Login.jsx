@@ -198,7 +198,7 @@ function Login() {
             type="password"
             name="password"
             id="password"
-            className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light focus:border-red-600"
+            className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light "
             placeholder="Enter Password"
             {...register("password")}
           />

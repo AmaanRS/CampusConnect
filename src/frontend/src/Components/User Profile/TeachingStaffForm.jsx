@@ -15,8 +15,7 @@ const schema = yup.object({});
 const TeachingStaffForm = () => {
   const navigate = useNavigate();
   const { setUserState } = useContext(UserContext);
-  // const { user, setUser, profCompleted, setProfCompleted } =
-  //   useContext(AuthContext);
+
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: ({ department }) => {
       return axiosInstance.post("/teacher/createTeacher", { department });
