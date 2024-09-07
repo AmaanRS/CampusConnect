@@ -41,3 +41,7 @@
 
   filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#9EC2FB", endColorstr="#7194F5", GradientType=1 );
 }
+
+/* input[type="text"]:focus {
+  box-shadow: none;
+} */
