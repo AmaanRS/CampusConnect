@@ -10,12 +10,6 @@ export default function Sidebar({ children, setGlobalOpen, globalOpen }) {
       <aside className="h-screen">
         <nav className="h-full flex flex-col bg-white border-r shadow-sm">
           <div className="p-4 pb-2 flex justify-between items-center">
-            {/* <img
-              src={logo}
-              className={`overflow-hidden transition-all ${
-                globalOpen ? "w-32" : "w-0"
-              }`}
-            /> */}
             <div className="logo ">
               <h1
                 className={` overflow-hidden transition-all ${
@@ -122,24 +116,6 @@ export function SidebarButton({ icon, text, active, onClick, alert }) {
           {text}
         </div>
       )}
-
-      {/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */}
-      {/* {icon}
-      <span
-        className={`overflow-hidden transition-all ${
-          globalOpen ? "w-52 ml-3" : "w-0"
-        }`}
-      >
-        {text}
-      </span>
-
-      {!globalOpen && (
-        <div
-          className={`absolute left-full rounded-md px-2 py-1 ml-6 bg-indigo-100 text-indigo-800 text-sm invisible opacity-20 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
-        >
-          {text}
-        </div>
-      )} */}
     </button>
   );
 }

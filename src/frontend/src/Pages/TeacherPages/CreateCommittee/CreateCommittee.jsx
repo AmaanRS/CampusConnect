@@ -10,6 +10,15 @@ import {
 import { Department } from "../../../utils/enum";
 
 export default function CreateCommittee() {
+  const inputTheme = {
+    field: {
+      input: {
+        colors: {
+          gray: "border-gray-300 bg-gray-50 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-cyan-500 dark:focus:ring-cyan-500",
+        },
+      },
+    },
+  };
   return (
     <>
       <div className="my-4  mx-6 lg:mx-10">
@@ -20,6 +29,7 @@ export default function CreateCommittee() {
               <Label htmlFor="committee-name" value="Commitee name" />
             </div>
             <TextInput
+              theme={inputTheme}
               id="committee-name"
               type="text"
               placeholder="committee"
@@ -31,6 +41,8 @@ export default function CreateCommittee() {
               <Label htmlFor="description" value="Description" />
             </div>
             <Textarea
+              color={" "}
+              className="border-gray-300 bg-gray-50 text-gray-900"
               id="description"
               placeholder="write description about committee"
               required
@@ -45,6 +57,7 @@ export default function CreateCommittee() {
               />
             </div>
             <TextInput
+              theme={inputTheme}
               id="student-incharge"
               type="email"
               placeholder="write email of student incharge"
@@ -65,7 +78,6 @@ export default function CreateCommittee() {
           </div>
 
           <Button
-            disabled
             color={""}
             className="bg-blue-medium hover:bg-blue-dark active:bg-blue-dark text-white"
             onClick={() => console.log("first")}
