@@ -16,6 +16,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import { toast } from "react-toastify";
 
 const options = [
   { value: Department.IT, label: Department.IT },
@@ -32,12 +33,14 @@ export default function CreateCommittee() {
 
   const mutation = useMutation({
     mutationFn: ({ data }) =>
-      axiosInstance.post("/student/createStudent", data),
+      axiosInstance.post("/committee/createCommittee", data),
     onSuccess: (data) => {
       console.log(data);
+      toast.success("created successfully");
     },
     onError: (error) => {
       console.log(error);
+      toast.error("failed to create");
     },
   });
 

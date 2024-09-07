@@ -3,7 +3,7 @@ import React from "react";
 import LocomotiveScroll from "locomotive-scroll";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import About from "./Pages/Landing Page/About";
-
+import { ToastContainer } from "react-toastify";
 import Contact from "./Pages/Landing Page/Contact";
 import Layout from "./Pages/Landing Page/Layout";
 import UserProfile from "./Components/User Profile/UserProfile";
@@ -122,6 +122,18 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <UserContextProvider>
         <div className="bg-blue-extralight w-full font-openSans overflow-x-hidden h-full">
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover={false}
+            theme="light"
+          />
           <RouterProvider router={router} />
         </div>
       </UserContextProvider>
