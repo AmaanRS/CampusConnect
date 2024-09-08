@@ -2,6 +2,7 @@
 "use client";
 
 import { Drawer, Sidebar, TextInput } from "flowbite-react";
+import { FiLogOut } from "react-icons/fi";
 import {
   HiChartPie,
   HiClipboard,
@@ -13,15 +14,15 @@ import {
   HiShoppingBag,
   HiUsers,
 } from "react-icons/hi";
+import { UserContext } from "../../../store/UserContextProvider";
+import { useContext } from "react";
 
 export default function MobileDrawer({ isDrawerOpen, setIsDrawerOpen }) {
+  const { logOutUser } = useContext(UserContext);
   const handleClose = () => setIsDrawerOpen(false);
 
   return (
     <>
-      {/* <div className="flex min-h-[50vh] items-center justify-center">
-        <Button onClick={}>Show navigation</Button>
-      </div> */}
       <Drawer open={isDrawerOpen} onClose={handleClose}>
         <Drawer.Header title="MENU" titleIcon={() => <></>} />
         <Drawer.Items>
@@ -67,6 +68,9 @@ export default function MobileDrawer({ isDrawerOpen, setIsDrawerOpen }) {
                     </Sidebar.Item>
                     <Sidebar.Item href="" icon={HiInformationCircle}>
                       Help
+                    </Sidebar.Item>
+                    <Sidebar.Item onClick={() => logOutUser()} icon={FiLogOut}>
+                      Logout
                     </Sidebar.Item>
                   </Sidebar.ItemGroup>
                 </Sidebar.Items>

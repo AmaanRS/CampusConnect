@@ -2,6 +2,8 @@
 "use client";
 
 import { Button, Drawer, Sidebar, TextInput } from "flowbite-react";
+import { useContext } from "react";
+import { FiLogOut } from "react-icons/fi";
 import {
   HiChartPie,
   HiClipboard,
@@ -14,8 +16,10 @@ import {
   HiUsers,
 } from "react-icons/hi";
 import { NavLink } from "react-router-dom";
+import { UserContext } from "../../../store/UserContextProvider";
 
 export default function MobileDrawer({ isDrawerOpen, setIsDrawerOpen }) {
+  const { logOutUser } = useContext(UserContext);
   const handleClose = () => setIsDrawerOpen(false);
   const sidebarItemStyle =
     "transition-colors group focus:bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-800";
@@ -77,6 +81,9 @@ export default function MobileDrawer({ isDrawerOpen, setIsDrawerOpen }) {
                     <Sidebar.Item icon={HiClipboard}>Docs</Sidebar.Item>
                     <Sidebar.Item icon={HiCollection}>Components</Sidebar.Item>
                     <Sidebar.Item icon={HiInformationCircle}>Help</Sidebar.Item>
+                    <Sidebar.Item onClick={() => logOutUser()} icon={FiLogOut}>
+                      Logout
+                    </Sidebar.Item>
                   </Sidebar.ItemGroup>
                 </Sidebar.Items>
               </div>
