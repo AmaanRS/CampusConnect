@@ -4,6 +4,7 @@ import { AccountType, PositionByAccountType } from "../Types/ModelTypes";
 import { decodedTokenPayload, StandardResponse } from "../Types/GeneralTypes";
 import _ from "lodash";
 
+// TODO: Use authorizationMiddlewareFactory as a global middleware
 const authorizationMiddlewareFactory = (
 	requiredPosition: PositionByAccountType<AccountType>,
 	requiredAccType: AccountType,

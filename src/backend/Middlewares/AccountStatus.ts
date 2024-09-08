@@ -4,6 +4,7 @@ import { userModel } from "../Models/User";
 import { cookieCheckerFunction } from "./CookieChecker";
 
 // Test this middleware
+// TODO: Use isAccountActive as a global middleware
 export const isAccountActive = async (
 	req: Request,
 	res: Response,

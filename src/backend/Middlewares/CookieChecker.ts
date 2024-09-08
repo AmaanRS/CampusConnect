@@ -1,89 +1,3 @@
-// import jwt, { JwtPayload } from "jsonwebtoken";
-// import { NextFunction, Request, Response } from "express";
-// import { JwtDataResponse, StandardResponse } from "../BackendTypes";
-
-// // Define the cookieChecker function
-// export const cookieCheckerFunction = (req: Request, res: Response) => {
-// 	// Get token from the request's header
-// 	const token = req.headers.authorization?.split("Bearer ")[1];
-
-// 	// If token does not exist, return a response indicating user not authenticated
-// 	if (!token) {
-// 		const response: StandardResponse = {
-// 			message: "User not authenticated",
-// 			success: false,
-// 		};
-
-// 		return res.json(response);
-// 	}
-
-// 	try {
-// 		// Check the token with secret key
-// 		const decodedToken: JwtPayload = jwt.verify(
-// 			token,
-// 			process.env["JWT_SECRET"]!,
-// 		) as JwtPayload;
-
-// 		// Return a response indicating user is authenticated along with decoded token
-// 		const response: JwtDataResponse = {
-// 			message: "The user is authenticated",
-// 			success: true,
-// 			decodedToken: decodedToken.email,
-// 		};
-
-// 		return res.json(response);
-// 	} catch (error) {
-// 		// Return a response indicating user not authenticated in case of error
-// 		const response: StandardResponse = {
-// 			message: "User not authenticated",
-// 			success: false,
-// 		};
-
-// 		return res.json(response);
-// 	}
-// };
-
-// // Define the cookieChecker middleware function
-// export const cookieCheckerMiddleware = (req: Request, next: NextFunction) => {
-// 	// Get token from the request's header
-// 	const token = req.headers.authorization?.split("Bearer ")[1];
-
-// 	// If token does not exist, return a response indicating user not authenticated
-// 	if (!token) {
-// 		const response: StandardResponse = {
-// 			message: "User not authenticated",
-// 			success: false,
-// 		};
-
-// 		return next(response);
-// 	}
-
-// 	try {
-// 		// Check the token with secret key
-// 		const decodedToken: JwtPayload = jwt.verify(
-// 			token,
-// 			process.env["JWT_SECRET"]!,
-// 		) as JwtPayload;
-
-// 		// Return a response indicating user is authenticated along with decoded token
-// 		const response: JwtDataResponse = {
-// 			message: "The user is authenticated",
-// 			success: true,
-// 			decodedToken: decodedToken.email,
-// 		};
-
-// 		return next(response);
-// 	} catch (error) {
-// 		// Return a response indicating user not authenticated in case of error
-// 		const response: StandardResponse = {
-// 			message: "User not authenticated",
-// 			success: false,
-// 		};
-// 		return next(response);
-// 	}
-// };
-
-//Chatgpt version
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import {
@@ -93,7 +7,7 @@ import {
 } from "../Types/GeneralTypes";
 
 // Utility function to verify token
-const verifyToken = (req: Request): JwtDataResponse | StandardResponse => {
+export let verifyToken = (req: Request): JwtDataResponse | StandardResponse => {
 	const token = req.headers.authorization?.split("Bearer ")[1];
 
 	if (!token) {
@@ -144,7 +58,7 @@ export const cookieCheckerFunction = (
 	return response;
 };
 
-//Write tests for middlewares//
+// TODO: Use cookieCheckerMiddleware as a global middleware
 
 // Define the cookieChecker middleware function
 export const cookieCheckerMiddleware = (
