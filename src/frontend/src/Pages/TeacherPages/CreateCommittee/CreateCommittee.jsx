@@ -216,9 +216,7 @@ export default function CreateCommittee() {
           </Button>
           {mutation.isError && (
             <p className={errorClass}>
-              {" "}
-              {mutation.error.response.data.message ||
-                mutation.error.message}{" "}
+              {mutation.error.response.data.message || mutation.error.message}
             </p>
           )}
         </form>
