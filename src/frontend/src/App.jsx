@@ -8,11 +8,6 @@ import Contact from "./Pages/Landing Page/Contact";
 import Layout from "./Pages/Landing Page/Layout";
 import UserProfile from "./Components/User Profile/UserProfile";
 import ProfileCompleted from "./Components/User Profile/ProfileCompleted";
-// import Dashboard, { dashboardLoader } from "./Components/Dashboard/Dashboard";
-
-// import MainProfile from "./Components/Dashboard/MainProfile";
-// import SearchProfile from "./Components/Dashboard/SearchProfile";
-// import Home from "./Components/Dashboard/Home";
 import AdminLayout from "./Pages/AdminPages/AdminLayout/AdminLayout";
 import Dashboard from "./Pages/AdminPages/Dashboard/Dashboard";
 import ErrorPage from "./Components/Alerts & animations/ErrorPage";

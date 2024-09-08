@@ -23,6 +23,12 @@ export default function TeacherLayout() {
     if (userState.accountType !== AccountType.Teacher) {
       navigate("/");
     }
+    if (
+      userState.accountType === AccountType.Teacher &&
+      !userState.isProfileComplete
+    ) {
+      navigate("/userprofile");
+    }
   }, []);
   const [globalOpen, setGlobalOpen] = useState(true);
 

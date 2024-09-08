@@ -23,6 +23,12 @@ export default function StudentLayout() {
     if (userState.accountType !== AccountType.Student) {
       navigate("/");
     }
+    if (
+      userState.accountType === AccountType.Student &&
+      !userState.isProfileComplete
+    ) {
+      navigate("/userprofile");
+    }
   }, []);
   const [globalOpen, setGlobalOpen] = useState(true);
 
