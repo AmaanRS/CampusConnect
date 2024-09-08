@@ -23,9 +23,6 @@ export default function MobileDrawer({ isDrawerOpen, setIsDrawerOpen }) {
 
   return (
     <>
-      {/* <div className="flex min-h-[50vh] items-center justify-center">
-        <Button onClick={}>Show navigation</Button>
-      </div> */}
       <Drawer open={isDrawerOpen} onClose={handleClose}>
         <Drawer.Header title="MENU" titleIcon={() => <></>} />
         <Drawer.Items>

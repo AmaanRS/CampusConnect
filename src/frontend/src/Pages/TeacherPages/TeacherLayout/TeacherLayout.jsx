@@ -74,7 +74,6 @@ export default function TeacherLayout() {
           <hr className="my-3" />
           <SidebarItem icon={<User size={20} />} text="profile" />
           <SidebarItem icon={<Settings size={20} />} text="Settings" />
-
           <SidebarButton
             onClick={() => logOutUser()}
             icon={<LogOutIcon className="inline" size={20} />}
