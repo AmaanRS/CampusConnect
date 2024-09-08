@@ -18,6 +18,7 @@ import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { toast } from "react-toastify";
 
 import { useNavigate } from "react-router-dom";
+import ApiError from "../../../Components/Errors/ApiError";
 
 const options = [
   { value: Department.IT, label: Department.IT },
@@ -214,11 +215,7 @@ export default function CreateCommittee() {
           >
             {mutation.isPending ? "Submitting" : "Submit"}
           </Button>
-          {mutation.isError && (
-            <p className={errorClass}>
-              {mutation.error.response.data.message || mutation.error.message}
-            </p>
-          )}
+          <ApiError error={mutation.error} isError={mutation.isError} />
         </form>
       </div>
     </>
