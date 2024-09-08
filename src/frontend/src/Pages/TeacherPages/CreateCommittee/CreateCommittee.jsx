@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   Button,
   Checkbox,
-  Dropdown,
   HR,
   Label,
   Textarea,
@@ -18,6 +17,8 @@ import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { toast } from "react-toastify";
 
+import { useNavigate } from "react-router-dom";
+
 const options = [
   { value: Department.IT, label: Department.IT },
   { value: Department.COMS, label: Department.COMS },
@@ -30,6 +31,7 @@ export default function CreateCommittee() {
   const [departments, setDepartments] = useState([]);
   const [depError, setDepError] = useState("");
   const errorClass = "text-red-600 ml-2 mt-1";
+  const navigate = useNavigate();
 
   const mutation = useMutation({
     mutationFn: ({ data }) =>
@@ -37,6 +39,7 @@ export default function CreateCommittee() {
     onSuccess: (data) => {
       console.log(data);
       toast.success("created successfully");
+      navigate("/teacher");
     },
     onError: (error) => {
       console.log(error);
@@ -212,7 +215,11 @@ export default function CreateCommittee() {
             {mutation.isPending ? "Submitting" : "Submit"}
           </Button>
           {mutation.isError && (
-            <p className={errorClass}> {mutation.error.message} </p>
+            <p className={errorClass}>
+              {" "}
+              {mutation.error.response.data.message ||
+                mutation.error.message}{" "}
+            </p>
           )}
         </form>
       </div>
