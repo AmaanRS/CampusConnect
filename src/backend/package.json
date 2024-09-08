@@ -4,7 +4,7 @@
 	"main": "app.ts",
 	"scripts": {
 		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-		"build": "rimraf ../dist && tsc",
+		"build": "rimraf src/backend/dist && npx rollup -c",
 		"dev": "nodemon"
 	},
 	"author": "",
@@ -13,6 +13,7 @@
 	"type": "module",
 	"devDependencies": {
 		"@faker-js/faker": "^8.4.1",
+		"@rollup/plugin-typescript": "^11.1.6",
 		"@types/bcrypt": "^5.0.2",
 		"@types/cookie-parser": "^1.4.7",
 		"@types/cookie-session": "^2.0.49",
@@ -27,7 +28,9 @@
 		"nodemon": "^3.0.3",
 		"prettier": "3.2.5",
 		"rimraf": "^5.0.7",
+		"rollup": "^4.21.2",
 		"ts-node": "^10.9.2",
+		"tslib": "^2.7.0",
 		"tsx": "^4.19.0",
 		"typescript": "^5.4.5"
 	},

@@ -16,6 +16,7 @@
 		"noImplicitThis": true,
 		"noPropertyAccessFromIndexSignature": true,
 		"preserveConstEnums": true,
+		"importHelpers": true,
 
 		/* Bundler mode */
 		"moduleResolution": "Bundler",
