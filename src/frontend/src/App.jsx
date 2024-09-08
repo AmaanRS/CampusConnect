@@ -20,6 +20,7 @@ import StudentLayout from "./Pages/StudentPages/StudentLayout/StudentLayout";
 import TeacherLayout from "./Pages/TeacherPages/TeacherLayout/TeacherLayout";
 import CreateCommittee from "./Pages/TeacherPages/CreateCommittee/CreateCommittee";
 import TeacherDashboard from "./Pages/TeacherPages/Dashboard/TeacherDashboard";
+import StudentHome from "./Pages/StudentPages/Home/StudentHome";
 
 const queryClient = new QueryClient();
 function App() {
@@ -84,6 +85,11 @@ function App() {
             {
               path: "student",
               element: <StudentLayout />,
+              children: [
+                { index: true, element: <StudentHome /> },
+                { path: "page2", element: <>Page 2</> },
+                { path: "page3", element: <>Page 3</> },
+              ],
             },
             {
               path: "teacher",
