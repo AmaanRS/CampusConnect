@@ -102,7 +102,7 @@ export default function CreateCommittee() {
       const newShowMulti = !prev;
       if (!newShowMulti) {
         setSelectedOptions([]);
-        setDepartments(["ALL"]);
+        setDepartments(["COLLEGE"]);
       }
       if (newShowMulti) {
         setDepartments([]);
