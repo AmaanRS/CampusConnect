@@ -1,9 +1,9 @@
 import React from "react";
-import BottomBar from "./BottomBar";
-import BottomBarItem from "./BottomBarItem";
+import BottomBar from "../../../Components/Layout/mobile/BottomBar/BottomBar";
+import BottomBarItem from "../../../Components/Layout/mobile/BottomBar/BottomBarItem";
 import { FaHome, FaSearch } from "react-icons/fa";
 import { FaUserGroup } from "react-icons/fa6";
-import BottomBarButton from "./BottomBarButton";
+import BottomBarButton from "../../../Components/Layout/mobile/BottomBar/BottomBarButton";
 
 export default function BottomBarComponent({ isDrawerOpen, setIsDrawerOpen }) {
   const iconCss = "text-gray-500 group-hover:text-blue-600";

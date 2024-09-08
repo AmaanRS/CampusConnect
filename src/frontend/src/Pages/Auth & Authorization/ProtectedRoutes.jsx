@@ -9,11 +9,11 @@ export default function ProtectedRoutes() {
   const { userState } = useContext(UserContext);
   // use this componet for redirecting unauthenticated users
   const { isLoggedIn } = getToken();
-  useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/", { replace: false });
-    }
-  }, [isLoggedIn, userState]);
+  // useEffect(() => {
+  //   if (!isLoggedIn) {
+  //     navigate("/", { replace: false });
+  //   }
+  // }, [isLoggedIn, userState]);
 
   return (
     <>

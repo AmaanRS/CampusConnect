@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import MobileDrawer from "./MobileDrawer";
+import MobileDrawer from "../../../Components/Layout/mobile/Sidebar/MobileDrawer";
 import BottomBarComponent from "./BottomBarComponent";
-import MobileSidebar from "./MobileSidebarComponent";
-
+import MobileSidebarComponent from "./MobileSidebarComponent";
 export default function MobileNav() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -17,7 +16,7 @@ export default function MobileNav() {
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
       >
-        <MobileSidebar setIsDrawerOpen={setIsDrawerOpen} />
+        <MobileSidebarComponent setIsDrawerOpen={setIsDrawerOpen} />
       </MobileDrawer>
     </>
   );

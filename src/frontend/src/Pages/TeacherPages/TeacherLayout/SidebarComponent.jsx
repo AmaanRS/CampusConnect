@@ -1,4 +1,4 @@
-import Sidebar from "./Sidebar";
+import Sidebar from "../../../Components/Layout/Desktop/Sidebar";
 
 import {
   LayoutDashboard,
@@ -13,8 +13,8 @@ import { PiStudent } from "react-icons/pi";
 import { TbDevicesQuestion } from "react-icons/tb";
 import { useContext } from "react";
 import { UserContext } from "../../../store/UserContextProvider";
-import SidebarButton from "./SidebarButton";
-import SidebarItem from "./SidebarItem";
+import SidebarButton from "../../../Components/Layout/Desktop/SidebarButton";
+import SidebarItem from "../../../Components/Layout/Desktop/SidebarItem";
 
 export default function SidebarComponent({ setGlobalOpen, globalOpen }) {
   const { logOutUser } = useContext(UserContext);
