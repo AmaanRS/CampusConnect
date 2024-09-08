@@ -25,8 +25,7 @@ export default function SidebarComponent({ globalOpen, setGlobalOpen }) {
         <SidebarItem
           to="requests"
           icon={<LayoutDashboard size={20} />}
-          text="Dashboard"
-          active
+          text="Requests"
         />
         <SidebarItem icon={<Search size={20} />} text="Search" />
         <SidebarItem

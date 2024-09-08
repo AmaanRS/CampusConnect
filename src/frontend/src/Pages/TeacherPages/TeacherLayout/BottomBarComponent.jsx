@@ -9,7 +9,7 @@ export default function BottomBarComponent({ isDrawerOpen, setIsDrawerOpen }) {
   const iconCss = "text-gray-500 group-hover:text-blue-600";
 
   return (
-    <BottomBar isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen}>
+    <BottomBar isDrawerOpen={isDrawerOpen}>
       {/* button 1 */}
       <BottomBarItem
         to={"/teacher"}
