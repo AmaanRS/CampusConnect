@@ -14,7 +14,7 @@ import { UserContext } from "../../../store/UserContextProvider";
 import { Sidebar } from "flowbite-react";
 import { NavLink, useLocation } from "react-router-dom";
 
-export default function MobileSidebar({ setIsDrawerOpen }) {
+export default function MobileSidebarComponent({ setIsDrawerOpen }) {
   const { logOutUser } = useContext(UserContext);
   const { pathname } = useLocation();
   const currntPage = pathname.split("/").pop();

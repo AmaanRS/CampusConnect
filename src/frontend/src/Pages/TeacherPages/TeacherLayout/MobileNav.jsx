@@ -2,7 +2,7 @@
 import { useState } from "react";
 import MobileDrawer from "./MobileDrawer";
 import BottomBarComponent from "./BottomBarComponent";
-import MobileSidebar from "./MobileSidebar";
+import MobileSidebar from "./MobileSidebarComponent";
 
 export default function MobileNav() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
