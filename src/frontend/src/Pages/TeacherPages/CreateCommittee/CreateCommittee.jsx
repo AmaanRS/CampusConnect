@@ -168,7 +168,11 @@ export default function CreateCommittee() {
               <p className={errorClass}> {errors.studentIncharge.message} </p>
             )}
           </div>
+          <HR className="m-1" />
           <div>
+            <div className="mb-2 block">
+              <Label value="Select Departments" />
+            </div>
             <div className="mb-2">
               <Checkbox color={""} onClick={handleCheckboxClick} id="check" />
               <Label
