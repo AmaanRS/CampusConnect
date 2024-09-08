@@ -15,9 +15,6 @@ import Login from "./Pages/Auth/Login";
 import Signup from "./Pages/Auth/Signup";
 import ProtectedRoutes from "./Pages/Auth/ProtectedRoutes";
 import { UserContextProvider } from "./store/UserContextProvider";
-import Demo1 from "./Demo1";
-import Demo2 from "./Demo2";
-import Demo3 from "./Demo3";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import StudentLayout from "./Pages/StudentPages/StudentLayout/StudentLayout";
 import TeacherLayout from "./Pages/TeacherPages/TeacherLayout/TeacherLayout";
@@ -79,16 +76,8 @@ function App() {
                   element: <Dashboard />,
                 },
                 {
-                  path: "demo1",
-                  element: <Demo1 />,
-                },
-                {
-                  path: "demo2",
-                  element: <Demo2 />,
-                },
-                {
-                  path: "demo3",
-                  element: <Demo3 />,
+                  path: "requests",
+                  element: <div>Hello</div>,
                 },
               ],
             },

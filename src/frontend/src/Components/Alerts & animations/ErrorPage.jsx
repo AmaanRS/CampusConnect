@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import ErrorImg from "../../assets/pics/404page.svg";
 
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function ErrorPage({ error }) {
   const navigate = useNavigate();
@@ -22,7 +22,10 @@ function ErrorPage({ error }) {
         {error}
       </h1>
       <h2 className="text-lg md:text-2xl text-blue-light">
-        Redirecting you to the Main page ....
+        Go to{" "}
+        <Link className="underline" to={"/"}>
+          Home Page
+        </Link>
       </h2>
     </div>
   );
