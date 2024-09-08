@@ -14,7 +14,7 @@ import Cookies from "js-cookie";
 const schema = yup.object({});
 const TeachingStaffForm = () => {
   const navigate = useNavigate();
-  const { setUserState } = useContext(UserContext);
+  const { setUserState, logOutUser } = useContext(UserContext);
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: ({ department }) => {
@@ -89,34 +89,9 @@ const TeachingStaffForm = () => {
           </option>
         </select>
 
-        {/* Position Input */}
-        {/* <label
-          htmlFor="position"
-          className="my-2 lg:my-3 font-medium text-blue-light text-lg xl:text-xl"
-        >
-          Position
-        </label>
-        <select
-          name="position"
-          {...register("position")}
-          id="position"
-          className="xl:text-xl text-blue-dark custom-select border border-blue-dark rounded-md mt-1 block w-full pl-3 pr-10 py-1 md:py-3 text-base"
-          // value={user?.email.includes("hod") ? "HOD" : ""}
-        >
-          <option value="TEACHER" className="p-3">
-            TEACHER
-          </option> */}
-        {/* <option value="ASSISTANT_PROFESSOR" className="p-3">
-            ASSISTANT_PROFESSOR
-          </option> */}
-        {/* <option value="HOD" className="p-3">
-            HOD
-          </option>
-        </select> */}
-
         <div className="btn flex gap-4 items-center justify-center mt-12">
           <NavLink
-            to="/"
+            onClick={() => logOutUser()}
             className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
             lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
           >
@@ -124,8 +99,12 @@ const TeachingStaffForm = () => {
           </NavLink>
           <button
             disabled={isPending}
-            className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
-            lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
+            className={`px-10 py-2 border rounded-lg font-semibold lg:text-xl lg:px-10 lg:py-3
+              ${
+                isPending
+                  ? "border-blue-lightone text-blue-light cursor-not-allowed"
+                  : "border-blue-dark text-blue-dark hover:animate-shift-up active:animate-shift-down"
+              }`}
           >
             {isPending ? "Confirming" : "Confirm"}
           </button>

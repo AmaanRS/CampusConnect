@@ -18,17 +18,11 @@ const schema = yup.object({
     .required("Year is required")
     .min(1, "Year must be at least 1")
     .max(4, "Year must be at most 4"),
-  studentid: yup
-    .number()
-    .typeError("Student ID must be a number")
-    .required("Student ID is a required field.")
-    .min(100000000, "Student ID must be at least 100000000")
-    .max(999999999, "Student ID must be at most 999999999"),
 });
 
 const StudentForm = () => {
   const navigate = useNavigate();
-  const { setUserState, userState } = useContext(UserContext);
+  const { setUserState, userState, logOutUser } = useContext(UserContext);
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: ({ department, year }) => {
@@ -125,29 +119,9 @@ const StudentForm = () => {
           </option>
         </select>
 
-        {/* Student ID Input */}
-        <label
-          htmlFor="studentid"
-          className="my-2 lg:my-5 font-medium text-blue-light text-lg xl:text-xl"
-        >
-          Student ID
-        </label>
-        <input
-          type="number"
-          name="studentid"
-          id="studentid"
-          // value={""}
-          className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light focus:border-red-600"
-          placeholder="Enter Student ID"
-          {...register("studentid")}
-        />
-        <span className="text-red-500 text-xs md:text-sm mt-1 lg:mt-2">
-          {formState.errors.studentid?.message}
-        </span>
-
         <div className="btn flex gap-4 items-center justify-center mt-12">
           <NavLink
-            to="/"
+            onClick={() => logOutUser()}
             className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
             lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
           >
@@ -155,8 +129,12 @@ const StudentForm = () => {
           </NavLink>
           <button
             disabled={isPending}
-            className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
-            lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down"
+            className={`px-10 py-2 border rounded-lg font-semibold lg:text-xl lg:px-10 lg:py-3
+              ${
+                isPending
+                  ? "border-blue-lightone text-blue-light cursor-not-allowed"
+                  : "border-blue-dark text-blue-dark hover:animate-shift-up active:animate-shift-down"
+              }`}
           >
             {isPending ? "Confirming" : "Confirm"}
           </button>
