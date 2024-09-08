@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Department } from "../../utils/enum";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
+import ApiError from "../Errors/ApiError";
 
 const schema = yup.object({
   year: yup
@@ -26,7 +27,10 @@ const StudentForm = () => {
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: ({ department, year }) => {
-      return axiosInstance.post("/student/createStudent", { department, year });
+      return axiosInstance.post("/student/createStudent", {
+        department,
+        year,
+      });
     },
 
     onSuccess: (data) => {
@@ -68,8 +72,8 @@ const StudentForm = () => {
           name="email"
           id="email"
           value={userState.email || ""}
-          readOnly
-          className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light"
+          disabled
+          className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light  bg-white"
           {...register("email")}
         />
         <span className="text-red-500 text-xs md:text-sm mt-1 lg:mt-2"></span>
@@ -87,7 +91,7 @@ const StudentForm = () => {
           min={1}
           max={4}
           id="year"
-          className="rounded-md px-3  py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light focus:border-red-600"
+          className="rounded-md px-3  py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light "
           placeholder="Enter Year Eg: 1 for 1st Year"
           {...register("year")}
         />
@@ -140,7 +144,7 @@ const StudentForm = () => {
           </button>
         </div>
       </form>
-      {isError && <p className="text-red-600">{error.message}</p>}
+      <ApiError isError={isError} error={error} />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -10,6 +10,7 @@ import axiosInstance from "../../utils/Axios/AxiosInstance";
 import { Department } from "../../utils/enum";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
+import ApiError from "../Errors/ApiError";
 
 const schema = yup.object({});
 const TeachingStaffForm = () => {
@@ -49,7 +50,9 @@ const TeachingStaffForm = () => {
         {/* Email Input */}
         <label
           htmlFor="email"
-          className="my-2 lg:my-3 font-medium text-blue-light text-lg xl:text-xl"
+          className={`my-2 lg:my-3 font-medium text-lg xl:text-xl ${
+            userState.email ? "text-blue-light" : "text-gray-500"
+          }`}
         >
           Email
         </label>
@@ -58,11 +61,16 @@ const TeachingStaffForm = () => {
           name="email"
           id="email"
           value={userState.email}
-          readOnly
-          className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light"
+          disabled
+          className={`rounded-md px-3 py-1 md:py-2 border-[1px] xl:text-xl ${
+            userState.email
+              ? "text-blue-light border-blue-light bg-white"
+              : "text-gray-500 border-gray-300 bg-gray-100 cursor-not-allowed"
+          }`}
           placeholder="Enter Email"
           {...register("email")}
         />
+
         <span className="text-red-500 text-xs md:text-sm mt-1 lg:mt-2"></span>
 
         {/* Department Input */}
@@ -110,7 +118,7 @@ const TeachingStaffForm = () => {
           </button>
         </div>
       </form>
-      {isError && <p className="text-red-600"> {error.message} </p>}
+      <ApiError error={error} isError={isError} />
     </div>
   );
 };
