@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import BottomBar from "./BottomBar";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../store/UserContextProvider";
 import { AccountType } from "../../../utils/enum";
 import SidebarComponent from "./SidebarComponent";
 import OutletComponent from "./OutletComponent";
+import MobileNav from "./MobileNav";
 
 export default function TeacherLayout() {
   const { userState } = useContext(UserContext);
@@ -25,7 +25,7 @@ export default function TeacherLayout() {
   return (
     <>
       <SidebarComponent globalOpen={globalOpen} setGlobalOpen={setGlobalOpen} />
-      <BottomBar />
+      <MobileNav />
       <OutletComponent globalOpen={globalOpen} />
     </>
   );

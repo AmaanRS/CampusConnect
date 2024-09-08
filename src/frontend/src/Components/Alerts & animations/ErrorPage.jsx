@@ -7,13 +7,13 @@ import { useNavigate } from "react-router-dom";
 
 function ErrorPage({ error }) {
   const navigate = useNavigate();
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate("/");
-    }, 2000); // Redirect after 2 seconds
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     navigate("/");
+  //   }, 2000); // Redirect after 2 seconds
 
-    return () => clearTimeout(timer); // Cleanup the timer on component unmount
-  }, [navigate]);
+  //   return () => clearTimeout(timer); // Cleanup the timer on component unmount
+  // }, [navigate]);
 
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center bg-blue-lightone gap-20">
