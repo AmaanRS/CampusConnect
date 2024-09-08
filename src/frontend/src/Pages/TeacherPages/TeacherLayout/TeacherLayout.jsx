@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../store/UserContextProvider";
 import { AccountType } from "../../../utils/enum";
 import SidebarComponent from "./SidebarComponent";
-import MobileNav from "./MobileNav";
+import MobileNavComponent from "./MobileNavComponent";
 import OutletComponent from "../../../Components/Layout/OutletComponent";
 
 export default function TeacherLayout() {
@@ -25,7 +25,7 @@ export default function TeacherLayout() {
   return (
     <>
       <SidebarComponent globalOpen={globalOpen} setGlobalOpen={setGlobalOpen} />
-      <MobileNav />
+      <MobileNavComponent />
       <OutletComponent globalOpen={globalOpen} />
     </>
   );

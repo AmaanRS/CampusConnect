@@ -8,7 +8,7 @@ import {
   LogOutIcon,
 } from "lucide-react";
 import BottomBar from "./BottomBar";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../store/UserContextProvider";
 import { AccountType } from "../../../utils/enum";
 import { HiOutlineUserGroup } from "react-icons/hi2";

@@ -4,7 +4,6 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate } from "react-router-dom";
-// import { AuthContext } from "../../Pages/Auth & Authorization/AuthContext";
 
 const schema = yup.object({
   position: yup
