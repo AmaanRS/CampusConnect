@@ -74,7 +74,7 @@ function Login() {
   const formSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const res = await axiosInstance.post("/login", {
+      const res = await axiosInstance.post("/user/login", {
         email: data.email,
         password: data.password,
       });

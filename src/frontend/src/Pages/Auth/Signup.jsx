@@ -57,7 +57,7 @@ function Signup() {
   const formSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const res = await axiosInstance.post("/signup", {
+      const res = await axiosInstance.post("/user/signup", {
         email: data.email,
         password: data.password,
       });

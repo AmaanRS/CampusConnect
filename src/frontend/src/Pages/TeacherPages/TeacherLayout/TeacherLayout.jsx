@@ -9,17 +9,17 @@ import OutletComponent from "../../../Components/Layout/OutletComponent";
 export default function TeacherLayout() {
   const { userState } = useContext(UserContext);
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (userState.accountType !== AccountType.Teacher) {
-  //     navigate("/");
-  //   }
-  //   if (
-  //     userState.accountType === AccountType.Teacher &&
-  //     !userState.isProfileComplete
-  //   ) {
-  //     navigate("/userprofile");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (userState.accountType !== AccountType.Teacher) {
+      navigate("/");
+    }
+    if (
+      userState.accountType === AccountType.Teacher &&
+      !userState.isProfileComplete
+    ) {
+      navigate("/userprofile");
+    }
+  }, [userState]);
   const [globalOpen, setGlobalOpen] = useState(true);
 
   return (
