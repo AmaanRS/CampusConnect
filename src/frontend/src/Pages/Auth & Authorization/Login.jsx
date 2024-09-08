@@ -23,6 +23,7 @@ import { UserContext } from "../../store/UserContextProvider";
 import { jwtDecode } from "jwt-decode";
 import { AccountType } from "../../utils/enum";
 import { getToken } from "../../utils/getToken";
+import PasswordInput from "../../Components/Inputs/PasswordInput";
 
 // Schema
 const schema = yup.object({
@@ -47,12 +48,6 @@ function Login() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const { setUserState, userState } = useContext(UserContext);
-
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     return navigate("/userprofile", { replace: true });
-  //   }
-  // }, [isLoggedIn]);
 
   useEffect(() => {
     const { isLoggedIn } = getToken();
@@ -194,14 +189,8 @@ function Login() {
           >
             Password
           </motion.label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light "
-            placeholder="Enter Password"
-            {...register("password")}
-          />
+
+          <PasswordInput register={register} name={"password"} />
           <span className="text-red-500 text-xs md:text-sm mt-1 lg:mt-2">
             {formState.errors.password?.message}
           </span>
@@ -211,8 +200,12 @@ function Login() {
               initial={{ x: 400 }}
               animate={{ x: 0 }}
               transition={{ ease: [0.12, 0, 0.39, 0], duration: 0.4 }}
-              className="px-10 py-2 border border-blue-dark text-blue-dark rounded-lg font-semibold
-  lg:text-xl lg:px-10 lg:py-3 hover:animate-shift-up active:animate-shift-down  "
+              className={`px-10 py-2 border rounded-lg font-semibold lg:text-xl lg:px-10 lg:py-3
+                ${
+                  isLoading
+                    ? "border-blue-lightone text-blue-light cursor-not-allowed"
+                    : "border-blue-dark text-blue-dark hover:animate-shift-up active:animate-shift-down"
+                }`}
             >
               {isLoading ? "Logging in" : "Log in"}
             </motion.button>
