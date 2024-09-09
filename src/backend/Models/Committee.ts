@@ -1,5 +1,6 @@
 import { Model, MongooseError, Schema, model } from "mongoose";
 import {
+	College,
 	CommitteeStatus,
 	Department,
 	ICommitteeDocument,
@@ -60,7 +61,7 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 		committeeOfDepartment: [
 			{
 				type: String,
-				enum: Object.values(Department),
+				enum: [...Object.values(Department), ...Object.values(College)],
 			},
 		],
 	},
@@ -99,6 +100,22 @@ committeeSchema.pre("validate", async function (next) {
 			this.members.push(this.studentIncharge);
 		}
 
+		if (Array.isArray(this.committeeOfDepartment)) {
+			const hasCollege = this.committeeOfDepartment.some((v) =>
+				Object.values(College).includes(v as unknown as College),
+			);
+
+			const hasDepartment = this.committeeOfDepartment.some((v) =>
+				Object.values(Department).includes(v as Department),
+			);
+
+			if (hasCollege && hasDepartment) {
+				throw new MongooseError(
+					"Cannot have both College and Department in committeeOfDepartment.",
+				);
+			}
+		}
+
 		if (!this.committeeId) {
 			while (true) {
 				const uniqueId = await generateUniqueId();
@@ -117,7 +134,9 @@ committeeSchema.pre("validate", async function (next) {
 
 		this.events = this.events ? [...new Set(this.events)] : undefined;
 
-		this.committeeOfDepartment = [...new Set(this.committeeOfDepartment)];
+		this.committeeOfDepartment = [...new Set(this.committeeOfDepartment)] as
+			| Department[]
+			| College;
 	} catch (err) {
 		next(err as MongooseError);
 	}
