@@ -10,7 +10,7 @@ import StudentRouter from "./Routes/StudentRoutes";
 import CommitteeRouter from "./Routes/CommitteeRoutes";
 import GeneralRouter from "./Routes/GeneralRoutes";
 import { fileURLToPath } from "url";
-// import { isAccountActive } from "./Middlewares/AccountStatus";
+import { isAccountActive } from "./Middlewares/AccountStatus";
 
 dotenv.config();
 const app = express();
@@ -19,7 +19,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// app.use(isAccountActive);
+app.use(isAccountActive);
 
 app.use("/", GeneralRouter);
 app.use("/user", UserRouter);
@@ -32,57 +32,66 @@ app.use("/committee", CommitteeRouter);
 async function connectToDbAndStartServer(
 	MONGO_URI: string,
 	PORT: string,
-	// REPL_SET: string,
+	REPL_SET?: string,
 ): Promise<void> {
 	try {
-		await mongoose
-			.connect(MONGO_URI, {
-				// replicaSet: REPL_SET,
-				// retryWrites: true,
-				// readPreference: "primary",
-				// ignoreUndefined: true,
-			})
-			.then(() => {
-				console.log("Database is connected");
-				app.listen(PORT, () => {
-					console.log(`Express app running on port ${PORT}`);
+		if (REPL_SET) {
+			await mongoose
+				.connect(MONGO_URI, {
+					replicaSet: REPL_SET,
+					retryWrites: true,
+					readPreference: "primary",
+					ignoreUndefined: true,
+				})
+				.then(() => {
+					console.log("Database is connected");
+					app.listen(PORT, () => {
+						console.log(`Express app running on port ${PORT}`);
+					});
+				})
+				.catch((err) => {
+					if (err) console.log(err.message);
 				});
-			})
-			.catch((err) => {
-				if (err) console.log(err.message);
-			});
+		} else {
+			await mongoose
+				.connect(MONGO_URI, {})
+				.then(() => {
+					console.log("Database is connected");
+					app.listen(PORT, () => {
+						console.log(`Express app running on port ${PORT}`);
+					});
+				})
+				.catch((err) => {
+					if (err) console.log(err.message);
+				});
+		}
 	} catch (e) {
 		console.log(`This Express Server is not running because : ${e}`);
 	}
 }
 
-// Checks if the file was ran using commandline and not by any other means eg testing (If run by testing don't run the server)
-// if (process.argv[1] === new URL(import.meta.url).pathname) {
-// 	console.log("Connecting from app.ts");
-
-// 	await connectToDbAndStartServer(
-// 		process.env["MONGO_URI"]!,
-// 		process.env["PORT"]!,
-// 		process.env.REPL_SET!,
-// 	);
-// }
-
-//
-// Check if this works for windows
-//
 const __filename = fileURLToPath(import.meta.url);
-
-// Checks if the file was ran using commandline and not by any other means eg testing (If run by testing don't run the server)
 
 // If the file was executed directly (not imported as a module)
 if (process.argv[1] === __filename) {
 	console.log("Connecting from app.ts");
 
-	await connectToDbAndStartServer(
-		process.env["MONGO_URI"]!,
-		process.env["PORT"]!,
-		// process.env.REPL_SET!,
-	);
+	if (process.env["ENV"]! === "DEV") {
+		console.log("Connecting to local db");
+
+		await connectToDbAndStartServer(
+			process.env["LOCAL_MONGO_URI"]!,
+			process.env["PORT"]!,
+			process.env["REPL_SET"]!,
+		);
+	} else {
+		console.log("Connecting to remote db");
+
+		await connectToDbAndStartServer(
+			process.env["REMOTE_MONGO_URI"]!,
+			process.env["PORT"]!,
+		);
+	}
 }
 
 export { app, connectToDbAndStartServer };

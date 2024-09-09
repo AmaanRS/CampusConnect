@@ -58,8 +58,6 @@ export const cookieCheckerFunction = (
 	return response;
 };
 
-// TODO: Use cookieCheckerMiddleware as a global middleware
-
 // Define the cookieChecker middleware function
 export const cookieCheckerMiddleware = (
 	req: Request,
