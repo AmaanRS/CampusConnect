@@ -118,7 +118,7 @@ export default function CreateCommittee() {
         <h1 className="mb-4 text-2xl font-semibold">Create a New Committee</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className=" flex h-screen max-w-lg flex-col gap-4"
+          className=" flex  max-w-lg flex-col gap-4"
         >
           <div>
             <div className="mb-2 block">

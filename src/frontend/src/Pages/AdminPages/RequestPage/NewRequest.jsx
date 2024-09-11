@@ -109,17 +109,29 @@ export default function NewRequest() {
   //   const data = await axiosInstance.post("/getAllPendingCommittees");
   // };
   // fetchData();
-
+  const dummyDat = [];
   return (
     <>
-      <div className=" py-4 px-4 h-screen">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3  gap-4">
-          {dummyData.map((item) => {
-            return (
-              <NewCommitteeRequestCard key={item.committeeId} item={item} />
-            );
-          })}
-        </div>
+      <div className=" py-4 px-4 ">
+        {dummyData.length !== 0 && (
+          <>
+            <p className="mb-3 md:text-2xl text-center font-bold text-xl ">
+              New Committee Requests
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3  gap-4">
+              {dummyData.map((item) => {
+                return (
+                  <NewCommitteeRequestCard key={item.committeeId} item={item} />
+                );
+              })}
+            </div>
+          </>
+        )}
+        {dummyData.length === 0 && (
+          <p className="text-2xl font-bold text-center ">
+            There are no Pending Requests
+          </p>
+        )}
       </div>
     </>
   );
