@@ -1,9 +1,16 @@
 import { committeeModel } from "../Models/Committee";
 import { DataResponse, StandardResponse } from "../Types/GeneralTypes";
-import { AccountType, CommitteeStatus, ICommittee } from "../Types/ModelTypes";
+import {
+	AccountType,
+	College,
+	CommitteeStatus,
+	IAdmin,
+	ICommittee,
+	ITeacher,
+} from "../Types/ModelTypes";
 
 const checkRequestsForCreatingCommittees = async (
-	accountType: AccountType,
+	user: IAdmin | ITeacher,
 ): Promise<StandardResponse | DataResponse> => {
 	try {
 		let pendingCommittees: ICommittee[];
@@ -12,22 +19,29 @@ const checkRequestsForCreatingCommittees = async (
 			status: CommitteeStatus.PENDING,
 		});
 
-		if (accountType === AccountType.Admin) {
+		if (user.accType === AccountType.Admin) {
 			// Return all committees with committeeOfDepartment having length greater than 1
 
 			pendingCommittees = AllPendingCommittees.filter((e: ICommittee) => {
-				return e.committeeOfDepartment.length >= 2;
+				return (
+					e.committeeOfDepartment.length >= 1 ||
+					e.committeeOfDepartment === College.COLLEGE
+				);
 			});
-		} else if (accountType === AccountType.Teacher) {
+		} else if (user.accType === AccountType.Teacher) {
 			// Return all committees with committeeOfDepartment having length equal to 1
 
 			pendingCommittees = AllPendingCommittees.filter((e: ICommittee) => {
-				return e.committeeOfDepartment.length === 1;
+				return (
+					e.committeeOfDepartment.length === 1 &&
+					e.committeeOfDepartment !== College.COLLEGE &&
+					e.committeeOfDepartment[0] === (user as ITeacher).department
+				);
 			});
 		} else {
 			const response: StandardResponse = {
 				message:
-					"For getting pending requests the account should be of HOD or admin",
+					"For getting pending requests the account should be of Teacher or HOD or admin",
 				success: false,
 			};
 
@@ -63,6 +77,7 @@ const checkRequestsForCreatingCommittees = async (
 	}
 };
 
+// TODO:
 const checkRequestsForCreatingEvents = () => {};
 
 export { checkRequestsForCreatingCommittees, checkRequestsForCreatingEvents };

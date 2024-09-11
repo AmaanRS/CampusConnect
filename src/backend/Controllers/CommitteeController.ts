@@ -11,6 +11,7 @@ import { teacherModel } from "../Models/Teacher";
 import { committeeModel } from "../Models/Committee";
 import mongoose from "mongoose";
 
+// TODO: There should be only one committee of the same name
 const createCommittee = async (req: Request, res: Response) => {
 	try {
 		const {

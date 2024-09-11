@@ -2,32 +2,39 @@ import { NextFunction, Request, Response } from "express";
 import { StandardResponse } from "../Types/GeneralTypes";
 import { userModel } from "../Models/User";
 import { cookieCheckerFunction } from "./CookieChecker";
+import { isAccountActiveMiddlewarePathsToSkip } from "../Utils/paths";
 
-// Test this middleware
 export const isAccountActive = async (
 	req: Request,
 	res: Response,
 	next: NextFunction,
 ) => {
 	try {
-		const response = cookieCheckerFunction(req);
-
-		if (!response.success || !("decodedToken" in response)) {
-			return res.status(401).json(response);
-		}
-
-		const userDecodedToken = response.decodedToken;
-
-		console.log(req.path);
-
 		// Paths to skip
-		if (req.path === "/signup") {
+		if (isAccountActiveMiddlewarePathsToSkip.includes(req.path)) {
 			return next();
 		}
 
-		const userAccountStatus = await userModel.findOne({
-			email: userDecodedToken.email,
-		});
+		let userAccountStatus;
+
+		if (req.path === "/user/login") {
+			userAccountStatus = await userModel.findOne({
+				email: req.body.email,
+			});
+		} else {
+			// TODO: Add the decodedToken to the req here and stop using cookieCheckerMiddleware as this function first authenticate user then check if its account is active or not
+			const response = cookieCheckerFunction(req);
+
+			if (!response.success || !("decodedToken" in response)) {
+				return res.status(401).json(response);
+			}
+
+			const userDecodedToken = response.decodedToken;
+
+			userAccountStatus = await userModel.findOne({
+				email: userDecodedToken.email,
+			});
+		}
 
 		if (!userAccountStatus) {
 			const response: StandardResponse = {
@@ -60,3 +67,5 @@ export const isAccountActive = async (
 		return res.status(401).json(response);
 	}
 };
+
+// TODO: isProfileComplete maybe merge in isAccountActive

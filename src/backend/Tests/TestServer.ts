@@ -6,15 +6,20 @@ let serverRef: Server;
 
 // Connects with db then express server
 async function connectToTestDbAndStartTestServer(
-	TEST_MONGO_URI: string,
+	MONGO_URI: string,
 	PORT: string,
+	REPL_SET: string,
 ): Promise<void> {
 	try {
-		mongoose
-			.connect(TEST_MONGO_URI)
+		await mongoose
+			.connect(MONGO_URI, {
+				replicaSet: REPL_SET,
+				retryWrites: true,
+				readPreference: "primary",
+				ignoreUndefined: true,
+			})
 			.then(() => {
-				console.log("Database is connected");
-
+				console.log("Test database is connected");
 				serverRef = app.listen(PORT, () => {
 					console.log(`Express app running on port ${PORT}`);
 				});
@@ -37,6 +42,7 @@ function stopTestServerRunning(): Promise<void> {
 				resolve();
 			});
 		} else {
+			// There maybe a problem in this
 			console.log("Server is not running");
 			resolve();
 		}

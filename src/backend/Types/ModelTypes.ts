@@ -134,6 +134,10 @@ export enum CommitteeStatus {
 	ACCEPTED = "ACCEPTED",
 }
 
+export enum College {
+	COLLEGE = "COLLEGE",
+}
+
 export interface ICommittee {
 	committeeId: string;
 	name: string;
@@ -142,10 +146,10 @@ export interface ICommittee {
 	facultyIncharge: Types.ObjectId;
 	facultyTeam?: Types.ObjectId[] | undefined;
 	members?: Types.ObjectId[] | undefined;
-	// Use nanoid here ie eventId
+	// TODO: Use nanoid here ie eventId
 	events?: Types.ObjectId[] | undefined;
 	status: CommitteeStatus;
-	committeeOfDepartment: Department[];
+	committeeOfDepartment: Department[] | College;
 }
 
 //

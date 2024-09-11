@@ -38,6 +38,7 @@ export interface EventResponse extends StandardResponse {
 	events: IEvent[];
 }
 
+// TODO: Add is isProfileCompleted and isAccountActive in decodedTokenPayload
 export interface decodedTokenPayload extends JwtPayload {
 	email: string;
 	position: UserPosition[];

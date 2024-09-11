@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 import { committeeModel } from "../../Models/Committee";
-import { Department, CommitteeStatus, ICommittee } from "../../Types/ModelTypes";
+import {
+	Department,
+	CommitteeStatus,
+	ICommittee,
+	College,
+} from "../../Types/ModelTypes";
 import { runTestServer, stopTestServer } from "../../Utils/util";
 
 describe("Committee Model Tests", () => {
@@ -167,6 +172,20 @@ describe("Committee Model Tests", () => {
 				},
 				expectedUnique: true,
 			},
+			{
+				name: "Cannot have both college and department in committeeOfDepartment",
+				committee: {
+					...validCommitteeBase,
+					studentIncharge: new mongoose.Types.ObjectId(),
+					facultyIncharge: new mongoose.Types.ObjectId(),
+					committeeOfDepartment: [
+						Department.IT,
+						Department.IT,
+						College.COLLEGE,
+					],
+				},
+				shouldThrowError: true,
+			},
 		];
 
 		it.each(testCases)(
@@ -177,41 +196,46 @@ describe("Committee Model Tests", () => {
 				expectedMembersLength,
 				shouldGenerateCommitteeId,
 				expectedUnique,
+				shouldThrowError,
 			}) => {
-				const createdCommittee = await committeeModel.create(committee);
+				if (shouldThrowError) {
+					await expect(committeeModel.create(committee)).rejects.toThrow();
+				} else {
+					const createdCommittee = await committeeModel.create(committee);
 
-				if (expectedFacultyTeamLength !== undefined) {
-					expect(createdCommittee.facultyTeam).toHaveLength(
-						expectedFacultyTeamLength,
-					);
-				}
+					if (expectedFacultyTeamLength !== undefined) {
+						expect(createdCommittee.facultyTeam).toHaveLength(
+							expectedFacultyTeamLength,
+						);
+					}
 
-				if (expectedMembersLength !== undefined) {
-					expect(createdCommittee.members).toHaveLength(
-						expectedMembersLength,
-					);
-				}
+					if (expectedMembersLength !== undefined) {
+						expect(createdCommittee.members).toHaveLength(
+							expectedMembersLength,
+						);
+					}
 
-				if (shouldGenerateCommitteeId) {
-					expect(createdCommittee.committeeId).toBeDefined();
-				}
+					if (shouldGenerateCommitteeId) {
+						expect(createdCommittee.committeeId).toBeDefined();
+					}
 
-				if (expectedUnique) {
-					expect(new Set(createdCommittee.facultyTeam).size).toBe(
-						createdCommittee.facultyTeam?.length,
-					);
+					if (expectedUnique) {
+						expect(new Set(createdCommittee.facultyTeam).size).toBe(
+							createdCommittee.facultyTeam?.length,
+						);
 
-					expect(new Set(createdCommittee.members).size).toBe(
-						createdCommittee.members?.length,
-					);
+						expect(new Set(createdCommittee.members).size).toBe(
+							createdCommittee.members?.length,
+						);
 
-					expect(new Set(createdCommittee.events).size).toBe(
-						createdCommittee.events?.length,
-					);
+						expect(new Set(createdCommittee.events).size).toBe(
+							createdCommittee.events?.length,
+						);
 
-					expect(
-						new Set(createdCommittee.committeeOfDepartment).size,
-					).toBe(createdCommittee.committeeOfDepartment.length);
+						expect(
+							new Set(createdCommittee.committeeOfDepartment).size,
+						).toBe(createdCommittee.committeeOfDepartment.length);
+					}
 				}
 			},
 		);
