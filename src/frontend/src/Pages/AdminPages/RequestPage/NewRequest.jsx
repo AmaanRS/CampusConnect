@@ -1,13 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import ApiError from "../../../Components/Errors/ApiError";
-import { Button, Card, HR } from "flowbite-react";
-
-const fetchData = async () => {
-  const data = await axiosInstance.post("/getAllPendingCommittees");
-  console.log("in response", data.response);
-};
+import { Badge, Button, Card, HR } from "flowbite-react";
+import { FaCheck } from "react-icons/fa6";
+import { FaRegCheckCircle } from "react-icons/fa";
+import { MdOutlineCancel } from "react-icons/md";
+import NewCommitteeRequestCard from "./NewCommitteeRequestCard";
 
 const dummyData = [
   {
@@ -31,7 +30,7 @@ const dummyData = [
     _id: "66e13a3484f04e8383ba4303",
     name: "committee four",
     description:
-      "committee four committee four committee four committee four committee four committee four committee four committee four committee four committee four committee four committee four committee four ",
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. ",
     studentIncharge: "66d8a996546965112293c8b0",
     facultyIncharge: "66d8aaf9546965112293c8b8",
     facultyTeam: ["66d8aaf9546965112293c8b8"],
@@ -48,7 +47,7 @@ const dummyData = [
     _id: "66e13a4384f04e8383ba430f",
     name: "committee six",
     description:
-      "committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six ",
+      "committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six committee six Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. ",
     studentIncharge: "66d8a996546965112293c8b0",
     facultyIncharge: "66d8aaf9546965112293c8b8",
     facultyTeam: ["66d8aaf9546965112293c8b8"],
@@ -64,8 +63,13 @@ const dummyData = [
   {
     _id: "66e13a4f84f04e8383ba431b",
     name: "committee eight",
-    description:
-      "committee eight committee eight committee eight committee eight committee eight committee eight committee eight committee eight committee eight committee eight committee eight committee eight committee eight ",
+    description: `Typhoon Yagi (satellite image shown) leaves more than 150 people dead in China, Vietnam, and the Philippines.
+Michel Barnier is appointed prime minister of France by President Emmanuel Macron, leading to nationwide anti-government protests.
+An attempted jailbreak at Makala Central Prison in Kinshasa, Democratic Republic of the Congo, leaves 129 people dead.
+A Mil Mi-8 helicopter crashes in Kamchatka, Russia, killing all 22 people on board.
+Ongoing: Israel Hamas war timelineRussian invasion of Ukraine timelineSudanese civil war timeline
+Recent deaths: James Earl JonesAna GervasiHenny MoanRebecca HornRadha Charan GuptaVladimir Bure
+`,
     studentIncharge: "66d8a996546965112293c8b0",
     facultyIncharge: "66d8aaf9546965112293c8b8",
     facultyTeam: ["66d8aaf9546965112293c8b8"],
@@ -101,37 +105,22 @@ export default function NewRequest() {
   //       />
   //     );
   //   }
-  const item = dummyData[0];
-  const lorem = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.`;
+  // const fetchData = async () => {
+  //   const data = await axiosInstance.post("/getAllPendingCommittees");
+  // };
+  // fetchData();
 
   return (
     <>
-      <div className=" py-4 px-4">
-        <Card className="max-w-md">
-          <h5 className="text-2xl font-bold tracking-tight capitalize text-gray-900 dark:text-white">
-            {item.name}
-          </h5>
-          <p className="font-normal custom-scrollbar text-gray-700 overflow-auto h-40  ">
-            {lorem}
-          </p>
-
-          <div className="mt-2 flex space-x-3 lg:mt-3">
-            <a
-              href="#"
-              className="inline-flex items-center rounded-lg bg-cyan-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-cyan-800 focus:outline-none focus:ring-4  dark:bg-cyan-600 dark:hover:bg-cyan-700 "
-            >
-              Add friend
-            </a>
-            <a
-              href="#"
-              className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-            >
-              Message
-            </a>
-          </div>
-        </Card>
+      <div className=" py-4 px-4 h-screen">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3  gap-4">
+          {dummyData.map((item) => {
+            return (
+              <NewCommitteeRequestCard key={item.committeeId} item={item} />
+            );
+          })}
+        </div>
       </div>
-      <div className="h-screen"></div>
     </>
   );
 }
