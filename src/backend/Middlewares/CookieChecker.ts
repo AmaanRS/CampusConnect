@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express";
+import { Request } from "express";
 import {
 	decodedTokenPayload,
 	JwtDataResponse,
@@ -58,33 +58,33 @@ export const cookieCheckerFunction = (
 	return response;
 };
 
-// Define the cookieChecker middleware function
-export const cookieCheckerMiddleware = (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
-	const tokenResponse = verifyToken(req);
+// Deprecated
+// export const cookieCheckerMiddleware = (
+// 	req: Request,
+// 	res: Response,
+// 	next: NextFunction,
+// ) => {
+// 	const tokenResponse = verifyToken(req);
 
-	const { success, message } = tokenResponse;
+// 	const { success, message } = tokenResponse;
 
-	if (!success) {
-		const response: StandardResponse = {
-			message,
-			success,
-		};
+// 	if (!success) {
+// 		const response: StandardResponse = {
+// 			message,
+// 			success,
+// 		};
 
-		return res.status(401).json(response);
-	}
+// 		return res.status(401).json(response);
+// 	}
 
-	const { decodedToken } = tokenResponse as JwtDataResponse;
+// 	const { decodedToken } = tokenResponse as JwtDataResponse;
 
-	// Even though if decodedToken with email is sent in the request it will get overrided, but i am keeping this here for extra safety
-	if (req.body.decodedToken) {
-		delete req.body.decodedToken;
-	}
+// 	// Even though if decodedToken with email is sent in the request it will get overrided, but i am keeping this here for extra safety
+// 	if (req.body.decodedToken) {
+// 		delete req.body.decodedToken;
+// 	}
 
-	(req as any).body.decodedToken = decodedToken;
+// 	(req as any).body.decodedToken = decodedToken;
 
-	return next();
-};
+// 	return next();
+// };
