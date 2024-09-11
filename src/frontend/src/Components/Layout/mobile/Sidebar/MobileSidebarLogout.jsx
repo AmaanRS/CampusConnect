@@ -6,7 +6,11 @@ import { UserContext } from "../../../../store/UserContextProvider";
 export default function MobileSidebarLogout() {
   const { logOutUser } = useContext(UserContext);
   return (
-    <Sidebar.Item onClick={() => logOutUser()} icon={FiLogOut}>
+    <Sidebar.Item
+      className="cursor-pointer"
+      onClick={() => logOutUser()}
+      icon={FiLogOut}
+    >
       Logout
     </Sidebar.Item>
   );

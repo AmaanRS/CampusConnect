@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
+import "./CardScroll.css";
 import React from "react";
-import LocomotiveScroll from "locomotive-scroll";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import About from "./Pages/Landing Page/About";
 import { ToastContainer } from "react-toastify";
@@ -21,10 +21,10 @@ import TeacherLayout from "./Pages/TeacherPages/TeacherLayout/TeacherLayout";
 import CreateCommittee from "./Pages/TeacherPages/CreateCommittee/CreateCommittee";
 import TeacherDashboard from "./Pages/TeacherPages/Dashboard/TeacherDashboard";
 import StudentHome from "./Pages/StudentPages/Home/StudentHome";
+import NewRequest from "./Pages/AdminPages/RequestPage/NewRequest";
 
 const queryClient = new QueryClient();
 function App() {
-  const locomotiveScroll = new LocomotiveScroll();
   const router = createBrowserRouter([
     {
       path: "/",
@@ -78,7 +78,7 @@ function App() {
                 },
                 {
                   path: "requests",
-                  element: <div>Hello</div>,
+                  element: <NewRequest />,
                 },
               ],
             },
