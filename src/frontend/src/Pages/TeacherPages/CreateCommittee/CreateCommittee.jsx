@@ -146,7 +146,7 @@ export default function CreateCommittee() {
               id="description"
               placeholder="write description about committee"
               required
-              rows={4}
+              rows={5}
               {...register("description")}
             />
             {errors.description && (

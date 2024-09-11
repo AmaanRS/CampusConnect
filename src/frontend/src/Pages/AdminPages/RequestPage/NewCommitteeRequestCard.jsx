@@ -9,6 +9,7 @@ export default function NewCommitteeRequestCard({ item }) {
         <h5 className="text-2xl font-bold tracking-tight capitalize text-gray-900  mb-1">
           {item.name}
         </h5>
+
         <p className="font-normal text-gray-700 dark:text-gray-400 custom-scrollbar overflow-auto max-h-60 md:h-40 mb-2 ">
           {item.description}
         </p>
@@ -20,7 +21,7 @@ export default function NewCommitteeRequestCard({ item }) {
           <div className="mt-1 flex flex-wrap">
             {item.committeeOfDepartment.map((dep) => (
               <span
-                className="bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 px-3 py-1 mx-1 my-1 rounded-full text-sm"
+                className="bg-blue-100 text-gray-800   px-3 py-1 mx-1 my-1 rounded-full text-sm"
                 key={dep}
               >
                 {dep}
@@ -31,14 +32,15 @@ export default function NewCommitteeRequestCard({ item }) {
 
         <div className="flex space-x-3">
           <Button
-            color="success"
-            className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md transition duration-300"
+            color={""}
+            className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition duration-300"
           >
             <FaRegCheckCircle className="mr-2 h-5 w-5" />
             Accept
           </Button>
+
           <Button
-            color="failure"
+            color={""}
             className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md transition duration-300"
           >
             <MdOutlineCancel className="mr-2 h-5 w-5" />

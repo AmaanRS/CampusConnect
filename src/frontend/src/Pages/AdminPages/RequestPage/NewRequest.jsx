@@ -85,6 +85,7 @@ Recent deaths: James Earl JonesAna GervasiHenny MoanRebecca HornRadha Charan Gup
 ];
 
 export default function NewRequest() {
+  const [isSingle, setIsSingle] = useState(false);
   //   const committeRequest = useQuery({
   //     queryKey: ["committeRequest"],
   //     queryFn: () => axiosInstance.post("/getAllPendingCommittees"),
@@ -110,6 +111,7 @@ export default function NewRequest() {
   // };
   // fetchData();
   const dummyDat = [];
+
   return (
     <>
       <div className=" py-4 px-4 ">
