@@ -29,7 +29,6 @@ function App() {
     {
       path: "/",
       errorElement: <ErrorPage />,
-      // action: homeAction,
       children: [
         {
           index: true,
