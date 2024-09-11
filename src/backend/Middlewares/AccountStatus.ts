@@ -67,3 +67,5 @@ export const isAccountActive = async (
 		return res.status(401).json(response);
 	}
 };
+
+// TODO: isProfileComplete maybe merge in isAccountActive

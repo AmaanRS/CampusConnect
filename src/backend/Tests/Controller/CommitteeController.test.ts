@@ -8,7 +8,7 @@ import { CommitteeStatus, Department, Year } from "../../Types/ModelTypes";
 import { runTestServer, stopTestServer } from "../../Utils/util";
 import { userModel } from "../../Models/User";
 
-const emailTeach = "hod.it@vcet.edu.in";
+const emailTeach = "hod_it@vcet.edu.in";
 const emailStu = "test.123456789@vcet.edu.in";
 const password = "Aa@123456";
 const createTeacherAndStudentAndReturnToken = async () => {
