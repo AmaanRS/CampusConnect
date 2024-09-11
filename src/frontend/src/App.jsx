@@ -22,12 +22,14 @@ import CreateCommittee from "./Pages/TeacherPages/CreateCommittee/CreateCommitte
 import TeacherDashboard from "./Pages/TeacherPages/Dashboard/TeacherDashboard";
 import StudentHome from "./Pages/StudentPages/Home/StudentHome";
 import NewRequest from "./Pages/AdminPages/RequestPage/NewRequest";
+import AppLayout from "./Components/Layout/AppLayout";
 
 const queryClient = new QueryClient();
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
+      element: <AppLayout />,
       errorElement: <ErrorPage />,
       children: [
         {
