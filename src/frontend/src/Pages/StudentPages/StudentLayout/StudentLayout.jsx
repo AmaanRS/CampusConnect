@@ -27,7 +27,7 @@ export default function StudentLayout() {
       {/* <BottomBar /> */}
       <SidebarComponent globalOpen={globalOpen} setGlobalOpen={setGlobalOpen} />
       <MobileNavComponent />
-      <OutletComponent />
+      <OutletComponent globalOpen={globalOpen} />
     </>
   );
 }
