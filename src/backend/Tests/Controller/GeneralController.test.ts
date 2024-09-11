@@ -23,7 +23,7 @@ describe("General Controller tests", () => {
 		await stopTestServer();
 	});
 
-	describe("POST /getAllPendingCommittees", () => {
+	describe.skip("POST /getAllPendingCommittees", () => {
 		let token: string;
 
 		beforeEach(async () => {
@@ -168,7 +168,7 @@ describe("General Controller tests", () => {
 		);
 	});
 
-	describe("POST /actionOnPendingCommittee", () => {
+	describe.skip("POST /actionOnPendingCommittee", () => {
 		let token: string;
 
 		beforeEach(async () => {

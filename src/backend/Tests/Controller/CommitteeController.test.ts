@@ -7,32 +7,30 @@ import { teacherModel } from "../../Models/Teacher";
 import { CommitteeStatus, Department, Year } from "../../Types/ModelTypes";
 import { runTestServer, stopTestServer } from "../../Utils/util";
 import { userModel } from "../../Models/User";
+import { createTestStudent, createTestTeacher } from "../../Utils/testUtils";
+import { TokenResponse } from "../../Types/GeneralTypes";
 
 const emailTeach = "hod_it@vcet.edu.in";
 const emailStu = "test.123456789@vcet.edu.in";
-const password = "Aa@123456";
+
 const createTeacherAndStudentAndReturnToken = async () => {
-	await userModel.create({ email: emailTeach, password });
-	await userModel.create({ email: emailStu, password });
+	const isTeacherCreated = await createTestTeacher(Department.AIDS, emailTeach);
 
-	const response1 = await request
-		.post("/user/login")
-		.send({ email: emailTeach, password });
-	const response2 = await request
-		.post("/user/login")
-		.send({ email: emailStu, password });
+	if (!isTeacherCreated.success) {
+		throw Error(isTeacherCreated.message);
+	}
 
-	await request
-		.post("/teacher/createTeacher")
-		.set("Authorization", `Bearer ${response1.body.token}`)
-		.send({ department: Department.IT });
+	const isStudentCreated = await createTestStudent(
+		Department.IT,
+		Year["4TH"],
+		emailStu,
+	);
 
-	await request
-		.post("/student/createStudent")
-		.set("Authorization", `Bearer ${response2.body.token}`)
-		.send({ department: Department.IT, year: Year["1ST"] });
+	if (!isStudentCreated.success) {
+		throw Error(isStudentCreated.message);
+	}
 
-	return response1.body.token;
+	return (isTeacherCreated as TokenResponse).token;
 };
 
 describe("Student Controller", () => {
@@ -161,8 +159,7 @@ describe("Student Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request

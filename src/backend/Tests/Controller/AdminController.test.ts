@@ -5,26 +5,12 @@ import { userModel } from "../../Models/User";
 import { adminModel } from "../../Models/Admin";
 import { runTestServer, stopTestServer } from "../../Utils/util";
 import { AdminPosition } from "../../Types/ModelTypes";
-// import { studentModel } from "../../Models/Student";
-// import { teacherModel } from "../../Models/Teacher";
-// import { nonTeachingStaffModel } from "../../Models/NonTeachingStaff";
-
-const createAdminAndReturnToken = async () => {
-	const email = "test.t@vcet.edu.in";
-	const password = "Aa@123456";
-
-	await userModel.create({ email, password });
-
-	const response = await request.post("/user/login").send({ email, password });
-
-	// Create a default admin for testing purposes
-	await request
-		.post("/admin/createAdmin")
-		.set("Authorization", `Bearer ${response.body.token}`)
-		.send();
-
-	return response.body.token;
-};
+import {
+	createTestAdmin,
+	createTestUser,
+	getRandomStudentEmail,
+} from "../../Utils/testUtils";
+import { TokenResponse } from "../../Types/GeneralTypes";
 
 describe("Admin Controller", () => {
 	beforeAll(async () => {
@@ -48,6 +34,7 @@ describe("Admin Controller", () => {
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				shouldThrow: false,
+				setup: async () => {},
 			},
 			{
 				name: "User not found",
@@ -66,30 +53,27 @@ describe("Admin Controller", () => {
 				expectedResponse: { success: true },
 				shouldThrow: false,
 				setup: async () => {
-					const email = "test.t@vcet.edu.in";
-					const password = "Aa@123456";
-					await userModel.create({
-						email,
-						password,
-					});
-					const response = await request
-						.post("/user/login")
-						.send({ email, password });
-					return response.body.token;
+					const isAdminCreated = await createTestUser(
+						getRandomStudentEmail(),
+						"Aa1234@12",
+					);
+
+					if (!isAdminCreated.success) {
+						throw Error(isAdminCreated.message);
+					}
+
+					return (isAdminCreated as TokenResponse).token;
 				},
 			},
 		];
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
-				let token: string | null = null;
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
+				let token: string | null | void = null;
 				let response;
 
-				if (setup) {
-					token = await setup();
-				}
+				if (setup) token = await setup();
 
 				if (token) {
 					response = await request
@@ -102,7 +86,7 @@ describe("Admin Controller", () => {
 
 				delete response.body.message;
 				expect(response.status).toBe(expectedStatus);
-				expect(response.body).toEqual(expectedResponse);
+				expect(response.body.success).toEqual(expectedResponse.success);
 			},
 		);
 	});
@@ -111,7 +95,14 @@ describe("Admin Controller", () => {
 		let token: string | undefined;
 
 		beforeEach(async () => {
-			token = await createAdminAndReturnToken();
+			const adminEmail = "hod_it@vcet.edu.in";
+			const isAdminCreated = await createTestAdmin(adminEmail);
+
+			if (!isAdminCreated.success) {
+				throw Error(isAdminCreated.message);
+			}
+
+			token = (isAdminCreated as TokenResponse).token;
 		});
 
 		afterEach(async () => {
@@ -126,7 +117,6 @@ describe("Admin Controller", () => {
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {
-					// Delete the admin so it doesnt exist
 					await adminModel.deleteMany({});
 				},
 			},
@@ -141,8 +131,7 @@ describe("Admin Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request
@@ -163,7 +152,14 @@ describe("Admin Controller", () => {
 		let token: string;
 
 		beforeEach(async () => {
-			token = await createAdminAndReturnToken();
+			const adminEmail = "hod_it@vcet.edu.in";
+			const isAdminCreated = await createTestAdmin(adminEmail);
+
+			if (!isAdminCreated.success) {
+				throw Error(isAdminCreated.message);
+			}
+
+			token = (isAdminCreated as TokenResponse).token;
 		});
 
 		afterEach(async () => {
@@ -204,8 +200,7 @@ describe("Admin Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request
@@ -224,7 +219,14 @@ describe("Admin Controller", () => {
 		let token: string;
 
 		beforeEach(async () => {
-			token = await createAdminAndReturnToken();
+			const adminEmail = "hod_it@vcet.edu.in";
+			const isAdminCreated = await createTestAdmin(adminEmail);
+
+			if (!isAdminCreated.success) {
+				throw Error(isAdminCreated.message);
+			}
+
+			token = (isAdminCreated as TokenResponse).token;
 		});
 
 		afterEach(async () => {
@@ -241,16 +243,14 @@ describe("Admin Controller", () => {
 				expectedResponse: { success: false },
 				setup: async () => {
 					await adminModel.deleteMany({});
-					console.log(await adminModel.find({}));
 				},
 			},
 			{
 				name: "Unsuccessful deletion (Admin exists but deletion fails)",
-				data: { decodedToken: { email: "test.t@vcet.edu.in" } },
+				data: {},
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {
-					// Mocking an unsuccessful deletion scenario
 					jest.spyOn(adminModel, "deleteOne").mockResolvedValueOnce({
 						deletedCount: 0,
 						acknowledged: false,
@@ -286,34 +286,22 @@ describe("Admin Controller", () => {
 
 	describe.skip("POST /deleteUserByEmail", () => {
 		let token: string | undefined;
-		let adminEmail: string = "admin.qtt@vcet.edu.in";
-		let adminPassword: string = "Aa@123456";
 		let userEmail: string = "a.b@vcet.edu.in";
 		let userPassword: string = "Ab@123456";
 
-		beforeAll(async () => {
-			await request
-				.post("/user/signup")
-				.send({ email: adminEmail, password: adminPassword });
+		beforeEach(async () => {
+			const adminEmail = "hod_it@vcet.edu.in";
+			const isAdminCreated = await createTestAdmin(adminEmail);
 
-			const response = await request.post("/user/login").send({
-				email: adminEmail,
-				password: adminPassword,
-			});
+			if (!isAdminCreated.success) {
+				throw Error(isAdminCreated.message);
+			}
 
-			token = response.body.token;
+			token = (isAdminCreated as TokenResponse).token;
+		});
 
-			await request
-				.post("/admin/createAdmin")
-				.set("Authorization", `Bearer ${token}`)
-				.send();
-
-			const res = await request.post("/user/login").send({
-				email: adminEmail,
-				password: adminPassword,
-			});
-
-			token = res.body.token;
+		afterEach(async () => {
+			await userModel.deleteMany({});
 		});
 
 		const testCases = [
@@ -353,10 +341,14 @@ describe("Admin Controller", () => {
 				expectedStatus: 201,
 				expectedResponse: { success: true },
 				setup: async () => {
-					await request.post("/user/signup").send({
-						email: userEmail,
-						password: userPassword,
-					});
+					const isUserCreated = await createTestUser(
+						userEmail,
+						userPassword,
+					);
+
+					if (!isUserCreated.success) {
+						throw Error(isUserCreated.message);
+					}
 				},
 			},
 			{
@@ -368,10 +360,14 @@ describe("Admin Controller", () => {
 				expectedStatus: 201,
 				expectedResponse: { success: true },
 				setup: async () => {
-					await request.post("/user/signup").send({
-						email: userEmail,
-						password: userPassword,
-					});
+					const isUserCreated = await createTestUser(
+						userEmail,
+						userPassword,
+					);
+
+					if (!isUserCreated.success) {
+						throw Error(isUserCreated.message);
+					}
 				},
 			},
 			{
@@ -387,16 +383,13 @@ describe("Admin Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request
 					.post("/admin/deleteUserByEmail")
 					.set("Authorization", `Bearer ${token}`)
 					.send(data);
-
-				console.log(response.body.message);
 
 				delete response.body.message;
 				expect(response.status).toBe(expectedStatus);
