@@ -5,14 +5,23 @@
 ```bash
 PORT = 8000
 JWT_SECRET = 123
-MONGO_URI = mongodb://localhost:27017/CampusConnectSelf
 ORIGIN = http://localhost:5173/
+ENV = DEV
 REPL_SET = rs0Me
+
+REMOTE_MONGO_URI = mongodb+srv://<atlas_username>:<db_password>@cluster0.ni6jd9k.mongodb.net/CampusConnectSelf?retryWrites=true&w=majority&appName=Cluster0
+
+LOCAL_MONGO_URI = mongodb://localhost:27017/CampusConnectSelf
+
+LOCAL_TEST_MONGO_URI = mongodb://localhost:27017/TestDbCampusConnectSelf
 ```
+!!! If you set ENV = DEV in .env file then, local mongodb db and dev server will be used
+
+!!! If you set ENV = PROD in .env then, atlas mongodb db will be used
 
 # Setting up a replication set in ubuntu
 
-#### Replication set is necessary because the code uses transaction
+#### Replication set is necessary because the code uses transaction if you are in DEV enviornment (i.e ENV = DEV)
 
 # Installation
 
@@ -42,11 +51,61 @@ sudo systemctl restart mongod
 ### In windows run the following command in command prompt
 
 ```bash
-mongod --port 27018 --replSet "rs0Me" --dbpath "C:\data\db1" --bind_ip localhost
+Did not find a fully working method
 ```
 
-# Images of User Schema Logic
+# APIs
 
-![Getting Started](./readmeImg/CC1.png)
-![Getting Started](./readmeImg/CC2.png)
-![Getting Started](./readmeImg/CC3.png)
+## General
+```
+/getAllPendingCommittees
+/actionOnPendingCommittee
+```
+
+## User
+```
+/user/login
+/user/signup
+/user/getUserProfileStatus
+```
+
+## Admin
+```
+/admin/createAdmin
+/admin/getAdmin
+/admin/updateAdmin
+/admin/deleteAdmin
+/admin/deleteUserByEmail
+```
+
+## Committee
+```
+/committee/createCommittee
+/committee/getCommittee
+/committee/updateCommittee
+/committee/deleteCommittee
+```
+
+## Event (Is not tested yet)
+```
+/event/createEvent
+/event/getEvent
+/event/updateEvent
+/event/deleteEvent
+```
+
+## Student
+```
+/student/createStudent
+/student/getStudent
+/student/updateStudent
+/student/deleteStudent
+```
+
+## Teacher
+```
+/teacher/createTeacher
+/teacher/getTeacher
+/teacher/updateTeacher
+/teacher/deleteTeacher
+```
