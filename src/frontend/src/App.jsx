@@ -24,6 +24,7 @@ import CreateCommittee from "./Pages/AdminPages/CreateCommittee/CreateCommittee"
 import AllCommittees from "./Pages/AdminPages/AllCommittees/AllCommittees";
 import AllTeachers from "./Pages/AdminPages/Teachers/AllTeachers";
 import AllStudents from "./Pages/AdminPages/Students/AllStudents";
+import CreatePost from "./Pages/StudentPages/AddPost/CreatePost";
 
 const queryClient = new QueryClient();
 function App() {
@@ -95,7 +96,7 @@ function App() {
               element: <StudentLayout />,
               children: [
                 { index: true, element: <StudentHome /> },
-                { path: "page2", element: <>Page 2</> },
+                { path: "createPost", element: <CreatePost /> },
                 { path: "page3", element: <>Page 3</> },
               ],
             },

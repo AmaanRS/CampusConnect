@@ -15,6 +15,7 @@ import Sidebar from "../../../Components/Layout/Desktop/Sidebar";
 import SidebarItem from "../../../Components/Layout/Desktop/SidebarItem";
 import SidebarButton from "../../../Components/Layout/Desktop/SidebarButton";
 import { UserContext } from "../../../store/UserContextProvider";
+import { IoCreateSharp } from "react-icons/io5";
 
 export default function SidebarComponent({ setGlobalOpen, globalOpen }) {
   const { logOutUser } = useContext(UserContext);
@@ -22,9 +23,9 @@ export default function SidebarComponent({ setGlobalOpen, globalOpen }) {
     <Sidebar setGlobalOpen={setGlobalOpen} globalOpen={globalOpen}>
       <SidebarItem to="/student" icon={<Home size={20} />} text="Home" />
       <SidebarItem
-        to="page2"
-        icon={<LayoutDashboard size={20} />}
-        text="Dashboard"
+        to="createPost"
+        icon={<IoCreateSharp size={20} />}
+        text="Add Post"
       />
       <SidebarItem to="page3" icon={<Search size={20} />} text="Search" />
       <SidebarItem icon={<HiOutlineUserGroup size={20} />} text="committees" />

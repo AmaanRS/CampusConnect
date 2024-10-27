@@ -1,13 +1,42 @@
-import React from "react";
+import React, { useContext } from "react";
 import StudentPost from "./StudentPost";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import { UserContext } from "../../../store/UserContextProvider";
 
 export default function StudentHome() {
-  const data = [1, 2, 3, 41];
+  const { userState } = useContext(UserContext);
+
+  const students = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => axiosInstance.post("/post/getAllPosts"),
+  });
+
+  if (students.isError) {
+    console.log(students.error);
+
+    return <ApiError error={students.error} isError={students.isError} />;
+  }
+
   return (
-    <div className="pl-0 md:pl-8 p-0 inline-block ">
-      {data.map((i) => {
-        return <StudentPost key={Math.random()} />;
-      })}
-    </div>
+    <>
+      <div className="pl-0 md:pl-8 p-0 inline-block ">
+        {students.isLoading && (
+          <>
+            <p className="flex h-screen ml-96 items-center justify-center">
+              Loading...
+            </p>
+          </>
+        )}
+
+        {!students.isLoading && (
+          <>
+            {students?.data?.data?.data.map((item) => (
+              <StudentPost key={item._id} data={item} email={userState.email} />
+            ))}
+          </>
+        )}
+      </div>
+    </>
   );
 }

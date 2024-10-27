@@ -16,7 +16,7 @@ export default function AllTeachers() {
 
     return <ApiError error={students.error} isError={students.isError} />;
   }
-
+  console.log("data is ", students?.data?.data?.data);
   return (
     <div className="max-w-xl mx-6 my-6 p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
@@ -33,7 +33,7 @@ export default function AllTeachers() {
           className="divide-y divide-gray-200 dark:divide-gray-700"
         >
           {students?.data?.data?.data.map((item) => (
-            <StudentItem key={item._id} email={item.email} />
+            <StudentItem key={item._id} />
           ))}
         </List>
       )}

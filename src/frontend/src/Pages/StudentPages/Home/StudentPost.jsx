@@ -1,10 +1,18 @@
 import React, { useState } from "react";
 import { Card } from "flowbite-react";
 import { FaThumbsUp, FaShare, FaComment } from "react-icons/fa";
+import userImg from "../../../assets/Dummy/user.png";
 
-export default function SocialMediaPost() {
+export default function StudentPost({ data, email }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [likes, setLikes] = useState(0);
+  const name = email.split(".")[0];
+  const date = new Date(data.createdAt);
+  const postDate = date.getDate();
+  const postMonth = date.toLocaleString("default", { month: "long" });
+  const postYear = date.getFullYear();
+  const [content, rest] = data.content.split(":urlText:");
+  const [urlText, url] = rest.split(":url:");
 
   const toggleContent = () => {
     setIsExpanded(!isExpanded);
@@ -13,6 +21,7 @@ export default function SocialMediaPost() {
   const handleLike = () => {
     setLikes(likes + 1);
   };
+  console.log(urlText, url);
 
   return (
     <div className=" sm:max-w-xl mx-auto my-6 md:px-4">
@@ -20,27 +29,24 @@ export default function SocialMediaPost() {
         {/* Header: Profile Picture, Name, Group, and Date */}
         <div className="flex items-center mb-4">
           <img
-            src="https://via.placeholder.com/50"
+            src={userImg}
             alt="Profile"
             className="w-12 h-12 rounded-full mr-4 border-2 border-gray-300 dark:border-gray-600"
           />
           <div>
             <h5 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              John Doe
+              {name}
             </h5>
-            <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-              Posted in{" "}
-              <span className="font-semibold">Tech Enthusiasts Group</span>
-            </p>
+
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              October 27, 2024
+              {postMonth + " " + postDate + " , " + postYear}
             </span>
           </div>
         </div>
 
         {/* Post Title */}
         <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-          Exciting New Discoveries in Tech
+          {data.title}
         </h3>
 
         {/* Content Section */}
@@ -50,16 +56,7 @@ export default function SocialMediaPost() {
               isExpanded ? "" : "line-clamp-5"
             }`}
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-            eget vehicula nibh. Nullam mattis diam a ante imperdiet fringilla et
-            eu odio. Ut lobortis risus non augue pellentesque eleifend. Quisque
-            leo augue, porta id hendrerit nec, tincidunt a nunc. Sed accumsan
-            tincidunt dolor. Nunc pharetra pulvinar magna. Pellentesque rutrum
-            magna sit amet odio gravida lacinia. Pellentesque rutrum vulputate
-            placerat. Vivamus lorem orci, volutpat nec sem eget, lacinia posuere
-            enim. Nulla facilisi. Vestibulum augue lectus, efficitur vel metus
-            sodales, auctor congue tortor. Pellentesque pulvinar feugiat augue
-            ut mattis.
+            {content}
           </p>
           <button
             onClick={toggleContent}
@@ -69,14 +66,16 @@ export default function SocialMediaPost() {
           </button>
 
           {/* Additional Section with Link */}
-          <div className="mt-0 pt-4  border-gray-200 ">
-            <a
-              href="/form-url" // replace with your form URL
-              className="text-blue-600 dark:text-blue-400 hover:underline text-sm transition duration-150"
-            >
-              Fill out our quick feedback form!
-            </a>
-          </div>
+          {url && (
+            <div className="mt-0 pt-4  border-gray-200 ">
+              <a
+                href={url} // replace with your form URL
+                className="text-blue-600 dark:text-blue-400 hover:underline text-sm transition duration-150"
+              >
+                {urlText}
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Actions: Like, Comment, Share */}
