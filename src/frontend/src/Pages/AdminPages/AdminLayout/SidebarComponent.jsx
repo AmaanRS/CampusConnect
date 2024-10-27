@@ -23,6 +23,11 @@ export default function SidebarComponent({ globalOpen, setGlobalOpen }) {
       <Sidebar globalOpen={globalOpen} setGlobalOpen={setGlobalOpen}>
         <SidebarItem icon={<Home size={20} />} to="/admin" text="Home" />
         <SidebarItem
+          to={"createcommittee"}
+          text="Create Committee"
+          icon={<HiOutlineUserGroup size={20} />}
+        />
+        <SidebarItem
           to="requests"
           icon={<LayoutDashboard size={20} />}
           text="Requests"

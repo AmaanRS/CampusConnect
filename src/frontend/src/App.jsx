@@ -18,11 +18,12 @@ import { UserContextProvider } from "./store/UserContextProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import StudentLayout from "./Pages/StudentPages/StudentLayout/StudentLayout";
 import TeacherLayout from "./Pages/TeacherPages/TeacherLayout/TeacherLayout";
-import CreateCommittee from "./Pages/TeacherPages/CreateCommittee/CreateCommittee";
+
 import TeacherDashboard from "./Pages/TeacherPages/Dashboard/TeacherDashboard";
 import StudentHome from "./Pages/StudentPages/Home/StudentHome";
 import NewRequest from "./Pages/AdminPages/RequestPage/NewRequest";
 import AppLayout from "./Components/Layout/AppLayout";
+import CreateCommittee from "./Pages/AdminPages/CreateCommittee/CreateCommittee";
 
 const queryClient = new QueryClient();
 function App() {
@@ -35,6 +36,10 @@ function App() {
         {
           index: true,
           element: <Layout />,
+        },
+        {
+          path: "test",
+          element: <p>Testing page</p>,
         },
         {
           path: "about",
@@ -55,17 +60,7 @@ function App() {
         {
           path: "userprofile",
           element: <UserProfile />,
-          // children: [
-          //   {
-          //     path: "completed",
-          //     element: <ProfileCompleted />,
-          //   },
-          // ],
         },
-        // {
-        //   path: "completed",
-        //   element: <ProfileCompleted />,
-        // },
         {
           element: <ProtectedRoutes />,
           children: [
@@ -80,6 +75,10 @@ function App() {
                 {
                   path: "requests",
                   element: <NewRequest />,
+                },
+                {
+                  path: "createcommittee",
+                  element: <CreateCommittee />,
                 },
               ],
             },
