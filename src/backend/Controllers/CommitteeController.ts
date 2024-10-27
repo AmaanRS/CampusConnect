@@ -19,12 +19,14 @@ const createCommittee = async (req: Request, res: Response) => {
 			name,
 			description,
 			studentIncharge: studentInchargeEmail,
+			facultyInchargeEmail,
 			committeeOfDepartment,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
 			name: string | undefined;
 			description: string | undefined;
 			studentIncharge: string | undefined;
+			facultyInchargeEmail: string | undefined;
 			committeeOfDepartment: Department[] | undefined;
 		} = req.body;
 
@@ -36,9 +38,9 @@ const createCommittee = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const facultyInchargeEmail = decodedToken.email;
+		const adminEmail = decodedToken.email;
 
-		if (!facultyInchargeEmail) {
+		if (!adminEmail) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",
 				success: false,
@@ -51,6 +53,7 @@ const createCommittee = async (req: Request, res: Response) => {
 			!name ||
 			!description ||
 			!studentInchargeEmail ||
+			!facultyInchargeEmail ||
 			!committeeOfDepartment ||
 			committeeOfDepartment.length === 0
 		) {
@@ -216,11 +219,13 @@ const updateCommittee = async (req: Request, res: Response) => {
 			committeeId,
 			description,
 			studentIncharge: studentInchargeEmail,
+			facultyInchargeEmail,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
 			committeeId: string | undefined;
 			description: string | undefined;
 			studentIncharge: string | undefined;
+			facultyInchargeEmail: string | undefined;
 		} = req.body;
 
 		if (!decodedToken) {
@@ -251,7 +256,7 @@ const updateCommittee = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if (!description && !studentInchargeEmail) {
+		if (!description && !studentInchargeEmail && !facultyInchargeEmail) {
 			const response: StandardResponse = {
 				message: "Give some data to update committee",
 				success: false,
@@ -307,6 +312,7 @@ const updateCommittee = async (req: Request, res: Response) => {
 						{ _id: 1 },
 					)
 					.session(session);
+
 				if (!newStudentIncharge) {
 					const response: StandardResponse = {
 						message: "Could not find the student while updating",
@@ -329,6 +335,37 @@ const updateCommittee = async (req: Request, res: Response) => {
 				}
 			}
 
+			if (facultyInchargeEmail) {
+				const facultyIncharge = await teacherModel
+					.findOne(
+						{
+							email: facultyInchargeEmail,
+						},
+						{ _id: 1 },
+					)
+					.session(session);
+
+				if (!facultyIncharge) {
+					const response: StandardResponse = {
+						message: "Could not find the teacher while updating",
+						success: false,
+					};
+
+					return res.status(401).json(response);
+				}
+
+				if (mongoose.isValidObjectId(facultyIncharge._id)) {
+					newDataForCommittee.facultyIncharge =
+						facultyIncharge._id as mongoose.Types.ObjectId;
+				} else {
+					const response: StandardResponse = {
+						message: "Could not set the teacher while updating",
+						success: false,
+					};
+
+					return res.status(401).json(response);
+				}
+			}
 			// Create a new committee
 			const newCommittee = await committeeModel.create([newDataForCommittee], {
 				session,
@@ -404,7 +441,7 @@ const deleteCommittee = async (req: Request, res: Response) => {
 		}
 
 		//
-		// While deleting committee make changes to all other models since commitee is referenced in many places
+		//TODO: While deleting committee make changes to all other models since commitee is referenced in many places
 		//
 		const isCommitteeDeleted = await committeeModel
 			.deleteOne({ committeeId })
