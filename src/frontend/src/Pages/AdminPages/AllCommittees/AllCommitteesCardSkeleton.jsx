@@ -1,7 +1,7 @@
 import { Card } from "flowbite-react";
 import React from "react";
 
-export default function NewCommitteeRequestCardSkeleton() {
+export default function AllCommitteesCardSkeleton() {
   return (
     <Card className=" max-w-lg bg-slate-50  shadow-lg rounded-lg overflow-hidden ">
       <div className="text h-8 w-56 rounded-md  animate-pulse bg-slate-200  mb-1">

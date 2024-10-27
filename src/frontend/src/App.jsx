@@ -7,7 +7,6 @@ import { ToastContainer } from "react-toastify";
 import Contact from "./Pages/Landing Page/Contact";
 import Layout from "./Pages/Landing Page/Layout";
 import UserProfile from "./Components/User Profile/UserProfile";
-import ProfileCompleted from "./Components/User Profile/ProfileCompleted";
 import AdminLayout from "./Pages/AdminPages/AdminLayout/AdminLayout";
 import Dashboard from "./Pages/AdminPages/Dashboard/Dashboard";
 import ErrorPage from "./Components/Alerts & animations/ErrorPage";
@@ -18,12 +17,11 @@ import { UserContextProvider } from "./store/UserContextProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import StudentLayout from "./Pages/StudentPages/StudentLayout/StudentLayout";
 import TeacherLayout from "./Pages/TeacherPages/TeacherLayout/TeacherLayout";
-
 import TeacherDashboard from "./Pages/TeacherPages/Dashboard/TeacherDashboard";
 import StudentHome from "./Pages/StudentPages/Home/StudentHome";
-import NewRequest from "./Pages/AdminPages/RequestPage/NewRequest";
 import AppLayout from "./Components/Layout/AppLayout";
 import CreateCommittee from "./Pages/AdminPages/CreateCommittee/CreateCommittee";
+import AllCommittees from "./Pages/AdminPages/AllCommittees/AllCommittees";
 
 const queryClient = new QueryClient();
 function App() {
@@ -73,8 +71,8 @@ function App() {
                   element: <Dashboard />,
                 },
                 {
-                  path: "requests",
-                  element: <NewRequest />,
+                  path: "allCommittee",
+                  element: <AllCommittees />,
                 },
                 {
                   path: "createcommittee",

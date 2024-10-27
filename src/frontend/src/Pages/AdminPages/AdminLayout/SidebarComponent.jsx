@@ -28,9 +28,9 @@ export default function SidebarComponent({ globalOpen, setGlobalOpen }) {
           icon={<HiOutlineUserGroup size={20} />}
         />
         <SidebarItem
-          to="requests"
+          to="allCommittee"
           icon={<LayoutDashboard size={20} />}
-          text="Requests"
+          text="All Committee"
         />
         <SidebarItem icon={<Search size={20} />} text="Search" />
         <SidebarItem

@@ -2,12 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import ApiError from "../../../Components/Errors/ApiError";
-import NewCommitteeRequestCard from "./NewCommitteeRequestCard";
-import NewCommitteeRequestCardSkeleton from "./NewCommitteeRequestCardSkeleton";
+import AllCommitteeCard from "./AllCommitteeCard";
+import AllCommitteesCardSkeleton from "./AllCommitteesCardSkeleton";
 
-export default function NewRequest() {
+export default function AllCommittees() {
   const committeRequest = useQuery({
-    queryKey: ["committeRequest"],
+    queryKey: ["allCommittee"],
     queryFn: () => axiosInstance.post("/getAllPendingCommittees"),
   });
 
@@ -28,15 +28,15 @@ export default function NewRequest() {
         {(committeRequest.isLoading ||
           committeRequest?.data?.data?.data.length !== 0) && (
           <p className="mb-3 md:text-2xl text-center font-bold text-xl ">
-            New Committee Requests
+            All Committees
           </p>
         )}
         {committeRequest.isLoading && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 mb-4  gap-4">
-              <NewCommitteeRequestCardSkeleton />
-              <NewCommitteeRequestCardSkeleton />
-              <NewCommitteeRequestCardSkeleton />
+              <AllCommitteesCardSkeleton />
+              <AllCommitteesCardSkeleton />
+              <AllCommitteesCardSkeleton />
             </div>
           </>
         )}
@@ -44,9 +44,7 @@ export default function NewRequest() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3  gap-4">
               {committeRequest?.data?.data?.data.map((item) => {
-                return (
-                  <NewCommitteeRequestCard key={item.committeeId} item={item} />
-                );
+                return <AllCommitteeCard key={item.committeeId} item={item} />;
               })}
             </div>
           </>

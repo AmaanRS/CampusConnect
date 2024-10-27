@@ -1,8 +1,31 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Card } from "flowbite-react";
-import { FaRegCheckCircle } from "react-icons/fa";
-import { MdOutlineCancel } from "react-icons/md";
+import { MdDelete, MdEdit, MdOutlineCancel } from "react-icons/md";
+import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import { toast } from "react-toastify";
 
-export default function NewCommitteeRequestCard({ item }) {
+export default function AllCommitteeCard({ item }) {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (data) =>
+      axiosInstance.post("/committee/deleteCommittee", data),
+    onSuccess: (data) => {
+      console.log("data is ", data);
+      queryClient.invalidateQueries(["allCommittee"]);
+      toast.success("Deleted Committee");
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("failed to create");
+    },
+  });
+
+  function handleDelete() {
+    console.log(item._id);
+    mutation.mutate({
+      committeeId: item.committeeId,
+    });
+  }
   return (
     <>
       <Card className=" max-w-lg bg-white  shadow-lg rounded-lg overflow-hidden ">
@@ -35,16 +58,18 @@ export default function NewCommitteeRequestCard({ item }) {
             color={""}
             className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition duration-300"
           >
-            <FaRegCheckCircle className="mr-2 h-5 w-5" />
-            Accept
+            <MdEdit className="mr-2 h-5 w-5" />
+            Edit
           </Button>
 
           <Button
+            disabled={mutation.isPending}
             color={""}
+            onClick={handleDelete}
             className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md transition duration-300"
           >
-            <MdOutlineCancel className="mr-2 h-5 w-5" />
-            Reject
+            <MdDelete className="mr-2 h-5 w-5" />
+            {mutation.isPending ? "Deleting" : "Delete"}
           </Button>
         </div>
       </Card>
