@@ -63,8 +63,8 @@ export interface IUser {
 	department?: Department;
 	accType: AccountType;
 	position: UserPosition[];
-	isProfileComplete: boolean;
-	isAccountActive: boolean;
+	isProfileComplete?: boolean;
+	isAccountActive?: boolean;
 }
 
 export interface IUserDocument extends IUser, Document {}
@@ -80,7 +80,7 @@ export interface IStudent {
 	// Use nanoid here to store the data ie committeeId
 	isInChargeOfCommittees?: ICommittee[] | undefined;
 	isMemberOfCommittees?: ICommittee[] | undefined;
-	isProfileComplete: boolean;
+	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 }
 
@@ -95,8 +95,8 @@ export interface ITeacher {
 	// Use nanoid here to store the data ie committeeId
 	isInChargeOfCommittees?: ICommittee[] | undefined;
 	isInTeamOfCommittees?: ICommittee[] | undefined;
-	isProfileComplete: boolean;
-	isAccountActive: boolean;
+	isProfileComplete?: boolean;
+	isAccountActive?: boolean;
 }
 
 export interface ITeacherDocument extends ITeacher, Document {}
@@ -106,8 +106,8 @@ export interface IAdmin {
 	password: string;
 	accType: AccountType;
 	position: AdminPosition[];
-	isProfileComplete: boolean;
-	isAccountActive: boolean;
+	isProfileComplete?: boolean;
+	isAccountActive?: boolean;
 }
 
 export interface IAdminDocument extends IAdmin, Document {}
@@ -118,8 +118,8 @@ export interface INonTeachingStaff {
 	department: Department;
 	accType: AccountType;
 	position: NonTeachingStaffPosition[];
-	isProfileComplete: boolean;
-	isAccountActive: boolean;
+	isProfileComplete?: boolean;
+	isAccountActive?: boolean;
 }
 
 export interface INonTeachingStaffDocument extends INonTeachingStaff, Document {}
@@ -163,10 +163,18 @@ export interface ICommittee {
 // 	facultyTeam?: ITeacher[];
 // 	members?: IUser[];
 // 	events?: IEvent[];
-// 	isAccountActive: boolean;
+// 	isAccountActive?: boolean;
 // }"
 
 export interface ICommitteeDocument extends ICommittee, Document {}
+
+export interface IPost {
+	postId: string;
+	title: string;
+	content: string;
+}
+
+export interface IPostDocument extends IPost, Document {}
 
 export interface IEvent {
 	eventId: string;

@@ -20,5 +20,7 @@ export default {
 		"bcrypt",
 		"@faker-js/faker",
 		"nanoid",
+		"dayjs",
+		"dayjs/plugin/customParseFormat",
 	],
 };

@@ -46,22 +46,22 @@ describe("CookieChecker Tests", () => {
 		});
 
 		const testCases = [
-			// {
-			// 	name: "No token provided",
-			// 	expectedStatus: 401,
-			// 	expectedResponse: {
-			// 		success: false,
-			// 	},
-			// 	setup: () => createRequest(undefined),
-			// },
-			// {
-			// 	name: "Invalid token provided",
-			// 	expectedStatus: 401,
-			// 	expectedResponse: {
-			// 		success: false,
-			// 	},
-			// 	setup: () => createRequest(token + "a"),
-			// },
+			{
+				name: "No token provided",
+				expectedStatus: 401,
+				expectedResponse: {
+					success: false,
+				},
+				setup: () => createRequest(undefined),
+			},
+			{
+				name: "Invalid token provided",
+				expectedStatus: 401,
+				expectedResponse: {
+					success: false,
+				},
+				setup: () => createRequest(token + "a"),
+			},
 			{
 				name: "Valid token provided",
 				expectedStatus: 200,
@@ -178,80 +178,80 @@ describe("CookieChecker Tests", () => {
 		});
 	});
 
-	describe.skip("cookieCheckerMiddleware middleware", () => {
-		let token: string;
-		const email = "a.a@vcet.edu.in";
-		const password = "Aaa123@2";
+	// describe.skip("cookieCheckerMiddleware middleware", () => {
+	// 	let token: string;
+	// 	const email = "a.a@vcet.edu.in";
+	// 	const password = "Aaa123@2";
 
-		beforeAll(async () => {
-			await userModel.create({ email, password });
+	// 	beforeAll(async () => {
+	// 		await userModel.create({ email, password });
 
-			const response = await request
-				.post("/user/login")
-				.send({ email, password });
+	// 		const response = await request
+	// 			.post("/user/login")
+	// 			.send({ email, password });
 
-			token = response.body.token;
-		});
+	// 		token = response.body.token;
+	// 	});
 
-		afterAll(async () => {
-			await userModel.deleteOne({ email });
-		});
+	// 	afterAll(async () => {
+	// 		await userModel.deleteOne({ email });
+	// 	});
 
-		const testCases = [
-			{
-				name: "Token is missing",
-				setup: () => request.post("/user/login").send({}),
-				expectedStatus: 401,
-				expectedResponse: {
-					message: "User not authenticated",
-					success: false,
-				},
-			},
-			{
-				name: "Token is invalid",
-				setup: () =>
-					request
-						.post("/user/login")
-						.set("Authorization", "Bearer invalidtoken")
-						.send({}),
-				expectedStatus: 401,
-				expectedResponse: {
-					message: "User not authenticated",
-					success: false,
-				},
-			},
-			{
-				name: "Token is valid and has decodedToken",
-				setup: () => {
-					return request
-						.post("/user/login")
-						.set("Authorization", `Bearer ${token}`)
-						.send({ email, password });
-				},
-				expectedStatus: 201,
-				expectedResponse: {
-					decodedToken: {
-						email: "user@example.com",
-						position: ["admin"],
-						accountType: "admin",
-						isProfileCompleted: true,
-						isAccountActive: true,
-					},
-				},
-			},
-		];
+	// 	const testCases = [
+	// 		{
+	// 			name: "Token is missing",
+	// 			setup: () => request.post("/user/login").send({}),
+	// 			expectedStatus: 401,
+	// 			expectedResponse: {
+	// 				message: "User not authenticated",
+	// 				success: false,
+	// 			},
+	// 		},
+	// 		{
+	// 			name: "Token is invalid",
+	// 			setup: () =>
+	// 				request
+	// 					.post("/user/login")
+	// 					.set("Authorization", "Bearer invalidtoken")
+	// 					.send({}),
+	// 			expectedStatus: 401,
+	// 			expectedResponse: {
+	// 				message: "User not authenticated",
+	// 				success: false,
+	// 			},
+	// 		},
+	// 		{
+	// 			name: "Token is valid and has decodedToken",
+	// 			setup: () => {
+	// 				return request
+	// 					.post("/user/login")
+	// 					.set("Authorization", `Bearer ${token}`)
+	// 					.send({ email, password });
+	// 			},
+	// 			expectedStatus: 201,
+	// 			expectedResponse: {
+	// 				decodedToken: {
+	// 					email: "user@example.com",
+	// 					position: ["admin"],
+	// 					accountType: "admin",
+	// 					isProfileCompleted: true,
+	// 					isAccountActive: true,
+	// 				},
+	// 			},
+	// 		},
+	// 	];
 
-		it.each(testCases)(
-			"$name",
-			async ({ setup, expectedStatus, expectedResponse }) => {
-				const response = await setup();
+	// 	it.each(testCases)(
+	// 		"$name",
+	// 		async ({ setup, expectedStatus, expectedResponse }) => {
+	// 			const response = await setup();
 
-				expect(response.status).toBe(expectedStatus);
+	// 			expect(response.status).toBe(expectedStatus);
 
-				if (expectedResponse.decodedToken) {
-					expect(response.body).toHaveProperty("token");
-				}
-			},
-		);
-	});
+	// 			if (expectedResponse.decodedToken) {
+	// 				expect(response.body).toHaveProperty("token");
+	// 			}
+	// 		},
+	// 	);
+	// });
 });

@@ -19,12 +19,14 @@ const createCommittee = async (req: Request, res: Response) => {
 			name,
 			description,
 			studentIncharge: studentInchargeEmail,
+			facultyInchargeEmail,
 			committeeOfDepartment,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
 			name: string | undefined;
 			description: string | undefined;
 			studentIncharge: string | undefined;
+			facultyInchargeEmail: string | undefined;
 			committeeOfDepartment: Department[] | undefined;
 		} = req.body;
 
@@ -36,9 +38,9 @@ const createCommittee = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const facultyInchargeEmail = decodedToken.email;
+		const adminEmail = decodedToken.email;
 
-		if (!facultyInchargeEmail) {
+		if (!adminEmail) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",
 				success: false,
@@ -51,6 +53,7 @@ const createCommittee = async (req: Request, res: Response) => {
 			!name ||
 			!description ||
 			!studentInchargeEmail ||
+			!facultyInchargeEmail ||
 			!committeeOfDepartment ||
 			committeeOfDepartment.length === 0
 		) {
@@ -216,11 +219,13 @@ const updateCommittee = async (req: Request, res: Response) => {
 			committeeId,
 			description,
 			studentIncharge: studentInchargeEmail,
+			facultyInchargeEmail,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
 			committeeId: string | undefined;
 			description: string | undefined;
 			studentIncharge: string | undefined;
+			facultyInchargeEmail: string | undefined;
 		} = req.body;
 
 		if (!decodedToken) {
@@ -251,7 +256,7 @@ const updateCommittee = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if (!description && !studentInchargeEmail) {
+		if (!description && !studentInchargeEmail && !facultyInchargeEmail) {
 			const response: StandardResponse = {
 				message: "Give some data to update committee",
 				success: false,
@@ -307,6 +312,7 @@ const updateCommittee = async (req: Request, res: Response) => {
 						{ _id: 1 },
 					)
 					.session(session);
+
 				if (!newStudentIncharge) {
 					const response: StandardResponse = {
 						message: "Could not find the student while updating",
@@ -329,6 +335,37 @@ const updateCommittee = async (req: Request, res: Response) => {
 				}
 			}
 
+			if (facultyInchargeEmail) {
+				const facultyIncharge = await teacherModel
+					.findOne(
+						{
+							email: facultyInchargeEmail,
+						},
+						{ _id: 1 },
+					)
+					.session(session);
+
+				if (!facultyIncharge) {
+					const response: StandardResponse = {
+						message: "Could not find the teacher while updating",
+						success: false,
+					};
+
+					return res.status(401).json(response);
+				}
+
+				if (mongoose.isValidObjectId(facultyIncharge._id)) {
+					newDataForCommittee.facultyIncharge =
+						facultyIncharge._id as mongoose.Types.ObjectId;
+				} else {
+					const response: StandardResponse = {
+						message: "Could not set the teacher while updating",
+						success: false,
+					};
+
+					return res.status(401).json(response);
+				}
+			}
 			// Create a new committee
 			const newCommittee = await committeeModel.create([newDataForCommittee], {
 				session,
@@ -404,7 +441,7 @@ const deleteCommittee = async (req: Request, res: Response) => {
 		}
 
 		//
-		// While deleting committee make changes to all other models since commitee is referenced in many places
+		//TODO: While deleting committee make changes to all other models since commitee is referenced in many places
 		//
 		const isCommitteeDeleted = await committeeModel
 			.deleteOne({ committeeId })
@@ -438,121 +475,70 @@ const deleteCommittee = async (req: Request, res: Response) => {
 	}
 };
 
-// const getAllEvents = async (res: Response) => {
-// 	try {
-// 		const events = (await eventModel.find()) as IEvent[];
+//TODO : Write this function properly
+//TODO: Write with pagination
+const getAllCommittees = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
 
-// 		if (!events) {
-// 			const response: StandardResponse = {
-// 				message: "There is some problem in logging in",
-// 				success: false,
-// 			};
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
 
-// 			return res.json(response);
-// 		}
+		const email = decodedToken.email;
 
-// 		console.log(events);
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
 
-// 		const response: EventResponse = {
-// 			message: "Fetched all events successfully",
-// 			success: true,
-// 			events: events,
-// 		};
+			return res.status(401).json(response);
+		}
 
-// 		return res.json(response);
-// 	} catch (error) {
-// 		console.log(error);
+		const allCommittees = await committeeModel.find();
 
-// 		//Send the message to the frontend that the user is not logged in
-// 		const response: StandardResponse = {
-// 			message: "There is some problem while fetching events",
-// 			success: false,
-// 		};
+		if (!allCommittees || allCommittees.length === 0) {
+			const response: StandardResponse = {
+				message: "No committee found",
+				success: false,
+			};
 
-// 		return res.json(response);
-// 	}
-// };
+			return res.status(401).json(response);
+		}
 
-// const createEvent = async (req: Request, res: Response) => {
-// 	try {
-// 		const {
-// 			name,
-// 			description,
-// 			hostingCommittees,
-// 			startDate,
-// 			endDate,
-// 			startTime,
-// 			endTime,
-// 		}: {
-// 			name: string;
-// 			description: string;
-// 			hostingCommittees: string[];
-// 			startDate: string;
-// 			endDate: string;
-// 			startTime: string;
-// 			endTime: string;
-// 		} = req.body;
+		const response: DataResponse = {
+			message: "All Committees fetched successfully",
+			success: true,
+			data: allCommittees,
+		};
 
-// 		if (
-// 			!name ||
-// 			!description ||
-// 			!hostingCommittees ||
-// 			!startDate ||
-// 			!endDate ||
-// 			!startTime ||
-// 			!endTime
-// 		) {
-// 			const response: StandardResponse = {
-// 				message:
-// 					"All fields ie name, description, hostingCommittees, startDate, endDate, startTime, endTime as required",
-// 				success: false,
-// 			};
-// 			return res.json(response);
-// 		}
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all committees" +
+				(e as Error).message,
+			success: false,
+		};
 
-// 		// let hostingCommitteesArray = [];
+		return res.status(401).json(response);
+	}
+};
 
-// 		// for (let i = 0; i < hostingCommittees.length; i++) {
-// 		// 	//Convert hostingCommittees string array into objectId array
-// 		// 	hostingCommitteesArray.push(createFromHexTo(hostingCommittees[i]));
-// 		// }
-
-// 		const event = eventModel.create({
-// 			name,
-// 			description,
-// 			hostingCommittees,
-// 			startDate,
-// 			endDate,
-// 			startTime,
-// 			endTime,
-// 		});
-
-// 		if (!event) {
-// 			const response: StandardResponse = {
-// 				message: "There is some problem while creating event",
-// 				success: false,
-// 			};
-
-// 			return res.json(response);
-// 		}
-
-// 		const response: StandardResponse = {
-// 			message: "Created event successful",
-// 			success: true,
-// 		};
-
-// 		return res.json(response);
-// 	} catch (error) {
-// 		console.log(error);
-// 		const response: StandardResponse = {
-// 			message: "There is some problem while creating event",
-// 			success: false,
-// 		};
-
-// 		return res.json(response);
-// 	}
-// };
-
-// export { getAllEvents, createEvent };
-
-export { createCommittee, getCommittee, updateCommittee, deleteCommittee };
+export {
+	createCommittee,
+	getCommittee,
+	updateCommittee,
+	deleteCommittee,
+	getAllCommittees,
+};

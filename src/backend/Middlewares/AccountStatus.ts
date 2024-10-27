@@ -22,7 +22,6 @@ export const isAccountActive = async (
 				email: req.body.email,
 			});
 		} else {
-			// TODO: Add the decodedToken to the req here and stop using cookieCheckerMiddleware as this function first authenticate user then check if its account is active or not
 			const response = cookieCheckerFunction(req);
 
 			if (!response.success || !("decodedToken" in response)) {
@@ -30,6 +29,13 @@ export const isAccountActive = async (
 			}
 
 			const userDecodedToken = response.decodedToken;
+
+			// Even though if decodedToken with email is sent in the request it will get overrided, but i am keeping this here for extra safety
+			if (req.body.decodedToken) {
+				delete req.body.decodedToken;
+			}
+
+			(req as any).body.decodedToken = userDecodedToken;
 
 			userAccountStatus = await userModel.findOne({
 				email: userDecodedToken.email,
@@ -67,5 +73,3 @@ export const isAccountActive = async (
 		return res.status(401).json(response);
 	}
 };
-
-// TODO: isProfileComplete maybe merge in isAccountActive

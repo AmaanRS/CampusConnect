@@ -1,6 +1,5 @@
 import express from "express";
 const Router = express.Router();
-import { cookieCheckerMiddleware } from "../Middlewares/CookieChecker";
 
 import {
 	createAdmin,
@@ -12,16 +11,15 @@ import {
 import { authorizationMiddlewareFactory } from "../Middlewares/Authorization";
 import { AccountType, AdminPosition } from "../Types/ModelTypes";
 
-Router.route("/createAdmin").post(cookieCheckerMiddleware, createAdmin);
+Router.route("/createAdmin").post(createAdmin);
 
-Router.route("/getAdmin").post(cookieCheckerMiddleware, getAdmin);
+Router.route("/getAdmin").post(getAdmin);
 
-Router.route("/updateAdmin").post(cookieCheckerMiddleware, updateAdmin);
+Router.route("/updateAdmin").post(updateAdmin);
 
-Router.route("/deleteAdmin").post(cookieCheckerMiddleware, deleteAdmin);
+Router.route("/deleteAdmin").post(deleteAdmin);
 
 Router.route("/deleteUserByEmail").post(
-	cookieCheckerMiddleware,
 	authorizationMiddlewareFactory([AdminPosition.Admin], AccountType.Admin),
 	changeUserAccountStatusByEmail,
 );
