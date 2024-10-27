@@ -58,6 +58,10 @@ export default function CreateCommittee() {
       .string()
       .email("enter a valid email")
       .required("student incharge mail is required"),
+    facultyInchargeEmail: yup
+      .string()
+      .email("enter a valid email")
+      .required("student incharge mail is required"),
   });
 
   const {
@@ -172,6 +176,32 @@ export default function CreateCommittee() {
               <p className={errorClass}> {errors.studentIncharge.message} </p>
             )}
           </div>
+
+          {/* ---------------------------------------- */}
+          <div>
+            <div className="mb-2 block">
+              <Label
+                htmlFor="faculty-incharge"
+                value="Faculty Incharge Email"
+              />
+            </div>
+            <TextInput
+              theme={inputTheme}
+              id="faculty-incharge"
+              type="email"
+              placeholder="write email of Faculty incharge"
+              required
+              {...register("facultyInchargeEmail")}
+            />
+            {errors.facultyInchargeEmail && (
+              <p className={errorClass}>
+                {" "}
+                {errors.facultyInchargeEmail.message}{" "}
+              </p>
+            )}
+          </div>
+          {/* ---------------------------------------- */}
+
           <HR className="m-1" />
           <div>
             <div className="mb-2 block">
