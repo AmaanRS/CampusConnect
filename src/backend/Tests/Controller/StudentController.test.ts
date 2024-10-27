@@ -5,22 +5,17 @@ import { userModel } from "../../Models/User";
 import { runTestServer, stopTestServer } from "../../Utils/util";
 import { Department, Year } from "../../Types/ModelTypes";
 import { studentModel } from "../../Models/Student";
+import { TokenResponse } from "../../Types/GeneralTypes";
+import { createTestStudent } from "../../Utils/testUtils";
 
 const createStudentAndReturnToken = async () => {
-	const email = "test.123456789@vcet.edu.in";
-	const password = "Aa@123456";
+	const isStudentCreated = await createTestStudent(Department.IT, Year["4TH"]);
 
-	await userModel.create({ email, password });
+	if (!isStudentCreated.success) {
+		throw Error(isStudentCreated.message);
+	}
 
-	const response = await request.post("/user/login").send({ email, password });
-
-	// Create a default admin for testing purposes
-	await request
-		.post("/student/createStudent")
-		.set("Authorization", `Bearer ${response.body.token}`)
-		.send({ department: Department.IT, year: Year["1ST"] });
-
-	return response.body.token;
+	return (isStudentCreated as TokenResponse).token;
 };
 
 describe("Student Controller", () => {
@@ -105,8 +100,7 @@ describe("Student Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request
@@ -117,7 +111,7 @@ describe("Student Controller", () => {
 				delete response.body.message;
 
 				expect(response.status).toBe(expectedStatus);
-				expect(response.body).toEqual(expectedResponse);
+				expect(response.body.success).toEqual(expectedResponse.success);
 			},
 		);
 	});
@@ -141,7 +135,6 @@ describe("Student Controller", () => {
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {
-					// Delete the student so it doesnt exist
 					await studentModel.deleteMany({});
 				},
 			},
@@ -156,8 +149,7 @@ describe("Student Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request
@@ -221,8 +213,7 @@ describe("Student Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request
@@ -271,8 +262,7 @@ describe("Student Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request

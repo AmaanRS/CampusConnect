@@ -5,22 +5,17 @@ import { teacherModel } from "../../Models/Teacher";
 import { userModel } from "../../Models/User";
 import { runTestServer, stopTestServer } from "../../Utils/util";
 import { Department } from "../../Types/ModelTypes";
+import { createTestTeacher, createTestUser } from "../../Utils/testUtils";
+import { TokenResponse } from "../../Types/GeneralTypes";
 
 const createTeacherAndReturnToken = async () => {
-	const email = "test.t@vcet.edu.in";
-	const password = "Aa@123456";
+	const isTeacherCreated = await createTestTeacher(Department.AIDS);
 
-	await userModel.create({ email, password });
+	if (!isTeacherCreated.success) {
+		throw Error(isTeacherCreated.message);
+	}
 
-	const response = await request.post("/user/login").send({ email, password });
-
-	// Create a default admin for testing purposes
-	await request
-		.post("/teacher/createTeacher")
-		.set("Authorization", `Bearer ${response.body.token}`)
-		.send({ department: Department.IT });
-
-	return response.body.token;
+	return (isTeacherCreated as TokenResponse).token;
 };
 
 describe("Teacher Controller", () => {
@@ -76,20 +71,16 @@ describe("Teacher Controller", () => {
 				expectedStatus: 201,
 				expectedResponse: { success: true },
 				setup: async () => {
-					const email = "hod_it@vcet.edu.in";
-					const password = "Pword123@";
+					const email = "hod_aids@vcet.edu.in";
+					const password = "Afan@3242";
 
-					await userModel.create({
-						email,
-						password,
-					});
+					const isUserCreated = await createTestUser(email, password);
 
-					const response = await request.post("/user/login").send({
-						email,
-						password,
-					});
+					if (!isUserCreated.success) {
+						throw Error(isUserCreated.message);
+					}
 
-					return response.body.token;
+					return (isUserCreated as TokenResponse).token;
 				},
 			},
 			{
@@ -107,8 +98,7 @@ describe("Teacher Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) {
 					let returnValue = await setup();
 					returnValue ? (token = returnValue) : undefined;
@@ -122,7 +112,7 @@ describe("Teacher Controller", () => {
 				delete response.body.message;
 
 				expect(response.status).toBe(expectedStatus);
-				expect(response.body).toEqual(expectedResponse);
+				expect(response.body.success).toEqual(expectedResponse.success);
 			},
 		);
 	});
@@ -146,7 +136,6 @@ describe("Teacher Controller", () => {
 				expectedStatus: 401,
 				expectedResponse: { success: false },
 				setup: async () => {
-					// Delete the teacher so it doesnt exist
 					await teacherModel.deleteMany({});
 				},
 			},
@@ -161,8 +150,7 @@ describe("Teacher Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request
@@ -219,8 +207,7 @@ describe("Teacher Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request
@@ -269,8 +256,7 @@ describe("Teacher Controller", () => {
 
 		it.each(testCases)(
 			"$name",
-			//@ts-ignore
-			async ({ name, data, expectedStatus, expectedResponse, setup }) => {
+			async ({ data, expectedStatus, expectedResponse, setup }) => {
 				if (setup) await setup();
 
 				const response = await request

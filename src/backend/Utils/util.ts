@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { StandardResponse } from "../Types/GeneralTypes";
 import mongoose, { ClientSession } from "mongoose";
 import {
@@ -27,26 +26,26 @@ export function getRandomEnumValueFromYear<
 }
 
 //Function to generate random password
-export function generatePassword(): string {
-	const lowerCase = faker.string.alpha({ length: 1, casing: "lower" });
-	const upperCase = faker.string.alpha({ length: 1, casing: "upper" });
-	const number = faker.string.numeric(1);
-	const specialChar = faker.helpers.arrayElement([
-		"@",
-		"$",
-		"!",
-		"%",
-		"*",
-		"?",
-		"&",
-	]);
-	const otherChars = faker.string.alphanumeric({ length: 4 });
+// export function generatePassword(): string {
+// 	const lowerCase = faker.string.alpha({ length: 1, casing: "lower" });
+// 	const upperCase = faker.string.alpha({ length: 1, casing: "upper" });
+// 	const number = faker.string.numeric(1);
+// 	const specialChar = faker.helpers.arrayElement([
+// 		"@",
+// 		"$",
+// 		"!",
+// 		"%",
+// 		"*",
+// 		"?",
+// 		"&",
+// 	]);
+// 	const otherChars = faker.string.alphanumeric({ length: 4 });
 
-	const passwordArray = [lowerCase, upperCase, number, specialChar, ...otherChars];
-	faker.helpers.shuffle(passwordArray);
+// 	const passwordArray = [lowerCase, upperCase, number, specialChar, ...otherChars];
+// 	faker.helpers.shuffle(passwordArray);
 
-	return passwordArray.join("");
-}
+// 	return passwordArray.join("");
+// }
 
 // Wrapper function for session management
 export const runWithRetrySession = async (
