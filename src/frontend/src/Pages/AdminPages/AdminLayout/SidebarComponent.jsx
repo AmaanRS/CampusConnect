@@ -32,16 +32,18 @@ export default function SidebarComponent({ globalOpen, setGlobalOpen }) {
           icon={<LayoutDashboard size={20} />}
           text="All Committee"
         />
-        <SidebarItem icon={<Search size={20} />} text="Search" />
+
         <SidebarItem
-          icon={<HiOutlineUserGroup size={20} />}
-          text="committees"
-        />
-        <SidebarItem
+          to="teachers"
           icon={<LiaChalkboardTeacherSolid size={20} />}
           text="Teachers"
         />
-        <SidebarItem icon={<PiStudent size={20} />} text="Students" />
+        <SidebarItem
+          to="students"
+          icon={<PiStudent size={20} />}
+          text="Students"
+        />
+        <SidebarItem icon={<Search size={20} />} text="Search" />
         <SidebarItem icon={<TbDevicesQuestion size={20} />} text="Requests" />
 
         <hr className="my-3" />

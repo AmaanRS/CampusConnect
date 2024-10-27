@@ -22,6 +22,8 @@ import StudentHome from "./Pages/StudentPages/Home/StudentHome";
 import AppLayout from "./Components/Layout/AppLayout";
 import CreateCommittee from "./Pages/AdminPages/CreateCommittee/CreateCommittee";
 import AllCommittees from "./Pages/AdminPages/AllCommittees/AllCommittees";
+import AllTeachers from "./Pages/AdminPages/Teachers/AllTeachers";
+import AllStudents from "./Pages/AdminPages/Students/AllStudents";
 
 const queryClient = new QueryClient();
 function App() {
@@ -77,6 +79,14 @@ function App() {
                 {
                   path: "createcommittee",
                   element: <CreateCommittee />,
+                },
+                {
+                  path: "teachers",
+                  element: <AllTeachers />,
+                },
+                {
+                  path: "students",
+                  element: <AllStudents />,
                 },
               ],
             },
