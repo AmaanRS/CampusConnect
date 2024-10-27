@@ -536,4 +536,65 @@ const deleteEvent = async (req: Request, res: Response) => {
 	}
 };
 
-export { createEvent, getEvent, updateEvent, deleteEvent };
+//TODO : Write this function properly
+//TODO: Write with pagination
+const getAllEvents = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const allEvents = await eventModel.find();
+
+		if (allEvents.length === 0) {
+			const response: StandardResponse = {
+				message: "There are no events in db",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Fetched all events successfully",
+			success: true,
+			data: allEvents,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all events" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+export { createEvent, getEvent, updateEvent, deleteEvent, getAllEvents };

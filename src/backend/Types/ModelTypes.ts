@@ -168,6 +168,14 @@ export interface ICommittee {
 
 export interface ICommitteeDocument extends ICommittee, Document {}
 
+export interface IPost {
+	postId: string;
+	title: string;
+	content: string;
+}
+
+export interface IPostDocument extends IPost, Document {}
+
 export interface IEvent {
 	eventId: string;
 	name: string;

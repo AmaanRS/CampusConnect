@@ -398,4 +398,65 @@ const deleteTeacher = async (req: Request, res: Response) => {
 	}
 };
 
-export { createTeacher, getTeacher, updateTeacher, deleteTeacher };
+//TODO : Write this function properly
+//TODO: Write with pagination
+const getAllTeachers = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const allTeachers = await teacherModel.find();
+
+		if (allTeachers.length === 0) {
+			const response: StandardResponse = {
+				message: "There are no teachers in db",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Fetched all posts successfully",
+			success: true,
+			data: allTeachers,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all teachers" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+export { createTeacher, getTeacher, updateTeacher, deleteTeacher, getAllTeachers };

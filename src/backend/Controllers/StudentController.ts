@@ -386,4 +386,64 @@ const deleteStudent = async (req: Request, res: Response) => {
 	}
 };
 
-export { createStudent, getStudent, updateStudent, deleteStudent };
+//TODO : Write this function properly
+//TODO: Write with pagination
+const getAllStudents = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const allStudents = await studentModel.find();
+
+		if (!allStudents || allStudents.length === 0) {
+			const response: StandardResponse = {
+				message: "No student found",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "All students fetched successfully",
+			success: true,
+			data: allStudents,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all students" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+export { createStudent, getStudent, updateStudent, deleteStudent, getAllStudents };
