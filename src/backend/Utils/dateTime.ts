@@ -1,15 +1,13 @@
 import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-
-// Extend dayjs with the customParseFormat plugin to handle custom formats
-dayjs.extend(customParseFormat);
 
 const isValidDate = (dateString: string): boolean => {
-	return dayjs(dateString, "DD-MM-YYYY", true).isValid();
+	const date = dayjs(dateString, "DD-MM-YYYY");
+	return date.isValid() && date.format("DD-MM-YYYY") === dateString;
 };
 
 const isValidTime = (timeString: string): boolean => {
-	return dayjs(timeString, "hh:mm A", true).isValid();
+	const time = dayjs(timeString, "hh:mm A");
+	return time.isValid() && time.format("hh:mm A") === timeString;
 };
 
 export { isValidDate, isValidTime };
