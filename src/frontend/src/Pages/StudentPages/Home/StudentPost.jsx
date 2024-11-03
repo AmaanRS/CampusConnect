@@ -69,6 +69,7 @@ export default function StudentPost({ data, email }) {
           {url && (
             <div className="mt-0 pt-4  border-gray-200 ">
               <a
+                target="_blank"
                 href={url} // replace with your form URL
                 className="text-blue-600 dark:text-blue-400 hover:underline text-sm transition duration-150"
               >

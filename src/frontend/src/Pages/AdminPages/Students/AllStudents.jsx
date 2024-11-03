@@ -33,7 +33,7 @@ export default function AllTeachers() {
           className="divide-y divide-gray-200 dark:divide-gray-700"
         >
           {students?.data?.data?.data.map((item) => (
-            <StudentItem key={item._id} />
+            <StudentItem key={item._id} email={item.email} />
           ))}
         </List>
       )}
