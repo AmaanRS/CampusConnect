@@ -9,6 +9,7 @@ import {
 	ITeacher,
 } from "../Types/ModelTypes";
 
+// TODO: Remove this function since admin will directly be creating committees hence there is no need for committee creating requests
 const checkRequestsForCreatingCommittees = async (
 	user: IAdmin | ITeacher,
 ): Promise<StandardResponse | DataResponse> => {

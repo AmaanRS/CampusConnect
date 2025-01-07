@@ -4,6 +4,7 @@ import {
 	CommitteeStatus,
 	Department,
 	ICommitteeDocument,
+	ModelTypes,
 } from "../Types/ModelTypes";
 import { generateUniqueId } from "../Utils/uniqueId";
 import { DataResponse } from "../Types/GeneralTypes";
@@ -58,9 +59,11 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 			enum: Object.values(CommitteeStatus),
 		},
 		// If committeeOfDepartment array length is greater than 1 then send committee creation request to admin else send it to respective hod
+		// TEST NOW: If committee of Department is not arrray of array
 		committeeOfDepartment: [
 			{
 				type: String,
+				required: true,
 				enum: [...Object.values(Department), ...Object.values(College)],
 			},
 		],
@@ -100,25 +103,34 @@ committeeSchema.pre("validate", async function (next) {
 			this.members.push(this.studentIncharge);
 		}
 
-		if (Array.isArray(this.committeeOfDepartment)) {
-			const hasCollege = this.committeeOfDepartment.some((v) =>
-				Object.values(College).includes(v as unknown as College),
-			);
+		// Validation check for empty arrays in the schema since mongoose allows empty array even though required true is written
 
-			const hasDepartment = this.committeeOfDepartment.some((v) =>
-				Object.values(Department).includes(v as Department),
-			);
+		// Added a validation check for committeeOfDepartment only because rest of array fields are optional
+		if (!Array.isArray(this.committeeOfDepartment)) {
+			throw new MongooseError("CommitteeOfDepartment should be an array");
+		}
 
-			if (hasCollege && hasDepartment) {
-				throw new MongooseError(
-					"Cannot have both College and Department in committeeOfDepartment.",
-				);
-			}
+		if (this.committeeOfDepartment.length < 1) {
+			throw new MongooseError("There should be some committeeOfDepartment");
+		}
+
+		const hasCollege = this.committeeOfDepartment.some((v) =>
+			Object.values(College).includes(v as unknown as College),
+		);
+
+		const hasDepartment = this.committeeOfDepartment.some((v) =>
+			Object.values(Department).includes(v as Department),
+		);
+
+		if (hasCollege && hasDepartment) {
+			throw new MongooseError(
+				"Cannot have both College and Department in committeeOfDepartment.",
+			);
 		}
 
 		if (!this.committeeId) {
 			while (true) {
-				const uniqueId = await generateUniqueId();
+				const uniqueId = await generateUniqueId(ModelTypes.COMMITTEE_MODEL);
 				if (uniqueId.success && "data" in uniqueId) {
 					this.committeeId = (uniqueId as DataResponse).data as string;
 					break;
@@ -134,9 +146,7 @@ committeeSchema.pre("validate", async function (next) {
 
 		this.events = this.events ? [...new Set(this.events)] : undefined;
 
-		this.committeeOfDepartment = [...new Set(this.committeeOfDepartment)] as
-			| Department[]
-			| College;
+		this.committeeOfDepartment = [...new Set(this.committeeOfDepartment)];
 	} catch (err) {
 		next(err as MongooseError);
 	}

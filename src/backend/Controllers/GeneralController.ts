@@ -16,6 +16,8 @@ import {
 import { IAdmin } from "../Types/ModelTypes";
 import { committeeModel } from "../Models/Committee";
 
+// TODO: Remove this controller as committees will directly be created by admin only
+
 const getAllPendingCommittees = async (req: Request, res: Response) => {
 	try {
 		const {

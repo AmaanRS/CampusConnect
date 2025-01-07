@@ -1,5 +1,5 @@
 import { Model, MongooseError, Schema, model } from "mongoose";
-import { IPostDocument } from "../Types/ModelTypes";
+import { IPostDocument, ModelTypes } from "../Types/ModelTypes";
 import { generateUniqueId } from "../Utils/uniqueId";
 import { DataResponse } from "../Types/GeneralTypes";
 
@@ -69,7 +69,7 @@ postSchema.pre("validate", async function (next) {
 	try {
 		if (!this.postId) {
 			while (true) {
-				const uniqueId = await generateUniqueId();
+				const uniqueId = await generateUniqueId(ModelTypes.POST_MODEL);
 				if (uniqueId.success && "data" in uniqueId) {
 					this.postId = (uniqueId as DataResponse).data as string;
 					break;

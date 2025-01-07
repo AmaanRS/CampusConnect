@@ -4,14 +4,13 @@ import {
 	decodedTokenPayload,
 	StandardResponse,
 } from "../Types/GeneralTypes";
-import { Department, ICommittee } from "../Types/ModelTypes";
+import { CommitteeStatus, Department, ICommittee } from "../Types/ModelTypes";
 import { runWithRetrySession } from "../Utils/util";
 import { studentModel } from "../Models/Student";
 import { teacherModel } from "../Models/Teacher";
 import { committeeModel } from "../Models/Committee";
 import mongoose from "mongoose";
 
-// TODO: There should be only one committee of the same name
 const createCommittee = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -91,6 +90,21 @@ const createCommittee = async (req: Request, res: Response) => {
 			if (!teacherId) {
 				const response: StandardResponse = {
 					message: "Could not find the teacher incharge",
+					success: false,
+				};
+
+				return response;
+			}
+
+			// If committee name already exists do not create a new committee
+			const doesCommitteeAlreadyExists = await committeeModel.findOne(
+				{ name: name },
+				{ id: 1 },
+			);
+
+			if (doesCommitteeAlreadyExists) {
+				const response: StandardResponse = {
+					message: "Committee name already exists",
 					success: false,
 				};
 
@@ -281,6 +295,16 @@ const updateCommittee = async (req: Request, res: Response) => {
 				return res.status(401).json(response);
 			}
 
+			// If status of committee is deleted then it cannot be updated
+			if(oldCommittee.status === CommitteeStatus.DELETED){
+				const response: StandardResponse = {
+					message: "Cannot update a deleted committee",
+					success: false,
+				};
+
+				return res.status(401).json(response);
+			}
+
 			// Delete the old committee
 			const isOldCommitteeDeleted = await committeeModel
 				.deleteOne({
@@ -440,14 +464,12 @@ const deleteCommittee = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		//
-		//TODO: While deleting committee make changes to all other models since commitee is referenced in many places
-		//
-		const isCommitteeDeleted = await committeeModel
-			.deleteOne({ committeeId })
-			.lean();
+		const isCommitteeDeleted = await committeeModel.findOneAndUpdate(
+			{ committeeId: committeeId },
+			{ status: CommitteeStatus.DELETED },
+		);
 
-		if (!isCommitteeDeleted.acknowledged) {
+		if (!isCommitteeDeleted) {
 			const response: StandardResponse = {
 				message: "Could not delete the committee",
 				success: false,

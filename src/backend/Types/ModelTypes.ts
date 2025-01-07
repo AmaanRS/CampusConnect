@@ -41,6 +41,12 @@ export enum NonTeachingStaffPosition {
 	NonTeachingStaff = "NON_TEACHING_STAFF",
 }
 
+export enum ModelTypes {
+	COMMITTEE_MODEL = "committeeModel",
+	EVENT_MODEL = "eventModel",
+	POST_MODEL = "postModel",
+}
+
 export type UserPosition =
 	| TeacherPosition
 	| StudentPosition
@@ -77,7 +83,6 @@ export interface IStudent {
 	studentId: number;
 	accType: AccountType;
 	position: StudentPosition[];
-	// Use nanoid here to store the data ie committeeId
 	isInChargeOfCommittees?: ICommittee[] | undefined;
 	isMemberOfCommittees?: ICommittee[] | undefined;
 	isProfileComplete?: boolean;
@@ -92,7 +97,6 @@ export interface ITeacher {
 	department: Department;
 	accType: AccountType;
 	position: TeacherPosition[];
-	// Use nanoid here to store the data ie committeeId
 	isInChargeOfCommittees?: ICommittee[] | undefined;
 	isInTeamOfCommittees?: ICommittee[] | undefined;
 	isProfileComplete?: boolean;
@@ -125,13 +129,14 @@ export interface INonTeachingStaff {
 export interface INonTeachingStaffDocument extends INonTeachingStaff, Document {}
 
 export interface IUniqueIdDocument extends Document {
-	uniqueIds: string[];
+	uniqueId: string;
 }
 
 export enum CommitteeStatus {
 	PENDING = "PENDING",
 	REJECTED = "REJECTED",
 	ACCEPTED = "ACCEPTED",
+	DELETED = "DELETED",
 }
 
 export enum College {
@@ -146,7 +151,6 @@ export interface ICommittee {
 	facultyIncharge: Types.ObjectId;
 	facultyTeam?: Types.ObjectId[] | undefined;
 	members?: Types.ObjectId[] | undefined;
-	// TODO: Use nanoid here ie eventId
 	events?: Types.ObjectId[] | undefined;
 	status: CommitteeStatus;
 	committeeOfDepartment: Department[] | College;
@@ -180,12 +184,11 @@ export interface IEvent {
 	eventId: string;
 	name: string;
 	description: string;
-	// Use nanoId here ie committeeId
-	hostingCommittees: Types.ObjectId[] | undefined;
-	startDate: Date;
-	endDate: Date;
-	startTime: Date;
-	endTime: Date;
+	hostingCommittees: Types.ObjectId[];
+	startDate: String;
+	endDate: String;
+	startTime: String;
+	endTime: String;
 	venue: string;
 }
 

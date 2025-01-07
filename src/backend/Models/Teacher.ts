@@ -70,16 +70,18 @@ const teacherSchema = new Schema<ITeacherDocument>(
 
 teacherSchema.pre("validate", async function (next) {
 	try {
-		if (this.position === undefined) {
-			this.position = [];
+		// Validation check for empty arrays in the schema since mongoose allows empty array even though required true is written
+
+		if (!Array.isArray(this.position)) {
+			throw new MongooseError("position should be an array");
+		}
+
+		if (this.position.length < 1) {
+			throw new MongooseError("There should be some position");
 		}
 
 		const hashedPassword = await validateAndHash(this.password);
 		this.password = hashedPassword;
-
-		if (this.position.length === 0) {
-			throw new MongooseError("Position for Teacher cannot be empty");
-		}
 
 		// By default
 		this.isProfileComplete = false;
