@@ -11,4 +11,6 @@ Router.route("/getUserProfileStatus").post(profileStatus);
 // Router.route("/updateUserProfile").post( updateUserProfile);
 // Router.route("/validateUser").post(cookieCheckerFunction);
 
+// TODO: Add middlewares for authorization in every routes of all entities
+
 export default Router;

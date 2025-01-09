@@ -10,8 +10,6 @@ import { committeeModel } from "../Models/Committee";
 import { eventModel } from "../Models/Event";
 import { CommitteeStatus } from "../Types/ModelTypes";
 
-// TODO: Cannot create events on same time and location and of same name
-
 const createEvent = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -76,11 +74,12 @@ const createEvent = async (req: Request, res: Response) => {
 
 		const result = await runWithRetrySession(async (session) => {
 			// Get the hosting committees
-			// Should not include deleted committtees
+			// Should not include deleted committtees (done in model)
+			// Event should not have same name with any existing event
 			const hostingCommitteesExists = await committeeModel
 				.find({
 					committeeId: { $in: hostingCommitteesId },
-					status: { $ne: CommitteeStatus.DELETED },
+					name: { $ne: name },
 				})
 				.session(session)
 				.lean();
@@ -300,11 +299,10 @@ const updateEvent = async (req: Request, res: Response) => {
 
 		const result = await runWithRetrySession(async (session) => {
 			if (hostingCommitteesId && hostingCommitteesId.length !== 0) {
-				//Should not include deleted committtees
+				//Should not include deleted committtees (done in model)
 				const hostingCommitteesExists = await committeeModel
 					.find({
 						committeeId: { $in: hostingCommitteesId },
-						status: { $ne: CommitteeStatus.DELETED },
 					})
 					.session(session)
 					.lean();
@@ -475,7 +473,6 @@ const deleteEvent = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO : Write this function properly
 //TODO: Write with pagination
 const getAllEvents = async (req: Request, res: Response) => {
 	try {

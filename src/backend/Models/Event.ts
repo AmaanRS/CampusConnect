@@ -95,6 +95,8 @@ eventSchema.pre("validate", async function (next) {
 		}
 
 		this.hostingCommittees = [...new Set(this.hostingCommittees)];
+
+		next();
 	} catch (err) {
 		next(err as MongooseError);
 	}

@@ -26,6 +26,21 @@ export enum StudentPosition {
 	CommitteeMember = "COMMITTEE_MEMBER",
 }
 
+// export const StudentPositionMap: Readonly<{
+// 	[key in StudentPosition]: StudentPosition[];
+// }> = {
+// 	[StudentPosition.Student]: [StudentPosition.Student],
+// 	[StudentPosition.CommitteeMember]: [
+// 		StudentPosition.Student,
+// 		StudentPosition.CommitteeMember,
+// 	],
+// 	[StudentPosition.StudentIncharge]: [
+// 		StudentPosition.Student,
+// 		StudentPosition.CommitteeMember,
+// 		StudentPosition.StudentIncharge,
+// 	],
+// } as const;
+
 export enum TeacherPosition {
 	Teacher = "TEACHER",
 	HOD = "HOD",
@@ -134,7 +149,7 @@ export interface IUniqueIdDocument extends Document {
 
 export enum CommitteeStatus {
 	PENDING = "PENDING",
-	REJECTED = "REJECTED",
+	REJECTED = "REJECTED", // Did'nt use
 	ACCEPTED = "ACCEPTED",
 	DELETED = "DELETED",
 }

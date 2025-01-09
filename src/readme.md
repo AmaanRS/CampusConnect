@@ -122,6 +122,10 @@ Did not find a fully working method
 
 # TODO NOW - A task on high priority or a task to be done immediately
 
+# TEST NOW - Perform testing on high priority or testing to be done immediately
+
 # Every model will use mongodb ObjectId internally and nanoid when showing results to user (ie externally)
 
 # Unique id start with a prefix eg for committee id it starts with C, for event id it starts with E and so on
+
+# All the data of a deleted committee will be saved but it can only be seen by admin

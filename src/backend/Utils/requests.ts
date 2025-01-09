@@ -9,7 +9,7 @@ import {
 	ITeacher,
 } from "../Types/ModelTypes";
 
-// TODO: Remove this function since admin will directly be creating committees hence there is no need for committee creating requests
+// TODO NOW: Remove this function since admin will directly be creating committees hence there is no need for committee creating requests
 const checkRequestsForCreatingCommittees = async (
 	user: IAdmin | ITeacher,
 ): Promise<StandardResponse | DataResponse> => {
@@ -78,7 +78,7 @@ const checkRequestsForCreatingCommittees = async (
 	}
 };
 
-// TODO:
+// TODO: Create this function
 const checkRequestsForCreatingEvents = () => {};
 
 export { checkRequestsForCreatingCommittees, checkRequestsForCreatingEvents };

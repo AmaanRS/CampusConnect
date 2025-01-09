@@ -35,6 +35,15 @@ const teacherSchema = new Schema<ITeacherDocument>(
 			required: true,
 			enum: Object.values(AccountType),
 		},
+		// TODO NOW (Complete this 1): Replace the position,isInChargeOfCommittees,isInTeamOfCommittees with this
+		// 	committeePositions: {
+		//     type: Object,
+		//     required: true,
+		//     default: {},
+		//  },
+
+		// key will be object id of the committee and value will be array of positions
+		// Add in pre find and other hooks to convert key (ie objectId which is automatically stored as string) to objectId
 		position: [
 			{
 				type: String,

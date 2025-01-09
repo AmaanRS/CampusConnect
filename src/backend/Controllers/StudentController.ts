@@ -386,7 +386,6 @@ const deleteStudent = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO : Write this function properly
 //TODO: Write with pagination
 const getAllStudents = async (req: Request, res: Response) => {
 	try {
