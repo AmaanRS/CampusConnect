@@ -5,6 +5,7 @@ import { AccountType } from "../../../utils/enum";
 import SidebarComponent from "./SidebarComponent";
 import OutletComponent from "../../../Components/Layout/OutletComponent";
 import MobileNavComponent from "./MobileNavComponent";
+import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 
 export default function StudentLayout() {
   const { userState, logOutUser } = useContext(UserContext);
@@ -24,9 +25,12 @@ export default function StudentLayout() {
   return (
     <>
       {/* <BottomBar /> */}
-      <SidebarComponent />
-      <MobileNavComponent />
-      <OutletComponent />
+      <div className="bg-white">
+        <SidebarComponent />
+        <MobileNavComponent />
+        <OutletComponent />
+        <RightSidebar />
+      </div>
     </>
   );
 }

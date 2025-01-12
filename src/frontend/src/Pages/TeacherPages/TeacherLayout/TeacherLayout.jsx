@@ -5,6 +5,7 @@ import { AccountType } from "../../../utils/enum";
 import SidebarComponent from "./SidebarComponent";
 import MobileNavComponent from "./MobileNavComponent";
 import OutletComponent from "../../../Components/Layout/OutletComponent";
+import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 
 export default function TeacherLayout() {
   const { userState } = useContext(UserContext);
@@ -26,6 +27,7 @@ export default function TeacherLayout() {
       <SidebarComponent />
       <MobileNavComponent />
       <OutletComponent />
+      <RightSidebar />
     </>
   );
 }
