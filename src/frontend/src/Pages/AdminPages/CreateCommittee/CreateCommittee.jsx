@@ -118,7 +118,7 @@ export default function CreateCommittee() {
 
   return (
     <>
-      <div className="my-4  mx-6 lg:mx-10">
+      <div className="my-4 mx-auto max-w-lg">
         <h1 className="mb-4 text-2xl font-semibold">Create a New Committee</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}

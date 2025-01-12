@@ -24,7 +24,7 @@ export default function AllCommittees() {
 
   return (
     <>
-      <div className=" py-4 px-4 ">
+      <div className=" px-2 ">
         {(committeRequest.isLoading ||
           committeRequest?.data?.data?.data.length !== 0) && (
           <p className="mb-3 md:text-2xl text-center font-bold text-xl ">
@@ -33,7 +33,7 @@ export default function AllCommittees() {
         )}
         {committeRequest.isLoading && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 mb-4  gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4 m-auto max-w-xl mb-4">
               <AllCommitteesCardSkeleton />
               <AllCommitteesCardSkeleton />
               <AllCommitteesCardSkeleton />
@@ -42,7 +42,7 @@ export default function AllCommittees() {
         )}
         {committeRequest?.data?.data?.data.length !== 0 && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3  gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1  gap-4">
               {committeRequest?.data?.data?.data.map((item) => {
                 return <AllCommitteeCard key={item.committeeId} item={item} />;
               })}

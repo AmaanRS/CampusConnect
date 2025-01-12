@@ -3,12 +3,13 @@ import React from "react";
 
 export default function AllCommitteesCardSkeleton() {
   return (
-    <Card className=" max-w-lg bg-slate-50  shadow-lg rounded-lg overflow-hidden ">
+    // <div className="m-auto">
+    <Card className=" max-w-xl bg-white  shadow-lg rounded-lg overflow-hidden ">
       <div className="text h-8 w-56 rounded-md  animate-pulse bg-slate-200  mb-1">
         {/* {item.name} */}
       </div>
 
-      <div className=" max-h-60 md:h-40 mb-2 ">
+      <div className=" h-32 mb-2 ">
         {/* {item.description} */}
         <div className="h-4 rounded-md mb-2 animate-pulse w-full bg-slate-200 "></div>
         <div className="h-4 rounded-md mb-2 animate-pulse w-full bg-slate-200 "></div>
@@ -39,5 +40,6 @@ export default function AllCommitteesCardSkeleton() {
         </div>
       </div>
     </Card>
+    // </div>
   );
 }

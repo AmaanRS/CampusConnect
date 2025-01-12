@@ -28,12 +28,12 @@ export default function AllCommitteeCard({ item }) {
   }
   return (
     <>
-      <Card className=" max-w-lg bg-white  shadow-lg rounded-lg overflow-hidden ">
+      <Card className=" m-auto max-w-xl bg-white  shadow-lg rounded-lg overflow-hidden ">
         <h5 className="text-2xl font-bold tracking-tight capitalize text-gray-900  mb-1">
           {item.name}
         </h5>
 
-        <p className="font-normal text-gray-700 dark:text-gray-400 custom-scrollbar overflow-auto max-h-60 md:h-40 mb-2 ">
+        <p className="font-normal text-gray-700 dark:text-gray-400 custom-scrollbar overflow-hidden hover:overflow-auto max-h-60  mb-2 ">
           {item.description}
         </p>
 
