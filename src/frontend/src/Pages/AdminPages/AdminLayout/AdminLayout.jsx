@@ -15,13 +15,12 @@ export default function AdminLayout() {
       navigate("/");
     }
   }, []);
-  const [globalOpen, setGlobalOpen] = useState(true);
 
   return (
     <>
-      <SidebarComponent globalOpen={globalOpen} setGlobalOpen={setGlobalOpen} />
+      <SidebarComponent />
       <MobileNavComponent />
-      <OutletComponent globalOpen={globalOpen} />
+      <OutletComponent />
     </>
   );
 }

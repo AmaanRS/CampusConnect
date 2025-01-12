@@ -16,10 +16,10 @@ import { UserContext } from "../../../store/UserContextProvider";
 import SidebarButton from "../../../Components/Layout/Desktop/SidebarButton";
 import SidebarItem from "../../../Components/Layout/Desktop/SidebarItem";
 
-export default function SidebarComponent({ setGlobalOpen, globalOpen }) {
+export default function SidebarComponent() {
   const { logOutUser } = useContext(UserContext);
   return (
-    <Sidebar setGlobalOpen={setGlobalOpen} globalOpen={globalOpen}>
+    <Sidebar>
       <SidebarItem
         to={"/teacher"}
         text={"Dashboard"}

@@ -20,14 +20,13 @@ export default function StudentLayout() {
       navigate("/userprofile");
     }
   }, []);
-  const [globalOpen, setGlobalOpen] = useState(true);
 
   return (
     <>
       {/* <BottomBar /> */}
-      <SidebarComponent globalOpen={globalOpen} setGlobalOpen={setGlobalOpen} />
+      <SidebarComponent />
       <MobileNavComponent />
-      <OutletComponent globalOpen={globalOpen} />
+      <OutletComponent />
     </>
   );
 }

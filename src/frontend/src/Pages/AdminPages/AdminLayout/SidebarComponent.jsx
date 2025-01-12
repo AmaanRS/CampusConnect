@@ -16,11 +16,11 @@ import { PiStudent } from "react-icons/pi";
 import { TbDevicesQuestion } from "react-icons/tb";
 import SidebarButton from "../../../Components/Layout/Desktop/SidebarButton";
 
-export default function SidebarComponent({ globalOpen, setGlobalOpen }) {
+export default function SidebarComponent() {
   const { logOutUser } = useContext(UserContext);
   return (
     <>
-      <Sidebar globalOpen={globalOpen} setGlobalOpen={setGlobalOpen}>
+      <Sidebar>
         <SidebarItem icon={<Home size={20} />} to="/admin" text="Home" />
         <SidebarItem
           to={"createcommittee"}

@@ -20,13 +20,12 @@ export default function TeacherLayout() {
       navigate("/userprofile");
     }
   }, [userState]);
-  const [globalOpen, setGlobalOpen] = useState(true);
 
   return (
     <>
-      <SidebarComponent globalOpen={globalOpen} setGlobalOpen={setGlobalOpen} />
+      <SidebarComponent />
       <MobileNavComponent />
-      <OutletComponent globalOpen={globalOpen} />
+      <OutletComponent />
     </>
   );
 }

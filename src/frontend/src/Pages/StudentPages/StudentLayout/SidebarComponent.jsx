@@ -17,10 +17,10 @@ import SidebarButton from "../../../Components/Layout/Desktop/SidebarButton";
 import { UserContext } from "../../../store/UserContextProvider";
 import { IoCreateSharp } from "react-icons/io5";
 
-export default function SidebarComponent({ setGlobalOpen, globalOpen }) {
+export default function SidebarComponent() {
   const { logOutUser } = useContext(UserContext);
   return (
-    <Sidebar setGlobalOpen={setGlobalOpen} globalOpen={globalOpen}>
+    <Sidebar>
       <SidebarItem to="/student" icon={<Home size={20} />} text="Home" />
       <SidebarItem
         to="createPost"
