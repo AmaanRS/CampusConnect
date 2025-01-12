@@ -25,7 +25,6 @@ export default function AdminLayout() {
         <OutletComponent />
         <RightSidebar />
       </div>
-      {/* </div> */}
     </>
   );
 }

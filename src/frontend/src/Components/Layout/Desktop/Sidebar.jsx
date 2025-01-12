@@ -5,8 +5,8 @@ export default function Sidebar({ children }) {
     <>
       {/* <div className="hidden sm:flex fixed left-0 top-0 w-72"> */}
       {/* <div className="border-2 border-black col-span-3 hidden sm:block "> */}
-      <div className="fixed top-0 left-0  w-72  hidden sm:block ">
-        <nav className="h-screen overflow-auto custom-scrollbar flex flex-col bg-white border-r shadow-sm">
+      <div className="fixed border-gray-300 border-r-[1px] top-0 left-0  w-72  hidden sm:block ">
+        <nav className="h-screen overflow-hidden hover:overflow-auto  custom-scrollbar flex flex-col bg-white shadow-sm">
           <div className="p-4 pb-2 flex justify-between items-center">
             <Logo />
           </div>

@@ -34,3 +34,13 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:active {
   background-color: #b8c0c2;
 }
+
+/* Hide scrollbars */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Edge */
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
