@@ -1,24 +1,16 @@
 /* eslint-disable react/prop-types */
-import { ChevronFirst, ChevronLast } from "lucide-react";
-import { createContext, useContext } from "react";
-import { NavLink } from "react-router-dom";
-
-export const SidebarContext = createContext();
 
 export default function Sidebar({ children }) {
-  let globalOpen = true;
   return (
     <>
-      <div className="hidden sm:flex fixed left-0 top-0">
+      <div className="hidden sm:flex fixed left-0 top-0 w-72">
         <aside className="h-screen">
           <nav className="h-full flex flex-col bg-white border-r shadow-sm">
             <div className="p-4 pb-2 flex justify-between items-center">
               <Logo />
             </div>
 
-            <SidebarContext.Provider value={{ globalOpen }}>
-              <ul className="flex-1 px-3">{children}</ul>
-            </SidebarContext.Provider>
+            <ul className="flex-1 px-3">{children}</ul>
 
             {/* <div className="border-t flex p-3">
             <img className="w-10 h-10 rounded-md" />

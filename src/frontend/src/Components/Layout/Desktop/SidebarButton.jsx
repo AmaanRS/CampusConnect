@@ -1,9 +1,4 @@
-import { useContext } from "react";
-import { SidebarContext } from "./Sidebar";
-
 export default function SidebarButton({ icon, text, onClick }) {
-  const { globalOpen } = useContext(SidebarContext);
-
   return (
     <button
       onClick={onClick}
@@ -11,16 +6,7 @@ export default function SidebarButton({ icon, text, onClick }) {
     >
       {icon}
       {/* <span className="ml-2">{text}</span> */}
-      <span className={`ml-2 overflow-hidden  ${globalOpen ? " ml-2" : "w-0"}`}>
-        {text}
-      </span>
-      {!globalOpen && (
-        <div
-          className={`absolute left-full rounded-md px-2 py-1 ml-6 bg-indigo-100 text-indigo-800 text-sm invisible opacity-20 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
-        >
-          {text}
-        </div>
-      )}
+      <span className={`ml-2 overflow-hidden `}>{text}</span>
     </button>
   );
 }

@@ -25,6 +25,7 @@ import AllCommittees from "./Pages/AdminPages/AllCommittees/AllCommittees";
 import AllTeachers from "./Pages/AdminPages/Teachers/AllTeachers";
 import AllStudents from "./Pages/AdminPages/Students/AllStudents";
 import CreatePost from "./Pages/StudentPages/AddPost/CreatePost";
+import TestLayout from "./Test/TestLayout";
 
 const queryClient = new QueryClient();
 function App() {
@@ -40,7 +41,7 @@ function App() {
         },
         {
           path: "test",
-          element: <p>Testing page</p>,
+          element: <TestLayout />,
         },
         {
           path: "about",
