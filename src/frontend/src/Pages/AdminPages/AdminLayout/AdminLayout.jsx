@@ -23,7 +23,7 @@ export default function AdminLayout() {
         <MobileNavComponent />
         <OutletComponent />
         {/* <div id="right-section"> */}
-        <div className="fixed top-0 right-0 h-screen w-72 bg-white border-l-[1px] p-4 hidden sm:block">
+        <div className=" custom-scrollbar overflow-auto fixed top-0 right-0 h-screen w-72 bg-white border-l-[1px] p-4 hidden sm:block">
           <h2 className="text-xl font-bold mb-4">Popular Committees</h2>
           <ul>
             <li className="mb-2">Committee 1</li>

@@ -48,6 +48,15 @@ export default function SidebarComponent() {
 
         <hr className="my-3" />
         <SidebarItem icon={<User size={20} />} text="profile" />
+
+        <SidebarItem icon={<User size={20} />} text="profile" />
+        <SidebarItem icon={<User size={20} />} text="profile" />
+        <SidebarItem icon={<User size={20} />} text="profile" />
+        <SidebarItem icon={<User size={20} />} text="profile" />
+        <SidebarItem icon={<User size={20} />} text="profile" />
+        <SidebarItem icon={<User size={20} />} text="profile" />
+        <SidebarItem icon={<User size={20} />} text="profile" />
+
         <SidebarItem icon={<Settings size={20} />} text="Settings" />
 
         <SidebarButton
