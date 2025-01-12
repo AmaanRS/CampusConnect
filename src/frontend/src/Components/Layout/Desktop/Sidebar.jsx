@@ -5,11 +5,11 @@ export default function Sidebar({ children }) {
     <>
       {/* <div className="hidden sm:flex fixed left-0 top-0 w-72"> */}
       {/* <div className="border-2 border-black col-span-3 hidden sm:block "> */}
-      <div className="fixed border-gray-300 border-r-[1px] top-0 left-0  w-72  hidden sm:block ">
+      <div className="fixed border-gray-300 border-r-[1px] top-[52px] left-0  w-72  hidden sm:block ">
         <nav className="h-screen overflow-hidden hover:overflow-auto  custom-scrollbar flex flex-col bg-white shadow-sm">
-          <div className="p-4 pb-2 flex justify-between items-center">
+          {/* <div className="p-4 pb-2 flex justify-between items-center">
             <Logo />
-          </div>
+          </div> */}
 
           <ul className="flex-1 px-3">{children}</ul>
 
@@ -32,17 +32,5 @@ export default function Sidebar({ children }) {
         </nav>
       </div>
     </>
-  );
-}
-
-function Logo() {
-  return (
-    <div className="logo ">
-      <h1
-        className={` overflow-hidden transition-all "w-36"  tracking-tighter text-lg font-semibold text-blue-dark`}
-      >
-        Campus<span className="text-blue-light">Connect</span>
-      </h1>
-    </div>
   );
 }

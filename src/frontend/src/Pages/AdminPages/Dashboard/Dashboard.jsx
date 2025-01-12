@@ -1,10 +1,10 @@
 export default function Dashboard() {
   return (
     <>
-      <div className="h-screen border-2 border-black m-2  flex justify-center items-center">
+      <div className="h-screen border-[1px] border-gray-300 m-2  flex justify-center items-center">
         <p>Main Content</p>
       </div>
-      <div className="h-screen border-2 border-black m-2  flex justify-center items-center">
+      <div className="h-screen border-[1px] border-gray-300 m-2  flex justify-center items-center">
         <p>Main Content</p>
       </div>
     </>

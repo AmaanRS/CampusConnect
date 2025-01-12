@@ -7,6 +7,8 @@ import OutletComponent from "../../../Components/Layout/OutletComponent";
 import SidebarComponent from "./SidebarComponent";
 import MobileNavComponent from "./MobileNavComponent";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
+import { Avatar, Dropdown, Navbar } from "flowbite-react";
+import Topbar from "../../../Components/Layout/Desktop/Topbar";
 
 export default function AdminLayout() {
   const { userState } = useContext(UserContext);
@@ -19,7 +21,8 @@ export default function AdminLayout() {
 
   return (
     <>
-      <div className="flex">
+      <Topbar />
+      <div className="flex mt-[52px]">
         <SidebarComponent />
         <MobileNavComponent />
         <OutletComponent />
