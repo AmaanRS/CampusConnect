@@ -4,7 +4,8 @@ export default function Sidebar({ children }) {
   return (
     <>
       {/* <div className="hidden sm:flex fixed left-0 top-0 w-72"> */}
-      <div className="border-2 border-black col-span-3 hidden sm:block ">
+      {/* <div className="border-2 border-black col-span-3 hidden sm:block "> */}
+      <div className="fixed top-0 left-0 h-screen w-72  hidden sm:block">
         <aside className="h-screen">
           <nav className="h-full flex flex-col bg-white border-r shadow-sm">
             <div className="p-4 pb-2 flex justify-between items-center">

@@ -18,12 +18,12 @@ export default function AdminLayout() {
 
   return (
     <>
-      <div className="grid grid-cols-12 min-h-screen">
+      <div className="flex">
         <SidebarComponent />
         <MobileNavComponent />
         <OutletComponent />
         {/* <div id="right-section"> */}
-        <div className="border-2 border-black col-span-3 hidden sm:block  p-4">
+        <div className="fixed top-0 right-0 h-screen w-72 bg-white border-l-[1px] p-4 hidden sm:block">
           <h2 className="text-xl font-bold mb-4">Popular Committees</h2>
           <ul>
             <li className="mb-2">Committee 1</li>
