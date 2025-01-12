@@ -53,11 +53,45 @@
 //   );
 // }
 
+// export default function TestLayout() {
+//   return (
+//     <div className="grid grid-cols-12 min-h-screen">
+//       {/* Left Section - Sidebar */}
+//       <div className="col-span-3 hidden sm:block bg-gray-200 p-4">
+//         <h2 className="text-xl font-bold">Sidebar</h2>
+//         <ul>
+//           <li className="mb-2">Dashboard</li>
+//           <li className="mb-2">Committees</li>
+//           <li className="mb-2">Events</li>
+//           <li className="mb-2">Settings</li>
+//         </ul>
+//       </div>
+
+//       {/* Center Section - Main Content */}
+//       <div className="col-span-6 bg-white p-6">
+//         <h1 className="text-2xl font-semibold">Main Content</h1>
+//         <p>This is the main content area.</p>
+//       </div>
+
+//       {/* Right Section - Popular Committees */}
+//       <div className="col-span-3 hidden sm:block bg-gray-100 p-4">
+//         <h2 className="text-xl font-bold mb-4">Popular Committees</h2>
+//         <ul>
+//           <li className="mb-2">Committee 1</li>
+//           <li className="mb-2">Committee 2</li>
+//           <li className="mb-2">Committee 3</li>
+//           <li className="mb-2">Committee 4</li>
+//         </ul>
+//       </div>
+//     </div>
+//   );
+// }
+
 export default function TestLayout() {
   return (
-    <div className="grid grid-cols-12 min-h-screen">
+    <div className="flex">
       {/* Left Section - Sidebar */}
-      <div className="col-span-3 hidden sm:block bg-gray-200 p-4">
+      <div className="fixed top-0 left-0 h-screen w-72 bg-gray-200 p-4 hidden sm:block">
         <h2 className="text-xl font-bold">Sidebar</h2>
         <ul>
           <li className="mb-2">Dashboard</li>
@@ -68,13 +102,18 @@ export default function TestLayout() {
       </div>
 
       {/* Center Section - Main Content */}
-      <div className="col-span-6 bg-white p-6">
+      <div className="flex-1 sm:ml-72 sm:mr-72 bg-white p-6 min-h-screen overflow-y-auto">
         <h1 className="text-2xl font-semibold">Main Content</h1>
-        <p>This is the main content area.</p>
+        <p>This is the main content area. Scroll to see more content.</p>
+        <div style={{ height: "1500px" }}>
+          {" "}
+          {/* Placeholder for long content */}
+          Add your scrollable content here.
+        </div>
       </div>
 
       {/* Right Section - Popular Committees */}
-      <div className="col-span-3 hidden sm:block bg-gray-100 p-4">
+      <div className="fixed top-0 right-0 h-screen w-72 bg-gray-100 p-4 hidden sm:block">
         <h2 className="text-xl font-bold mb-4">Popular Committees</h2>
         <ul>
           <li className="mb-2">Committee 1</li>
