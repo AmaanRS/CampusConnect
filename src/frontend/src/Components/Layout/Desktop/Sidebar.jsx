@@ -11,7 +11,7 @@ export default function Sidebar({ children }) {
             <Logo />
           </div> */}
 
-          <ul className="flex-1 px-3">{children}</ul>
+          <ul className="flex-1 px-3 pt-1">{children}</ul>
 
           {/* <div className="border-t flex p-3">
             <img className="w-10 h-10 rounded-md" />

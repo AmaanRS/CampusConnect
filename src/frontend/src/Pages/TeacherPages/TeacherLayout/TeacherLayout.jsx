@@ -6,6 +6,7 @@ import SidebarComponent from "./SidebarComponent";
 import MobileNavComponent from "./MobileNavComponent";
 import OutletComponent from "../../../Components/Layout/OutletComponent";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
+import Topbar from "../../../Components/Layout/Desktop/Topbar";
 
 export default function TeacherLayout() {
   const { userState } = useContext(UserContext);
@@ -24,10 +25,13 @@ export default function TeacherLayout() {
 
   return (
     <>
-      <SidebarComponent />
-      <MobileNavComponent />
-      <OutletComponent />
-      <RightSidebar />
+      <Topbar />
+      <div className="mt-[52px]">
+        <SidebarComponent />
+        <MobileNavComponent />
+        <OutletComponent />
+        <RightSidebar />
+      </div>
     </>
   );
 }
