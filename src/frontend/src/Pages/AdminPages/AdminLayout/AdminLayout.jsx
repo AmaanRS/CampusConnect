@@ -27,6 +27,24 @@ export default function AdminLayout() {
           <h2 className="text-xl font-bold mb-4">Popular Committees</h2>
           <ul>
             <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
+            <li className="mb-2">Committee 1</li>
             <li className="mb-2">Committee 2</li>
             <li className="mb-2">Committee 3</li>
             <li className="mb-2">Committee 4</li>

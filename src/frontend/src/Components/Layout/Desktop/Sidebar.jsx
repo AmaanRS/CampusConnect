@@ -5,16 +5,15 @@ export default function Sidebar({ children }) {
     <>
       {/* <div className="hidden sm:flex fixed left-0 top-0 w-72"> */}
       {/* <div className="border-2 border-black col-span-3 hidden sm:block "> */}
-      <div className="fixed top-0 left-0  w-72  hidden sm:block custom-scrollbar overflow-auto ">
-        <aside className="h-screen">
-          <nav className="h-full flex flex-col bg-white border-r shadow-sm">
-            <div className="p-4 pb-2 flex justify-between items-center">
-              <Logo />
-            </div>
+      <div className="fixed top-0 left-0  w-72  hidden sm:block ">
+        <nav className="h-screen overflow-auto custom-scrollbar flex flex-col bg-white border-r shadow-sm">
+          <div className="p-4 pb-2 flex justify-between items-center">
+            <Logo />
+          </div>
 
-            <ul className="flex-1 px-3">{children}</ul>
+          <ul className="flex-1 px-3">{children}</ul>
 
-            {/* <div className="border-t flex p-3">
+          {/* <div className="border-t flex p-3">
             <img className="w-10 h-10 rounded-md" />
             <div
               className={`flex justify-between items-center overflow-hidden transition-all ${
@@ -30,8 +29,7 @@ export default function Sidebar({ children }) {
               <MoreVertical size={20} />
             </div>
           </div> */}
-          </nav>
-        </aside>
+        </nav>
       </div>
     </>
   );
