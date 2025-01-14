@@ -20,7 +20,7 @@ export default function StudentHome() {
 
   return (
     <>
-      <div className="pl-0 md:pl-8 p-0 inline-block ">
+      <div className="pl-0 w-full m-auto p-0 inline-block ">
         {students.isLoading && (
           <>
             <p className="flex h-screen ml-96 items-center justify-center">
@@ -31,9 +31,15 @@ export default function StudentHome() {
 
         {!students.isLoading && (
           <>
-            {students?.data?.data?.data.map((item) => (
-              <StudentPost key={item._id} data={item} email={userState.email} />
-            ))}
+            <div className="m-auto w-full">
+              {students?.data?.data?.data.map((item) => (
+                <StudentPost
+                  key={item._id}
+                  data={item}
+                  email={userState.email}
+                />
+              ))}
+            </div>
           </>
         )}
       </div>

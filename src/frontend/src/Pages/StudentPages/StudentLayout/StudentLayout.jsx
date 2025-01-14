@@ -6,6 +6,7 @@ import SidebarComponent from "./SidebarComponent";
 import OutletComponent from "../../../Components/Layout/OutletComponent";
 import MobileNavComponent from "./MobileNavComponent";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
+import Topbar from "../../../Components/Layout/Desktop/Topbar";
 
 export default function StudentLayout() {
   const { userState, logOutUser } = useContext(UserContext);
@@ -24,8 +25,8 @@ export default function StudentLayout() {
 
   return (
     <>
-      {/* <BottomBar /> */}
-      <div className="bg-white">
+      <Topbar />
+      <div className="bg-white mt-[52px]">
         <SidebarComponent />
         <MobileNavComponent />
         <OutletComponent />

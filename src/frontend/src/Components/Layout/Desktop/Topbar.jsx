@@ -63,7 +63,7 @@ export default function Topbar() {
               onClick={() => logOutUser()}
               className="text-red-700 font-semibold"
             >
-              Sign out
+              Log out
             </Dropdown.Item>
           </Dropdown>
         </div>

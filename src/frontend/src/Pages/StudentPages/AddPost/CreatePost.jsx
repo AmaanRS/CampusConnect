@@ -64,11 +64,11 @@ export default function CreatePost() {
 
   return (
     <>
-      <div className="my-4  mx-6 lg:mx-10">
-        <h1 className="mb-4 text-2xl font-semibold">Add a New Post</h1>
+      <div className="my-4 max-w-xl mx-auto ">
+        <div className="mb-4 text-2xl font-semibold">Add a New Post</div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className=" flex  max-w-lg flex-col gap-4"
+          className=" flex  flex-col gap-4"
         >
           <div>
             <div className="mb-2 block">
@@ -86,7 +86,7 @@ export default function CreatePost() {
               <p className={errorClass}> {errors.name.message} </p>
             )}
           </div>
-          <div className="max-w-lg">
+          <div className="">
             <div className="mb-2 block">
               <Label htmlFor="description" value="Description" />
             </div>
