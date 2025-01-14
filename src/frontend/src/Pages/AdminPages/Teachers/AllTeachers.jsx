@@ -4,6 +4,8 @@ import TeacherItem from "./TeacherItem";
 import { useQuery } from "@tanstack/react-query";
 import ApiError from "../../../Components/Errors/ApiError";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
+import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 
 export default function AllTeachers() {
   const teachers = useQuery({
@@ -18,25 +20,30 @@ export default function AllTeachers() {
   }
 
   return (
-    <div className="max-w-xl  mx-auto my-6 p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        All Teachers
-      </h2>
-      {teachers.isLoading && (
-        <>
-          <p>Loading...</p>
-        </>
-      )}
-      {!teachers.isLoading && (
-        <List
-          unstyled
-          className="divide-y divide-gray-200 dark:divide-gray-700"
-        >
-          {teachers?.data?.data?.data.map((item) => (
-            <TeacherItem key={item._id} email={item.email} />
-          ))}
-        </List>
-      )}
-    </div>
+    <>
+      <CentreMainContent>
+        <div className="max-w-xl  mx-auto my-6 p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            All Teachers
+          </h2>
+          {teachers.isLoading && (
+            <>
+              <p>Loading...</p>
+            </>
+          )}
+          {!teachers.isLoading && (
+            <List
+              unstyled
+              className="divide-y divide-gray-200 dark:divide-gray-700"
+            >
+              {teachers?.data?.data?.data.map((item) => (
+                <TeacherItem key={item._id} email={item.email} />
+              ))}
+            </List>
+          )}
+        </div>
+      </CentreMainContent>
+      <RightSidebar></RightSidebar>
+    </>
   );
 }

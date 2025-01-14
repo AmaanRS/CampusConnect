@@ -30,7 +30,7 @@ export default function TeacherLayout() {
         <SidebarComponent />
         <MobileNavComponent />
         <OutletComponent />
-        <RightSidebar />
+        {/* <RightSidebar /> */}
       </div>
     </>
   );
