@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { UserContext } from "../../../store/UserContextProvider";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
+import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
 
 export default function StudentHome() {
   const { userState } = useContext(UserContext);
@@ -21,7 +22,7 @@ export default function StudentHome() {
 
   return (
     <>
-      <div className="mr-72">
+      <CentreMainContent>
         <div className="pl-0 w-full m-auto p-0 inline-block ">
           {students.isLoading && (
             <>
@@ -45,14 +46,14 @@ export default function StudentHome() {
             </>
           )}
         </div>
-      </div>
+      </CentreMainContent>
       <RightSidebar>
-        <h1>test</h1>
-        <h1>test</h1>
-        <h1>test</h1>
-        <h1>test</h1>
-        <h1>test</h1>
-        <h1>test</h1>
+        <h1>test 1</h1>
+        <h1>test 2</h1>
+        <h1>test 3</h1>
+        <h1>test 4</h1>
+        <h1>test 5</h1>
+        <h1>test 6</h1>
       </RightSidebar>
     </>
   );
