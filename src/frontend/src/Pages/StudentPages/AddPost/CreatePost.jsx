@@ -64,7 +64,7 @@ export default function CreatePost() {
 
   return (
     <>
-      <div className="my-4 max-w-xl mx-auto ">
+      <div className="my-4 max-w-xl ml-12">
         <div className="mb-4 text-2xl font-semibold">Add a New Post</div>
         <form
           onSubmit={handleSubmit(onSubmit)}

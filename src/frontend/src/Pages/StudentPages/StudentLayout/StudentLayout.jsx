@@ -30,7 +30,7 @@ export default function StudentLayout() {
         <SidebarComponent />
         <MobileNavComponent />
         <OutletComponent />
-        <RightSidebar />
+        {/* <RightSidebar /> */}
       </div>
     </>
   );

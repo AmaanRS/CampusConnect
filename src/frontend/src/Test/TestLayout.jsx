@@ -1,8 +1,9 @@
 export default function TestLayout() {
   return (
-    <div className="flex">
+    <>
+      {/* <div className="flex"> */}
       {/* Left Section - Sidebar */}
-      <div className="scrollbar-hide overflow-hidden hover:overflow-auto fixed top-0 left-0 h-screen w-72 bg-gray-100 p-4 hidden sm:block">
+      <div className="overflow-hidden hover:overflow-auto fixed top-0 left-0 h-screen w-72 bg-gray-100 p-4 hidden sm:block">
         <h2 className="text-xl font-bold">Sidebar</h2>
         <ul>
           <li className="mb-2">Dashboard</li>
@@ -14,7 +15,7 @@ export default function TestLayout() {
       </div>
 
       {/* Center Section - Main Content */}
-      <div className="flex-1 sm:ml-72 sm:mr-72 bg-white p-6 min-h-screen overflow-y-auto">
+      <div className="sm:ml-72 sm:mr-72 bg-white p-6 min-h-screen overflow-y-auto m-auto">
         <h1 className="text-2xl font-semibold">Main Content</h1>
         <p>This is the main content area. Scroll to see more content.</p>
         <div style={{ height: "1500px" }}>
@@ -34,6 +35,7 @@ export default function TestLayout() {
           <li className="mb-2">Committee 4</li>
         </ul>
       </div>
-    </div>
+      {/* </div> */}
+    </>
   );
 }

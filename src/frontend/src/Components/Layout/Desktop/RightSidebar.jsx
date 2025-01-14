@@ -1,16 +1,20 @@
 import React from "react";
 
-export default function RightSidebar() {
+export default function RightSidebar({ children }) {
   return (
     <>
       <div className=" custom-scrollbar overflow-hidden  hover:overflow-auto fixed top-[52px] right-0 h-screen w-72 bg-white border-gray-300 border-l-[1px] p-4 hidden sm:block">
-        <h2 className="text-xl font-bold mb-4">Popular Committees</h2>
-        <ul>
-          <li className="mb-2">Committee 1</li>
-          <li className="mb-2">Committee 2</li>
-          <li className="mb-2">Committee 3</li>
-          <li className="mb-2">Committee 4</li>
-        </ul>
+        {children || (
+          <>
+            <h2 className="text-xl font-bold mb-4">Popular Committees</h2>
+            <ul>
+              <li className="mb-2">Committee 1</li>
+              <li className="mb-2">Committee 2</li>
+              <li className="mb-2">Committee 3</li>
+              <li className="mb-2">Committee 4</li>
+            </ul>
+          </>
+        )}
       </div>
     </>
   );
