@@ -5,7 +5,7 @@ export default function PopularCommiteeItem() {
   return (
     <li>
       <Link>
-        <div className="flex mx-2 my-6">
+        <div className=" hover:bg-slate-200 rounded-lg flex py-2     px-2 mx-2 my-2">
           <Avatar
             rounded
             size="sm"

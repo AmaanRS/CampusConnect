@@ -3,7 +3,7 @@ import React from "react";
 export default function RightSidebar({ children }) {
   return (
     <>
-      <div className=" custom-scrollbar overflow-hidden  hover:overflow-auto fixed top-[52px] right-0 h-screen w-72 bg-white border-gray-300 border-l-[0px] hidden sm:block">
+      <div className=" custom-scrollbar overflow-hidden  hover:overflow-auto fixed top-[52px] right-0 h-screen w-72 bg-white hidden sm:block">
         {children || (
           <>
             <h2 className="text-xl font-bold mb-4">Popular Committees</h2>
