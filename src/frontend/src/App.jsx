@@ -26,6 +26,7 @@ import AllTeachers from "./Pages/AdminPages/Teachers/AllTeachers";
 import AllStudents from "./Pages/AdminPages/Students/AllStudents";
 import CreatePost from "./Pages/StudentPages/AddPost/CreatePost";
 import TestLayout from "./Test/TestLayout";
+import AddPost from "./Pages/StudentPages/AddPost/AddPost";
 
 const queryClient = new QueryClient();
 function App() {
@@ -97,7 +98,7 @@ function App() {
               element: <StudentLayout />,
               children: [
                 { index: true, element: <StudentHome /> },
-                { path: "createPost", element: <CreatePost /> },
+                { path: "createPost", element: <AddPost /> },
                 { path: "page3", element: <>Page 3</> },
               ],
             },
