@@ -2,8 +2,7 @@ import { Dropdown, Tabs } from "flowbite-react";
 import React from "react";
 import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
 import { MdDashboard } from "react-icons/md";
-import RichTextEditor from "../../../Components/RichTextEditor/RichTextEditor";
-import Tiptap from "./TipTap";
+import TipTap from "../../../Components/RichTextEditor/TipTap";
 
 export default function AddPostForm() {
   return (
@@ -21,7 +20,7 @@ export default function AddPostForm() {
           <Tabs.Item active title="Profile" icon={HiUserCircle}>
             {/* <RichTextEditor /> */}
             <div>
-              <Tiptap />
+              <TipTap />
             </div>
           </Tabs.Item>
           <Tabs.Item title="Dashboard" icon={MdDashboard}>
