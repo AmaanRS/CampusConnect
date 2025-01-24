@@ -37,7 +37,7 @@ export default function MenuBar({ editor }) {
         <RTEButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
-          className={editor.isActive("bold") ? "is-active" : ""}
+          className={editor.isActive("bold")}
         >
           Bold
         </RTEButton>
@@ -186,7 +186,9 @@ export default function MenuBar({ editor }) {
           Redo
         </RTEButton>
 
-        <RTEButton onClick={setLink}>Set Link</RTEButton>
+        <RTEButton onClick={setLink} className={editor.isActive("link")}>
+          Set Link
+        </RTEButton>
 
         <RTEButton
           onClick={() => editor.chain().focus().unsetLink().run()}

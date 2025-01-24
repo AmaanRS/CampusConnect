@@ -7,12 +7,11 @@
   /* Heading styles */
   outline: none;
 
-  
-  h1, 
-  h2, 
-  h3, 
-  h4, 
-  h5, 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
   h6 {
     line-height: 1.1;
     margin-top: 2.5rem;
@@ -20,34 +19,38 @@
     font-weight: bold;
   }
 
-  h1, 
+  h1,
   h2 {
     margin-top: 3.5rem;
     margin-bottom: 1.5rem;
   }
 
-  h1 { 
-    font-size: 1.4rem; 
+  h1 {
+    font-size: 1.4rem;
   }
 
-  h2 { 
-    font-size: 1.2rem; 
+  h2 {
+    font-size: 1.2rem;
   }
 
-  h3 { 
-    font-size: 1.1rem; 
+  h3 {
+    font-size: 1.1rem;
   }
 
-  h4, 
-  h5, 
-  h6 { 
-    font-size: 1rem; 
+  h4 {
+    font-size: 1rem;
+  }
+  h5 {
+    font-size: 0.9rem;
+  }
+  h6 {
+    font-size: 0.8rem;
   }
 
   code {
     display: inline-block;
     background-color: #1e293b; /* Light gray background */
-    font-family: 'Courier New', Courier, monospace; /* Monospace font */
+    font-family: "Courier New", Courier, monospace; /* Monospace font */
     padding: 0.2rem 0.4rem; /* Add some padding */
     border-radius: 4px; /* Rounded corners */
     font-size: 0.875rem; /* Equivalent to text-sm in Tailwind */
@@ -59,7 +62,7 @@
     color: #e2e8f0; /* Light text color */
     padding: 1rem; /* Add padding */
     border-radius: 8px; /* Rounded corners */
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     font-size: 0.875rem; /* Equivalent to text-sm in Tailwind */
     overflow-x: auto; /* Enable horizontal scrolling for long code */
     margin: 1rem 0; /* Add spacing */
@@ -78,17 +81,15 @@
     list-style-type: disc;
   }
 
-
   ol {
     list-style-type: decimal;
   }
 
-
-  ul, 
+  ul,
   ol {
     padding: 0 1rem;
     margin: 1.25rem 1rem 1.25rem 0.4rem;
-    
+
     li p {
       margin-top: 0.25em;
       margin-bottom: 0.25em;
@@ -119,6 +120,4 @@
     margin: 1rem 0; /* Vertical margin for spacing */
     // color: #334155; /* Slate color for readability */
   }
-
-
 }
