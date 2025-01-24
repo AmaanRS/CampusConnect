@@ -1,12 +1,18 @@
 import { Dropdown, Tabs } from "flowbite-react";
-import React from "react";
+import React, { useState } from "react";
 import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
 import { MdDashboard } from "react-icons/md";
 import TipTap from "../../../Components/RichTextEditor/TipTap";
+import RichTextViewer from "../../../Components/RichTextEditor/RichTextViewer";
 
 export default function AddPostForm() {
+  const [htmlContent, setHtmlContent] = useState("");
+  function getEditorContent(richText) {
+    setHtmlContent(richText);
+  }
+
   return (
-    <div className="m-auto max-w-2xl">
+    <div className="ml-16 max-w-2xl">
       <h1>Create Post</h1>
 
       <form>
@@ -18,10 +24,10 @@ export default function AddPostForm() {
         </Dropdown>
         <Tabs aria-label="Default tabs" variant="default">
           <Tabs.Item active title="Profile" icon={HiUserCircle}>
-            {/* <RichTextEditor /> */}
             <div>
-              <TipTap />
+              <TipTap getEditorContent={getEditorContent} />
             </div>
+            <RichTextViewer htmlContent={htmlContent} />
           </Tabs.Item>
           <Tabs.Item title="Dashboard" icon={MdDashboard}>
             This is{" "}

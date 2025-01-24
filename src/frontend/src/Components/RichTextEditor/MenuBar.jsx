@@ -1,9 +1,39 @@
+import { useCallback } from "react";
 import RTEButton from "./RTEButton";
 
 export default function MenuBar({ editor }) {
+  const setLink = useCallback(() => {
+    const previousUrl = editor.getAttributes("link").href;
+    const url = window.prompt("URL", previousUrl);
+
+    // cancelled
+    if (url === null) {
+      return;
+    }
+
+    // empty
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+
+      return;
+    }
+
+    // update link
+    try {
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange("link")
+        .setLink({ href: url })
+        .run();
+    } catch (e) {
+      alert(e.message);
+    }
+  }, [editor]);
+
   return (
     <>
-      <div className="">
+      <div className="rounded-md">
         <RTEButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -155,15 +185,14 @@ export default function MenuBar({ editor }) {
         >
           Redo
         </RTEButton>
+
+        <RTEButton onClick={setLink}>Set Link</RTEButton>
+
         <RTEButton
-          onClick={() => editor.chain().focus().setColor("#958DF1").run()}
-          className={
-            editor.isActive("textStyle", { color: "#958DF1" })
-              ? "is-active"
-              : ""
-          }
+          onClick={() => editor.chain().focus().unsetLink().run()}
+          disabled={!editor.isActive("link")}
         >
-          Purple
+          Unset Link
         </RTEButton>
       </div>
     </>

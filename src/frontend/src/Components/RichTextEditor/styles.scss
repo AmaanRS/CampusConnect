@@ -1,69 +1,124 @@
 .tiptap {
-    padding: 1rem;
-    h1 {
-      font-size: 2.25rem; /* Equivalent to text-3xl in Tailwind */
-      font-weight: 700; /* Equivalent to font-bold in Tailwind */
-      margin: 1.5rem 0;
-    }
+  :first-child {
+    margin-top: 0;
+  }
+
+  padding: 1rem;
+  /* Heading styles */
+
   
-    h2 {
-      font-size: 2rem; /* Equivalent to text-2xl in Tailwind */
-      font-weight: 700;
-      margin: 1.25rem 0;
-    }
-  
-    h3 {
-      font-size: 1.75rem; /* Equivalent to text-xl in Tailwind */
-      font-weight: 600; /* Equivalent to font-semibold in Tailwind */
-      margin: 1rem 0;
-    }
-  
-    h4 {
-      font-size: 1.5rem; /* Equivalent to text-lg in Tailwind */
-      font-weight: 600;
-      margin: 0.75rem 0;
-    }
-  
-    h5 {
-      font-size: 1.25rem; /* Equivalent to text-base in Tailwind */
-      font-weight: 500; /* Equivalent to font-medium in Tailwind */
-      margin: 0.5rem 0;
-    }
-  
-    h6 {
-      font-size: 1rem; /* Equivalent to text-sm in Tailwind */
-      font-weight: 500;
-      margin: 0.25rem 0;
-    }
-  
-    code {
-      display: inline-block;
-      background-color: #1e293b; /* Light gray background */
-      font-family: 'Courier New', Courier, monospace; /* Monospace font */
-      padding: 0.2rem 0.4rem; /* Add some padding */
-      border-radius: 4px; /* Rounded corners */
-      font-size: 0.875rem; /* Equivalent to text-sm in Tailwind */
-      color: #e2e8f0; /* Custom color for code */
-    }
-  
-    pre {
-      background-color: #1e293b; /* Dark background for code blocks */
-      color: #e2e8f0; /* Light text color */
-      padding: 1rem; /* Add padding */
-      border-radius: 8px; /* Rounded corners */
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 0.875rem; /* Equivalent to text-sm in Tailwind */
-      overflow-x: auto; /* Enable horizontal scrolling for long code */
-      margin: 1rem 0; /* Add spacing */
-    }
-  
-    blockquote {
-      border-left: 4px solid gainsboro; /* Blue border */
-      background-color: white; /* Light blue background */
-      padding: 0.75rem 1.5rem; /* Add padding */
-      font-style: italic; /* Italicized text */
-      margin: 1rem 0; /* Add spacing */
-      color: #334155; /* Darker text color */
+  h1, 
+  h2, 
+  h3, 
+  h4, 
+  h5, 
+  h6 {
+    line-height: 1.1;
+    margin-top: 2.5rem;
+    text-wrap: pretty;
+    font-weight: bold;
+  }
+
+  h1, 
+  h2 {
+    margin-top: 3.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 { 
+    font-size: 1.4rem; 
+  }
+
+  h2 { 
+    font-size: 1.2rem; 
+  }
+
+  h3 { 
+    font-size: 1.1rem; 
+  }
+
+  h4, 
+  h5, 
+  h6 { 
+    font-size: 1rem; 
+  }
+
+  code {
+    display: inline-block;
+    background-color: #1e293b; /* Light gray background */
+    font-family: 'Courier New', Courier, monospace; /* Monospace font */
+    padding: 0.2rem 0.4rem; /* Add some padding */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 0.875rem; /* Equivalent to text-sm in Tailwind */
+    color: #e2e8f0; /* Custom color for code */
+  }
+
+  pre {
+    background-color: #1e293b; /* Dark background for code blocks */
+    color: #e2e8f0; /* Light text color */
+    padding: 1rem; /* Add padding */
+    border-radius: 8px; /* Rounded corners */
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.875rem; /* Equivalent to text-sm in Tailwind */
+    overflow-x: auto; /* Enable horizontal scrolling for long code */
+    margin: 1rem 0; /* Add spacing */
+  }
+
+  blockquote {
+    border-left: 4px solid #3b82f6; /* Blue border */
+    background-color: #f0f9ff; /* Light blue background */
+    padding: 0.75rem 1.5rem; /* Add padding */
+    font-style: italic; /* Italicized text */
+    margin: 1rem 0; /* Add spacing */
+    color: #334155; /* Darker text color */
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+
+  ol {
+    list-style-type: decimal;
+  }
+
+
+  ul, 
+  ol {
+    padding: 0 1rem;
+    margin: 1.25rem 1rem 1.25rem 0.4rem;
+    
+    li p {
+      margin-top: 0.25em;
+      margin-bottom: 0.25em;
     }
   }
-  
+
+  a {
+    color: #3b82f6; /* Primary blue color */
+    text-decoration: underline;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #1d4ed8; /* Darker blue on hover */
+      text-decoration: none; /* Removes underline on hover */
+    }
+
+    &:visited {
+      color: #6366f1; /* Purple for visited links */
+    }
+
+    &:focus {
+      outline-offset: 2px;
+    }
+  }
+
+  p {
+    font-size: 1rem; /* Default text size */
+    margin: 1rem 0; /* Vertical margin for spacing */
+    // color: #334155; /* Slate color for readability */
+  }
+
+
+
+}

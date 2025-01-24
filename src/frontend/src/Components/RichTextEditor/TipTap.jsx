@@ -6,6 +6,8 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import React from "react";
+import Link from "@tiptap/extension-link";
+
 import { HR } from "flowbite-react";
 import MenuBar from "./MenuBar";
 
@@ -54,10 +56,82 @@ const extensions = [
     },
   }),
   Underline,
+  Link.configure({
+    openOnClick: false,
+    autolink: true,
+    defaultProtocol: "https",
+    protocols: ["http", "https"],
+    isAllowedUri: (url, ctx) => {
+      try {
+        // construct URL
+        const parsedUrl = url.includes(":")
+          ? new URL(url)
+          : new URL(`${ctx.defaultProtocol}://${url}`);
+
+        // use default validation
+        if (!ctx.defaultValidate(parsedUrl.href)) {
+          return false;
+        }
+
+        // disallowed protocols
+        const disallowedProtocols = ["ftp", "file", "mailto"];
+        const protocol = parsedUrl.protocol.replace(":", "");
+
+        if (disallowedProtocols.includes(protocol)) {
+          return false;
+        }
+
+        // only allow protocols specified in ctx.protocols
+        const allowedProtocols = ctx.protocols.map((p) =>
+          typeof p === "string" ? p : p.scheme
+        );
+
+        if (!allowedProtocols.includes(protocol)) {
+          return false;
+        }
+
+        // disallowed domains
+        const disallowedDomains = [
+          "example-phishing.com",
+          "malicious-site.net",
+        ];
+        const domain = parsedUrl.hostname;
+
+        if (disallowedDomains.includes(domain)) {
+          return false;
+        }
+
+        // all checks have passed
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    shouldAutoLink: (url) => {
+      try {
+        // construct URL
+        const parsedUrl = url.includes(":")
+          ? new URL(url)
+          : new URL(`https://${url}`);
+
+        // only auto-link if the domain is not in the disallowed list
+        const disallowedDomains = [
+          "example-no-autolink.com",
+          "another-no-autolink.com",
+        ];
+        const domain = parsedUrl.hostname;
+
+        return !disallowedDomains.includes(domain);
+      } catch {
+        return false;
+      }
+    },
+  }),
 ];
 
-export default function TipTap() {
+export default function TipTap({ getEditorContent }) {
   const editor = useEditor({
+    editable: true,
     content,
     extensions,
   });
@@ -68,16 +142,22 @@ export default function TipTap() {
 
   return (
     <div className="">
-      <div className="border border-black ">
+      <div className="border shadow-sm rounded-md  ">
         <MenuBar editor={editor} />
         <HR className="m-0" />
         <EditorContent
-          style={{
-            outline: "none",
-          }}
-          className="outline-none"
+          className="custom-scrollbar max-h-96 overflow-auto"
           editor={editor}
         />
+      </div>
+      <div>
+        <button
+          onClick={() => getEditorContent(editor.getHTML())}
+          className="p-1 m-1 border-2 rounded-md border-slate-700 hover:bg-slate-700 hover:text-white"
+          type="button"
+        >
+          Save
+        </button>
       </div>
     </div>
   );
