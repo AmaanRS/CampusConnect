@@ -3,6 +3,7 @@ import React from "react";
 import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
 import { MdDashboard } from "react-icons/md";
 import RichTextEditor from "../../../Components/RichTextEditor/RichTextEditor";
+import Tiptap from "./TipTap";
 
 export default function AddPostForm() {
   return (
@@ -18,7 +19,10 @@ export default function AddPostForm() {
         </Dropdown>
         <Tabs aria-label="Default tabs" variant="default">
           <Tabs.Item active title="Profile" icon={HiUserCircle}>
-            <RichTextEditor />
+            {/* <RichTextEditor /> */}
+            <div>
+              <Tiptap />
+            </div>
           </Tabs.Item>
           <Tabs.Item title="Dashboard" icon={MdDashboard}>
             This is{" "}
