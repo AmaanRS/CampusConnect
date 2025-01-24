@@ -142,9 +142,9 @@ export default function TipTap({ getEditorContent }) {
 
   return (
     <div className="">
-      <div className="border shadow-sm rounded-md  ">
+      <div className="border border-slate-400 rounded-md  ">
         <MenuBar editor={editor} />
-        <HR className="m-0" />
+        <HR className="m-0 border border-t-slate-400" />
         <EditorContent
           className="custom-scrollbar max-h-96 overflow-auto"
           editor={editor}

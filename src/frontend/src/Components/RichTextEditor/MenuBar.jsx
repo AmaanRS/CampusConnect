@@ -1,5 +1,16 @@
 import { useCallback } from "react";
 import RTEButton from "./RTEButton";
+import { MdFormatListBulleted } from "react-icons/md";
+import { RiListOrdered2 } from "react-icons/ri";
+import { FaQuoteLeft } from "react-icons/fa6";
+import { FaStrikethrough } from "react-icons/fa6";
+import { FaUndoAlt } from "react-icons/fa";
+import { FaRedoAlt } from "react-icons/fa";
+import { MdHorizontalRule } from "react-icons/md";
+import { FaLink } from "react-icons/fa6";
+import { FaLinkSlash } from "react-icons/fa6";
+import { VscNewline } from "react-icons/vsc";
+import { AiOutlineEnter } from "react-icons/ai";
 
 export default function MenuBar({ editor }) {
   const setLink = useCallback(() => {
@@ -33,35 +44,38 @@ export default function MenuBar({ editor }) {
 
   return (
     <>
-      <div className="rounded-md">
+      <div className="rounded-md p-2">
         <RTEButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
           className={editor.isActive("bold")}
         >
-          Bold
+          <strong>B</strong>
         </RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
           className={editor.isActive("italic") ? "is-active" : ""}
         >
-          Italic
+          <b>
+            <i>i</i>
+          </b>
         </RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           disabled={!editor.can().chain().focus().toggleUnderline().run()}
           className={editor.isActive("underline") ? "is-active" : ""}
         >
-          Underline
+          <b>
+            <u>U</u>
+          </b>
         </RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
           className={editor.isActive("strike") ? "is-active" : ""}
-        >
-          Strike
-        </RTEButton>
+          icon={<FaStrikethrough className="inline" />}
+        ></RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().toggleCode().run()}
           disabled={!editor.can().chain().focus().toggleCode().run()}
@@ -144,15 +158,13 @@ export default function MenuBar({ editor }) {
         <RTEButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={editor.isActive("bulletList") ? "is-active" : ""}
-        >
-          Bullet list
-        </RTEButton>
+          icon={<MdFormatListBulleted className="inline text-lg" />}
+        ></RTEButton>
         <RTEButton
+          icon={<RiListOrdered2 className="inline text-lg" />}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={editor.isActive("orderedList") ? "is-active" : ""}
-        >
-          Ordered list
-        </RTEButton>
+        ></RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={editor.isActive("codeBlock") ? "is-active" : ""}
@@ -162,40 +174,38 @@ export default function MenuBar({ editor }) {
         <RTEButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={editor.isActive("blockquote") ? "is-active" : ""}
-        >
-          Blockquote
-        </RTEButton>
+          icon={<FaQuoteLeft className="inline-block" />}
+        ></RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
-        >
-          Horizontal rule
-        </RTEButton>
-        <RTEButton onClick={() => editor.chain().focus().setHardBreak().run()}>
-          Hard break
-        </RTEButton>
+          icon={<MdHorizontalRule className="inline" />}
+        ></RTEButton>
+        <RTEButton
+          icon={<AiOutlineEnter className="inline " />}
+          onClick={() => editor.chain().focus().setHardBreak().run()}
+        ></RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().chain().focus().undo().run()}
-        >
-          Undo
-        </RTEButton>
+          icon={<FaUndoAlt className="inline" />}
+        ></RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().chain().focus().redo().run()}
-        >
-          Redo
-        </RTEButton>
+          icon={<FaRedoAlt className="inline" />}
+        ></RTEButton>
 
-        <RTEButton onClick={setLink} className={editor.isActive("link")}>
-          Set Link
-        </RTEButton>
+        <RTEButton
+          icon={<FaLink className="inline" />}
+          onClick={setLink}
+          className={editor.isActive("link")}
+        ></RTEButton>
 
         <RTEButton
           onClick={() => editor.chain().focus().unsetLink().run()}
           disabled={!editor.isActive("link")}
-        >
-          Unset Link
-        </RTEButton>
+          icon={<FaLinkSlash className="inline" />}
+        ></RTEButton>
       </div>
     </>
   );

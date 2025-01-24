@@ -9,10 +9,11 @@ export default function AddPostForm() {
   const [htmlContent, setHtmlContent] = useState("");
   function getEditorContent(richText) {
     setHtmlContent(richText);
+    console.log(richText);
   }
 
   return (
-    <div className="ml-16 max-w-2xl">
+    <div className="ml-8 max-w-2xl">
       <h1>Create Post</h1>
 
       <form>
