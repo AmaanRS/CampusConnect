@@ -5,6 +5,8 @@ import TextStyle from "@tiptap/extension-text-style";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
+import Superscript from "@tiptap/extension-superscript";
+import Subscript from "@tiptap/extension-subscript";
 import React from "react";
 import Link from "@tiptap/extension-link";
 
@@ -127,6 +129,8 @@ const extensions = [
       }
     },
   }),
+  Superscript,
+  Subscript,
 ];
 
 export default function TipTap({ getEditorContent }) {
@@ -142,22 +146,14 @@ export default function TipTap({ getEditorContent }) {
 
   return (
     <div className="">
-      <div className="border border-slate-400 rounded-md  ">
+      <div className="border border-slate-300 rounded-md  ">
         <MenuBar editor={editor} />
-        <HR className="m-0 border border-t-slate-400" />
+        <HR className="m-0 border border-t-slate-300" />
         <EditorContent
+          onBlur={() => getEditorContent(editor.getHTML())}
           className="custom-scrollbar max-h-96 overflow-auto"
           editor={editor}
         />
-      </div>
-      <div>
-        <button
-          onClick={() => getEditorContent(editor.getHTML())}
-          className="p-1 m-1 border-2 rounded-md border-slate-700 hover:bg-slate-700 hover:text-white"
-          type="button"
-        >
-          Save
-        </button>
       </div>
     </div>
   );

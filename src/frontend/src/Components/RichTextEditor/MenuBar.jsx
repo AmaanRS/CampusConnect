@@ -71,6 +71,19 @@ export default function MenuBar({ editor }) {
           </b>
         </RTEButton>
         <RTEButton
+          onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          className={editor.isActive("superscript") ? "is-active" : ""}
+        >
+          Toggle superscript
+        </RTEButton>
+        <RTEButton
+          onClick={() => editor.chain().focus().toggleSubscript().run()}
+          className={editor.isActive("subscript") ? "is-active" : ""}
+        >
+          Toggle subscript
+        </RTEButton>
+
+        <RTEButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
           className={editor.isActive("strike") ? "is-active" : ""}
