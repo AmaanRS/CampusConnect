@@ -9,6 +9,7 @@ import MobileNavComponent from "./MobileNavComponent";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
 import Topbar from "../../../Components/Layout/Desktop/Topbar";
+import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
 
 export default function AdminLayout() {
   const { userState } = useContext(UserContext);

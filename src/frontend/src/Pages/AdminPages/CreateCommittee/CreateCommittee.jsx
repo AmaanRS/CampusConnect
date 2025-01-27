@@ -19,6 +19,8 @@ import { toast } from "react-toastify";
 
 import { useNavigate } from "react-router-dom";
 import ApiError from "../../../Components/Errors/ApiError";
+import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
+import PopularCommittees from "../../StudentPages/Home/PopularCommittees";
 
 const options = [
   { value: Department.IT, label: Department.IT },
@@ -248,6 +250,9 @@ export default function CreateCommittee() {
           <ApiError error={mutation.error} isError={mutation.isError} />
         </form>
       </div>
+      <RightSidebar>
+        <PopularCommittees />
+      </RightSidebar>
     </>
   );
 }

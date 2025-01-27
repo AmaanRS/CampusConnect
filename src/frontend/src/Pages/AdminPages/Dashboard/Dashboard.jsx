@@ -1,5 +1,6 @@
 import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
+import PopularCommittees from "../../StudentPages/Home/PopularCommittees";
 
 export default function Dashboard() {
   return (
@@ -12,7 +13,9 @@ export default function Dashboard() {
           <p>Main Content</p>
         </div>
       </CentreMainContent>
-      <RightSidebar></RightSidebar>
+      <RightSidebar>
+        <PopularCommittees />
+      </RightSidebar>
     </>
   );
 }

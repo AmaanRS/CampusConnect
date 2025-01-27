@@ -6,6 +6,7 @@ import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import StudentItem from "./StudentItem";
 import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
+import PopularCommittees from "../../StudentPages/Home/PopularCommittees";
 
 export default function AllTeachers() {
   const students = useQuery({
@@ -43,7 +44,9 @@ export default function AllTeachers() {
           )}
         </div>
       </CentreMainContent>
-      <RightSidebar></RightSidebar>
+      <RightSidebar>
+        <PopularCommittees />
+      </RightSidebar>
     </>
   );
 }
