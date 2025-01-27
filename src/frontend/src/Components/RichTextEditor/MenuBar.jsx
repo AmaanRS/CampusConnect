@@ -1,16 +1,15 @@
 import { useCallback } from "react";
 import RTEButton from "./RTEButton";
-import { MdFormatListBulleted } from "react-icons/md";
-import { RiListOrdered2 } from "react-icons/ri";
-import { FaQuoteLeft } from "react-icons/fa6";
+import { FaBold, FaItalic, FaQuoteLeft, FaUnderline } from "react-icons/fa6";
 import { FaStrikethrough } from "react-icons/fa6";
 import { FaUndoAlt } from "react-icons/fa";
 import { FaRedoAlt } from "react-icons/fa";
 import { MdHorizontalRule } from "react-icons/md";
 import { FaLink } from "react-icons/fa6";
 import { FaLinkSlash } from "react-icons/fa6";
-import { VscNewline } from "react-icons/vsc";
 import { AiOutlineEnter } from "react-icons/ai";
+import { FaListUl } from "react-icons/fa";
+import { FaListOl } from "react-icons/fa";
 
 export default function MenuBar({ editor }) {
   const setLink = useCallback(() => {
@@ -44,43 +43,42 @@ export default function MenuBar({ editor }) {
 
   return (
     <>
-      <div className="rounded-md p-2">
+      <div className=" flex flex-wrap rounded-md p-2">
         <RTEButton
+          icon={<FaBold className="inline" />}
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
           className={editor.isActive("bold")}
         >
-          <strong>B</strong>
+          Bold
         </RTEButton>
         <RTEButton
+          icon={<FaItalic className="inline" />}
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
           className={editor.isActive("italic") ? "is-active" : ""}
         >
-          <b>
-            <i>i</i>
-          </b>
+          Italic
         </RTEButton>
         <RTEButton
+          icon={<FaUnderline className="inline" />}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           disabled={!editor.can().chain().focus().toggleUnderline().run()}
           className={editor.isActive("underline") ? "is-active" : ""}
         >
-          <b>
-            <u>U</u>
-          </b>
+          Underlined
         </RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().toggleSuperscript().run()}
           className={editor.isActive("superscript") ? "is-active" : ""}
         >
-          Toggle superscript
+          superscript
         </RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().toggleSubscript().run()}
           className={editor.isActive("subscript") ? "is-active" : ""}
         >
-          Toggle subscript
+          subscript
         </RTEButton>
 
         <RTEButton
@@ -171,13 +169,17 @@ export default function MenuBar({ editor }) {
         <RTEButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={editor.isActive("bulletList") ? "is-active" : ""}
-          icon={<MdFormatListBulleted className="inline text-lg" />}
-        ></RTEButton>
+          icon={<FaListUl className="inline" />}
+        >
+          Unorderd List
+        </RTEButton>
         <RTEButton
-          icon={<RiListOrdered2 className="inline text-lg" />}
+          icon={<FaListOl className="inline" />}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={editor.isActive("orderedList") ? "is-active" : ""}
-        ></RTEButton>
+        >
+          Ordered List
+        </RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={editor.isActive("codeBlock") ? "is-active" : ""}

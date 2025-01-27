@@ -11,17 +11,17 @@ import Topbar from "../../../Components/Layout/Desktop/Topbar";
 export default function StudentLayout() {
   const { userState, logOutUser } = useContext(UserContext);
   const navigate = useNavigate();
-  useEffect(() => {
-    if (userState.accountType !== AccountType.Student) {
-      navigate("/");
-    }
-    if (
-      userState.accountType === AccountType.Student &&
-      !userState.isProfileComplete
-    ) {
-      navigate("/userprofile");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (userState.accountType !== AccountType.Student) {
+  //     navigate("/");
+  //   }
+  //   if (
+  //     userState.accountType === AccountType.Student &&
+  //     !userState.isProfileComplete
+  //   ) {
+  //     navigate("/userprofile");
+  //   }
+  // }, []);
 
   return (
     <>
