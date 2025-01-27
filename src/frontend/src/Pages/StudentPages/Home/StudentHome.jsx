@@ -27,7 +27,7 @@ export default function StudentHome() {
         <div className="pl-0 w-full m-auto p-0 inline-block ">
           {students.isLoading && (
             <>
-              <p className="flex h-screen ml-96 items-center justify-center">
+              <p className="flex h-screen items-center justify-center">
                 Loading...
               </p>
             </>
