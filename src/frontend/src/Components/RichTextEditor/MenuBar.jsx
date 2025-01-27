@@ -1,15 +1,32 @@
 import { useCallback } from "react";
 import RTEButton from "./RTEButton";
-import { FaBold, FaItalic, FaQuoteLeft, FaUnderline } from "react-icons/fa6";
+import {
+  FaBold,
+  FaItalic,
+  FaQuoteLeft,
+  FaUnderline,
+  FaCode,
+} from "react-icons/fa6";
 import { FaStrikethrough } from "react-icons/fa6";
 import { FaUndoAlt } from "react-icons/fa";
 import { FaRedoAlt } from "react-icons/fa";
-import { MdHorizontalRule } from "react-icons/md";
+import { MdFormatClear, MdHorizontalRule, MdLayersClear } from "react-icons/md";
 import { FaLink } from "react-icons/fa6";
 import { FaLinkSlash } from "react-icons/fa6";
 import { AiOutlineEnter } from "react-icons/ai";
 import { FaListUl } from "react-icons/fa";
 import { FaListOl } from "react-icons/fa";
+import { ImSubscript2, ImSuperscript2 } from "react-icons/im";
+import { BiParagraph } from "react-icons/bi";
+import {
+  RiCodeBlock,
+  RiH1,
+  RiH2,
+  RiH3,
+  RiH4,
+  RiH5,
+  RiH6,
+} from "react-icons/ri";
 
 export default function MenuBar({ editor }) {
   const setLink = useCallback(() => {
@@ -68,45 +85,60 @@ export default function MenuBar({ editor }) {
         >
           Underlined
         </RTEButton>
-        <RTEButton
-          onClick={() => editor.chain().focus().toggleSuperscript().run()}
-          className={editor.isActive("superscript") ? "is-active" : ""}
-        >
-          superscript
-        </RTEButton>
-        <RTEButton
-          onClick={() => editor.chain().focus().toggleSubscript().run()}
-          className={editor.isActive("subscript") ? "is-active" : ""}
-        >
-          subscript
-        </RTEButton>
 
         <RTEButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
           className={editor.isActive("strike") ? "is-active" : ""}
           icon={<FaStrikethrough className="inline" />}
-        ></RTEButton>
+        >
+          Strikethrough
+        </RTEButton>
+
         <RTEButton
+          icon={<ImSuperscript2 className="inline text-lg" />}
+          onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          className={editor.isActive("superscript") ? "is-active" : ""}
+        >
+          Superscript
+        </RTEButton>
+        <RTEButton
+          icon={<ImSubscript2 className="inline text-lg" />}
+          onClick={() => editor.chain().focus().toggleSubscript().run()}
+          className={editor.isActive("subscript") ? "is-active" : ""}
+        >
+          Subscript
+        </RTEButton>
+
+        <RTEButton
+          icon={<FaCode className="inline text-lg" />}
           onClick={() => editor.chain().focus().toggleCode().run()}
           disabled={!editor.can().chain().focus().toggleCode().run()}
           className={editor.isActive("code") ? "is-active" : ""}
         >
           Code
         </RTEButton>
-        <RTEButton onClick={() => editor.chain().focus().unsetAllMarks().run()}>
+        <RTEButton
+          icon={<MdFormatClear className="inline text-xl" />}
+          onClick={() => editor.chain().focus().unsetAllMarks().run()}
+        >
           Clear marks
         </RTEButton>
-        <RTEButton onClick={() => editor.chain().focus().clearNodes().run()}>
+        <RTEButton
+          icon={<MdLayersClear className="inline text-xl" />}
+          onClick={() => editor.chain().focus().clearNodes().run()}
+        >
           Clear nodes
         </RTEButton>
         <RTEButton
+          icon={<BiParagraph className="inline text-xl" />}
           onClick={() => editor.chain().focus().setParagraph().run()}
           className={editor.isActive("paragraph") ? "is-active" : ""}
         >
           Paragraph
         </RTEButton>
         <RTEButton
+          icon={<RiH1 className="inline text-lg " />}
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
           }
@@ -117,6 +149,7 @@ export default function MenuBar({ editor }) {
           H1
         </RTEButton>
         <RTEButton
+          icon={<RiH2 className="inline text-lg " />}
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 2 }).run()
           }
@@ -127,6 +160,7 @@ export default function MenuBar({ editor }) {
           H2
         </RTEButton>
         <RTEButton
+          icon={<RiH3 className="inline text-lg " />}
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 3 }).run()
           }
@@ -137,6 +171,7 @@ export default function MenuBar({ editor }) {
           H3
         </RTEButton>
         <RTEButton
+          icon={<RiH4 className="inline text-lg " />}
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 4 }).run()
           }
@@ -147,6 +182,7 @@ export default function MenuBar({ editor }) {
           H4
         </RTEButton>
         <RTEButton
+          icon={<RiH5 className="inline text-lg " />}
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 5 }).run()
           }
@@ -157,6 +193,7 @@ export default function MenuBar({ editor }) {
           H5
         </RTEButton>
         <RTEButton
+          icon={<RiH6 className="inline text-lg " />}
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 6 }).run()
           }
@@ -181,6 +218,7 @@ export default function MenuBar({ editor }) {
           Ordered List
         </RTEButton>
         <RTEButton
+          icon={<RiCodeBlock className="inline text-xl" />}
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={editor.isActive("codeBlock") ? "is-active" : ""}
         >
@@ -190,37 +228,51 @@ export default function MenuBar({ editor }) {
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={editor.isActive("blockquote") ? "is-active" : ""}
           icon={<FaQuoteLeft className="inline-block" />}
-        ></RTEButton>
+        >
+          Quote Block
+        </RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           icon={<MdHorizontalRule className="inline" />}
-        ></RTEButton>
+        >
+          Horizontal Line
+        </RTEButton>
         <RTEButton
           icon={<AiOutlineEnter className="inline " />}
           onClick={() => editor.chain().focus().setHardBreak().run()}
-        ></RTEButton>
+        >
+          Line Break
+        </RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().chain().focus().undo().run()}
           icon={<FaUndoAlt className="inline" />}
-        ></RTEButton>
+        >
+          Undo
+        </RTEButton>
         <RTEButton
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().chain().focus().redo().run()}
           icon={<FaRedoAlt className="inline" />}
-        ></RTEButton>
+        >
+          Redo
+        </RTEButton>
 
         <RTEButton
-          icon={<FaLink className="inline" />}
+          icon={<FaLink className="inline text-lg" />}
           onClick={setLink}
           className={editor.isActive("link")}
-        ></RTEButton>
+        >
+          Set Link
+        </RTEButton>
 
         <RTEButton
           onClick={() => editor.chain().focus().unsetLink().run()}
           disabled={!editor.isActive("link")}
-          icon={<FaLinkSlash className="inline" />}
-        ></RTEButton>
+          icon={<FaLinkSlash className="inline text-lg" />}
+        >
+          Remove Link
+        </RTEButton>
       </div>
     </>
   );
