@@ -1,4 +1,4 @@
-import { Dropdown, Tabs } from "flowbite-react";
+import { Button, Dropdown, Label, Tabs, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
 import { MdDashboard } from "react-icons/md";
@@ -14,32 +14,73 @@ export default function AddPostForm() {
 
   return (
     <div className="ml-8 max-w-2xl">
-      <h1>Create Post</h1>
-
+      <h1 className="font-bold text-slate-800 text-2xl mb-4">Create Post</h1>
       <form>
-        <Dropdown label="Dropdown button" dismissOnClick={false}>
-          <Dropdown.Item>Dashboard</Dropdown.Item>
-          <Dropdown.Item>Settings</Dropdown.Item>
-          <Dropdown.Item>Earnings</Dropdown.Item>
-          <Dropdown.Item>Sign out</Dropdown.Item>
-        </Dropdown>
-        <Tabs aria-label="Default tabs" variant="default">
-          <Tabs.Item active title="Profile" icon={HiUserCircle}>
-            <div>
-              <TipTap getEditorContent={getEditorContent} />
-            </div>
-            <RichTextViewer htmlContent={htmlContent} />
-          </Tabs.Item>
-          <Tabs.Item title="Dashboard" icon={MdDashboard}>
-            This is{" "}
-            <span className="font-medium text-gray-800 dark:text-white">
-              Dashboard tab's associated content
-            </span>
-            . Clicking another tab will toggle the visibility of this one for
-            the next. The tab JavaScript swaps classes to control the content
-            visibility and styling.
-          </Tabs.Item>
-        </Tabs>
+        <div className="mb-8 ">
+          <Dropdown
+            renderTrigger={() => (
+              <div className="inline-block  bg-slate-200 px-4 py-2 rounded-full">
+                <div className=" flex items-center">
+                  <span className="font-medium">Select a committee</span>
+                  <span className="ml-2">
+                    {" "}
+                    {/* Adjust the margin as needed */}
+                    <svg
+                      className="fill-current"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M10 13.125a.624.624 0 0 1-.442-.183l-5-5 .884-.884L10 11.616l4.558-4.558.884.884-5 5a.624.624 0 0 1-.442.183Z"></path>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            )}
+            dismissOnClick={false}
+          >
+            <Dropdown.Item>Hackathon Committee</Dropdown.Item>
+            <Dropdown.Item>Student Council</Dropdown.Item>
+            <Dropdown.Item>NSS</Dropdown.Item>
+            <Dropdown.Item>Computer Society of India</Dropdown.Item>
+          </Dropdown>
+        </div>
+        <div className="mb-8">
+          <div className="mb-2 block">
+            <Label
+              className="my-2 text-lg font-semibold"
+              htmlFor="email1"
+              value="Post Title"
+            />
+          </div>
+          <TextInput
+            sizing={"lg"}
+            theme={{
+              field: {
+                input: {
+                  colors: {
+                    gray: "border-gray-300 bg-gray-50 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-cyan-500 dark:focus:ring-cyan-500 ",
+                  },
+                },
+              },
+            }}
+            className="rounded-full"
+            id="email1"
+            type="email"
+            placeholder="Post Title"
+            required
+          />
+        </div>
+
+        <div>
+          <p className="my-2 text-lg font-semibold">Post Content</p>
+          <TipTap getEditorContent={getEditorContent} />
+        </div>
+        {/* <RichTextViewer htmlContent={htmlContent} /> */}
+        <Button color="blue" className=" inline-block  ml-auto mt-4">
+          Submit
+        </Button>
       </form>
     </div>
   );
