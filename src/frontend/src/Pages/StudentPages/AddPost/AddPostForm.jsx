@@ -16,7 +16,7 @@ export default function AddPostForm() {
         <div className="mb-8 ">
           <Dropdown
             renderTrigger={() => (
-              <div className="inline-block  bg-slate-200 px-4 py-2 rounded-full">
+              <div className="inline-block  bg-neutral-200 px-4 py-2 rounded-full">
                 <div className=" flex items-center">
                   <span className="font-medium">Select a committee</span>
                   <span className="ml-2">
@@ -51,22 +51,9 @@ export default function AddPostForm() {
               value="Post Title"
             />
           </div>
-          <TextInput
-            sizing={"lg"}
-            theme={{
-              field: {
-                input: {
-                  colors: {
-                    gray: "border-gray-300 bg-gray-50 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-cyan-500 dark:focus:ring-cyan-500 ",
-                  },
-                },
-              },
-            }}
-            className="rounded-full"
-            id="email1"
-            type="email"
+          <input
             placeholder="Post Title"
-            required
+            className=" rounded-2xl block w-full border disabled:cursor-not-allowed disabled:opacity-50 border-gray-300 bg-gray-50 text-gray-900 focus:border-cyan-500 focus:ring-cyan-500  p-4 sm:text-base"
           />
         </div>
 
