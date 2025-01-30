@@ -17,6 +17,7 @@
     "@tiptap/extension-color": "^2.11.3",
     "@tiptap/extension-link": "^2.11.3",
     "@tiptap/extension-list-item": "^2.11.3",
+    "@tiptap/extension-placeholder": "^2.11.3",
     "@tiptap/extension-subscript": "^2.11.3",
     "@tiptap/extension-superscript": "^2.11.3",
     "@tiptap/extension-text-style": "^2.11.3",
