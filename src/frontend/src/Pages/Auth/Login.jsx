@@ -81,7 +81,7 @@ function Login() {
       console.log(res);
       if (res.data.token) {
         console.log(res.data.token);
-        Cookies.set("token", res.data.token);
+        Cookies.set("token", res.data.token, { expires: 365 * 1 }); // Expires in 1 years
         const decodedToken = jwtDecode(res.data.token);
         setUserState(decodedToken);
         const accountType = decodedToken.accountType;
