@@ -27,6 +27,7 @@ export default function UploadedImage({ images = [], handleRemove, removing }) {
           backgroundStyle={{
             backgroundColor: "rgba(0, 0, 0, 0.8)", // Dark with some transparency
             cursor: "pointer",
+            zIndex: 51,
           }}
           src={images}
           currentIndex={0}

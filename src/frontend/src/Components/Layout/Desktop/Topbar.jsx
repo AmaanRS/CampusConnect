@@ -8,7 +8,7 @@ import { UserContext } from "../../../store/UserContextProvider";
 export default function Topbar() {
   const { logOutUser } = useContext(UserContext);
   return (
-    <div className="border-b-[1px] z-1 fixed w-full border-gray-300 ">
+    <div className="border-b-[1px] z-50 fixed w-full border-gray-300 ">
       <Navbar className="flex  ">
         {/* Left Section - Logo */}
         <Link to={"/"} className="flex-shrink-0">

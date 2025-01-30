@@ -53,12 +53,12 @@ export default function AddPostForm() {
           </div>
           <input
             placeholder="Post Title"
-            className=" rounded-2xl block w-full border disabled:cursor-not-allowed disabled:opacity-50 border-gray-300 bg-gray-50 text-gray-900 focus:border-cyan-500 focus:ring-cyan-500  p-4 sm:text-base"
+            className=" appearance-none rounded-2xl block w-full border disabled:cursor-not-allowed disabled:opacity-50 border-gray-300 bg-gray-50 text-gray-900  focus:outline-1 focus:outline-blue-700  p-4 sm:text-base"
           />
         </div>
 
         <div>
-          <p className="my-2 text-lg font-semibold">Post Content</p>
+          <p className="my-2  text-lg font-semibold">Post Content</p>
           <TipTap getEditorContent={getEditorContent} />
         </div>
 
