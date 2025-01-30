@@ -1,14 +1,18 @@
 import { Button, Dropdown, Label, Tabs, TextInput } from "flowbite-react";
-import React from "react";
+import React, { useState } from "react";
 import TipTap from "../../../Components/RichTextEditor/TipTap";
 import MediaUploader from "../../../Components/MediaUploader/MediaUploader";
 
 export default function AddPostForm() {
+  const [htmlContent, setHtmlContent] = useState("");
+  const [publicURL, setPublicUrl] = useState("");
+  const [filePath, setFilePath] = useState("");
+
   function getEditorContent(richText) {
     setHtmlContent(richText);
-    console.log(richText);
   }
-
+  console.log(filePath, publicURL);
+  console.log(htmlContent);
   return (
     <div className="ml-8 max-w-2xl">
       <h1 className="font-bold text-slate-800 text-2xl mb-4">Add Post</h1>
@@ -62,8 +66,14 @@ export default function AddPostForm() {
           <TipTap getEditorContent={getEditorContent} />
         </div>
 
-        <div>
-          <MediaUploader />
+        <div className="mt-6">
+          <MediaUploader
+            filePath={filePath}
+            publicURL={publicURL}
+            setFilePath={setFilePath}
+            setPublicUrl={setPublicUrl}
+            dir={"sub1/sub2/"}
+          />
         </div>
 
         <div className="text-center">

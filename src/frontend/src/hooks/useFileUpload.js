@@ -3,12 +3,16 @@ import axios from "axios";
 
 const MAX_FILE_SIZE = 11 * 1024; // 11 KB in bytes
 
-export function useFileUpload(dir = "") {
+export function useFileUpload({
+  dir,
+  publicURL,
+  filePath,
+  setPublicUrl,
+  setFilePath,
+}) {
   const [error, setError] = useState("");
-  const [publicURL, setPublicUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [removing, setRemoving] = useState(false);
-  const [filePath, setFilePath] = useState("");
 
   useEffect(() => {
     const handleBeforeUnload = () => {
