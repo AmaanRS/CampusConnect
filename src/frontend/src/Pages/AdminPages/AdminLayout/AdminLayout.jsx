@@ -14,11 +14,11 @@ import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainCont
 export default function AdminLayout() {
   const { userState } = useContext(UserContext);
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (userState.accountType !== AccountType.Admin) {
-  //     navigate("/");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (userState.accountType !== AccountType.Admin) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <>
