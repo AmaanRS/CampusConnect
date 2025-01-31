@@ -99,12 +99,10 @@ export function useFileUpload({
   }
 
   return {
-    publicURL,
     uploading,
-    filePath,
-    handleFileChange,
-    handleRemove,
     removing,
     error,
+    handleRemove,
+    handleFileChange,
   };
 }
