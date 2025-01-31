@@ -9,11 +9,13 @@ export default function Topbar() {
   const { logOutUser } = useContext(UserContext);
   return (
     <div className="border-b-[1px] z-50 fixed w-full border-gray-300 ">
-      <Navbar className="flex  ">
+      <div className="flex px-3 bg-white justify-between h-[52.3px] items-center">
         {/* Left Section - Logo */}
-        <Link to={"/"} className="flex-shrink-0">
-          <Logo />
-        </Link>
+        <div>
+          <Link to={"/"} className="flex-shrink-0">
+            <Logo />
+          </Link>
+        </div>
 
         {/* Center Section - Search Bar */}
         <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-lg">
@@ -34,8 +36,8 @@ export default function Topbar() {
                 },
               }}
               color={"search"}
-              id="email4"
-              type="email"
+              id="search"
+              type="search"
               icon={LucideSearch}
               placeholder="Search committees, posts, or events..."
               required
@@ -44,7 +46,7 @@ export default function Topbar() {
         </div>
 
         {/* Right Section - User Dropdown */}
-        <div className="flex md:order-2 flex-shrink-0">
+        <div className="">
           <Dropdown
             className="rounded-xl"
             arrowIcon={false}
@@ -67,7 +69,7 @@ export default function Topbar() {
             </Dropdown.Item>
           </Dropdown>
         </div>
-      </Navbar>
+      </div>
     </div>
   );
 }
