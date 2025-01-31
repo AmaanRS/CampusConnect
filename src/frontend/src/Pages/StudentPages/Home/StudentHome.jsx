@@ -1,5 +1,5 @@
 import React from "react";
-import StudentPost from "./StudentPost";
+import StudentPost from "./Post/StudentPost";
 
 export default function StudentHome() {
   return (

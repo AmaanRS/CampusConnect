@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import "./CardScroll.css";
+import "./Components/RichTextEditor/styles.scss";
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import About from "./Pages/Landing Page/About";
