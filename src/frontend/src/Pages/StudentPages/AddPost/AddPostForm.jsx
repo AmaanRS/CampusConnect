@@ -2,6 +2,8 @@ import { Button, Dropdown, Label, Tabs, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import TipTap from "../../../Components/RichTextEditor/TipTap";
 import MediaUploader from "../../../Components/MediaUploader/MediaUploader";
+import Title from "./Title";
+import SelectCommittee from "./SelectCommittee";
 
 export default function AddPostForm() {
   const [htmlContent, setHtmlContent] = useState("");
@@ -18,48 +20,10 @@ export default function AddPostForm() {
       <h1 className="font-bold text-slate-800 text-2xl mb-4">Add Post</h1>
       <form>
         <div className="mb-8 ">
-          <Dropdown
-            renderTrigger={() => (
-              <div className="inline-block  bg-neutral-200 px-4 py-2 rounded-full">
-                <div className=" flex items-center">
-                  <span className="font-medium">Select a committee</span>
-                  <span className="ml-2">
-                    {" "}
-                    {/* Adjust the margin as needed */}
-                    <svg
-                      className="fill-current"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      width="20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M10 13.125a.624.624 0 0 1-.442-.183l-5-5 .884-.884L10 11.616l4.558-4.558.884.884-5 5a.624.624 0 0 1-.442.183Z"></path>
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            )}
-            dismissOnClick={false}
-          >
-            <Dropdown.Item>Hackathon Committee</Dropdown.Item>
-            <Dropdown.Item>Student Council</Dropdown.Item>
-            <Dropdown.Item>NSS</Dropdown.Item>
-            <Dropdown.Item>Computer Society of India</Dropdown.Item>
-          </Dropdown>
+          <SelectCommittee />
         </div>
         <div className="mb-8">
-          <div className="mb-2 block">
-            <Label
-              className="my-2 text-lg font-semibold"
-              htmlFor="title"
-              value="Post Title"
-            />
-          </div>
-          <input
-            id="title"
-            placeholder="Post Title"
-            className=" appearance-none rounded-2xl block w-full border disabled:cursor-not-allowed disabled:opacity-50 border-gray-300 bg-gray-50 text-gray-900  focus:outline-1 focus:outline-blue-700  p-4 sm:text-base"
-          />
+          <Title />
         </div>
 
         <div>
@@ -79,18 +43,12 @@ export default function AddPostForm() {
           />
         </div>
 
-        <div className="text-center">
+        <div className="text-right">
           <Button
             color="blue"
             className=" inline-block text-center ml-auto mt-4"
           >
             Submit
-          </Button>
-          <Button
-            color="failure"
-            className=" inline-block text-center ml-3 mt-4"
-          >
-            Clear
           </Button>
         </div>
       </form>
