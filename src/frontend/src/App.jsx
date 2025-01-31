@@ -18,7 +18,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import StudentLayout from "./Pages/StudentPages/StudentLayout/StudentLayout";
 import TeacherLayout from "./Pages/TeacherPages/TeacherLayout/TeacherLayout";
 import TeacherDashboard from "./Pages/TeacherPages/Dashboard/TeacherDashboard";
-import StudentHome from "./Pages/StudentPages/Home/StudentHome";
 import AppLayout from "./Components/Layout/AppLayout";
 import CreateCommittee from "./Pages/AdminPages/CreateCommittee/CreateCommittee";
 import AllCommittees from "./Pages/AdminPages/AllCommittees/AllCommittees";
@@ -27,6 +26,7 @@ import AllStudents from "./Pages/AdminPages/Students/AllStudents";
 import CreatePost from "./Pages/StudentPages/AddPost/CreatePost";
 import TestLayout from "./Test/TestLayout";
 import AddPost from "./Pages/StudentPages/AddPost/AddPost";
+import StudentHomeLayout from "./Pages/StudentPages/Home/StudentHomeLayout";
 
 const queryClient = new QueryClient();
 function App() {
@@ -97,7 +97,7 @@ function App() {
               path: "student",
               element: <StudentLayout />,
               children: [
-                { index: true, element: <StudentHome /> },
+                { index: true, element: <StudentHomeLayout /> },
                 { path: "createPost", element: <AddPost /> },
                 { path: "page3", element: <>Page 3</> },
               ],

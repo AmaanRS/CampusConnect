@@ -6,7 +6,7 @@ import AllCommitteeCard from "./AllCommitteeCard";
 import AllCommitteesCardSkeleton from "./AllCommitteesCardSkeleton";
 import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
-import PopularCommittees from "../../StudentPages/Home/PopularCommittees";
+import PopularCommittees from "../../StudentPages/Home/PopularCommittee/PopularCommittees";
 
 export default function AllCommittees() {
   const committeRequest = useQuery({
