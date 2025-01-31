@@ -17,9 +17,10 @@ export default function AddPostForm() {
   console.log(htmlContent);
   return (
     <div className="ml-8 max-w-2xl">
-      <h1 className="font-bold text-slate-800 text-2xl mb-4">Add Post</h1>
+      <h1 className="font-bold text-slate-800 text-2xl mb-8">Add Post</h1>
       <form>
         <div className="mb-8 ">
+          <p className="my-2  text-lg font-semibold">Select Committee</p>
           <SelectCommittee />
         </div>
         <div className="mb-8">
