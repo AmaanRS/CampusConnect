@@ -18,10 +18,15 @@ export default function PostImage() {
   };
 
   return (
-    <div className="w-full my-1 rounded-2xl bg-white  overflow-hidden ">
+    <div
+      style={{
+        backgroundImage: `url(${images[1]})`,
+      }}
+      className="w-full my-1  bg-cover bg-center  rounded-2xl"
+    >
       <img
-        className="rounded-2xl  object-cover  w-full max-h-96"
-        src={images[2]}
+        className="rounded-2xl backdrop-blur-3xl   object-contain   w-full max-h-96"
+        src={images[1]}
         alt="image"
         onClick={() => openImageViewer()}
       />
@@ -29,12 +34,13 @@ export default function PostImage() {
         <ImageViewer
           backgroundStyle={{
             backgroundColor: "rgba(0, 0, 0, 0.8)", // Dark with some transparency
+            backdropFilter: "blur(10px)", // Apply blur effect to the backdrop
             cursor: "pointer",
             zIndex: 51,
           }}
           src={images}
-          currentIndex={2}
-          disableScroll={false}
+          currentIndex={0}
+          disableScroll={true}
           closeOnClickOutside={true}
           onClose={closeImageViewer}
         />
