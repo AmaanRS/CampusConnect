@@ -17,33 +17,41 @@ export default function PostImage() {
     setIsViewerOpen(false);
   };
 
+  let image = images[2];
+
   return (
     <div
       style={{
-        backgroundImage: `url(${images[1]})`,
+        backgroundImage: `url(${image})`,
       }}
       className="w-full my-1  bg-cover bg-center  rounded-2xl"
     >
       <img
         className="rounded-2xl backdrop-blur-3xl   object-contain   w-full max-h-96"
-        src={images[1]}
+        src={image}
         alt="image"
         onClick={() => openImageViewer()}
       />
       {isViewerOpen && (
-        <ImageViewer
-          backgroundStyle={{
-            backgroundColor: "rgba(0, 0, 0, 0.8)", // Dark with some transparency
-            backdropFilter: "blur(10px)", // Apply blur effect to the backdrop
-            cursor: "pointer",
-            zIndex: 51,
+        <div
+          style={{
+            backgroundImage: `url(${image})`,
           }}
-          src={images}
-          currentIndex={0}
-          disableScroll={true}
-          closeOnClickOutside={true}
-          onClose={closeImageViewer}
-        />
+          className="h-screen w-screen bg-cover bg-center  z-[51] fixed top-0 left-0"
+        >
+          <ImageViewer
+            backgroundStyle={{
+              backgroundColor: "rgba(0, 0, 0,0)", // Dark with some transparency
+              backdropFilter: "blur(64px)", // Apply blur effect to the backdrop
+              cursor: "pointer",
+            }}
+            src={images}
+            currentIndex={2}
+            disableScroll={true}
+            closeOnClickOutside={true}
+            onClose={closeImageViewer}
+          />
+        </div>
       )}
     </div>
   );
