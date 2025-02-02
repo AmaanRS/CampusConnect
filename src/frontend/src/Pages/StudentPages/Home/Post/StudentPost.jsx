@@ -13,14 +13,12 @@ export default function StudentPost() {
     <>
       <div className="mx-1 hover:bg-slate-100 cursor-pointer rounded-2xl py-1 px-3 transition-colors duration-100 ">
         <PostTop />
-        <div>
-          <PostTitle />
+        <PostTitle />
 
-          <PostBody />
-          <PostImage />
+        <PostBody />
+        <PostImage />
 
-          <PostActionBar />
-        </div>
+        <PostActionBar />
       </div>
       <div className="border-b-[1.3px] mx-1 border-slate-200 mt-1 mb-1"></div>
     </>
