@@ -13,8 +13,6 @@ export default function AddPostForm() {
   function getEditorContent(richText) {
     setHtmlContent(richText);
   }
-  console.log(filePath, publicURL);
-  console.log(htmlContent);
   return (
     <div className="ml-8 max-w-2xl">
       <h1 className="font-bold text-slate-800 text-2xl mb-8">Add Post</h1>
