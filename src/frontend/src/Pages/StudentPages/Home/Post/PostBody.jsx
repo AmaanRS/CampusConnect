@@ -10,9 +10,12 @@ export default function PostBody() {
 
   return (
     <div className="tiptap-post mb-1 line-clamp-3 text-slate-700   ">
-      {parse(`<p>Hey y’all! I think as experienced leetcoders (or not), we underestimate how “easy” some Leetcode problems  are. For me, it’d be Two Sum. I remember not being able to come up with the HashMap as the best fit data structure. 
-  
-  All to say, the wifey and I came up with a video walkthrough that goes through the actual intuition behind the optimal solution. We also included 2 variants that Meta asks (in case you were studying for it!) - TBH it’s helpful to solve the same problem from different angles with small-to-medium modifications (Spoiler: the second one is about dominoes).</p>
+      {parse(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas id fringilla leo, a vehicula turpis. Donec faucibus turpis a justo vestibulum auctor. Phasellus iaculis aliquam placerat. Sed varius in urna ut elementum. Nam convallis massa vitae ipsum congue, consectetur interdum est pretium. In molestie, tortor ut facilisis tempus, urna arcu venenatis velit, quis venenatis felis sem nec magna. Morbi vel dui nunc. Fusce eu tempus neque. Aenean vel lacinia dui, nec scelerisque enim. Quisque libero metus, condimentum sit amet ligula quis, sodales consequat metus. Fusce a bibendum nisi.
+
+Curabitur ut interdum risus. Aliquam ultrices, ligula sit amet maximus condimentum, diam lacus blandit ligula, et consequat mauris libero nec nulla. Mauris eget ligula erat. Quisque erat tortor, pretium id justo ac, commodo gravida urna. Donec cursus molestie justo, et mollis augue eleifend a. Integer venenatis odio in leo vulputate congue. Pellentesque iaculis ligula ut ante pellentesque vulputate. In in aliquet leo. Nam malesuada nulla suscipit gravida mattis. In id imperdiet lacus, non blandit quam. Aliquam a ultricies sem. Duis hendrerit lobortis gravida.
+
+Aliquam euismod risus vel bibendum euismod. Proin ut nunc tincidunt, auctor ligula a, venenatis enim. Morbi consectetur nisi consequat, vestibulum mi sed, pellentesque felis. Nullam accumsan hendrerit lacinia. Vestibulum lobortis auctor mauris non rhoncus. Nullam posuere tellus eu finibus sollicitudin. Quisque nec enim tortor. Nam convallis ex vitae eros pellentesque iaculis. Nam nisi turpis, sodales eget gravida eu, tincidunt vel felis. Curabitur dapibus magna ac neque lacinia placerat. Donec tincidunt nisi sit amet neque varius, vitae ultricies nulla egestas.
+
   `)}
     </div>
   );
