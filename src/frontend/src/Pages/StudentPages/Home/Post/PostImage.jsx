@@ -19,23 +19,23 @@ export default function PostImage() {
     setIsViewerOpen(false);
   };
 
-  let image = images[0];
+  let index = 0;
 
   return (
     <div
       style={{
-        backgroundImage: `url(${image})`,
+        backgroundImage: `url(${images[index]})`,
       }}
-      className="w-full my-1  bg-cover bg-center  rounded-2xl"
+      className="w-full my-1  bg-cover bg-center overflow-hidden  rounded-2xl"
     >
       <img
         className="rounded-2xl backdrop-blur-3xl   object-contain   w-full max-h-96"
-        src={image}
+        src={images[index]}
         alt="image"
         onClick={() => openImageViewer()}
       />
       {isViewerOpen && (
-        <SimpleImageWrapper image={image}>
+        <SimpleImageWrapper image={images[index]}>
           <ImageViewer
             backgroundStyle={{
               backgroundColor: "rgba(0, 0, 0,0)", // Dark with some transparency
@@ -43,7 +43,7 @@ export default function PostImage() {
               cursor: "pointer",
             }}
             src={images}
-            currentIndex={0}
+            currentIndex={index}
             disableScroll={true}
             closeOnClickOutside={true}
             onClose={closeImageViewer}

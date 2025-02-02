@@ -5,21 +5,21 @@ import numbro from "numbro";
 import { PiShareFat } from "react-icons/pi";
 
 export default function PostActionBar() {
-  let active = true;
+  let active = false;
   return (
     <div className="flex">
       {/* like button */}
       <div
         className={`min-w-16   rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1 ${
-          active ? "text-white bg-blue-500 " : "bg-slate-200"
+          active ? "text-white bg-blue-600 " : "bg-slate-200"
         }`}
       >
         <button
           type="button"
-          className={`text-black bg-slate-200  rounded-full font-medium text-xs text-center inline-flex items-center hover:text-blue-500 ${
+          className={`  rounded-full font-medium text-xs text-center inline-flex items-center hover:text-blue-600 ${
             active
-              ? "text-white bg-blue-500 hover:text-white hover:bg-blue-500"
-              : ""
+              ? "text-white bg-blue-600 hover:text-white hover:bg-blue-600"
+              : "text-black bg-slate-200"
           } `}
         >
           <AiOutlineLike className="text-lg rounded-full m-1" />
@@ -33,7 +33,7 @@ export default function PostActionBar() {
       <div className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1">
         <button
           type="button"
-          className="text-black bg-slate-200 hover:text-blue-500  rounded-full font-medium text-xs text-center inline-flex items-center"
+          className="text-black bg-slate-200 hover:text-blue-600  rounded-full font-medium text-xs text-center inline-flex items-center"
         >
           <FaRegComment className="text-base rounded-full m-1" />
           <div className="text-xs font-medium">
@@ -43,14 +43,14 @@ export default function PostActionBar() {
       </div>
 
       {/* share button */}
-      <div className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1">
+      <div className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1 ">
         <button
           type="button"
-          className="text-black bg-slate-200  rounded-full font-medium text-xs text-center inline-flex items-center"
+          className="text-black bg-slate-200  rounded-full font-medium text-xs text-center inline-flex items-center hover:text-blue-600"
         >
           <PiShareFat className="text-lg rounded-full m-1" />
+          <div className=" font-medium text-xs">Share</div>
         </button>
-        <div className=" font-medium text-xs">Share</div>
       </div>
     </div>
   );
