@@ -1,5 +1,6 @@
 import { Avatar } from "flowbite-react";
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function PostTop() {
   return (
@@ -8,7 +9,11 @@ export default function PostTop() {
         <div>
           <Avatar rounded size={"xs"} />
         </div>
-        <div className="text-xs font-semibold ml-2">subname</div>
+        <Link to={"/"}>
+          <div className="text-xs font-semibold ml-2 hover:text-blue-500">
+            subname
+          </div>
+        </Link>
         <div className="h-[4px] w-[4px] mx-2 rounded-full bg-neutral-500"></div>
         <div className="text-xs">10 min ago</div>
       </div>
