@@ -29,7 +29,7 @@ export default function PostImage() {
       className="w-full my-1  bg-cover bg-center overflow-hidden  rounded-2xl"
     >
       <img
-        className="rounded-2xl backdrop-blur-3xl   object-contain   w-full max-h-96"
+        className="rounded-2xl backdrop-blur-3xl   object-contain   w-full max-h-[400px] xl:max-h-[530px] "
         src={images[index]}
         alt="image"
         onClick={() => openImageViewer()}
