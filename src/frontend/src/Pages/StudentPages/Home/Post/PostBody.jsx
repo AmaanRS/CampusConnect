@@ -10,8 +10,8 @@ export default function PostBody({ isImage }) {
 
   return (
     <div
-      className={`tiptap-post mb-1,  line-clamp-${
-        isImage ? "3" : "6"
+      className={`tiptap-post mb-1  ${
+        isImage ? "line-clamp-3" : "line-clamp-6"
       }  text-slate-700`}
     >
       {parse(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas id fringilla leo, a vehicula turpis. Donec faucibus turpis a justo vestibulum auctor. Phasellus iaculis aliquam placerat. Sed varius in urna ut elementum. Nam convallis massa vitae ipsum congue, consectetur interdum est pretium. In molestie, tortor ut facilisis tempus, urna arcu venenatis velit, quis venenatis felis sem nec magna. Morbi vel dui nunc. Fusce eu tempus neque. Aenean vel lacinia dui, nec scelerisque enim. Quisque libero metus, condimentum sit amet ligula quis, sodales consequat metus. Fusce a bibendum nisi.

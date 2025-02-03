@@ -28,7 +28,7 @@ import CreatePost from "./Pages/StudentPages/AddPost/CreatePost";
 import TestLayout from "./Test/TestLayout";
 import AddPost from "./Pages/StudentPages/AddPost/AddPost";
 import StudentHomeLayout from "./Pages/StudentPages/Home/StudentHomeLayout";
-import PostDetails from "./Pages/StudentPages/PostDetails/PostDetails";
+import PostDetailsLayout from "./Pages/StudentPages/PostDetails/PostDetailsLayout";
 
 const queryClient = new QueryClient();
 function App() {
@@ -102,7 +102,7 @@ function App() {
                 { index: true, element: <StudentHomeLayout /> },
                 { path: "createPost", element: <AddPost /> },
                 { path: "page3", element: <>Page 3</> },
-                { path: "post/:postId", element: <PostDetails /> },
+                { path: "post/:postId", element: <PostDetailsLayout /> },
               ],
             },
             {

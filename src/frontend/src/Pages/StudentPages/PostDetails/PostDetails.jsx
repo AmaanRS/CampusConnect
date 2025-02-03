@@ -1,18 +1,12 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
-import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
+import PostTop from "./PostTop";
 
 export default function PostDetails() {
-  const { postId } = useParams();
-  console.log(postId);
-
   return (
     <>
-      <CentreMainContent>
-        <p>hello world</p>
-      </CentreMainContent>
-      <RightSidebar></RightSidebar>
+      <div className=" h-screen max-w-3xl m-auto">
+        <PostTop />
+      </div>
     </>
   );
 }
