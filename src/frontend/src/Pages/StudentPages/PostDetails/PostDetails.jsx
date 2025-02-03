@@ -3,6 +3,7 @@ import PostTop from "./PostTop";
 import PostTitle from "./PostTitle";
 import PostBody from "./PostBody";
 import PostImage from "./PostImage";
+import PostActionBar from "./PostActionBar";
 
 export default function PostDetails() {
   return (
@@ -12,6 +13,7 @@ export default function PostDetails() {
         <PostTitle />
         <PostBody />
         <PostImage />
+        <PostActionBar />
       </div>
     </>
   );

@@ -18,35 +18,30 @@ export default function PostActionBar() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex mt-4">
       {/* like button */}
-      <Link to={"post/1"}>
-        <div
-          className={`min-w-16   rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1 ${
-            active ? "text-white bg-blue-600 " : "bg-slate-200"
-          }`}
+      <div
+        className={`min-w-16    rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1 ${
+          active ? "text-white bg-blue-600 " : "bg-slate-200"
+        }`}
+      >
+        <button
+          type="button"
+          className={`  rounded-full h-7 font-medium text-xs text-center inline-flex items-center hover:text-blue-600 ${
+            active
+              ? "text-white bg-blue-600 hover:text-white hover:bg-blue-600"
+              : "text-black bg-slate-200"
+          } `}
         >
-          <button
-            type="button"
-            className={`  rounded-full font-medium text-xs text-center inline-flex items-center hover:text-blue-600 ${
-              active
-                ? "text-white bg-blue-600 hover:text-white hover:bg-blue-600"
-                : "text-black bg-slate-200"
-            } `}
-          >
-            <AiOutlineLike className="text-lg rounded-full m-1" />
-            <div className="text-xs font-medium">
-              {numbro(1000).format({ average: true }).toUpperCase()}
-            </div>
-          </button>
-        </div>
-      </Link>
+          <AiOutlineLike className="text-lg rounded-full m-1" />
+          <div className="text-xs font-medium">
+            {numbro(1000).format({ average: true }).toUpperCase()}
+          </div>
+        </button>
+      </div>
 
       {/* comment button */}
-      <Link
-        to={"post/1"}
-        className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1"
-      >
+      <div className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1">
         <button
           type="button"
           className="text-black bg-slate-200 hover:text-blue-600  rounded-full font-medium text-xs text-center inline-flex items-center"
@@ -56,7 +51,7 @@ export default function PostActionBar() {
             {numbro(10000000).format({ average: true }).toUpperCase()}
           </div>
         </button>
-      </Link>
+      </div>
 
       {/* share button */}
       <div
