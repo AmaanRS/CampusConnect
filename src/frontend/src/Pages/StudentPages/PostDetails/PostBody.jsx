@@ -13,5 +13,5 @@ export default function PostBody() {
 </p>
 <p>Java gained popularity shortly after its release, and has been a popular programming language since then. Java was the third most popular programming language in 2022 according to GitHub. Although still widely popular, there has been a gradual decline in use of Java in recent years with other languages using JVM gaining popularity.</p>  `;
 
-  return <div className="tiptap mt-4 border">{parse(content2)}</div>;
+  return <div className="tiptap mt-4 ">{parse(content2)}</div>;
 }

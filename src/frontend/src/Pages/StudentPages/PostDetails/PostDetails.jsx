@@ -2,6 +2,7 @@ import React from "react";
 import PostTop from "./PostTop";
 import PostTitle from "./PostTitle";
 import PostBody from "./PostBody";
+import PostImage from "./PostImage";
 
 export default function PostDetails() {
   return (
@@ -10,6 +11,7 @@ export default function PostDetails() {
         <PostTop />
         <PostTitle />
         <PostBody />
+        <PostImage />
       </div>
     </>
   );
