@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 import PostDetails from "./PostDetails";
+import PopularCommittees from "../Home/PopularCommittee/PopularCommittees";
 
 export default function PostDetailsLayout() {
   const { postId } = useParams();
@@ -13,7 +14,9 @@ export default function PostDetailsLayout() {
       <CentreMainContent>
         <PostDetails />
       </CentreMainContent>
-      <RightSidebar></RightSidebar>
+      <RightSidebar>
+        <PopularCommittees />
+      </RightSidebar>
     </>
   );
 }
