@@ -1,9 +1,11 @@
 import { Textarea } from "flowbite-react";
 import React, { useState } from "react";
 import CommentInput from "./CommentInput";
+import EmptyComment from "./EmptyComment";
 
 export default function CommentInputLayout() {
   const [commentOn, setCommentOn] = useState(false);
+  let nocomment = true;
   return (
     <>
       <div className=" mt-4 mb-8  ">
@@ -16,6 +18,7 @@ export default function CommentInputLayout() {
           </div>
         )}
         {commentOn && <CommentInput setCommentOn={setCommentOn} />}
+        {nocomment && <EmptyComment />}
       </div>
     </>
   );
