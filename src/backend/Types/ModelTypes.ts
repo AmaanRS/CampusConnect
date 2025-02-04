@@ -1,4 +1,4 @@
-import { Document, Types } from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 
 export enum Year {
 	"1ST" = 1,
@@ -25,21 +25,6 @@ export enum StudentPosition {
 	StudentIncharge = "STUDENT_INCHARGE",
 	CommitteeMember = "COMMITTEE_MEMBER",
 }
-
-// export const StudentPositionMap: Readonly<{
-// 	[key in StudentPosition]: StudentPosition[];
-// }> = {
-// 	[StudentPosition.Student]: [StudentPosition.Student],
-// 	[StudentPosition.CommitteeMember]: [
-// 		StudentPosition.Student,
-// 		StudentPosition.CommitteeMember,
-// 	],
-// 	[StudentPosition.StudentIncharge]: [
-// 		StudentPosition.Student,
-// 		StudentPosition.CommitteeMember,
-// 		StudentPosition.StudentIncharge,
-// 	],
-// } as const;
 
 export enum TeacherPosition {
 	Teacher = "TEACHER",
@@ -69,7 +54,7 @@ export type UserPosition =
 	| NonTeachingStaffPosition;
 
 // Mapping between AccountType and UserPosition
-type PositionMap = {
+export type PositionMap = {
 	[AccountType.Student]: StudentPosition[];
 	[AccountType.Teacher]: TeacherPosition[];
 	[AccountType.Admin]: AdminPosition[];
@@ -97,9 +82,10 @@ export interface IStudent {
 	department: Department;
 	studentId: number;
 	accType: AccountType;
-	position: StudentPosition[];
-	isInChargeOfCommittees?: ICommittee[] | undefined;
-	isMemberOfCommittees?: ICommittee[] | undefined;
+	committeePositions?: {
+		committeeObjId?: mongoose.Types.ObjectId;
+		position?: StudentPosition;
+	}[];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 }
@@ -111,9 +97,10 @@ export interface ITeacher {
 	password: string;
 	department: Department;
 	accType: AccountType;
-	position: TeacherPosition[];
-	isInChargeOfCommittees?: ICommittee[] | undefined;
-	isInTeamOfCommittees?: ICommittee[] | undefined;
+	committeePositions?: {
+		committeeObjId?: mongoose.Types.ObjectId;
+		position?: TeacherPosition;
+	}[];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 }

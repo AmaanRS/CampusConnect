@@ -24,7 +24,8 @@ export interface EventResponse extends StandardResponse {
 
 export interface decodedTokenPayload extends JwtPayload {
 	email: string;
-	position: UserPosition[];
+	// DELETE THIS
+	// position: UserPosition[];
 	accountType: AccountType;
 	isProfileComplete: boolean;
 	isAccountActive: boolean;

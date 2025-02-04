@@ -359,32 +359,43 @@ const deleteTeacher = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const isTeacherDeleted = await teacherModel.deleteOne({ email: email });
+		// Make account inactive instead of deleting it
+		const result = await runWithRetrySession(async (session) => {
+			const isTeacherDeleted = await teacherModel
+				.updateOne({ email: email }, { isAccountActive: false })
+				.session(session);
 
-		if (!isTeacherDeleted.acknowledged) {
+			if (!isTeacherDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not delete the teacher",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isUserDeleted = await userModel
+				.updateOne({ email: email }, { isAccountActive: false })
+				.session(session);
+
+			if (!isUserDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not delete the student",
+					success: false,
+				};
+
+				return response;
+			}
+
 			const response: StandardResponse = {
-				message: "Could not delete the teacher",
-				success: false,
+				message: "Teacher deleted successfully",
+				success: true,
 			};
 
-			return res.status(401).json(response);
-		}
+			return response;
+		});
 
-		if (isTeacherDeleted.deletedCount === 0) {
-			const response: StandardResponse = {
-				message: "Could not find the teacher to delete",
-				success: false,
-			};
-
-			return res.status(401).json(response);
-		}
-
-		const response: StandardResponse = {
-			message: "Teacher deleted successfully",
-			success: true,
-		};
-
-		return res.status(201).json(response);
+		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
 		const response: StandardResponse = {

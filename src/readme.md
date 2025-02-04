@@ -129,3 +129,7 @@ Did not find a fully working method
 # Unique id start with a prefix eg for committee id it starts with C, for event id it starts with E and so on
 
 # All the data of a deleted committee will be saved but it can only be seen by admin
+
+# A studentIncharge is automatically (programatically) set as a member of the committee
+
+# A facultyIncharge is automatically (programatically) set in facultyTeam of the committee

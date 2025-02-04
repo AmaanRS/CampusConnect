@@ -132,7 +132,7 @@ userSchema.pre("validate", async function (next) {
 			}
 
 			// The second part should be a 9-digit number
-			if (secondPart.length !== 9) {
+			if (Number(secondPart).toString().length !== 9) {
 				throw new MongooseError("Give a valid vcet email");
 			}
 

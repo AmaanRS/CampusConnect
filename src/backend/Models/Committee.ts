@@ -27,7 +27,7 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 		},
 		studentIncharge: {
 			type: Schema.Types.ObjectId,
-			ref: "userModel",
+			ref: "studentModel",
 			required: true,
 		},
 		facultyIncharge: {
@@ -59,7 +59,6 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 			default: CommitteeStatus.PENDING,
 			enum: Object.values(CommitteeStatus),
 		},
-		//TODO NOW:(Check if this condition exists somewhere and delete it) If committeeOfDepartment array length is greater than 1 then send committee creation request to admin else send it to respective hod
 		committeeOfDepartment: [
 			{
 				type: String,
@@ -73,9 +72,7 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 	},
 );
 
-// TODO NOW: When studentIncharge is added add position student_incharge to that student's document
-//TODO NOW: When teacherIncharge/teamOfteacher is added add position FacultyIncharge/FacultyTeam to that teacher's document
-
+// TODO: For some reason there are duplicate entries in members and facultyTeam
 committeeSchema.pre("validate", async function (next) {
 	try {
 		// If facultyTeam is given
@@ -160,9 +157,11 @@ const hooks = [
 	"findOneAndUpdate",
 	"deleteOne",
 	"deleteMany",
+	"updateOne",
+	"updateMany",
 ] as const;
 
-// Programatically adds condition to remove pending and deleted committees
+// Programatically adds condition to remove pending and deleted committees from the query result
 // When in need of only one of the conditions, set both flags true then add the condition you want (ie if only pending committees are needed then set both flags true and add Committee status pending)
 // If you want to use any other condition besides pending/deleted then set both flags true and add the condition
 hooks.forEach(function (hook) {
