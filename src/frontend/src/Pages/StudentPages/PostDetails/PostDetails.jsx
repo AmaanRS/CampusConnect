@@ -4,6 +4,7 @@ import PostTitle from "./PostTitle";
 import PostBody from "./PostBody";
 import PostImage from "./PostImage";
 import PostActionBar from "./PostActionBar";
+import PostComment from "./Comment/PostComment";
 
 export default function PostDetails() {
   return (
@@ -14,6 +15,7 @@ export default function PostDetails() {
         <PostBody />
         <PostImage />
         <PostActionBar />
+        <PostComment />
       </div>
     </>
   );

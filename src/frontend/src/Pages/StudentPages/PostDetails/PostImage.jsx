@@ -9,6 +9,7 @@ export default function PostImage() {
     "https://plus.unsplash.com/premium_photo-1681530700755-e8079add58ef?q=80&w=1930&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://plus.unsplash.com/premium_photo-1680582107403-04dfac02efc3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://images.unsplash.com/photo-1531219572328-a0171b4448a3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1514924013411-cbf25faa35bb?q=80&w=1890&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   ];
 
   const openImageViewer = useCallback(() => {
@@ -19,14 +20,14 @@ export default function PostImage() {
     setIsViewerOpen(false);
   };
 
-  let index = 0;
+  let index = 4;
 
   return (
     <div
       style={{
         backgroundImage: `url(${images[index]})`,
       }}
-      className="w-full my-1  bg-cover bg-center overflow-hidden  rounded-2xl"
+      className="w-full my-1 cursor-pointer  bg-cover bg-center overflow-hidden  rounded-2xl"
     >
       <img
         className="rounded-2xl backdrop-blur-3xl   object-contain   w-full max-h-[400px] xl:max-h-[530px] "
