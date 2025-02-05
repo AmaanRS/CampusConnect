@@ -3,7 +3,12 @@ import React from "react";
 export default function RightSidebar({ children }) {
   return (
     <>
-      <div className=" custom-scrollbar overflow-hidden  hover:overflow-auto fixed top-[52.4px] right-0 h-screen w-72 bg-white hidden sm:block">
+      <div
+        style={{
+          scrollbarGutter: "stable",
+        }}
+        className=" custom-scrollbar overflow-hidden  hover:overflow-auto fixed top-[52.4px] right-0 h-screen w-72 bg-white hidden sm:block"
+      >
         {children || (
           <>
             <div className="h-screen border-l">
