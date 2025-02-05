@@ -15,7 +15,7 @@ export default function PostDetails() {
         <PostBody />
         <PostImage />
         <PostActionBar />
-        <PostComment />
+        {/* <PostComment /> */}
       </div>
     </>
   );

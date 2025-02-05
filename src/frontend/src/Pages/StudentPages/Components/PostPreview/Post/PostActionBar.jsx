@@ -43,7 +43,7 @@ export default function PostActionBar() {
       </Link>
 
       {/* comment button */}
-      <Link
+      {/* <Link
         to={"/student/post/1"}
         className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1"
       >
@@ -56,7 +56,7 @@ export default function PostActionBar() {
             {numbro(10000000).format({ average: true }).toUpperCase()}
           </div>
         </button>
-      </Link>
+      </Link> */}
 
       {/* share button */}
       <div

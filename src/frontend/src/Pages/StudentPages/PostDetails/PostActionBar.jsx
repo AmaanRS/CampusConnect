@@ -41,7 +41,7 @@ export default function PostActionBar() {
       </div>
 
       {/* comment button */}
-      <div className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1">
+      {/* <div className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1">
         <button
           type="button"
           className="text-black bg-slate-200 hover:text-blue-600  rounded-full font-medium text-xs text-center inline-flex items-center"
@@ -51,7 +51,7 @@ export default function PostActionBar() {
             {numbro(10000000).format({ average: true }).toUpperCase()}
           </div>
         </button>
-      </div>
+      </div> */}
 
       {/* share button */}
       <div
