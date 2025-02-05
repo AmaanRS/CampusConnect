@@ -1,8 +1,9 @@
 import React from "react";
+import { CiCalendar } from "react-icons/ci";
 
 export default function CommitteeSidebarTop() {
   return (
-    <div className="px-4 pt-4 pb-2">
+    <div className="px-4 pt-4 ">
       <div className="flex justify-between items-center">
         <p className="font-bold  text-slate-800">Committee Name</p>
         <button
@@ -18,6 +19,10 @@ export default function CommitteeSidebarTop() {
         development can range from developing a simple single static page of
         plain text to complex web applications, electronic businesses, and
         social network services.
+      </div>
+      <div className="flex my-2 items-center">
+        <CiCalendar className="text-lg mr-1" />
+        <p className="text-xs text-slate-700">Created Jan 20, 2025</p>
       </div>
     </div>
   );
