@@ -9,7 +9,7 @@ export default function PostTop() {
         <div>
           <Avatar rounded size={"xs"} />
         </div>
-        <Link to={"/"}>
+        <Link to={"committee/1"}>
           <div className="text-xs font-semibold ml-2 hover:text-blue-500 transition-colors duration-150">
             subname
           </div>

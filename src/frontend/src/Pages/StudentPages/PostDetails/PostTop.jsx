@@ -19,7 +19,7 @@ export default function PostTop() {
 
         <div className="flex-col ml-2 ">
           <div className="flex h-4 items-center gap-1 ">
-            <Link to={"/"}>
+            <Link to={"../committee/1"}>
               <div className="text-xs font-bold transition-colors duration-150  hover:text-blue-500">
                 subname
               </div>
