@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import ImageViewer from "react-simple-image-viewer";
-import SimpleImageWrapper from "../../../../Components/ImageHelper/SimpleImageWrapper";
+import SimpleImageWrapper from "../../../../../Components/ImageHelper/SimpleImageWrapper";
 
 export default function PostImage() {
   const [isViewerOpen, setIsViewerOpen] = useState(false);

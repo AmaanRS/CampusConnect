@@ -20,7 +20,7 @@ export default function PostActionBar() {
   return (
     <div className="flex">
       {/* like button */}
-      <Link to={"post/1"}>
+      <Link to={"/student/post/1"}>
         <div
           className={`min-w-16   rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1 ${
             active ? "text-white bg-blue-600 " : "bg-slate-200"
@@ -44,7 +44,7 @@ export default function PostActionBar() {
 
       {/* comment button */}
       <Link
-        to={"post/1"}
+        to={"/student/post/1"}
         className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1"
       >
         <button
