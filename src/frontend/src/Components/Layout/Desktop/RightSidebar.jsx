@@ -7,7 +7,7 @@ export default function RightSidebar({ children }) {
         style={{
           scrollbarGutter: "stable",
         }}
-        className=" custom-scrollbar overflow-hidden  hover:overflow-auto fixed top-[52.4px] right-0 h-screen w-72 bg-white hidden sm:block"
+        className=" custom-scrollbar overflow-hidden  hover:overflow-auto fixed top-[52.4px] right-0 h-screen w-72 bg-white hidden sm:block pb-14"
       >
         {children || (
           <>
