@@ -9,12 +9,12 @@ import PostBody from "./PostBody";
 import PostImage from "./PostImage";
 import { Link } from "react-router-dom";
 
-export default function StudentPost() {
+export default function StudentPost({ mode = "home" }) {
   let isImage = true;
   return (
     <>
       <div className="mx-1 hover:bg-slate-100 cursor-pointer rounded-2xl py-1 px-3 transition-colors duration-100 ">
-        <PostTop />
+        <PostTop mode={mode} />
         <Link to={"/student/post/1"}>
           <PostTitle />
           <PostBody isImage={isImage} />
