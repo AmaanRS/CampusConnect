@@ -4,6 +4,7 @@ import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainCont
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 import PostDetails from "./PostDetails";
 import PopularCommittees from "../Home/PopularCommittee/PopularCommittees";
+import CommitteeSidebar from "../Components/CommitteeSidebar";
 
 export default function PostDetailsLayout() {
   const { postId } = useParams();
@@ -15,7 +16,7 @@ export default function PostDetailsLayout() {
         <PostDetails />
       </CentreMainContent>
       <RightSidebar>
-        <PopularCommittees />
+        <CommitteeSidebar />
       </RightSidebar>
     </>
   );
