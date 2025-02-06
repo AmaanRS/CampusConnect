@@ -7,7 +7,7 @@ export default function PopularCommiteeItem({
 }) {
   return (
     <li>
-      <Link>
+      <Link to={"/student"}>
         <div className=" hover:bg-slate-200 transition-colors duration-100 rounded-lg flex py-2     px-2 mx-2 my-2">
           <Avatar
             rounded

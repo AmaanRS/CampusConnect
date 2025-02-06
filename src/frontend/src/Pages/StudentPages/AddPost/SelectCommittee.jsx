@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Select from "react-select";
 
-export default function SelectCommittee() {
+export default function SelectCommittee({ handleChange }) {
   const options = [
     { label: "committee one", value: 1 },
     { label: "committee two", value: 2 },
@@ -10,9 +10,6 @@ export default function SelectCommittee() {
     { label: "committee five", value: 5 },
   ];
 
-  function handleChange(e) {
-    console.log(e);
-  }
   return (
     <>
       <Select
@@ -23,6 +20,7 @@ export default function SelectCommittee() {
             "input:focus": {
               boxShadow: "none",
             },
+            cursor: "text",
           }),
           valueContainer: (base) => ({
             ...base,
