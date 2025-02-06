@@ -5,10 +5,8 @@ import {
 	StandardResponse,
 } from "../Types/GeneralTypes";
 import {
-	AccountType,
 	CommitteeStatus,
 	Department,
-	ICommittee,
 	ICommitteeDocument,
 	IStudent,
 	IStudentDocument,

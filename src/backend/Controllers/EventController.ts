@@ -8,7 +8,6 @@ import {
 import { runWithRetrySession } from "../Utils/util";
 import { committeeModel } from "../Models/Committee";
 import { eventModel } from "../Models/Event";
-import { CommitteeStatus } from "../Types/ModelTypes";
 
 const createEvent = async (req: Request, res: Response) => {
 	try {

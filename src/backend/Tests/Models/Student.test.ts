@@ -29,6 +29,7 @@ describe.only("Student Model Tests", () => {
 		department: Department.IT,
 		studentId: 123456789,
 		accType: AccountType.Student,
+		// @ts-ignore
 		position: [StudentPosition.Student],
 		isProfileComplete: false,
 	};
