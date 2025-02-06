@@ -5,7 +5,11 @@ import {
 	StandardResponse,
 } from "../Types/GeneralTypes";
 import { postModel } from "../Models/Post";
-import { runWithRetrySession } from "../Utils/util";
+import {
+	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
+	runWithRetrySession,
+} from "../Utils/util";
+import { committeeModel } from "../Models/Committee";
 
 const createPost = async (req: Request, res: Response) => {
 	try {
@@ -13,10 +17,14 @@ const createPost = async (req: Request, res: Response) => {
 			decodedToken,
 			title,
 			content,
+			committeeId,
+			image,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
 			title: string | undefined;
 			content: string | undefined;
+			committeeId: string | undefined;
+			image?: [{ imageUrl: string; imagePath: string }];
 		} = req.body;
 
 		if (!decodedToken) {
@@ -38,16 +46,66 @@ const createPost = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if (!title || !content) {
+		if (!committeeId) {
 			const response: StandardResponse = {
-				message: "Both title and content are required",
+				message: "Give committeeId to post under the committee",
 				success: false,
 			};
 
 			return res.status(401).json(response);
 		}
 
-		const isPostCreated = await postModel.create({ title, content });
+		if (!title || !content) {
+			const response: StandardResponse = {
+				message: "Give all of the required fields to create a post",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		if (
+			image &&
+			(!Array.isArray(image) ||
+				image.some((img) => !img.imageUrl || !img.imagePath))
+		) {
+			const response: StandardResponse = {
+				message: "Give image in proper structure",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const committee = await committeeModel
+			.findOne({ committeeId })
+			.populate(["studentIncharge", "facultyIncharge"])
+			.lean();
+
+		if (!committee) {
+			const response: StandardResponse = {
+				message: "Committee not found",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const resp = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+			decodedToken,
+			oldCommittee: committee,
+		});
+
+		if (!resp.success) {
+			return res.status(401).json(resp);
+		}
+
+		const isPostCreated = await postModel.create({
+			committeeDocId: committee._id,
+			title,
+			content,
+			image,
+		});
 
 		if (!isPostCreated) {
 			const response: StandardResponse = {
@@ -77,7 +135,7 @@ const createPost = async (req: Request, res: Response) => {
 	}
 };
 
-const getPost = async (req: Request, res: Response) => {
+const getPostById = async (req: Request, res: Response) => {
 	try {
 		const {
 			decodedToken,
@@ -115,7 +173,7 @@ const getPost = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const post = await postModel.findOne({ postId });
+		const post = await postModel.findOne({ postId }).populate("committeeDocId");
 
 		if (!post) {
 			const response: StandardResponse = {
@@ -365,7 +423,7 @@ const getAllPosts = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const allPosts = await postModel.find();
+		const allPosts = await postModel.find().populate("committeeDocId");
 
 		if (allPosts.length === 0) {
 			const response: StandardResponse = {
@@ -397,4 +455,4 @@ const getAllPosts = async (req: Request, res: Response) => {
 	}
 };
 
-export { createPost, getPost, updatePost, deletePost, getAllPosts };
+export { createPost, getPostById, updatePost, deletePost, getAllPosts };

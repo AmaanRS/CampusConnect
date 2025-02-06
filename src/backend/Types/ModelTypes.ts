@@ -88,6 +88,7 @@ export interface IStudent {
 	}[];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
+	postsLiked?: Types.ObjectId[];
 }
 
 export interface IStudentDocument extends IStudent, Document {}
@@ -154,6 +155,7 @@ export interface ICommittee {
 	facultyTeam?: Types.ObjectId[] | undefined;
 	members?: Types.ObjectId[] | undefined;
 	events?: Types.ObjectId[] | undefined;
+	posts?: Types.ObjectId[] | undefined;
 	status: CommitteeStatus;
 	committeeOfDepartment: Department[] | College;
 }
@@ -176,8 +178,14 @@ export interface ICommitteeDocument extends ICommittee, Document {}
 
 export interface IPost {
 	postId: string;
+	committeeDocId: Types.ObjectId;
 	title: string;
 	content: string;
+	image?: {
+		imageUrl?: string;
+		imagePath?: string;
+	}[];
+	likes?: Types.ObjectId[];
 }
 
 export interface IPostDocument extends IPost, Document {}

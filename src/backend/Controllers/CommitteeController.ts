@@ -16,7 +16,10 @@ import {
 	StudentPosition,
 	TeacherPosition,
 } from "../Types/ModelTypes";
-import { runWithRetrySession } from "../Utils/util";
+import {
+	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
+	runWithRetrySession,
+} from "../Utils/util";
 import { studentModel } from "../Models/Student";
 import { teacherModel } from "../Models/Teacher";
 import { committeeModel } from "../Models/Committee";
@@ -311,75 +314,6 @@ const getCommittee = async (req: Request, res: Response) => {
 		};
 
 		return res.status(401).json(response);
-	}
-};
-
-const checkIfFacultyOrStudentInchargeOfCommitteeFunc = ({
-	decodedToken,
-	oldCommittee,
-}: {
-	decodedToken: decodedTokenPayload;
-	// Used any because the type was too complex
-	oldCommittee: any;
-}): StandardResponse | DataResponse => {
-	try {
-		if (decodedToken.accountType === AccountType.Teacher) {
-			//Check if FacultyIncharge, is incharge of the committee she is trying to update
-			if (oldCommittee.facultyIncharge.email !== decodedToken.email) {
-				const response: StandardResponse = {
-					message:
-						"You must be the faculty incharge of the given committee to update",
-					success: false,
-				};
-
-				return response;
-			}
-
-			const response: DataResponse = {
-				message: "The user is a teacher Incharge",
-				success: true,
-				data: TeacherPosition.FacultyIncharge,
-			};
-
-			return response;
-		} else if (decodedToken.accountType === AccountType.Student) {
-			//Check if StudentIncharge is incharge of the committee she is trying to update
-			if (oldCommittee.studentIncharge.email !== decodedToken.email) {
-				const response: StandardResponse = {
-					message:
-						"You must be the student incharge of the given committee to update",
-					success: false,
-				};
-
-				return response;
-			}
-
-			const response: DataResponse = {
-				message: "The user is a student Incharge",
-				success: true,
-				data: StudentPosition.StudentIncharge,
-			};
-
-			return response;
-		} else {
-			const response: StandardResponse = {
-				message:
-					"You must be teacher Incharge or student incharge of the given committee to update",
-				success: false,
-			};
-
-			return response;
-		}
-	} catch (e) {
-		console.log((e as Error).message);
-		const response: StandardResponse = {
-			message:
-				"There is some problem while updating committee" +
-				(e as Error).message,
-			success: false,
-		};
-
-		return response;
 	}
 };
 

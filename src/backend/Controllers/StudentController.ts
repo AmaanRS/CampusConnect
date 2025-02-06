@@ -456,4 +456,69 @@ const getAllStudents = async (req: Request, res: Response) => {
 	}
 };
 
-export { createStudent, getStudent, updateStudent, deleteStudent, getAllStudents };
+const getAllStudentData = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const studentData = await studentModel.findOne({ email }, { password: 0 }).populate("committeePositions.committeeObjId");
+
+		if (!studentData) {
+			const response: StandardResponse = {
+				message: "Student not found",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Student found successfully",
+			success: true,
+			data: studentData,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all the data of student" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+export {
+	createStudent,
+	getStudent,
+	updateStudent,
+	deleteStudent,
+	getAllStudents,
+	getAllStudentData,
+};

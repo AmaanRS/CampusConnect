@@ -1,4 +1,4 @@
-import { Model, MongooseError, Schema, model } from "mongoose";
+import { Model, MongooseError, Schema, Types, model } from "mongoose";
 import {
 	College,
 	CommitteeStatus,
@@ -53,6 +53,15 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 				ref: "eventModel",
 			},
 		],
+		posts: {
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "postModel",
+				},
+			],
+			default: [],
+		},
 		status: {
 			type: String,
 			required: true,
@@ -71,7 +80,6 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 		timestamps: true,
 	},
 );
-
 // TODO: For some reason there are duplicate entries in members and facultyTeam
 committeeSchema.pre("validate", async function (next) {
 	try {
@@ -134,6 +142,16 @@ committeeSchema.pre("validate", async function (next) {
 			}
 		}
 
+		if (
+			this.posts &&
+			(!Array.isArray(this.posts) ||
+				this.posts.some((post) => !Types.ObjectId.isValid(post)))
+		) {
+			return next(new MongooseError("Invalid ObjectId in posts array"));
+		}
+
+		if (this.posts === undefined) this.posts = [];
+
 		this.facultyTeam = this.facultyTeam
 			? [...new Set(this.facultyTeam)]
 			: undefined;
@@ -143,6 +161,8 @@ committeeSchema.pre("validate", async function (next) {
 		this.events = this.events ? [...new Set(this.events)] : undefined;
 
 		this.committeeOfDepartment = [...new Set(this.committeeOfDepartment)];
+
+		next();
 	} catch (err) {
 		next(err as MongooseError);
 	}

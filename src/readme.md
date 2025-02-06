@@ -133,3 +133,13 @@ Did not find a fully working method
 # A studentIncharge is automatically (programatically) set as a member of the committee
 
 # A facultyIncharge is automatically (programatically) set in facultyTeam of the committee
+
+# Features to add
+
+1. When some puts social media link(instagram,facebook,youtube) in post it should open up as a popup and not redirect it to the social media website
+
+2. Post in campus connect website should be sharable to other social media platforms
+
+3. Make a section where promotions of companies can be inserted during an event by a committee
+
+4. Decide ranking criteria to use when making a ml model for recommendation of top committees

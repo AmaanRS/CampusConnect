@@ -3,14 +3,14 @@ import {
 	createPost,
 	deletePost,
 	getAllPosts,
-	getPost,
+	getPostById,
 	updatePost,
 } from "../Controllers/PostController";
 const Router = express.Router();
 
 Router.route("/createPost").post(createPost);
 
-Router.route("/getPost").post(getPost);
+Router.route("/getPostById").post(getPostById);
 
 Router.route("/updatePost").post(updatePost);
 

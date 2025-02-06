@@ -79,6 +79,11 @@ const studentSchema = new Schema<IStudentDocument>(
 			default: true,
 			type: Boolean,
 		},
+		postsLiked: {
+			type: [Schema.Types.ObjectId],
+			ref: "postModel",
+			default: [],
+		},
 	},
 	{
 		timestamps: true,
@@ -253,6 +258,8 @@ studentSchema.pre("validate", async function (next) {
 		}
 
 		this.studentId = stuId;
+
+		if (this.postsLiked === undefined) this.postsLiked = [];
 
 		// this.isInChargeOfCommittees = this.isInChargeOfCommittees
 		// 	? [...new Set(this.isInChargeOfCommittees)]
