@@ -5,19 +5,26 @@ import {
 	StandardResponse,
 } from "../Types/GeneralTypes";
 import { postModel } from "../Models/Post";
+import {
+	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
+	runWithRetrySession,
+} from "../Utils/util";
+import { committeeModel } from "../Models/Committee";
 
-//TODO: Write function for creating a post
-//TODO : Write this function properly
 const createPost = async (req: Request, res: Response) => {
 	try {
 		const {
 			decodedToken,
 			title,
 			content,
+			committeeId,
+			image,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
 			title: string | undefined;
 			content: string | undefined;
+			committeeId: string | undefined;
+			image?: [{ imageUrl: string; imagePath: string }];
 		} = req.body;
 
 		if (!decodedToken) {
@@ -39,16 +46,66 @@ const createPost = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if (!title || !content) {
+		if (!committeeId) {
 			const response: StandardResponse = {
-				message: "Both title and content are required",
+				message: "Give committeeId to post under the committee",
 				success: false,
 			};
 
 			return res.status(401).json(response);
 		}
 
-		const isPostCreated = await postModel.create({ title, content });
+		if (!title || !content) {
+			const response: StandardResponse = {
+				message: "Give all of the required fields to create a post",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		if (
+			image &&
+			(!Array.isArray(image) ||
+				image.some((img) => !img.imageUrl || !img.imagePath))
+		) {
+			const response: StandardResponse = {
+				message: "Give image in proper structure",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const committee = await committeeModel
+			.findOne({ committeeId })
+			.populate(["studentIncharge", "facultyIncharge"])
+			.lean();
+
+		if (!committee) {
+			const response: StandardResponse = {
+				message: "Committee not found",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const resp = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+			decodedToken,
+			oldCommittee: committee,
+		});
+
+		if (!resp.success) {
+			return res.status(401).json(resp);
+		}
+
+		const isPostCreated = await postModel.create({
+			committeeDocId: committee._id,
+			title,
+			content,
+			image,
+		});
 
 		if (!isPostCreated) {
 			const response: StandardResponse = {
@@ -78,9 +135,7 @@ const createPost = async (req: Request, res: Response) => {
 	}
 };
 
-// TODO: Write function for reading a post
-//TODO : Write this function properly
-const getPost = async (req: Request, res: Response) => {
+const getPostById = async (req: Request, res: Response) => {
 	try {
 		const {
 			decodedToken,
@@ -118,7 +173,7 @@ const getPost = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const post = await postModel.findOne({ postId });
+		const post = await postModel.findOne({ postId }).populate("committeeDocId");
 
 		if (!post) {
 			const response: StandardResponse = {
@@ -150,8 +205,6 @@ const getPost = async (req: Request, res: Response) => {
 	}
 };
 
-// TODO: Write function for updating a post
-//TODO : Write this function properly
 const updatePost = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -203,31 +256,62 @@ const updatePost = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const updateData: { [key: string]: string } = {};
+		const result = await runWithRetrySession(async (session) => {
+			// Adding lean is compulsory otherwise it throws error when creating a document with the same data
+			const oldPost = await postModel
+				.findOne({ postId })
+				.session(session)
+				.lean();
 
-		if (title) updateData["title"] = title;
-		if (content) updateData["content"] = content;
+			if (!oldPost) {
+				const response: StandardResponse = {
+					message: "Post to update not found",
+					success: false,
+				};
 
-		const isPostUpdated = await postModel.findOneAndUpdate(
-			{ postId },
-			updateData,
-		);
+				return response;
+			}
 
-		if (!isPostUpdated) {
+			const isPostDeleted = await postModel
+				.deleteOne({ postId })
+				.session(session);
+
+			if (!isPostDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Post did'nt get deleted while updating",
+					success: false,
+				};
+
+				return response;
+			}
+
+			if (title) oldPost.title = title;
+			if (content) oldPost.content = content;
+
+			const newUpdatedPost = oldPost;
+
+			const isPostUpdated = await postModel.create([newUpdatedPost], {
+				session,
+			});
+
+			if (!Array.isArray(isPostUpdated) || isPostUpdated.length === 0) {
+				const response: StandardResponse = {
+					message: "Post update unsuccessfull",
+					success: false,
+				};
+
+				return response;
+			}
+
 			const response: StandardResponse = {
-				message: "Post update unsuccessfull",
-				success: false,
+				message: "Post updated successfully",
+				success: true,
 			};
 
-			return res.status(401).json(response);
-		}
+			return response;
+		});
 
-		const response: StandardResponse = {
-			message: "Post updated successfully",
-			success: true,
-		};
-
-		return res.status(201).json(response);
+		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
 
@@ -242,8 +326,6 @@ const updatePost = async (req: Request, res: Response) => {
 	}
 };
 
-// TODO: Write function for deleting a post
-//TODO : Write this function properly
 const deletePost = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -313,7 +395,6 @@ const deletePost = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO : Write this function properly
 //TODO: Write with pagination
 const getAllPosts = async (req: Request, res: Response) => {
 	try {
@@ -342,7 +423,7 @@ const getAllPosts = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const allPosts = await postModel.find();
+		const allPosts = await postModel.find().populate("committeeDocId");
 
 		if (allPosts.length === 0) {
 			const response: StandardResponse = {
@@ -374,4 +455,4 @@ const getAllPosts = async (req: Request, res: Response) => {
 	}
 };
 
-export { createPost, getPost, updatePost, deletePost, getAllPosts };
+export { createPost, getPostById, updatePost, deletePost, getAllPosts };

@@ -1,9 +1,10 @@
-import { Model, MongooseError, Schema, model } from "mongoose";
+import { Model, MongooseError, Schema, Types, model } from "mongoose";
 import {
 	College,
 	CommitteeStatus,
 	Department,
 	ICommitteeDocument,
+	ModelTypes,
 } from "../Types/ModelTypes";
 import { generateUniqueId } from "../Utils/uniqueId";
 import { DataResponse } from "../Types/GeneralTypes";
@@ -18,6 +19,7 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 			type: String,
 			required: true,
 			trim: true,
+			unique: true,
 		},
 		description: {
 			type: String,
@@ -25,7 +27,7 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 		},
 		studentIncharge: {
 			type: Schema.Types.ObjectId,
-			ref: "userModel",
+			ref: "studentModel",
 			required: true,
 		},
 		facultyIncharge: {
@@ -51,16 +53,25 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 				ref: "eventModel",
 			},
 		],
+		posts: {
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "postModel",
+				},
+			],
+			default: [],
+		},
 		status: {
 			type: String,
 			required: true,
 			default: CommitteeStatus.PENDING,
 			enum: Object.values(CommitteeStatus),
 		},
-		// If committeeOfDepartment array length is greater than 1 then send committee creation request to admin else send it to respective hod
 		committeeOfDepartment: [
 			{
 				type: String,
+				required: true,
 				enum: [...Object.values(Department), ...Object.values(College)],
 			},
 		],
@@ -69,11 +80,7 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 		timestamps: true,
 	},
 );
-
-// Create crud api's fro this
-// When studentIncharge is added add position student_incharge to that student's document
-// When teacherIncharge/teamOfteacher is added add position FacultyIncharge/FacultyTeam to that teacher's document
-
+// TODO: For some reason there are duplicate entries in members and facultyTeam
 committeeSchema.pre("validate", async function (next) {
 	try {
 		// If facultyTeam is given
@@ -100,31 +107,50 @@ committeeSchema.pre("validate", async function (next) {
 			this.members.push(this.studentIncharge);
 		}
 
-		if (Array.isArray(this.committeeOfDepartment)) {
-			const hasCollege = this.committeeOfDepartment.some((v) =>
-				Object.values(College).includes(v as unknown as College),
-			);
+		// Validation check for empty arrays in the schema since mongoose allows empty array even though required true is written
 
-			const hasDepartment = this.committeeOfDepartment.some((v) =>
-				Object.values(Department).includes(v as Department),
-			);
+		// Added a validation check for committeeOfDepartment only because rest of array fields are optional
+		if (!Array.isArray(this.committeeOfDepartment)) {
+			throw new MongooseError("CommitteeOfDepartment should be an array");
+		}
 
-			if (hasCollege && hasDepartment) {
-				throw new MongooseError(
-					"Cannot have both College and Department in committeeOfDepartment.",
-				);
-			}
+		if (this.committeeOfDepartment.length < 1) {
+			throw new MongooseError("There should be some committeeOfDepartment");
+		}
+
+		const hasCollege = this.committeeOfDepartment.some((v) =>
+			Object.values(College).includes(v as unknown as College),
+		);
+
+		const hasDepartment = this.committeeOfDepartment.some((v) =>
+			Object.values(Department).includes(v as Department),
+		);
+
+		if (hasCollege && hasDepartment) {
+			throw new MongooseError(
+				"Cannot have both College and Department in committeeOfDepartment.",
+			);
 		}
 
 		if (!this.committeeId) {
 			while (true) {
-				const uniqueId = await generateUniqueId();
+				const uniqueId = await generateUniqueId(ModelTypes.COMMITTEE_MODEL);
 				if (uniqueId.success && "data" in uniqueId) {
 					this.committeeId = (uniqueId as DataResponse).data as string;
 					break;
 				}
 			}
 		}
+
+		if (
+			this.posts &&
+			(!Array.isArray(this.posts) ||
+				this.posts.some((post) => !Types.ObjectId.isValid(post)))
+		) {
+			return next(new MongooseError("Invalid ObjectId in posts array"));
+		}
+
+		if (this.posts === undefined) this.posts = [];
 
 		this.facultyTeam = this.facultyTeam
 			? [...new Set(this.facultyTeam)]
@@ -134,12 +160,84 @@ committeeSchema.pre("validate", async function (next) {
 
 		this.events = this.events ? [...new Set(this.events)] : undefined;
 
-		this.committeeOfDepartment = [...new Set(this.committeeOfDepartment)] as
-			| Department[]
-			| College;
+		this.committeeOfDepartment = [...new Set(this.committeeOfDepartment)];
+
+		next();
 	} catch (err) {
 		next(err as MongooseError);
 	}
+});
+
+// If the status of committee is pending/deleted do not show the committee in find
+
+// Hooks for which pending and deleted committees will not be returned
+const hooks = [
+	"find",
+	"findOne",
+	"findOneAndUpdate",
+	"deleteOne",
+	"deleteMany",
+	"updateOne",
+	"updateMany",
+] as const;
+
+// Programatically adds condition to remove pending and deleted committees from the query result
+// When in need of only one of the conditions, set both flags true then add the condition you want (ie if only pending committees are needed then set both flags true and add Committee status pending)
+// If you want to use any other condition besides pending/deleted then set both flags true and add the condition
+hooks.forEach(function (hook) {
+	committeeSchema.pre(hook, function (next) {
+		const options = this.getOptions();
+		const query = this.getQuery();
+
+		// _skipPendingInFindHook; flag when true, will allow hooks to show pending committees
+		if (options && !options["_skipPendingCheckInHook"]) {
+			// If "status" already exists as an object
+			if (query["status"] && typeof query["status"] === "object") {
+				if (query["status"]["$nin"]) {
+					// Add PENDING to $nin if it doesn't already exist
+					if (!query["status"]["$nin"].includes(CommitteeStatus.PENDING)) {
+						query["status"]["$nin"].push(CommitteeStatus.PENDING);
+					}
+				} else {
+					// Convert $ne or other objects to $nin
+					query["status"]["$nin"] = [CommitteeStatus.PENDING];
+				}
+			} else if (!query["status"]) {
+				// If "status" doesn't exist, create $nin with PENDING
+				query["status"] = { $nin: [CommitteeStatus.PENDING] };
+			} else {
+				// If "status" exists as a non-object, wrap it with $nin
+				query["status"] = {
+					$nin: [query["status"], CommitteeStatus.PENDING],
+				};
+			}
+		}
+
+		// _skipDeletingInFindHook; flag when true, will allow hooks to show deleted committees
+		if (options && !options["_skipDeletingCheckInHook"]) {
+			// If "status" already exists as an object
+			if (query["status"] && typeof query["status"] === "object") {
+				if (query["status"]["$nin"]) {
+					// Add PENDING to $nin if it doesn't already exist
+					if (!query["status"]["$nin"].includes(CommitteeStatus.DELETED)) {
+						query["status"]["$nin"].push(CommitteeStatus.DELETED);
+					}
+				} else {
+					// Convert $ne or other objects to $nin
+					query["status"]["$nin"] = [CommitteeStatus.DELETED];
+				}
+			} else if (!query["status"]) {
+				// If "status" doesn't exist, create $nin with PENDING
+				query["status"] = { $nin: [CommitteeStatus.DELETED] };
+			} else {
+				// If "status" exists as a non-object, wrap it with $nin
+				query["status"] = {
+					$nin: [query["status"], CommitteeStatus.DELETED],
+				};
+			}
+		}
+		next();
+	});
 });
 
 export const committeeModel: Model<ICommitteeDocument> = model<ICommitteeDocument>(

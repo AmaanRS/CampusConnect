@@ -3,11 +3,14 @@ const Router = express.Router();
 
 import {
 	getAllPendingCommittees,
-	actionOnPendingCommittee,
+	getAllDeletedCommittees,
+	updateCommitteeByAdmin,
 } from "../Controllers/GeneralController";
 
 Router.route("/getAllPendingCommittees").post(getAllPendingCommittees);
 
-Router.route("/actionOnPendingCommittee").post(actionOnPendingCommittee);
+Router.route("/getAllDeletedCommittees").post(getAllDeletedCommittees);
+
+Router.route("/updateCommitteeByAdmin").post(updateCommitteeByAdmin);
 
 export default Router;

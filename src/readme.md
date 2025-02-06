@@ -15,6 +15,7 @@ LOCAL_MONGO_URI = mongodb://localhost:27017/CampusConnectSelf
 
 LOCAL_TEST_MONGO_URI = mongodb://localhost:27017/TestDbCampusConnectSelf
 ```
+
 !!! If you set ENV = DEV in .env file then, local mongodb db and dev server will be used
 
 !!! If you set ENV = PROD in .env then, atlas mongodb db will be used
@@ -57,12 +58,14 @@ Did not find a fully working method
 # APIs
 
 ## General
+
 ```
 /getAllPendingCommittees
 /actionOnPendingCommittee
 ```
 
 ## User
+
 ```
 /user/login
 /user/signup
@@ -70,6 +73,7 @@ Did not find a fully working method
 ```
 
 ## Admin
+
 ```
 /admin/createAdmin
 /admin/getAdmin
@@ -79,6 +83,7 @@ Did not find a fully working method
 ```
 
 ## Committee
+
 ```
 /committee/createCommittee
 /committee/getCommittee
@@ -87,6 +92,7 @@ Did not find a fully working method
 ```
 
 ## Event (Is not tested yet)
+
 ```
 /event/createEvent
 /event/getEvent
@@ -95,6 +101,7 @@ Did not find a fully working method
 ```
 
 ## Student
+
 ```
 /student/createStudent
 /student/getStudent
@@ -103,9 +110,36 @@ Did not find a fully working method
 ```
 
 ## Teacher
+
 ```
 /teacher/createTeacher
 /teacher/getTeacher
 /teacher/updateTeacher
 /teacher/deleteTeacher
 ```
+
+# TODO - A task left to do
+
+# TODO NOW - A task on high priority or a task to be done immediately
+
+# TEST NOW - Perform testing on high priority or testing to be done immediately
+
+# Every model will use mongodb ObjectId internally and nanoid when showing results to user (ie externally)
+
+# Unique id start with a prefix eg for committee id it starts with C, for event id it starts with E and so on
+
+# All the data of a deleted committee will be saved but it can only be seen by admin
+
+# A studentIncharge is automatically (programatically) set as a member of the committee
+
+# A facultyIncharge is automatically (programatically) set in facultyTeam of the committee
+
+# Features to add
+
+1. When some puts social media link(instagram,facebook,youtube) in post it should open up as a popup and not redirect it to the social media website
+
+2. Post in campus connect website should be sharable to other social media platforms
+
+3. Make a section where promotions of companies can be inserted during an event by a committee
+
+4. Decide ranking criteria to use when making a ml model for recommendation of top committees

@@ -74,11 +74,20 @@ nonTeachingStaffSchema.pre("validate", async function (next) {
 			);
 		}
 
+		// Validation check for empty arrays in the schema since mongoose allows empty array even though required true is written
+
+		if (!Array.isArray(this.position)) {
+			throw new MongooseError("position should be an array");
+		}
+
+		if (this.position.length < 1) {
+			throw new MongooseError("There should be some position");
+		}
+
 		this.accType = AccountType.NonTeachingStaff;
 
 		this.position = [NonTeachingStaffPosition.NonTeachingStaff];
 
-		// this.position = this.position ? [...new Set(this.position)] : undefined;
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];
 

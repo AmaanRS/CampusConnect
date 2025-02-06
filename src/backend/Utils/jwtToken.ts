@@ -4,7 +4,12 @@ import {
 	TokenResponse,
 } from "../Types/GeneralTypes";
 import jwt from "jsonwebtoken";
-import { IAdmin, IStudent, ITeacher, IUser } from "../Types/ModelTypes";
+import {
+	IAdmin,
+	IStudent,
+	ITeacher,
+	IUser,
+} from "../Types/ModelTypes";
 
 export const createJwtToken = (
 	user: IUser | IStudent | ITeacher | IAdmin,
@@ -12,7 +17,8 @@ export const createJwtToken = (
 	try {
 		const jwtPayload: decodedTokenPayload = {
 			email: user.email,
-			position: [...user.position],
+			// DELETE THIS
+			// position: computedUser.position,
 			accountType: user.accType,
 			isProfileComplete: user.isProfileComplete!,
 			isAccountActive: user.isAccountActive!,

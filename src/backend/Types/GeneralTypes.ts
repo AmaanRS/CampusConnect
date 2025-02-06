@@ -1,5 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
-import { AccountType, IEvent, UserPosition } from "./ModelTypes";
+import { AccountType, IEvent } from "./ModelTypes";
 
 export interface StandardResponse {
 	message: string;
@@ -24,7 +24,8 @@ export interface EventResponse extends StandardResponse {
 
 export interface decodedTokenPayload extends JwtPayload {
 	email: string;
-	position: UserPosition[];
+	// DELETE THIS
+	// position: UserPosition[];
 	accountType: AccountType;
 	isProfileComplete: boolean;
 	isAccountActive: boolean;

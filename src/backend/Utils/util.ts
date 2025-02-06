@@ -1,9 +1,14 @@
-import { StandardResponse } from "../Types/GeneralTypes";
+import {
+	DataResponse,
+	decodedTokenPayload,
+	StandardResponse,
+} from "../Types/GeneralTypes";
 import mongoose, { ClientSession } from "mongoose";
 import {
 	connectToTestDbAndStartTestServer,
 	stopTestServerRunning,
 } from "../Tests/TestServer";
+import { AccountType, StudentPosition, TeacherPosition } from "../Types/ModelTypes";
 
 // Function for returning a random value from enum
 export function getRandomEnumValue<T extends { [key: string]: string | number }>(
@@ -112,6 +117,75 @@ export const runWithRetrySession = async (
 	return response;
 };
 
+const checkIfFacultyOrStudentInchargeOfCommitteeFunc = ({
+	decodedToken,
+	oldCommittee,
+}: {
+	decodedToken: decodedTokenPayload;
+	// Used any because the type was too complex
+	oldCommittee: any;
+}): StandardResponse | DataResponse => {
+	try {
+		if (decodedToken.accountType === AccountType.Teacher) {
+			//Check if FacultyIncharge, is incharge of the committee she is trying to update
+			if (oldCommittee.facultyIncharge.email !== decodedToken.email) {
+				const response: StandardResponse = {
+					message:
+						"You must be the faculty incharge of the given committee",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const response: DataResponse = {
+				message: "The user is a teacher Incharge",
+				success: true,
+				data: TeacherPosition.FacultyIncharge,
+			};
+
+			return response;
+		} else if (decodedToken.accountType === AccountType.Student) {
+			//Check if StudentIncharge is incharge of the committee she is trying to update
+			if (oldCommittee.studentIncharge.email !== decodedToken.email) {
+				const response: StandardResponse = {
+					message:
+						"You must be the student incharge of the given committee",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const response: DataResponse = {
+				message: "The user is a student Incharge",
+				success: true,
+				data: StudentPosition.StudentIncharge,
+			};
+
+			return response;
+		} else {
+			const response: StandardResponse = {
+				message:
+					"You must be teacher Incharge or student incharge of the given committee",
+				success: false,
+			};
+
+			return response;
+		}
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while checking for studentIncharge and facultyIncharge " +
+				(e as Error).message,
+			success: false,
+		};
+
+		return response;
+	}
+};
+
 const runTestServer = async () => {
 	console.log("Connecting to local test db");
 
@@ -128,4 +202,8 @@ const stopTestServer = async () => {
 	await stopTestServerRunning();
 };
 
-export { runTestServer, stopTestServer };
+export {
+	runTestServer,
+	stopTestServer,
+	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
+};

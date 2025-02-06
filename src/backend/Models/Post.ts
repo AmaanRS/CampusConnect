@@ -1,5 +1,5 @@
 import { Model, MongooseError, Schema, model } from "mongoose";
-import { IPostDocument } from "../Types/ModelTypes";
+import { IPostDocument, ModelTypes } from "../Types/ModelTypes";
 import { generateUniqueId } from "../Utils/uniqueId";
 import { DataResponse } from "../Types/GeneralTypes";
 
@@ -9,6 +9,11 @@ const postSchema = new Schema<IPostDocument>(
 			required: true,
 			type: String,
 		},
+		committeeDocId: {
+			type: Schema.Types.ObjectId,
+			ref: "committeeModel",
+			required: true,
+		},
 		title: {
 			required: true,
 			type: String,
@@ -16,6 +21,26 @@ const postSchema = new Schema<IPostDocument>(
 		content: {
 			type: String,
 			required: true,
+		},
+		image: {
+			type: [
+				{
+					imageUrl: {
+						type: String,
+						required: true,
+					},
+					imagePath: {
+						type: String,
+						required: true,
+					},
+				},
+			],
+			default: [],
+		},
+		likes: {
+			type: [Schema.Types.ObjectId],
+			ref: "studentModel",
+			default: [],
 		},
 	},
 	{
@@ -65,17 +90,31 @@ const postSchema = new Schema<IPostDocument>(
 // 	}
 // });
 
+// TODO: Add isPostDeleted and mongoose middlewares to not show posts which are deleted
 postSchema.pre("validate", async function (next) {
 	try {
 		if (!this.postId) {
 			while (true) {
-				const uniqueId = await generateUniqueId();
+				const uniqueId = await generateUniqueId(ModelTypes.POST_MODEL);
 				if (uniqueId.success && "data" in uniqueId) {
 					this.postId = (uniqueId as DataResponse).data as string;
 					break;
 				}
 			}
 		}
+
+		if (
+			this.image &&
+			(!Array.isArray(this.image) ||
+				this.image.some((img) => !img.imageUrl || !img.imagePath))
+		) {
+			throw new MongooseError("Give image in proper structure");
+		}
+
+		if (this.image === undefined) this.image = [];
+		if (this.likes === undefined) this.likes = [];
+
+		next();
 	} catch (error) {
 		next(error as MongooseError);
 	}

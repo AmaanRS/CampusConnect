@@ -347,32 +347,43 @@ const deleteStudent = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const isStudentDeleted = await studentModel.deleteOne({ email: email });
+		// Make account inactive instead of deleting it
+		const result = await runWithRetrySession(async (session) => {
+			const isStudentDeleted = await studentModel
+				.updateOne({ email: email }, { isAccountActive: false })
+				.session(session);
 
-		if (!isStudentDeleted.acknowledged) {
+			if (!isStudentDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not delete the student",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isUserDeleted = await userModel
+				.updateOne({ email: email }, { isAccountActive: false })
+				.session(session);
+
+			if (!isUserDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not delete the student",
+					success: false,
+				};
+
+				return response;
+			}
+
 			const response: StandardResponse = {
-				message: "Could not delete the student",
-				success: false,
+				message: "Student deleted successfully",
+				success: true,
 			};
 
-			return res.status(401).json(response);
-		}
+			return response;
+		});
 
-		if (isStudentDeleted.deletedCount === 0) {
-			const response: StandardResponse = {
-				message: "Could not find the student to delete",
-				success: false,
-			};
-
-			return res.status(401).json(response);
-		}
-
-		const response: StandardResponse = {
-			message: "Student deleted successfully",
-			success: true,
-		};
-
-		return res.status(201).json(response);
+		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
 		const response: StandardResponse = {
@@ -386,7 +397,6 @@ const deleteStudent = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO : Write this function properly
 //TODO: Write with pagination
 const getAllStudents = async (req: Request, res: Response) => {
 	try {
@@ -446,4 +456,69 @@ const getAllStudents = async (req: Request, res: Response) => {
 	}
 };
 
-export { createStudent, getStudent, updateStudent, deleteStudent, getAllStudents };
+const getAllStudentData = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const studentData = await studentModel.findOne({ email }, { password: 0 }).populate("committeePositions.committeeObjId");
+
+		if (!studentData) {
+			const response: StandardResponse = {
+				message: "Student not found",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Student found successfully",
+			success: true,
+			data: studentData,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all the data of student" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+export {
+	createStudent,
+	getStudent,
+	updateStudent,
+	deleteStudent,
+	getAllStudents,
+	getAllStudentData,
+};

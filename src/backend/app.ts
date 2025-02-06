@@ -13,6 +13,7 @@ import PostRouter from "./Routes/PostRoutes";
 import EventRouter from "./Routes/EventRoutes";
 import { fileURLToPath } from "url";
 import { isAccountActive } from "./Middlewares/AccountStatus";
+import uploadRoutes from "./Routes/UploadRoutes";
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,7 @@ app.use("/student", StudentRouter);
 app.use("/committee", CommitteeRouter);
 app.use("/post", PostRouter);
 app.use("/event", EventRouter);
+app.use("/images", uploadRoutes);
 
 // Connects with db then express server
 async function connectToDbAndStartServer(

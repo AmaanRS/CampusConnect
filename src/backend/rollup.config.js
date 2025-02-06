@@ -21,6 +21,6 @@ export default {
 		"@faker-js/faker",
 		"nanoid",
 		"dayjs",
-		"dayjs/plugin/customParseFormat",
+		"multer"
 	],
 };

@@ -66,7 +66,16 @@ adminSchema.pre("validate", async function (next) {
 
 		this.position = [AdminPosition.Admin];
 
-		// this.position = this.position ? [...new Set(this.position)] : undefined;
+		// Validation check for empty arrays in the schema since mongoose allows empty array even though required true is written
+
+		if (!Array.isArray(this.position)) {
+			throw new MongooseError("Position should be an array");
+		}
+
+		if (this.position.length < 1) {
+			throw new MongooseError("There should be some position");
+		}
+
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];
 

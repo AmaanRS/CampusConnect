@@ -8,8 +8,8 @@ import {
 	deleteAdmin,
 	changeUserAccountStatusByEmail,
 } from "../Controllers/AdminController";
-import { authorizationMiddlewareFactory } from "../Middlewares/Authorization";
-import { AccountType, AdminPosition } from "../Types/ModelTypes";
+// import { authorizationMiddlewareFactory } from "../Middlewares/Authorization";
+// import { AccountType, AdminPosition } from "../Types/ModelTypes";
 
 Router.route("/createAdmin").post(createAdmin);
 
@@ -19,9 +19,6 @@ Router.route("/updateAdmin").post(updateAdmin);
 
 Router.route("/deleteAdmin").post(deleteAdmin);
 
-Router.route("/deleteUserByEmail").post(
-	authorizationMiddlewareFactory([AdminPosition.Admin], AccountType.Admin),
-	changeUserAccountStatusByEmail,
-);
+Router.route("/deleteUserByEmail").post(changeUserAccountStatusByEmail);
 
 export default Router;

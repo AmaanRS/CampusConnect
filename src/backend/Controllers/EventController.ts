@@ -7,7 +7,6 @@ import {
 } from "../Types/GeneralTypes";
 import { runWithRetrySession } from "../Utils/util";
 import { committeeModel } from "../Models/Committee";
-import { isValidDate, isValidTime } from "../Utils/dateTime";
 import { eventModel } from "../Models/Event";
 
 const createEvent = async (req: Request, res: Response) => {
@@ -74,9 +73,12 @@ const createEvent = async (req: Request, res: Response) => {
 
 		const result = await runWithRetrySession(async (session) => {
 			// Get the hosting committees
+			// Should not include deleted committtees (done in model)
+			// Event should not have same name with any existing event
 			const hostingCommitteesExists = await committeeModel
 				.find({
 					committeeId: { $in: hostingCommitteesId },
+					name: { $ne: name },
 				})
 				.session(session)
 				.lean();
@@ -87,14 +89,14 @@ const createEvent = async (req: Request, res: Response) => {
 					success: false,
 				};
 
-				return res.status(401).json(response);
+				return response;
 			}
 
 			const foundCommitteeIds = hostingCommitteesExists.map(
 				(committee) => committee.committeeId,
 			);
 
-			// Identify the missing committee IDs
+			// Identify the missing committee IDs (ie committee ids which are not present in db or are marked as deleted)
 			const missingCommitteeIds = hostingCommitteesId.filter(
 				(id) => !foundCommitteeIds.includes(id),
 			);
@@ -105,53 +107,24 @@ const createEvent = async (req: Request, res: Response) => {
 					success: false,
 				};
 
-				return res.status(401).json(response);
+				return response;
 			}
 
-			// Validate dates
-			if (!isValidDate(startDate)) {
-				const response: StandardResponse = {
-					message: "Invalid start date format expected DD-MM-YYYY",
-					success: false,
-				};
-
-				return res.status(401).json(response);
-			}
-
-			if (!isValidDate(endDate)) {
-				const response: StandardResponse = {
-					message: "Invalid end date format expected DD-MM-YYYY",
-					success: false,
-				};
-
-				return res.status(401).json(response);
-			}
-
-			// Validate times in 12-hour format
-			if (!isValidTime(startTime)) {
-				const response: StandardResponse = {
-					message: "Invalid start time format (expected hh:mm AM/PM)",
-					success: false,
-				};
-
-				return res.status(401).json(response);
-			}
-
-			if (!isValidTime(endTime)) {
-				const response: StandardResponse = {
-					message: "Invalid end time format (expected hh:mm AM/PM)",
-					success: false,
-				};
-
-				return res.status(401).json(response);
-			}
+			// Get obect ids corresponding to committee ids
+			const hostingCommitteesObjectId = await committeeModel
+				.find(
+					{ committeeId: { $in: hostingCommitteesId } },
+					{ _id: 1 },
+					{ session },
+				)
+				.lean();
 
 			const newEvent = await eventModel.create(
 				[
 					{
 						name,
 						description,
-						hostingCommitteesId,
+						hostingCommittees: hostingCommitteesObjectId,
 						startDate,
 						endDate,
 						startTime,
@@ -168,7 +141,7 @@ const createEvent = async (req: Request, res: Response) => {
 					success: false,
 				};
 
-				return res.status(401).json(response);
+				return response;
 			}
 
 			const response: StandardResponse = {
@@ -176,7 +149,7 @@ const createEvent = async (req: Request, res: Response) => {
 				success: true,
 			};
 
-			return res.status(201).json(response);
+			return response;
 		});
 
 		return res.status(result.success ? 201 : 401).json(result);
@@ -306,13 +279,13 @@ const updateEvent = async (req: Request, res: Response) => {
 		}
 
 		if (
-			!name &&
-			!description &&
-			!hostingCommitteesId &&
-			!startDate &&
-			!endDate &&
-			!startTime &&
-			!endTime &&
+			!name ||
+			!description ||
+			!hostingCommitteesId ||
+			!startDate ||
+			!endDate ||
+			!startTime ||
+			!endTime ||
 			!venue
 		) {
 			const response: StandardResponse = {
@@ -325,6 +298,7 @@ const updateEvent = async (req: Request, res: Response) => {
 
 		const result = await runWithRetrySession(async (session) => {
 			if (hostingCommitteesId && hostingCommitteesId.length !== 0) {
+				//Should not include deleted committtees (done in model)
 				const hostingCommitteesExists = await committeeModel
 					.find({
 						committeeId: { $in: hostingCommitteesId },
@@ -341,7 +315,7 @@ const updateEvent = async (req: Request, res: Response) => {
 						success: false,
 					};
 
-					return res.status(401).json(response);
+					return response;
 				}
 
 				const foundCommitteeIds = hostingCommitteesExists.map(
@@ -359,46 +333,8 @@ const updateEvent = async (req: Request, res: Response) => {
 						success: false,
 					};
 
-					return res.status(401).json(response);
+					return response;
 				}
-			}
-
-			// Validate dates
-			if (startDate && !isValidDate(startDate)) {
-				const response: StandardResponse = {
-					message: "Invalid start date format expected DD-MM-YYYY",
-					success: false,
-				};
-
-				return res.status(401).json(response);
-			}
-
-			if (endDate && !isValidDate(endDate)) {
-				const response: StandardResponse = {
-					message: "Invalid end date format expected DD-MM-YYYY",
-					success: false,
-				};
-
-				return res.status(401).json(response);
-			}
-
-			// Validate times in 12-hour format
-			if (startTime && !isValidTime(startTime)) {
-				const response: StandardResponse = {
-					message: "Invalid start time format (expected hh:mm AM/PM)",
-					success: false,
-				};
-
-				return res.status(401).json(response);
-			}
-
-			if (endTime && !isValidTime(endTime)) {
-				const response: StandardResponse = {
-					message: "Invalid end time format (expected hh:mm AM/PM)",
-					success: false,
-				};
-
-				return res.status(401).json(response);
 			}
 
 			const newDataForEvent = {
@@ -425,7 +361,7 @@ const updateEvent = async (req: Request, res: Response) => {
 					success: false,
 				};
 
-				return res.status(401).json(response);
+				return response;
 			}
 
 			// Delete the old event
@@ -440,7 +376,7 @@ const updateEvent = async (req: Request, res: Response) => {
 					success: false,
 				};
 
-				return res.status(401).json(response);
+				return response;
 			}
 
 			const updatedEvent = await eventModel.create([newDataForEvent], {
@@ -453,7 +389,7 @@ const updateEvent = async (req: Request, res: Response) => {
 					success: false,
 				};
 
-				return res.status(401).json(response);
+				return response;
 			}
 
 			const response: StandardResponse = {
@@ -461,7 +397,7 @@ const updateEvent = async (req: Request, res: Response) => {
 				success: true,
 			};
 
-			return res.status(201).json(response);
+			return response;
 		});
 
 		return res.status(result.success ? 201 : 401).json(result);
@@ -536,7 +472,6 @@ const deleteEvent = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO : Write this function properly
 //TODO: Write with pagination
 const getAllEvents = async (req: Request, res: Response) => {
 	try {

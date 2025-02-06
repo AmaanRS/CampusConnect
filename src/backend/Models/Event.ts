@@ -1,7 +1,8 @@
 import { Model, MongooseError, Schema, model } from "mongoose";
-import { IEventDocument } from "../Types/ModelTypes";
+import { IEventDocument, ModelTypes } from "../Types/ModelTypes";
 import { generateUniqueId } from "../Utils/uniqueId";
 import { DataResponse } from "../Types/GeneralTypes";
+import { isValidDateTimeRange } from "../Utils/dateTime";
 
 const eventSchema = new Schema<IEventDocument>(
 	{
@@ -26,19 +27,19 @@ const eventSchema = new Schema<IEventDocument>(
 			},
 		],
 		startDate: {
-			type: Date,
+			type: String,
 			required: true,
 		},
 		endDate: {
-			type: Date,
+			type: String,
 			required: true,
 		},
 		startTime: {
-			type: Date,
+			type: String,
 			required: true,
 		},
 		endTime: {
-			type: Date,
+			type: String,
 			required: true,
 		},
 		venue: {
@@ -51,24 +52,51 @@ const eventSchema = new Schema<IEventDocument>(
 	},
 );
 
-//
-// Start date/time cannot be more than end date/time
-//
 eventSchema.pre("validate", async function (next) {
 	try {
+		// If eventId is given use it (this is for updating an event)
 		if (!this.eventId) {
+			let count = 0;
 			while (true) {
-				const uniqueId = await generateUniqueId();
+				const uniqueId = await generateUniqueId(ModelTypes.EVENT_MODEL);
 				if (uniqueId.success && "data" in uniqueId) {
 					this.eventId = (uniqueId as DataResponse).data as string;
 					break;
 				}
+				count++;
+				if (count > 3) {
+					throw new MongooseError(
+						"Could not create unique id and could not create event",
+					);
+				}
 			}
 		}
 
-		this.hostingCommittees = this.hostingCommittees
-			? [...new Set(this.hostingCommittees)]
-			: undefined;
+		// Validate date and time
+		const isValidRange = isValidDateTimeRange({
+			startDate: this.startDate.toString(),
+			startTime: this.startTime.toString(),
+			endDate: this.endDate.toString(),
+			endTime: this.endTime.toString(),
+		});
+
+		if (!isValidRange.success) {
+			throw new MongooseError(isValidRange.message);
+		}
+
+		// Validation check for empty arrays in the schema since mongoose allows empty array even though required true is written
+
+		if (!Array.isArray(this.hostingCommittees)) {
+			throw new MongooseError("Hosting committee should be an array");
+		}
+
+		if (this.hostingCommittees.length < 1) {
+			throw new MongooseError("There should be some hosting committee");
+		}
+
+		this.hostingCommittees = [...new Set(this.hostingCommittees)];
+
+		next();
 	} catch (err) {
 		next(err as MongooseError);
 	}
