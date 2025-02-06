@@ -11,6 +11,7 @@ import TipTap from "../../../Components/RichTextEditor/TipTap";
 import MediaUploader from "../../../Components/MediaUploader/MediaUploader";
 import Title from "./Title";
 import SelectCommittee from "./SelectCommittee";
+import axiosInstance from "../../../utils/Axios/AxiosInstance";
 
 export default function AddPostForm() {
   const [htmlContent, setHtmlContent] = useState("");
