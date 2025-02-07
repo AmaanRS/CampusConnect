@@ -21,7 +21,7 @@ export default function SelectCommittee({ handleChange }) {
   useEffect(() => {
     if (data?.data?.committeePositions) {
       const temp = data.data.committeePositions.map((position) => ({
-        value: position.committeeObjId._id,
+        value: position.committeeObjId.committeeId,
         label: position.committeeObjId.name,
       }));
       setOptions(temp);

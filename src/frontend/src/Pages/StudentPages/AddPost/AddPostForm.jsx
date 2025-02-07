@@ -12,6 +12,12 @@ import MediaUploader from "../../../Components/MediaUploader/MediaUploader";
 import Title from "./Title";
 import SelectCommittee from "./SelectCommittee";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import { useMutation } from "@tanstack/react-query";
+
+const postData = async (data) => {
+  const response = await axiosInstance.post("/post/createPost", data);
+  return response.data;
+};
 
 export default function AddPostForm() {
   const [htmlContent, setHtmlContent] = useState("");
@@ -20,6 +26,19 @@ export default function AddPostForm() {
   const [title, setTitle] = useState("");
   const [committee, setCommittee] = useState("");
   const [error, setError] = useState("");
+
+  // Use the mutation hook
+  const mutation = useMutation({
+    mutationFn: postData,
+    onSuccess: (data) => {
+      console.log("Data posted successfully:", data);
+      alert("Data posted successfully!");
+    },
+    onError: (error) => {
+      console.error("Error posting data:", error);
+      alert("Error posting data");
+    },
+  });
 
   function getEditorContent(richText) {
     setError("");
@@ -36,7 +55,16 @@ export default function AddPostForm() {
       setError("Please Fill all mandatory fields");
       return;
     }
-    console.log(committee, title, htmlContent, filePath, publicURL);
+    let obj = {
+      title: title,
+      content: htmlContent,
+      committeeId: committee,
+    };
+    if (filePath && publicURL) {
+      obj.image = [{ imageUrl: publicURL, imagePath: filePath }];
+    }
+    console.log(obj);
+    mutation.mutate(obj); // Trigger the mutation
   }
 
   return (
