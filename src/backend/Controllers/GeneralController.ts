@@ -8,13 +8,18 @@ import { adminModel } from "../Models/Admin";
 import { teacherModel } from "../Models/Teacher";
 import {
 	CommitteeStatus,
+	ICommittee,
+	ICommitteeDocument,
 	IStudentDocument,
 	ITeacherDocument,
 	TeacherPosition,
 } from "../Types/ModelTypes";
 import { IAdmin } from "../Types/ModelTypes";
 import { committeeModel } from "../Models/Committee";
-import { runWithRetrySession } from "../Utils/util";
+import {
+	runWithRetrySession,
+	updateStudentInchargeOfCommittee,
+} from "../Utils/util";
 import { Types } from "mongoose";
 
 const getAllPendingCommitteesFunc = async (
@@ -323,17 +328,19 @@ const getAllDeletedCommittees = async (req: Request, res: Response) => {
 // 	}
 // };
 
-// Admin can only update facultyIncharge (of both active and pending committees)
+// Admin can update facultyIncharge,studentIncharge,members,desc (of both active and pending committees)
 const updateCommitteeByAdmin = async (req: Request, res: Response) => {
 	try {
 		const {
 			decodedToken,
 			committeeId,
 			newFacultyIncharge: newFacultyInchargeEmail,
+			newStudentIncharge: newStudentInchargeEmail,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
 			committeeId: string | undefined;
 			newFacultyIncharge: string | undefined;
+			newStudentIncharge: string | undefined;
 		} = req.body;
 
 		if (!decodedToken) {
@@ -364,9 +371,9 @@ const updateCommitteeByAdmin = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if (!newFacultyInchargeEmail) {
+		if (!newFacultyInchargeEmail && !newStudentInchargeEmail) {
 			const response: StandardResponse = {
-				message: "Please give faculty incharge email",
+				message: "Please give faculty incharge or studentIncharge email",
 				success: false,
 			};
 
@@ -546,6 +553,18 @@ const updateCommitteeByAdmin = async (req: Request, res: Response) => {
 				};
 
 				return response;
+			}
+
+			// Update the studentIncharge email
+			if (newStudentInchargeEmail) {
+				const response = await updateStudentInchargeOfCommittee({
+					studentInchargeEmail: newStudentInchargeEmail,
+					committee: oldCommittee,
+					session,
+					newDataForCommittee: newDataForCommittee as ICommitteeDocument,
+				});
+
+				if (!response.success) return response;
 			}
 
 			// Replace facultyIncharge of committee with new facultyIncharge

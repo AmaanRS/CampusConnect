@@ -8,6 +8,7 @@ import {
 	deleteStudent,
 	getAllStudents,
 	getAllStudentData,
+	getAllStudentsEmail,
 } from "../Controllers/StudentController";
 
 Router.route("/createStudent").post(createStudent);
@@ -16,5 +17,6 @@ Router.route("/updateStudent").post(updateStudent);
 Router.route("/deleteStudent").post(deleteStudent);
 Router.route("/getAllStudents").post(getAllStudents);
 Router.route("/getAllStudentData").post(getAllStudentData);
+Router.route("/getAllStudentsEmail").post(getAllStudentsEmail);
 
 export default Router;

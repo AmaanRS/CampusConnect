@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import { Department, IStudent, Year } from "../Types/ModelTypes";
+import {
+	AccountType,
+	Department,
+	IStudent,
+	StudentPosition,
+	Year,
+} from "../Types/ModelTypes";
 import {
 	DataResponse,
 	decodedTokenPayload,
@@ -483,7 +489,9 @@ const getAllStudentData = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const studentData = await studentModel.findOne({ email }, { password: 0 }).populate("committeePositions.committeeObjId");
+		const studentData = await studentModel
+			.findOne({ email }, { password: 0 })
+			.populate("committeePositions.committeeObjId");
 
 		if (!studentData) {
 			const response: StandardResponse = {
@@ -514,6 +522,66 @@ const getAllStudentData = async (req: Request, res: Response) => {
 	}
 };
 
+const getAllStudentsEmail = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const emails = await userModel
+			.find({ accType: AccountType.Student }, { email: 1, _id: 0 })
+			.lean();
+
+		if (!Array.isArray(emails) || emails.length === 0) {
+			const response: StandardResponse = {
+				message: "No student emails found in db",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Emails of students found successfully",
+			success: false,
+			data: emails,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all email of students" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
 export {
 	createStudent,
 	getStudent,
@@ -521,4 +589,5 @@ export {
 	deleteStudent,
 	getAllStudents,
 	getAllStudentData,
+	getAllStudentsEmail,
 };

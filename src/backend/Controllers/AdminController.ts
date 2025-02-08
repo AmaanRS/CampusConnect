@@ -57,6 +57,39 @@ const createAdmin = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			//Delete the student/teacher from the teacher/student model
+			if (user.accType === AccountType.Student) {
+				const isStudentDeleted = await studentModel
+					.deleteOne({ email })
+					.session(session)
+					.lean();
+
+				if (!isStudentDeleted.acknowledged) {
+					const response: StandardResponse = {
+						message:
+							"Could not delete the student while changing to admin",
+						success: false,
+					};
+
+					return response;
+				}
+			} else if (user.accType === AccountType.Teacher) {
+				const isTeacherDeleted = await teacherModel
+					.deleteOne({ email })
+					.session(session)
+					.lean();
+
+				if (!isTeacherDeleted.acknowledged) {
+					const response: StandardResponse = {
+						message:
+							"Could not delete the teacher while changing to admin",
+						success: false,
+					};
+
+					return response;
+				}
+			}
+
 			// Passing old objectId ensures that objectid remains same
 			const userId = user._id;
 			const { ...dataForNewAdmin } = user;
