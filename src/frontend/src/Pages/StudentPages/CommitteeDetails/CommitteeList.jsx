@@ -3,6 +3,7 @@ import StudentPost from "../Components/PostPreview/Post/StudentPost";
 import { Avatar } from "flowbite-react";
 
 export default function CommitteeList() {
+  return "work in progress";
   return (
     <>
       <div className="flex bg-slate-100 rounded-lg items-center mb-4 px-4 ">

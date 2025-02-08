@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import axiosInstance from "../utils/Axios/AxiosInstance";
 
 const MAX_FILE_SIZE = 11 * 1024; // 11 KB in bytes
 
@@ -17,7 +18,7 @@ export function useFileUpload({
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (publicURL) {
-        const url = `http://localhost:5000/images/delete/${encodeURIComponent(
+        const url = `https://campusconnect-wep1.onrender.com/images/delete/${encodeURIComponent(
           filePath
         )}`;
         const payload = JSON.stringify({ filePath });
@@ -33,18 +34,23 @@ export function useFileUpload({
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     // Cleanup when the component is unmounted or the effect is cleaned up
-    return () => {
+    return async () => {
       // Handle the cleanup and trigger sendBeacon on component unmount as well
       if (publicURL) {
-        const url = `http://localhost:5000/images/delete/${encodeURIComponent(
-          filePath
-        )}`;
-        const payload = JSON.stringify({ filePath });
-        const headers = { "Content-Type": "application/json" };
+        // const url = `https://campusconnect-wep1.onrender.com/images/delete/${encodeURIComponent(
+        //   filePath
+        // )}`;
+        // const payload = JSON.stringify({ filePath });
+        // const headers = { "Content-Type": "application/json" };
 
-        // Construct and send the request using sendBeacon on unmount
-        const blob = new Blob([payload], headers);
-        navigator.sendBeacon(url, blob);
+        // // Construct and send the request using sendBeacon on unmount
+        // const blob = new Blob([payload], headers);
+        // navigator.sendBeacon(url, blob);
+        await axiosInstance.post(
+          `https://campusconnect-wep1.onrender.com/images/delete/${encodeURIComponent(
+            filePath
+          )}`
+        );
       }
 
       // Remove the event listener
@@ -66,12 +72,13 @@ export function useFileUpload({
     setUploading(true);
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/images/upload",
+      const res = await axiosInstance.post(
+        "https://campusconnect-wep1.onrender.com/images/upload",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      setPublicUrl(res.data.publicURL);
+      console.log(res);
+      setPublicUrl(res.data.data.publicURL);
       setFilePath(currFilePath);
     } catch (error) {
       alert("Error: " + error.message);
@@ -86,8 +93,10 @@ export function useFileUpload({
     }
     setRemoving(true);
     try {
-      const res = await axios.post(
-        `http://localhost:5000/images/delete/${encodeURIComponent(filePath)}`
+      const res = await axiosInstance.post(
+        `https://campusconnect-wep1.onrender.com/images/delete/${encodeURIComponent(
+          filePath
+        )}`
       );
       setPublicUrl("");
       setFilePath("");
