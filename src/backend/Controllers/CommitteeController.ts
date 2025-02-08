@@ -5,6 +5,7 @@ import {
 	StandardResponse,
 } from "../Types/GeneralTypes";
 import {
+	AccountType,
 	CommitteeStatus,
 	Department,
 	ICommitteeDocument,
@@ -567,7 +568,7 @@ const updateCommittee = async (req: Request, res: Response) => {
 							newDataForCommittee as ICommitteeDocument,
 					});
 
-					if(!response.success) return response
+					if (!response.success) return response;
 				} else {
 					const response: StandardResponse = {
 						message:
@@ -696,31 +697,55 @@ const addMembersInCommittee = async (req: Request, res: Response) => {
 		}
 
 		const result = await runWithRetrySession(async (session) => {
-			const oldCommittee = await committeeModel
-				.findOne({ committeeId })
-				.populate<{
-					facultyIncharge: ITeacherDocument;
-					studentIncharge: IStudentDocument;
-				}>(["facultyIncharge", "studentIncharge"])
-				.session(session)
-				.lean();
+			let oldCommittee;
 
-			if (!oldCommittee) {
-				const response: StandardResponse = {
-					message: "Could not find the committee",
-					success: false,
-				};
-				return response;
-			}
+			if (decodedToken.accountType === AccountType.Admin) {
+				oldCommittee = await committeeModel
+					.findOne({ committeeId }, null, {
+						_skipPendingCheckInHook: true,
+						_skipDeletingCheckInHook: true,
+					})
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["facultyIncharge", "studentIncharge"])
+					.session(session)
+					.lean();
 
-			// Both faculty incharge and student incharge can add members to the committee
-			const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
-				decodedToken,
-				oldCommittee,
-			});
+				if (!oldCommittee) {
+					const response: StandardResponse = {
+						message: "Could not find the committee",
+						success: false,
+					};
+					return response;
+				}
+			} else {
+				oldCommittee = await committeeModel
+					.findOne({ committeeId })
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["facultyIncharge", "studentIncharge"])
+					.session(session)
+					.lean();
 
-			if (!funcResponse.success) {
-				return funcResponse;
+				if (!oldCommittee) {
+					const response: StandardResponse = {
+						message: "Could not find the committee",
+						success: false,
+					};
+					return response;
+				}
+
+				// Both faculty incharge and student incharge can add members to the committee
+				const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+					decodedToken,
+					oldCommittee,
+				});
+
+				if (!funcResponse.success) {
+					return funcResponse;
+				}
 			}
 
 			// Check if members exists in db
@@ -884,9 +909,15 @@ const addMembersInCommittee = async (req: Request, res: Response) => {
 
 			// Delete the old committee
 			const isOldCommitteeDeleted = await committeeModel
-				.deleteOne({
-					committeeId,
-				})
+				.deleteOne(
+					{
+						committeeId,
+					},
+					{
+						_skipPendingCheckInHook: true,
+						_skipDeletingCheckInHook: true,
+					},
+				)
 				.session(session);
 
 			if (!isOldCommitteeDeleted.acknowledged) {
@@ -934,7 +965,7 @@ const addMembersInCommittee = async (req: Request, res: Response) => {
 	}
 };
 
-// Both studentIncharge and teacherIncharge can remove members from the committee
+// Both studentIncharge, teacherIncharge and admin can remove members from the committee
 // Cannot remove studentIncharge through this api
 const removeMembersFromCommittee = async (req: Request, res: Response) => {
 	try {
@@ -996,31 +1027,55 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 		}
 
 		const result = await runWithRetrySession(async (session) => {
-			const oldCommittee = await committeeModel
-				.findOne({ committeeId })
-				.populate<{
-					facultyIncharge: ITeacherDocument;
-					studentIncharge: IStudentDocument;
-				}>(["facultyIncharge", "studentIncharge"])
-				.session(session)
-				.lean();
+			let oldCommittee;
 
-			if (!oldCommittee) {
-				const response: StandardResponse = {
-					message: "Could not find the committee",
-					success: false,
-				};
-				return response;
-			}
+			if (decodedToken.accountType === AccountType.Admin) {
+				oldCommittee = await committeeModel
+					.findOne({ committeeId }, null, {
+						_skipPendingCheckInHook: true,
+						_skipDeletingCheckInHook: true,
+					})
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["facultyIncharge", "studentIncharge"])
+					.session(session)
+					.lean();
 
-			// Both faculty incharge and student incharge can add members to the committee
-			const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
-				decodedToken,
-				oldCommittee,
-			});
+				if (!oldCommittee) {
+					const response: StandardResponse = {
+						message: "Could not find the committee",
+						success: false,
+					};
+					return response;
+				}
+			} else {
+				oldCommittee = await committeeModel
+					.findOne({ committeeId })
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["facultyIncharge", "studentIncharge"])
+					.session(session)
+					.lean();
 
-			if (!funcResponse.success) {
-				return funcResponse;
+				if (!oldCommittee) {
+					const response: StandardResponse = {
+						message: "Could not find the committee",
+						success: false,
+					};
+					return response;
+				}
+
+				// Both faculty incharge and student incharge can add members to the committee
+				const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+					decodedToken,
+					oldCommittee,
+				});
+
+				if (!funcResponse.success) {
+					return funcResponse;
+				}
 			}
 
 			// Check if members exists in db
@@ -1028,7 +1083,8 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 				.find({
 					email: { $in: members },
 				})
-				.session(session);
+				.session(session)
+				.lean();
 
 			if (!Array.isArray(foundMembers) || foundMembers.length === 0) {
 				const response: StandardResponse = {
@@ -1063,7 +1119,8 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 				if (
 					foundMembers[i].committeePositions?.some((committeePosition) => {
 						return (
-							committeePosition.committeeObjId === oldCommittee._id &&
+							committeePosition.committeeObjId?.toString() ===
+								(oldCommittee._id as Types.ObjectId).toString() &&
 							committeePosition.position ===
 								StudentPosition.StudentIncharge
 						);
@@ -1072,6 +1129,14 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 					// Since the email belongs to studentIncharge and we dont want to remove him from the committee
 					foundMembers.splice(i, 1);
 				}
+			}
+
+			if (!Array.isArray(foundMembers) || foundMembers.length === 0) {
+				const response: StandardResponse = {
+					message: "Cannot remove the studentIncharge",
+					success: false,
+				};
+				return response;
 			}
 
 			// Remove members which are present in foundMembers from OldCommittee.members
@@ -1161,9 +1226,15 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 
 			// Delete the old committee
 			const isOldCommitteeDeleted = await committeeModel
-				.deleteOne({
-					committeeId,
-				})
+				.deleteOne(
+					{
+						committeeId,
+					},
+					{
+						_skipPendingCheckInHook: true,
+						_skipDeletingCheckInHook: true,
+					},
+				)
 				.session(session);
 
 			if (!isOldCommitteeDeleted.acknowledged) {

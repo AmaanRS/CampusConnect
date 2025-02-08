@@ -8,7 +8,6 @@ import { adminModel } from "../Models/Admin";
 import { teacherModel } from "../Models/Teacher";
 import {
 	CommitteeStatus,
-	ICommittee,
 	ICommitteeDocument,
 	IStudentDocument,
 	ITeacherDocument,
@@ -328,7 +327,7 @@ const getAllDeletedCommittees = async (req: Request, res: Response) => {
 // 	}
 // };
 
-// Admin can update facultyIncharge,studentIncharge,members,desc (of both active and pending committees)
+// Admin can update facultyIncharge,studentIncharge,desc (of both active and pending committees)
 const updateCommitteeByAdmin = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -336,11 +335,13 @@ const updateCommitteeByAdmin = async (req: Request, res: Response) => {
 			committeeId,
 			newFacultyIncharge: newFacultyInchargeEmail,
 			newStudentIncharge: newStudentInchargeEmail,
+			desc,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
 			committeeId: string | undefined;
 			newFacultyIncharge: string | undefined;
 			newStudentIncharge: string | undefined;
+			desc: string | undefined;
 		} = req.body;
 
 		if (!decodedToken) {
@@ -371,9 +372,10 @@ const updateCommitteeByAdmin = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if (!newFacultyInchargeEmail && !newStudentInchargeEmail) {
+		if (!newFacultyInchargeEmail && !newStudentInchargeEmail && !desc) {
 			const response: StandardResponse = {
-				message: "Please give faculty incharge or studentIncharge email",
+				message:
+					"Please give faculty incharge or studentIncharge email or desc to update",
 				success: false,
 			};
 
@@ -448,6 +450,8 @@ const updateCommitteeByAdmin = async (req: Request, res: Response) => {
 						).toString()
 					);
 				});
+
+			if (desc) newDataForCommittee.description = desc;
 
 			let oldFacultyInchargeNewData = oldCommittee.facultyIncharge;
 
