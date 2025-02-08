@@ -7,7 +7,6 @@ import {
 	updateCommittee,
 	addMembersInCommittee,
 	removeMembersFromCommittee,
-	deleteCommittee,
 	getAllCommittees,
 } from "../Controllers/CommitteeController";
 
@@ -20,8 +19,6 @@ Router.route("/updateCommittee").post(updateCommittee);
 Router.route("/addMembersInCommittee").post(addMembersInCommittee);
 
 Router.route("/removeMembersFromCommittee").post(removeMembersFromCommittee);
-
-Router.route("/deleteCommittee").post(deleteCommittee);
 
 Router.route("/getAllCommittees").post(getAllCommittees);
 
