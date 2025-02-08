@@ -16,7 +16,6 @@ export default function StudentHome() {
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error: {error.message}</p>;
-  console.log(data?.data[0]);
   return (
     <div className="max-w-3xl m-auto">
       <hr className="mb-2 mx-1" />

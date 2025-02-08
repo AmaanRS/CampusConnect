@@ -4,15 +4,29 @@ import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainCont
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 import PostDetails from "./PostDetails";
 import CommitteeSidebar from "../Components/CommitteeSidebar/CommitteeSidebar";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../../../utils/Axios/AxiosInstance";
+
+const fetchData = async ({ postId }) => {
+  const response = await axiosInstance.post(`/post/getPostById`, { postId }); // Replace with your API URL
+  return response.data;
+};
 
 export default function PostDetailsLayout() {
   const { postId } = useParams();
-  console.log(postId);
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["post", postId], // Unique query key
+    queryFn: () => fetchData({ postId }), // Function to fetch data
+  });
 
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error: {error.message}</p>;
+
+  console.log(data);
   return (
     <>
       <CentreMainContent>
-        <PostDetails />
+        <PostDetails postData={data?.data} />
       </CentreMainContent>
       <RightSidebar>
         <CommitteeSidebar />

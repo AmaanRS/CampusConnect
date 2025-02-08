@@ -6,15 +6,21 @@ import PostImage from "./PostImage";
 import PostActionBar from "./PostActionBar";
 import PostComment from "./Comment/PostComment";
 
-export default function PostDetails() {
+export default function PostDetails({ postData }) {
+  console.log(postData);
+  let isImage = postData?.image.length > 0;
+  console.log(isImage);
   return (
     <>
       <div className="  max-w-3xl m-auto">
-        <PostTop />
-        <PostTitle />
-        <PostBody />
-        <PostImage />
-        <PostActionBar />
+        <PostTop
+          subname={postData?.committeeDocId.name}
+          createdAt={postData?.createdAt}
+        />
+        <PostTitle title={postData?.title} />
+        <PostBody content={postData?.content} />
+        {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
+        <PostActionBar postId={postData?.postId} />
         {/* <PostComment /> */}
       </div>
     </>

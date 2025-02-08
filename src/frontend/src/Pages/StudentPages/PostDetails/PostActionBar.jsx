@@ -6,11 +6,13 @@ import { PiShareFat } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export default function PostActionBar() {
+export default function PostActionBar({ postId }) {
   let active = false;
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText("testing copy function");
+      await navigator.clipboard.writeText(
+        `http://localhost:5173/student/post/${postId}`
+      );
       toast.success("Link Copied");
     } catch (err) {
       console.error("Failed to copy text: ", err);

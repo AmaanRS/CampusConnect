@@ -28,7 +28,7 @@ export default function SidebarComponent() {
         text="Add Post"
       />
       <SidebarItem to="page3" icon={<Search size={20} />} text="Search" />
-      <SidebarItem icon={<HiOutlineUserGroup size={20} />} text="committees" />
+      {/* <SidebarItem icon={<HiOutlineUserGroup size={20} />} text="committees" />
       <SidebarItem
         icon={<LiaChalkboardTeacherSolid size={20} />}
         text="Teachers"
@@ -38,7 +38,7 @@ export default function SidebarComponent() {
 
       <hr className="my-3" />
       <SidebarItem icon={<User size={20} />} text="profile" />
-      <SidebarItem icon={<Settings size={20} />} text="Settings" />
+      <SidebarItem icon={<Settings size={20} />} text="Settings" /> */}
 
       <SidebarButton
         onClick={() => logOutUser()}
