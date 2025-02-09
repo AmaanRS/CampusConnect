@@ -10,7 +10,11 @@ import {
 	runWithRetrySession,
 } from "../Utils/util";
 import { committeeModel } from "../Models/Committee";
-import { IStudentDocument } from "../Types/ModelTypes";
+import {
+	IStudentDocument,
+	StudentPosition,
+	TeacherPosition,
+} from "../Types/ModelTypes";
 import { studentModel } from "../Models/Student";
 
 const createPost = async (req: Request, res: Response) => {
@@ -102,11 +106,22 @@ const createPost = async (req: Request, res: Response) => {
 			return res.status(401).json(resp);
 		}
 
+		let postedBy;
+
+		if ("data" in resp) {
+			if (resp.data === StudentPosition.StudentIncharge) {
+				postedBy = committee.studentIncharge._id;
+			} else if (resp.data === TeacherPosition.FacultyIncharge) {
+				postedBy = committee.facultyIncharge._id;
+			}
+		}
+
 		const isPostCreated = await postModel.create({
 			committeeDocId: committee._id,
 			title,
 			content,
 			image,
+			postedBy: postedBy,
 		});
 
 		if (!isPostCreated) {
@@ -180,6 +195,7 @@ const getPostById = async (req: Request, res: Response) => {
 			.populate({
 				path: "committeeDocId",
 				populate: [
+					{ path: "postedBy", model: "userModel" },
 					{ path: "studentIncharge", model: "studentModel" },
 					{ path: "facultyIncharge", model: "teacherModel" },
 					{ path: "facultyTeam", model: "teacherModel" },
@@ -437,7 +453,13 @@ const getAllPosts = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const allPosts = await postModel.find().populate("committeeDocId");
+		const allPosts = await postModel
+			.find()
+			.populate([
+				{ path: "committeeDocId" },
+				{ path: "postedBy", model: "userModel" },
+			])
+			.lean();
 
 		if (allPosts.length === 0) {
 			const response: StandardResponse = {

@@ -179,6 +179,7 @@ export interface ICommitteeDocument extends ICommittee, Document {}
 export interface IPost {
 	postId: string;
 	committeeDocId: Types.ObjectId;
+	postedBy: Types.ObjectId;
 	title: string;
 	content: string;
 	image?: {

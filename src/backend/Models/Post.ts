@@ -14,6 +14,11 @@ const postSchema = new Schema<IPostDocument>(
 			ref: "committeeModel",
 			required: true,
 		},
+		postedBy: {
+			type: Schema.Types.ObjectId,
+			ref: "userModel",
+			required: true,
+		},
 		title: {
 			required: true,
 			type: String,
