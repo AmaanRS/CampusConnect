@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import axiosInstance from "../utils/Axios/AxiosInstance";
 
@@ -15,48 +15,47 @@ export function useFileUpload({
   const [uploading, setUploading] = useState(false);
   const [removing, setRemoving] = useState(false);
 
+  const filePathRef = useRef(filePath);
+  const publicURLRef = useRef(publicURL);
+
+  // Update the refs whenever filePath or publicURL changes
+  useEffect(() => {
+    filePathRef.current = filePath;
+    publicURLRef.current = publicURL;
+  }, [filePath, publicURL]);
+
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (publicURL) {
+      if (publicURLRef.current) {
         const url = `https://campusconnect-wep1.onrender.com/images/delete/${encodeURIComponent(
-          filePath
+          filePathRef.current
         )}`;
-        const payload = JSON.stringify({ filePath });
+        const payload = JSON.stringify({ filePath: filePathRef.current });
         const headers = { "Content-Type": "application/json" };
 
-        // Construct and send the request using sendBeacon
         const blob = new Blob([payload], headers);
         navigator.sendBeacon(url, blob);
       }
     };
 
-    // Attach beforeunload event to send request when the user tries to close the tab or reload the page
     window.addEventListener("beforeunload", handleBeforeUnload);
 
-    // Cleanup when the component is unmounted or the effect is cleaned up
-    return async () => {
-      // Handle the cleanup and trigger sendBeacon on component unmount as well
-      if (publicURL) {
-        // const url = `https://campusconnect-wep1.onrender.com/images/delete/${encodeURIComponent(
-        //   filePath
-        // )}`;
-        // const payload = JSON.stringify({ filePath });
-        // const headers = { "Content-Type": "application/json" };
-
-        // // Construct and send the request using sendBeacon on unmount
-        // const blob = new Blob([payload], headers);
-        // navigator.sendBeacon(url, blob);
-        await axiosInstance.post(
+    return () => {
+      console.log(
+        "in useEffect cleanup",
+        filePathRef.current,
+        publicURLRef.current
+      );
+      if (publicURLRef.current && filePathRef.current) {
+        axiosInstance.post(
           `https://campusconnect-wep1.onrender.com/images/delete/${encodeURIComponent(
-            filePath
+            filePathRef.current
           )}`
         );
       }
-
-      // Remove the event listener
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [publicURL, filePath]);
+  }, []); // Still empty so that the effect and cleanup run only once at mount/unmount
 
   async function handleFileChange(image) {
     setError("");
