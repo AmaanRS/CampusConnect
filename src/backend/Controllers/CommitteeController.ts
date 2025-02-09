@@ -6,8 +6,8 @@ import {
 } from "../Types/GeneralTypes";
 import {
 	AccountType,
-	CommitteeStatus,
 	Department,
+	ICommittee,
 	ICommitteeDocument,
 	IStudent,
 	IStudentDocument,
@@ -246,7 +246,7 @@ const createCommittee = async (req: Request, res: Response) => {
 	}
 };
 
-const getCommittee = async (req: Request, res: Response) => {
+const getCommitteeById = async (req: Request, res: Response) => {
 	try {
 		const {
 			decodedToken,
@@ -284,9 +284,20 @@ const getCommittee = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const committee = await committeeModel
-			.findOne({ committeeId: committeeId })
-			.lean();
+		let committee: ICommittee | null;
+
+		if (decodedToken.accountType === AccountType.Admin) {
+			committee = await committeeModel
+				.findOne({ committeeId: committeeId }, null, {
+					_skipPendingCheckInHook: true,
+					_skipDeletingCheckInHook: true,
+				})
+				.lean();
+		} else {
+			committee = await committeeModel
+				.findOne({ committeeId: committeeId })
+				.lean();
+		}
 
 		if (!committee) {
 			const response: StandardResponse = {
@@ -1309,7 +1320,18 @@ const getAllCommittees = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const allCommittees = await committeeModel.find();
+		let allCommittees: ICommittee[];
+
+		if (decodedToken.accountType === AccountType.Admin) {
+			allCommittees = await committeeModel
+				.find({}, null, {
+					_skipPendingCheckInHook: true,
+					_skipDeletingCheckInHook: true,
+				})
+				.lean();
+		} else {
+			allCommittees = await committeeModel.find().lean();
+		}
 
 		if (!allCommittees || allCommittees.length === 0) {
 			const response: StandardResponse = {
@@ -1342,7 +1364,7 @@ const getAllCommittees = async (req: Request, res: Response) => {
 
 export {
 	createCommittee,
-	getCommittee,
+	getCommitteeById,
 	updateCommittee,
 	addMembersInCommittee,
 	removeMembersFromCommittee,

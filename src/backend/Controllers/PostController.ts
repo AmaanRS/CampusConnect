@@ -10,6 +10,8 @@ import {
 	runWithRetrySession,
 } from "../Utils/util";
 import { committeeModel } from "../Models/Committee";
+import { IStudentDocument } from "../Types/ModelTypes";
+import { studentModel } from "../Models/Student";
 
 const createPost = async (req: Request, res: Response) => {
 	try {
@@ -173,7 +175,19 @@ const getPostById = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const post = await postModel.findOne({ postId }).populate("committeeDocId");
+		const post = await postModel
+			.findOne({ postId })
+			.populate({
+				path: "committeeDocId",
+				populate: [
+					{ path: "studentIncharge", model: "studentModel" },
+					{ path: "facultyIncharge", model: "teacherModel" },
+					{ path: "facultyTeam", model: "teacherModel" },
+					{ path: "members", model: "userModel" },
+					{ path: "events", model: "eventModel" },
+				],
+			})
+			.lean();
 
 		if (!post) {
 			const response: StandardResponse = {
@@ -455,4 +469,181 @@ const getAllPosts = async (req: Request, res: Response) => {
 	}
 };
 
-export { createPost, getPostById, updatePost, deletePost, getAllPosts };
+// If a student has already liked a post ie student exists in likes array of objects then remove him else add him
+const togglePostLike = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+			postId,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+			postId: string | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		if (!postId) {
+			const response: StandardResponse = {
+				message: "Send post id",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const result = await runWithRetrySession(async (session) => {
+			const post = await postModel
+				.findOne({ postId })
+				.populate<{ likes: IStudentDocument[] }>("likes")
+				.session(session)
+				.lean();
+
+			if (!post) {
+				const response: StandardResponse = {
+					message: "Post not found",
+					success: false,
+				};
+
+				return response;
+			}
+
+			let likeRemoved: boolean = false;
+
+			if (Array.isArray(post.likes)) {
+				for (let i = 0; i < post.likes.length; i++) {
+					if (post.likes[i].email === email) {
+						const removeLike = await postModel
+							.updateOne(
+								{ postId },
+								{ $pull: { likes: post.likes[i]._id } },
+							)
+							.session(session)
+							.lean();
+
+						if (!removeLike.acknowledged) {
+							const response: StandardResponse = {
+								message: "Could not update the likes in post",
+								success: false,
+							};
+
+							return response;
+						}
+
+						const isStudentLikesUpdates = await studentModel
+							.updateOne(
+								{
+									email,
+								},
+								{
+									$pull: { postsLiked: post._id },
+								},
+							)
+							.session(session);
+
+						if (!isStudentLikesUpdates.acknowledged) {
+							const response: StandardResponse = {
+								message: "Could not update the likes in students",
+								success: false,
+							};
+
+							return response;
+						}
+
+						likeRemoved = true;
+						break;
+					}
+				}
+
+				// If like is not removed it should be added
+				if (!likeRemoved) {
+					const likeAddedInStudent = await studentModel
+						.findOneAndUpdate(
+							{ email },
+							{ $push: { postsLiked: post._id } },
+						)
+						.session(session)
+						.lean();
+
+					if (!likeAddedInStudent) {
+						const response: StandardResponse = {
+							message: "Could not update the likes in students",
+							success: false,
+						};
+
+						return response;
+					}
+
+					const likeAddedInPost = await postModel
+						.updateOne(
+							{ postId },
+							{ $push: { likes: likeAddedInStudent._id } },
+						)
+						.session(session)
+						.lean();
+
+					if (!likeAddedInPost.acknowledged) {
+						const response: StandardResponse = {
+							message: "Could not update the likes in post",
+							success: false,
+						};
+
+						return response;
+					}
+				}
+			} else {
+				const response: StandardResponse = {
+					message: "There was some problem while liking the post",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const response: StandardResponse = {
+				message: "Successfully toggled the post like",
+				success: true,
+			};
+
+			return response;
+		});
+
+		return res.status(result.success ? 201 : 401).json(result);
+	} catch (e) {
+		console.log((e as Error).message);
+
+		const response: StandardResponse = {
+			message:
+				"There is some problem while updating like of post" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+export {
+	createPost,
+	getPostById,
+	updatePost,
+	deletePost,
+	getAllPosts,
+	togglePostLike,
+};

@@ -162,7 +162,7 @@ const createStudent = async (req: Request, res: Response) => {
 	}
 };
 
-const getStudent = async (req: Request, res: Response) => {
+const getStudentById = async (req: Request, res: Response) => {
 	try {
 		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
 
@@ -183,11 +183,19 @@ const getStudent = async (req: Request, res: Response) => {
 			};
 			return res.status(401).json(response);
 		}
+		let student: IStudent | null;
 
-		const student: IStudent | null = await studentModel.findOne(
-			{ email },
-			{ password: 0 },
-		);
+		if (decodedToken.accountType === AccountType.Admin) {
+			student = await studentModel
+				.findOne(
+					{ email },
+					{ password: 0 },
+					{ _skipInactiveStudentsInHook: true },
+				)
+				.lean();
+		} else {
+			student = await studentModel.findOne({ email }, { password: 0 }).lean();
+		}
 
 		if (!student) {
 			const response: StandardResponse = {
@@ -584,7 +592,7 @@ const getAllStudentsEmail = async (req: Request, res: Response) => {
 
 export {
 	createStudent,
-	getStudent,
+	getStudentById,
 	updateStudent,
 	deleteStudent,
 	getAllStudents,

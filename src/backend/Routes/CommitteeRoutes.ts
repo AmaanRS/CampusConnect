@@ -3,7 +3,7 @@ const Router = express.Router();
 
 import {
 	createCommittee,
-	getCommittee,
+	getCommitteeById,
 	updateCommittee,
 	addMembersInCommittee,
 	removeMembersFromCommittee,
@@ -12,7 +12,7 @@ import {
 
 Router.route("/createCommittee").post(createCommittee);
 
-Router.route("/getCommittee").post(getCommittee);
+Router.route("/getCommitteeById").post(getCommitteeById);
 
 Router.route("/updateCommittee").post(updateCommittee);
 
