@@ -5,8 +5,9 @@ import {
 	StandardResponse,
 } from "../Types/GeneralTypes";
 import {
-	CommitteeStatus,
+	AccountType,
 	Department,
+	ICommittee,
 	ICommitteeDocument,
 	IStudent,
 	IStudentDocument,
@@ -17,13 +18,13 @@ import {
 import {
 	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
 	runWithRetrySession,
+	updateStudentInchargeOfCommittee,
 } from "../Utils/util";
 import { studentModel } from "../Models/Student";
 import { teacherModel } from "../Models/Teacher";
 import { committeeModel } from "../Models/Committee";
 import mongoose, { Types } from "mongoose";
 
-// TODO: Only Admin can do this
 const createCommittee = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -244,7 +245,7 @@ const createCommittee = async (req: Request, res: Response) => {
 	}
 };
 
-const getCommittee = async (req: Request, res: Response) => {
+const getCommitteeById = async (req: Request, res: Response) => {
 	try {
 		const {
 			decodedToken,
@@ -282,9 +283,20 @@ const getCommittee = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const committee = await committeeModel
-			.findOne({ committeeId: committeeId })
-			.lean();
+		let committee: ICommittee | null;
+
+		if (decodedToken.accountType === AccountType.Admin) {
+			committee = await committeeModel
+				.findOne({ committeeId: committeeId }, null, {
+					_skipPendingCheckInHook: true,
+					_skipDeletingCheckInHook: true,
+				})
+				.lean();
+		} else {
+			committee = await committeeModel
+				.findOne({ committeeId: committeeId })
+				.lean();
+		}
 
 		if (!committee) {
 			const response: StandardResponse = {
@@ -329,7 +341,6 @@ const updateCommittee = async (req: Request, res: Response) => {
 			decodedToken: decodedTokenPayload | undefined;
 			committeeId: string | undefined;
 			description: string | undefined;
-			members: string[] | undefined;
 			studentIncharge: string | undefined;
 		} = req.body;
 
@@ -412,151 +423,161 @@ const updateCommittee = async (req: Request, res: Response) => {
 					// Nothing here
 				} else if (funcResponse.data === TeacherPosition.FacultyIncharge) {
 					// Only FacultyIncharge can change studentIncharge
-					if (studentInchargeEmail) {
-						// If the old StudentIncharge email is same as new StudentIncharge email
-						if (
-							oldCommittee.studentIncharge.email ===
-							studentInchargeEmail
-						) {
-							const response: StandardResponse = {
-								message:
-									"Cannot update since old email and email to update of studentIncharge is same",
-								success: false,
-							};
-							return response;
-						}
-						// Does new studentIncharge exists in db
-						const newStudentIncharge = await studentModel
-							.findOne({
-								email: studentInchargeEmail,
-							})
-							.session(session)
-							.lean();
+					// if (studentInchargeEmail) {
+					// 	// If the old StudentIncharge email is same as new StudentIncharge email
+					// 	if (
+					// 		oldCommittee.studentIncharge.email ===
+					// 		studentInchargeEmail
+					// 	) {
+					// 		const response: StandardResponse = {
+					// 			message:
+					// 				"Cannot update since old email and email to update of studentIncharge is same",
+					// 			success: false,
+					// 		};
+					// 		return response;
+					// 	}
+					// 	// Does new studentIncharge exists in db
+					// 	const newStudentIncharge = await studentModel
+					// 		.findOne({
+					// 			email: studentInchargeEmail,
+					// 		})
+					// 		.session(session)
+					// 		.lean();
 
-						if (!newStudentIncharge) {
-							const response: StandardResponse = {
-								message: "Could not find the student while updating",
-								success: false,
-							};
-							return response;
-						}
+					// 	if (!newStudentIncharge) {
+					// 		const response: StandardResponse = {
+					// 			message: "Could not find the student while updating",
+					// 			success: false,
+					// 		};
+					// 		return response;
+					// 	}
 
-						// Set the objId of new studentIncharge
-						if (mongoose.isValidObjectId(newStudentIncharge._id)) {
-							newDataForCommittee.studentIncharge =
-								newStudentIncharge._id as mongoose.Types.ObjectId;
-						} else {
-							const response: StandardResponse = {
-								message: "Could not set the student while updating",
-								success: false,
-							};
-							return response;
-						}
+					// 	// Set the objId of new studentIncharge
+					// 	if (mongoose.isValidObjectId(newStudentIncharge._id)) {
+					// 		newDataForCommittee.studentIncharge =
+					// 			newStudentIncharge._id as mongoose.Types.ObjectId;
+					// 	} else {
+					// 		const response: StandardResponse = {
+					// 			message: "Could not set the student while updating",
+					// 			success: false,
+					// 		};
+					// 		return response;
+					// 	}
 
-						let newDataForOldStudentIncharge =
-							oldCommittee.studentIncharge;
+					// 	let newDataForOldStudentIncharge =
+					// 		oldCommittee.studentIncharge;
 
-						// Remove the anything related to this committee from student doc
-						newDataForOldStudentIncharge.committeePositions =
-							newDataForOldStudentIncharge.committeePositions?.filter(
-								(committeePosition) => {
-									return (
-										committeePosition.committeeObjId?.toString() !==
-										(
-											oldCommittee._id as Types.ObjectId
-										).toString()
-									);
-								},
-							);
+					// 	// Remove the anything related to this committee from student doc
+					// 	newDataForOldStudentIncharge.committeePositions =
+					// 		newDataForOldStudentIncharge.committeePositions?.filter(
+					// 			(committeePosition) => {
+					// 				return (
+					// 					committeePosition.committeeObjId?.toString() !==
+					// 					(
+					// 						oldCommittee._id as Types.ObjectId
+					// 					).toString()
+					// 				);
+					// 			},
+					// 		);
 
-						const isOldStudentInchargeDeleted = await studentModel
-							.deleteOne({ _id: oldCommittee.studentIncharge._id })
-							.session(session);
+					// 	const isOldStudentInchargeDeleted = await studentModel
+					// 		.deleteOne({ _id: oldCommittee.studentIncharge._id })
+					// 		.session(session);
 
-						if (!isOldStudentInchargeDeleted.acknowledged) {
-							const response: StandardResponse = {
-								message:
-									"Could not delete the old student incharge while updating",
-								success: false,
-							};
-							return response;
-						}
+					// 	if (!isOldStudentInchargeDeleted.acknowledged) {
+					// 		const response: StandardResponse = {
+					// 			message:
+					// 				"Could not delete the old student incharge while updating",
+					// 			success: false,
+					// 		};
+					// 		return response;
+					// 	}
 
-						// Create oldStudentIncharge with studentIncharge position removed
-						const isOldStudentInchargeCreated =
-							await studentModel.create(
-								[newDataForOldStudentIncharge],
-								{ session },
-							);
+					// 	// Create oldStudentIncharge with studentIncharge position removed
+					// 	const isOldStudentInchargeCreated =
+					// 		await studentModel.create(
+					// 			[newDataForOldStudentIncharge],
+					// 			{ session },
+					// 		);
 
-						if (
-							!Array.isArray(isOldStudentInchargeCreated) ||
-							isOldStudentInchargeCreated.length === 0
-						) {
-							const response: StandardResponse = {
-								message:
-									"Could not create the old student with remove studentIncharge position while updating",
-								success: false,
-							};
-							return response;
-						}
+					// 	if (
+					// 		!Array.isArray(isOldStudentInchargeCreated) ||
+					// 		isOldStudentInchargeCreated.length === 0
+					// 	) {
+					// 		const response: StandardResponse = {
+					// 			message:
+					// 				"Could not create the old student with remove studentIncharge position while updating",
+					// 			success: false,
+					// 		};
+					// 		return response;
+					// 	}
 
-						// Add studentIncharge to new studentIncharge's committeePositions
-						const newDataForNewStudentIncharge = newStudentIncharge;
+					// 	// Add studentIncharge to new studentIncharge's committeePositions
+					// 	const newDataForNewStudentIncharge = newStudentIncharge;
 
-						// If committeePositions is undefined make it an empty array
-						if (!newDataForNewStudentIncharge.committeePositions) {
-							newDataForNewStudentIncharge.committeePositions = [];
-						}
+					// 	// If committeePositions is undefined make it an empty array
+					// 	if (!newDataForNewStudentIncharge.committeePositions) {
+					// 		newDataForNewStudentIncharge.committeePositions = [];
+					// 	}
 
-						// Remove the anything related to this committee from student doc
-						newDataForNewStudentIncharge.committeePositions =
-							newDataForNewStudentIncharge.committeePositions.filter(
-								(committeePosition) => {
-									return (
-										committeePosition.committeeObjId?.toString() !==
-										(
-											oldCommittee._id as Types.ObjectId
-										).toString()
-									);
-								},
-							);
+					// 	// Remove the anything related to this committee from student doc
+					// 	newDataForNewStudentIncharge.committeePositions =
+					// 		newDataForNewStudentIncharge.committeePositions.filter(
+					// 			(committeePosition) => {
+					// 				return (
+					// 					committeePosition.committeeObjId?.toString() !==
+					// 					(
+					// 						oldCommittee._id as Types.ObjectId
+					// 					).toString()
+					// 				);
+					// 			},
+					// 		);
 
-						// Add position as studentIncharge in committeePositions of newStudentIncharge
-						newDataForNewStudentIncharge.committeePositions.push({
-							committeeObjId: oldCommittee._id as Types.ObjectId,
-							position: StudentPosition.StudentIncharge,
-						});
+					// 	// Add position as studentIncharge in committeePositions of newStudentIncharge
+					// 	newDataForNewStudentIncharge.committeePositions.push({
+					// 		committeeObjId: oldCommittee._id as Types.ObjectId,
+					// 		position: StudentPosition.StudentIncharge,
+					// 	});
 
-						// Delete the studentIncharge
-						const isStudentInchargeDeleted = await studentModel
-							.deleteOne({ _id: newStudentIncharge._id })
-							.session(session);
+					// 	// Delete the studentIncharge
+					// 	const isStudentInchargeDeleted = await studentModel
+					// 		.deleteOne({ _id: newStudentIncharge._id })
+					// 		.session(session);
 
-						if (!isStudentInchargeDeleted.acknowledged) {
-							const response: StandardResponse = {
-								message:
-									"Could not delete the student while updating",
-								success: false,
-							};
-							return response;
-						}
+					// 	if (!isStudentInchargeDeleted.acknowledged) {
+					// 		const response: StandardResponse = {
+					// 			message:
+					// 				"Could not delete the student while updating",
+					// 			success: false,
+					// 		};
+					// 		return response;
+					// 	}
 
-						const isNewUpdatedStudentInchargeCreated =
-							await studentModel.create(
-								[newDataForNewStudentIncharge],
-								{ session },
-							);
+					// 	const isNewUpdatedStudentInchargeCreated =
+					// 		await studentModel.create(
+					// 			[newDataForNewStudentIncharge],
+					// 			{ session },
+					// 		);
 
-						if (!isNewUpdatedStudentInchargeCreated) {
-							const response: StandardResponse = {
-								message:
-									"Could not create the new Updated student with added studentIncharge position while updating",
-								success: false,
-							};
-							return response;
-						}
-					}
+					// 	if (!isNewUpdatedStudentInchargeCreated) {
+					// 		const response: StandardResponse = {
+					// 			message:
+					// 				"Could not create the new Updated student with added studentIncharge position while updating",
+					// 			success: false,
+					// 		};
+					// 		return response;
+					// 	}
+					// }
+
+					const response = await updateStudentInchargeOfCommittee({
+						studentInchargeEmail,
+						committee: oldCommittee,
+						session,
+						newDataForCommittee:
+							newDataForCommittee as ICommitteeDocument,
+					});
+
+					if (!response.success) return response;
 				} else {
 					const response: StandardResponse = {
 						message:
@@ -685,31 +706,55 @@ const addMembersInCommittee = async (req: Request, res: Response) => {
 		}
 
 		const result = await runWithRetrySession(async (session) => {
-			const oldCommittee = await committeeModel
-				.findOne({ committeeId })
-				.populate<{
-					facultyIncharge: ITeacherDocument;
-					studentIncharge: IStudentDocument;
-				}>(["facultyIncharge", "studentIncharge"])
-				.session(session)
-				.lean();
+			let oldCommittee;
 
-			if (!oldCommittee) {
-				const response: StandardResponse = {
-					message: "Could not find the committee",
-					success: false,
-				};
-				return response;
-			}
+			if (decodedToken.accountType === AccountType.Admin) {
+				oldCommittee = await committeeModel
+					.findOne({ committeeId }, null, {
+						_skipPendingCheckInHook: true,
+						_skipDeletingCheckInHook: true,
+					})
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["facultyIncharge", "studentIncharge"])
+					.session(session)
+					.lean();
 
-			// Both faculty incharge and student incharge can add members to the committee
-			const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
-				decodedToken,
-				oldCommittee,
-			});
+				if (!oldCommittee) {
+					const response: StandardResponse = {
+						message: "Could not find the committee",
+						success: false,
+					};
+					return response;
+				}
+			} else {
+				oldCommittee = await committeeModel
+					.findOne({ committeeId })
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["facultyIncharge", "studentIncharge"])
+					.session(session)
+					.lean();
 
-			if (!funcResponse.success) {
-				return funcResponse;
+				if (!oldCommittee) {
+					const response: StandardResponse = {
+						message: "Could not find the committee",
+						success: false,
+					};
+					return response;
+				}
+
+				// Both faculty incharge and student incharge can add members to the committee
+				const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+					decodedToken,
+					oldCommittee,
+				});
+
+				if (!funcResponse.success) {
+					return funcResponse;
+				}
 			}
 
 			// Check if members exists in db
@@ -873,9 +918,15 @@ const addMembersInCommittee = async (req: Request, res: Response) => {
 
 			// Delete the old committee
 			const isOldCommitteeDeleted = await committeeModel
-				.deleteOne({
-					committeeId,
-				})
+				.deleteOne(
+					{
+						committeeId,
+					},
+					{
+						_skipPendingCheckInHook: true,
+						_skipDeletingCheckInHook: true,
+					},
+				)
 				.session(session);
 
 			if (!isOldCommitteeDeleted.acknowledged) {
@@ -923,7 +974,7 @@ const addMembersInCommittee = async (req: Request, res: Response) => {
 	}
 };
 
-// Both studentIncharge and teacherIncharge can remove members from the committee
+// Both studentIncharge, teacherIncharge and admin can remove members from the committee
 // Cannot remove studentIncharge through this api
 const removeMembersFromCommittee = async (req: Request, res: Response) => {
 	try {
@@ -985,31 +1036,55 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 		}
 
 		const result = await runWithRetrySession(async (session) => {
-			const oldCommittee = await committeeModel
-				.findOne({ committeeId })
-				.populate<{
-					facultyIncharge: ITeacherDocument;
-					studentIncharge: IStudentDocument;
-				}>(["facultyIncharge", "studentIncharge"])
-				.session(session)
-				.lean();
+			let oldCommittee;
 
-			if (!oldCommittee) {
-				const response: StandardResponse = {
-					message: "Could not find the committee",
-					success: false,
-				};
-				return response;
-			}
+			if (decodedToken.accountType === AccountType.Admin) {
+				oldCommittee = await committeeModel
+					.findOne({ committeeId }, null, {
+						_skipPendingCheckInHook: true,
+						_skipDeletingCheckInHook: true,
+					})
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["facultyIncharge", "studentIncharge"])
+					.session(session)
+					.lean();
 
-			// Both faculty incharge and student incharge can add members to the committee
-			const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
-				decodedToken,
-				oldCommittee,
-			});
+				if (!oldCommittee) {
+					const response: StandardResponse = {
+						message: "Could not find the committee",
+						success: false,
+					};
+					return response;
+				}
+			} else {
+				oldCommittee = await committeeModel
+					.findOne({ committeeId })
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["facultyIncharge", "studentIncharge"])
+					.session(session)
+					.lean();
 
-			if (!funcResponse.success) {
-				return funcResponse;
+				if (!oldCommittee) {
+					const response: StandardResponse = {
+						message: "Could not find the committee",
+						success: false,
+					};
+					return response;
+				}
+
+				// Both faculty incharge and student incharge can add members to the committee
+				const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+					decodedToken,
+					oldCommittee,
+				});
+
+				if (!funcResponse.success) {
+					return funcResponse;
+				}
 			}
 
 			// Check if members exists in db
@@ -1017,7 +1092,8 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 				.find({
 					email: { $in: members },
 				})
-				.session(session);
+				.session(session)
+				.lean();
 
 			if (!Array.isArray(foundMembers) || foundMembers.length === 0) {
 				const response: StandardResponse = {
@@ -1052,7 +1128,8 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 				if (
 					foundMembers[i].committeePositions?.some((committeePosition) => {
 						return (
-							committeePosition.committeeObjId === oldCommittee._id &&
+							committeePosition.committeeObjId?.toString() ===
+								(oldCommittee._id as Types.ObjectId).toString() &&
 							committeePosition.position ===
 								StudentPosition.StudentIncharge
 						);
@@ -1061,6 +1138,14 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 					// Since the email belongs to studentIncharge and we dont want to remove him from the committee
 					foundMembers.splice(i, 1);
 				}
+			}
+
+			if (!Array.isArray(foundMembers) || foundMembers.length === 0) {
+				const response: StandardResponse = {
+					message: "Cannot remove the studentIncharge",
+					success: false,
+				};
+				return response;
 			}
 
 			// Remove members which are present in foundMembers from OldCommittee.members
@@ -1150,9 +1235,15 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 
 			// Delete the old committee
 			const isOldCommitteeDeleted = await committeeModel
-				.deleteOne({
-					committeeId,
-				})
+				.deleteOne(
+					{
+						committeeId,
+					},
+					{
+						_skipPendingCheckInHook: true,
+						_skipDeletingCheckInHook: true,
+					},
+				)
 				.session(session);
 
 			if (!isOldCommitteeDeleted.acknowledged) {
@@ -1200,78 +1291,6 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 	}
 };
 
-const deleteCommittee = async (req: Request, res: Response) => {
-	try {
-		const {
-			decodedToken,
-			committeeId,
-		}: {
-			decodedToken: decodedTokenPayload | undefined;
-			committeeId: string | undefined;
-		} = req.body;
-
-		if (!decodedToken) {
-			const response: StandardResponse = {
-				message: "User is not authenticated",
-				success: false,
-			};
-			return res.status(401).json(response);
-		}
-
-		const email = decodedToken.email;
-
-		if (!email) {
-			const response: StandardResponse = {
-				message: "User is not authenticated",
-				success: false,
-			};
-
-			return res.status(401).json(response);
-		}
-
-		if (!committeeId) {
-			const response: StandardResponse = {
-				message: "Committee id is required to get an committee",
-				success: false,
-			};
-
-			return res.status(401).json(response);
-		}
-
-		const isCommitteeDeleted = await committeeModel.findOneAndUpdate(
-			{ committeeId: committeeId },
-			{ status: CommitteeStatus.DELETED },
-		);
-
-		if (!isCommitteeDeleted) {
-			const response: StandardResponse = {
-				message: "Could not delete the committee",
-				success: false,
-			};
-
-			return res.status(401).json(response);
-		}
-
-		const response: StandardResponse = {
-			message: "Committee deleted successfully",
-			success: true,
-		};
-
-		return res.status(201).json(response);
-	} catch (e) {
-		console.log((e as Error).message);
-		const response: StandardResponse = {
-			message:
-				"There is some problem while deleting committee" +
-				(e as Error).message,
-			success: false,
-		};
-
-		return res.status(401).json(response);
-	}
-};
-
-//TODO: Write with pagination
 const getAllCommittees = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -1299,7 +1318,18 @@ const getAllCommittees = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const allCommittees = await committeeModel.find();
+		let allCommittees: ICommittee[];
+
+		if (decodedToken.accountType === AccountType.Admin) {
+			allCommittees = await committeeModel
+				.find({}, null, {
+					_skipPendingCheckInHook: true,
+					_skipDeletingCheckInHook: true,
+				})
+				.lean();
+		} else {
+			allCommittees = await committeeModel.find().lean();
+		}
 
 		if (!allCommittees || allCommittees.length === 0) {
 			const response: StandardResponse = {
@@ -1332,10 +1362,9 @@ const getAllCommittees = async (req: Request, res: Response) => {
 
 export {
 	createCommittee,
-	getCommittee,
+	getCommitteeById,
 	updateCommittee,
 	addMembersInCommittee,
 	removeMembersFromCommittee,
-	deleteCommittee,
 	getAllCommittees,
 };

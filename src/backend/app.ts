@@ -11,6 +11,7 @@ import CommitteeRouter from "./Routes/CommitteeRoutes";
 import GeneralRouter from "./Routes/GeneralRoutes";
 import PostRouter from "./Routes/PostRoutes";
 import EventRouter from "./Routes/EventRoutes";
+import CommentRouter from "./Routes/CommentRoutes";
 import { fileURLToPath } from "url";
 import { isAccountActive } from "./Middlewares/AccountStatus";
 import uploadRoutes from "./Routes/UploadRoutes";
@@ -33,6 +34,7 @@ app.use("/committee", CommitteeRouter);
 app.use("/post", PostRouter);
 app.use("/event", EventRouter);
 app.use("/images", uploadRoutes);
+app.use("/comment", CommentRouter);
 
 // Connects with db then express server
 async function connectToDbAndStartServer(

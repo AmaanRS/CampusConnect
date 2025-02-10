@@ -10,6 +10,16 @@ import {
 	runWithRetrySession,
 } from "../Utils/util";
 import { committeeModel } from "../Models/Committee";
+import {
+	AccountType,
+	IUserDocument,
+	StudentPosition,
+	TeacherPosition,
+} from "../Types/ModelTypes";
+import { studentModel } from "../Models/Student";
+import { commentModel } from "../Models/Comment";
+import { adminModel } from "../Models/Admin";
+import { teacherModel } from "../Models/Teacher";
 
 const createPost = async (req: Request, res: Response) => {
 	try {
@@ -100,28 +110,88 @@ const createPost = async (req: Request, res: Response) => {
 			return res.status(401).json(resp);
 		}
 
-		const isPostCreated = await postModel.create({
-			committeeDocId: committee._id,
-			title,
-			content,
-			image,
-		});
+		const result = await runWithRetrySession(async (session) => {
+			let postedBy;
 
-		if (!isPostCreated) {
+			if ("data" in resp) {
+				if (resp.data === StudentPosition.StudentIncharge) {
+					postedBy = committee.studentIncharge._id;
+				} else if (resp.data === TeacherPosition.FacultyIncharge) {
+					postedBy = committee.facultyIncharge._id;
+				}
+			}
+
+			const isCommentSectionCreated = await commentModel.create(
+				[
+					{
+						comments: [],
+					},
+				],
+				{ session },
+			);
+
+			if (
+				!Array.isArray(isCommentSectionCreated) ||
+				isCommentSectionCreated.length === 0
+			) {
+				const response: StandardResponse = {
+					message: "Post could not be created",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isPostCreated = await postModel.create(
+				[
+					{
+						committeeObjId: committee._id,
+						title,
+						content,
+						image,
+						postedBy: postedBy,
+						commentObjId: isCommentSectionCreated[0]._id,
+					},
+				],
+				{ session },
+			);
+
+			if (!Array.isArray(isPostCreated) || isPostCreated.length === 0) {
+				const response: StandardResponse = {
+					message: "Post could not be created",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isCommentSectionUpdated = await commentModel
+				.updateOne(
+					{ _id: isCommentSectionCreated[0]._id },
+					{
+						postObjId: isPostCreated[0]._id,
+					},
+				)
+				.session(session);
+
+			if (!isCommentSectionUpdated.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not set the post id in comment model",
+					success: false,
+				};
+
+				return response;
+			}
+
 			const response: StandardResponse = {
-				message: "Post could not be created",
-				success: false,
+				message: "Post created successfully",
+				success: true,
 			};
 
-			return res.status(401).json(response);
-		}
+			return response;
+		});
 
-		const response: StandardResponse = {
-			message: "Post created successfully",
-			success: true,
-		};
-
-		return res.status(201).json(response);
+		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
 
@@ -173,7 +243,22 @@ const getPostById = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const post = await postModel.findOne({ postId }).populate("committeeDocId");
+		const post = await postModel
+			.findOne({ postId })
+			.populate({
+				path: "committeeObjId",
+				populate: [
+					{ path: "postedBy", model: "userModel" },
+					{ path: "studentIncharge", model: "studentModel" },
+					{ path: "facultyIncharge", model: "teacherModel" },
+					{ path: "facultyTeam", model: "teacherModel" },
+					{ path: "members", model: "userModel" },
+					{ path: "events", model: "eventModel" },
+					{ path: "commentObjId", model: "commentModel" },
+					{ path: "commentObjId", model: "commentModel" },
+				],
+			})
+			.lean();
 
 		if (!post) {
 			const response: StandardResponse = {
@@ -363,10 +448,24 @@ const deletePost = async (req: Request, res: Response) => {
 
 			return res.status(401).json(response);
 		}
+		let isPostDeleted;
 
-		const isPostDeleted = await postModel.deleteOne({ postId });
+		if (decodedToken.accountType === AccountType.Admin) {
+			isPostDeleted = await postModel.updateOne(
+				{ postId },
+				{ isPostDeleted: true },
+				{
+					_skipdeletedPostsInHook: true,
+				},
+			);
+		} else {
+			isPostDeleted = await postModel.updateOne(
+				{ postId },
+				{ isPostDeleted: true },
+			);
+		}
 
-		if (!isPostDeleted.acknowledged || isPostDeleted.deletedCount === 0) {
+		if (!isPostDeleted.acknowledged) {
 			const response: StandardResponse = {
 				message: "Could not delete the post",
 				success: false,
@@ -395,7 +494,6 @@ const deletePost = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO: Write with pagination
 const getAllPosts = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -423,7 +521,13 @@ const getAllPosts = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const allPosts = await postModel.find().populate("committeeDocId");
+		const allPosts = await postModel
+			.find()
+			.populate([
+				{ path: "committeeObjId" },
+				{ path: "postedBy", model: "userModel" },
+			])
+			.lean();
 
 		if (allPosts.length === 0) {
 			const response: StandardResponse = {
@@ -455,4 +559,196 @@ const getAllPosts = async (req: Request, res: Response) => {
 	}
 };
 
-export { createPost, getPostById, updatePost, deletePost, getAllPosts };
+// If a user has already liked a post ie user exists in likes array of objects then remove him else add him
+const togglePostLike = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+			postId,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+			postId: string | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		if (!postId) {
+			const response: StandardResponse = {
+				message: "Send post id",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const result = await runWithRetrySession(async (session) => {
+			const post = await postModel
+				.findOne({ postId })
+				.populate<{ likes: IUserDocument[] }>("likes")
+				.session(session)
+				.lean();
+
+			if (!post) {
+				const response: StandardResponse = {
+					message: "Post not found",
+					success: false,
+				};
+
+				return response;
+			}
+
+			let likeRemoved: boolean = false;
+
+			let model: any;
+			switch (decodedToken.accountType) {
+				case AccountType.Student:
+					model = studentModel;
+					break;
+
+				case AccountType.Admin:
+					model = adminModel;
+					break;
+
+				case AccountType.Teacher:
+					model = teacherModel;
+					break;
+			}
+
+			if (Array.isArray(post.likes)) {
+				for (let i = 0; i < post.likes.length; i++) {
+					if (post.likes[i].email === email) {
+						const removeLike = await postModel
+							.updateOne(
+								{ postId },
+								{ $pull: { likes: post.likes[i]._id } },
+							)
+							.session(session)
+							.lean();
+
+						if (!removeLike.acknowledged) {
+							const response: StandardResponse = {
+								message: "Could not update the likes in post",
+								success: false,
+							};
+
+							return response;
+						}
+
+						const isUserLikesUpdate = await model
+							.updateOne(
+								{
+									email,
+								},
+								{
+									$pull: { postsLiked: post._id },
+								},
+							)
+							.session(session);
+
+						if (!isUserLikesUpdate.acknowledged) {
+							const response: StandardResponse = {
+								message: "Could not update the likes",
+								success: false,
+							};
+
+							return response;
+						}
+
+						likeRemoved = true;
+						break;
+					}
+				}
+
+				// If like is not removed it should be added
+				if (!likeRemoved) {
+					const likeAddedInUser = await model
+						.findOneAndUpdate(
+							{ email },
+							{ $push: { postsLiked: post._id } },
+						)
+						.session(session)
+						.lean();
+
+					if (!likeAddedInUser) {
+						const response: StandardResponse = {
+							message: "Could not update the likes",
+							success: false,
+						};
+
+						return response;
+					}
+
+					const likeAddedInPost = await postModel
+						.updateOne(
+							{ postId },
+							{ $push: { likes: likeAddedInUser._id } },
+						)
+						.session(session)
+						.lean();
+
+					if (!likeAddedInPost.acknowledged) {
+						const response: StandardResponse = {
+							message: "Could not update the likes in post",
+							success: false,
+						};
+
+						return response;
+					}
+				}
+			} else {
+				const response: StandardResponse = {
+					message: "There was some problem while liking the post",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const response: StandardResponse = {
+				message: "Successfully toggled the post like",
+				success: true,
+			};
+
+			return response;
+		});
+
+		return res.status(result.success ? 201 : 401).json(result);
+	} catch (e) {
+		console.log((e as Error).message);
+
+		const response: StandardResponse = {
+			message:
+				"There is some problem while updating like of post" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+export {
+	createPost,
+	getPostById,
+	updatePost,
+	deletePost,
+	getAllPosts,
+	togglePostLike,
+};

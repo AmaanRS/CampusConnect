@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { uploadImageToSupabase, deleteImageFromSupabase } from "../Utils/supabase";
-import { StandardResponse } from "../Types/GeneralTypes";
+import { DataResponse, StandardResponse } from "../Types/GeneralTypes";
 
 const handleUpload = async (req: Request, res: Response) => {
 	try {
@@ -25,11 +25,12 @@ const handleUpload = async (req: Request, res: Response) => {
 		// Get the file details
 		const { buffer, mimetype } = req.file;
 		// Upload the file to Supabase Storage
-		await uploadImageToSupabase(filePath, buffer, mimetype);
+		const imageData = await uploadImageToSupabase(filePath, buffer, mimetype);
 
-		const response: StandardResponse = {
+		const response: DataResponse = {
 			message: "File uploaded successfully",
 			success: true,
+			data: imageData
 		};
 
 		return res.status(201).json(response);

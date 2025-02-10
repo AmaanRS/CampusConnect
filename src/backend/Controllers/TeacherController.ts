@@ -9,7 +9,7 @@ import { onlyHodEmailRegex, onlyTeacherEmailRegex } from "../Utils/regexUtils";
 import { runWithRetrySession } from "../Utils/util";
 import { userModel } from "../Models/User";
 import { teacherModel } from "../Models/Teacher";
-import { Department, ITeacher } from "../Types/ModelTypes";
+import { AccountType, Department, ITeacher } from "../Types/ModelTypes";
 import { createJwtToken } from "../Utils/jwtToken";
 
 // Creates teacher using user jwt token
@@ -409,7 +409,6 @@ const deleteTeacher = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO: Write with pagination
 const getAllTeachers = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -437,7 +436,16 @@ const getAllTeachers = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const allTeachers = await teacherModel.find();
+		let allTeachers;
+		if (decodedToken.accountType === AccountType.Admin) {
+			allTeachers = await teacherModel
+				.find({}, null, {
+					_skipInactiveTeachersInHook: true,
+				})
+				.lean();
+		} else {
+			allTeachers = await teacherModel.find().lean();
+		}
 
 		if (allTeachers.length === 0) {
 			const response: StandardResponse = {
@@ -469,4 +477,71 @@ const getAllTeachers = async (req: Request, res: Response) => {
 	}
 };
 
-export { createTeacher, getTeacher, updateTeacher, deleteTeacher, getAllTeachers };
+const getAllFacultysEmail = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const emails = await userModel
+			.find({ accType: AccountType.Teacher }, { email: 1, _id: 0 })
+			.lean();
+
+		if (!Array.isArray(emails) || emails.length === 0) {
+			const response: StandardResponse = {
+				message: "No teacher emails found in db",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Emails of teachers found successfully",
+			success: true,
+			data: emails,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all email of teachers" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+export {
+	createTeacher,
+	getTeacher,
+	updateTeacher,
+	deleteTeacher,
+	getAllTeachers,
+	getAllFacultysEmail,
+};

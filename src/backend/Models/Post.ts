@@ -9,9 +9,14 @@ const postSchema = new Schema<IPostDocument>(
 			required: true,
 			type: String,
 		},
-		committeeDocId: {
+		committeeObjId: {
 			type: Schema.Types.ObjectId,
 			ref: "committeeModel",
+			required: true,
+		},
+		postedBy: {
+			type: Schema.Types.ObjectId,
+			ref: "userModel",
 			required: true,
 		},
 		title: {
@@ -39,8 +44,17 @@ const postSchema = new Schema<IPostDocument>(
 		},
 		likes: {
 			type: [Schema.Types.ObjectId],
-			ref: "studentModel",
+			ref: "userModel",
 			default: [],
+		},
+		commentObjId: {
+			type: Schema.Types.ObjectId,
+			ref: "commentModel",
+			required: true,
+		},
+		isPostDeleted: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	{
@@ -48,49 +62,49 @@ const postSchema = new Schema<IPostDocument>(
 	},
 );
 
-// postSchema.pre("validate", async function (next) {
-// 	try {
-// 		if (this.position === undefined) {
-// 			this.position = [];
-// 		}
+// Hooks for which inactive teacher will not be returned
+const hooks = [
+	"find",
+	"findOne",
+	"findOneAndUpdate",
+	"deleteOne",
+	"deleteMany",
+	"updateOne",
+	"updateMany",
+] as const;
 
-// 		if (this.position.length === 0) {
-// 			throw new MongooseError("Position for admin cannot be empty");
-// 		}
+// Programatically adds condition to remove inactive teachers from the query result
+// When inactive teachers are also needed and should not be excluded set _skipdeletedPostsInHook
+// If in some place this code gives error then set _skipdeletedPostsInHook as true
+hooks.forEach(function (hook) {
+	postSchema.pre(hook, function (next) {
+		const options = this.getOptions();
+		const query = this.getQuery();
 
-// 		const hashedPassword = await validateAndHash(this.password);
-// 		this.password = hashedPassword;
+		// _skipdeletedPostsInHook; flag when true, will allow hooks to show inactive teachers
+		if (options && !options["_skipdeletedPostsInHook"]) {
+			// If "isPostDeleted" already exists as an object
+			if (
+				query["isPostDeleted"] &&
+				typeof query["isPostDeleted"] === "object"
+			) {
+				if (query["isPostDeleted"]["$nin"]) {
+					// Add true to $nin if it doesn't already exist
+					if (!query["status"]["$nin"].includes(true)) {
+						query["status"]["$nin"].push(true);
+					}
+				} else {
+					query["isPostDeleted"]["$nin"] = [true];
+				}
+			} else {
+				// If "status" doesn't exist, create $nin with true
+				query["isPostDeleted"] = { $ne: true };
+			}
+		}
+		next();
+	});
+});
 
-// 		//By default
-// 		this.isProfileComplete = false;
-
-// 		this.accType = AccountType.Admin;
-
-// 		this.position = [AdminPosition.Admin];
-
-// 		// this.position = this.position ? [...new Set(this.position)] : undefined;
-// 		// Converted set to array because i need position to be unique but mongodb supports array not set
-// 		this.position = [...new Set(this.position)];
-
-// 		next();
-// 	} catch (err) {
-// 		next(err as MongooseError);
-// 	}
-// });
-
-// adminSchema.pre("save", async function (next) {
-// 	try {
-// 		// If all fields are given except the optional fields then set isProfileComplete to true
-// 		if (this.email && this.password && this.accType && this.position) {
-// 			this.isProfileComplete = true;
-// 		}
-// 		next();
-// 	} catch (err) {
-// 		next(err as MongooseError);
-// 	}
-// });
-
-// TODO: Add isPostDeleted and mongoose middlewares to not show posts which are deleted
 postSchema.pre("validate", async function (next) {
 	try {
 		if (!this.postId) {

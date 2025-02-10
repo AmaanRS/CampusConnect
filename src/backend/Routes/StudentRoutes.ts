@@ -3,18 +3,20 @@ const Router = express.Router();
 
 import {
 	createStudent,
-	getStudent,
+	getStudentById,
 	updateStudent,
 	deleteStudent,
 	getAllStudents,
 	getAllStudentData,
+	getAllStudentsEmail,
 } from "../Controllers/StudentController";
 
 Router.route("/createStudent").post(createStudent);
-Router.route("/getStudent").post(getStudent);
+Router.route("/getStudentById").post(getStudentById);
 Router.route("/updateStudent").post(updateStudent);
 Router.route("/deleteStudent").post(deleteStudent);
 Router.route("/getAllStudents").post(getAllStudents);
 Router.route("/getAllStudentData").post(getAllStudentData);
+Router.route("/getAllStudentsEmail").post(getAllStudentsEmail);
 
 export default Router;

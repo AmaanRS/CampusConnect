@@ -3,12 +3,20 @@ import {
 	decodedTokenPayload,
 	StandardResponse,
 } from "../Types/GeneralTypes";
-import mongoose, { ClientSession } from "mongoose";
+import mongoose, { ClientSession, Types } from "mongoose";
 import {
 	connectToTestDbAndStartTestServer,
 	stopTestServerRunning,
 } from "../Tests/TestServer";
-import { AccountType, StudentPosition, TeacherPosition } from "../Types/ModelTypes";
+import {
+	AccountType,
+	ICommitteeDocument,
+	IStudentDocument,
+	ITeacherDocument,
+	StudentPosition,
+	TeacherPosition,
+} from "../Types/ModelTypes";
+import { studentModel } from "../Models/Student";
 
 // Function for returning a random value from enum
 export function getRandomEnumValue<T extends { [key: string]: string | number }>(
@@ -55,7 +63,7 @@ export function getRandomEnumValueFromYear<
 // Wrapper function for session management
 export const runWithRetrySession = async (
 	operation: (session: ClientSession) => Promise<any>,
-	maxRetries: number = 4,
+	maxRetries: number = 2,
 ) => {
 	const session = await mongoose.startSession();
 	let retryCount = 0;
@@ -92,7 +100,10 @@ export const runWithRetrySession = async (
 
 				// Exponential backoff
 				await new Promise((resolve) =>
-					setTimeout(resolve, Math.pow(2, retryCount) * 500),
+					setTimeout(
+						resolve,
+						Math.pow(2, retryCount) * (Math.random() + 100) * 7,
+					),
 				);
 			} else {
 				await session.endSession();
@@ -186,6 +197,181 @@ const checkIfFacultyOrStudentInchargeOfCommitteeFunc = ({
 	}
 };
 
+const updateStudentInchargeOfCommittee = async ({
+	studentInchargeEmail,
+	committee: oldCommittee,
+	session,
+	newDataForCommittee,
+}: {
+	studentInchargeEmail: string | undefined;
+	committee: mongoose.FlattenMaps<
+		Omit<ICommitteeDocument, "studentIncharge" | "facultyIncharge"> & {
+			facultyIncharge: ITeacherDocument;
+			studentIncharge: IStudentDocument;
+		}
+	>;
+	session: mongoose.mongo.ClientSession;
+	newDataForCommittee: ICommitteeDocument;
+}) => {
+	if (studentInchargeEmail) {
+		// If the old StudentIncharge email is same as new StudentIncharge email
+		if (oldCommittee.studentIncharge.email === studentInchargeEmail) {
+			const response: StandardResponse = {
+				message:
+					"Cannot update since old email and email to update of studentIncharge is same",
+				success: false,
+			};
+			return response;
+		}
+		// Does new studentIncharge exists in db
+		const newStudentIncharge = await studentModel
+			.findOne({
+				email: studentInchargeEmail,
+			})
+			.session(session)
+			.lean();
+
+		if (!newStudentIncharge) {
+			const response: StandardResponse = {
+				message: "Could not find the student while updating",
+				success: false,
+			};
+			return response;
+		}
+
+		// Set the objId of new studentIncharge
+		if (mongoose.isValidObjectId(newStudentIncharge._id)) {
+			newDataForCommittee.studentIncharge =
+				newStudentIncharge._id as mongoose.Types.ObjectId;
+		} else {
+			const response: StandardResponse = {
+				message: "Could not set the student while updating",
+				success: false,
+			};
+			return response;
+		}
+
+		let newDataForOldStudentIncharge = oldCommittee.studentIncharge;
+
+		// Remove the anything related to this committee from student doc
+		newDataForOldStudentIncharge.committeePositions =
+			newDataForOldStudentIncharge.committeePositions?.filter(
+				(committeePosition) => {
+					return (
+						committeePosition.committeeObjId?.toString() !==
+						(oldCommittee._id as Types.ObjectId).toString()
+					);
+				},
+			);
+
+		const isOldStudentInchargeDeleted = await studentModel
+			.deleteOne({ _id: oldCommittee.studentIncharge._id })
+			.session(session);
+
+		if (!isOldStudentInchargeDeleted.acknowledged) {
+			const response: StandardResponse = {
+				message: "Could not delete the old student incharge while updating",
+				success: false,
+			};
+			return response;
+		}
+
+		// Create oldStudentIncharge with studentIncharge position removed
+		const isOldStudentInchargeCreated = await studentModel.create(
+			[newDataForOldStudentIncharge],
+			{ session },
+		);
+
+		if (
+			!Array.isArray(isOldStudentInchargeCreated) ||
+			isOldStudentInchargeCreated.length === 0
+		) {
+			const response: StandardResponse = {
+				message:
+					"Could not create the old student with remove studentIncharge position while updating",
+				success: false,
+			};
+			return response;
+		}
+
+		// Add studentIncharge to new studentIncharge's committeePositions
+		const newDataForNewStudentIncharge = newStudentIncharge;
+
+		// If committeePositions is undefined make it an empty array
+		if (!newDataForNewStudentIncharge.committeePositions) {
+			newDataForNewStudentIncharge.committeePositions = [];
+		}
+
+		// Remove the anything related to this committee from student doc
+		newDataForNewStudentIncharge.committeePositions =
+			newDataForNewStudentIncharge.committeePositions.filter(
+				(committeePosition) => {
+					return (
+						committeePosition.committeeObjId?.toString() !==
+						(oldCommittee._id as Types.ObjectId).toString()
+					);
+				},
+			);
+
+		// Add position as studentIncharge in committeePositions of newStudentIncharge
+		newDataForNewStudentIncharge.committeePositions.push({
+			committeeObjId: oldCommittee._id as Types.ObjectId,
+			position: StudentPosition.StudentIncharge,
+		});
+
+		// Delete the studentIncharge
+		const isStudentInchargeDeleted = await studentModel
+			.deleteOne({ _id: newStudentIncharge._id })
+			.session(session);
+
+		if (!isStudentInchargeDeleted.acknowledged) {
+			const response: StandardResponse = {
+				message: "Could not delete the student while updating",
+				success: false,
+			};
+			return response;
+		}
+
+		const isNewUpdatedStudentInchargeCreated = await studentModel.create(
+			[newDataForNewStudentIncharge],
+			{ session },
+		);
+
+		if (!isNewUpdatedStudentInchargeCreated) {
+			const response: StandardResponse = {
+				message:
+					"Could not create the new Updated student with added studentIncharge position while updating",
+				success: false,
+			};
+			return response;
+		}
+
+		// Remove the studentIncharge from members array
+		newDataForCommittee.members = newDataForCommittee.members?.filter(
+			(member) => {
+				return (
+					member.toString() !==
+					(oldCommittee.studentIncharge._id as Types.ObjectId).toString()
+				);
+			},
+		);
+
+		const response: StandardResponse = {
+			message: "Updated studentIncharge successfully",
+			success: true,
+		};
+		return response;
+	} else {
+		const response: StandardResponse = {
+			message:
+				"You must be teacher Incharge or student incharge of the given committee to update",
+			success: false,
+		};
+
+		return response;
+	}
+};
+
 const runTestServer = async () => {
 	console.log("Connecting to local test db");
 
@@ -206,4 +392,5 @@ export {
 	runTestServer,
 	stopTestServer,
 	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
+	updateStudentInchargeOfCommittee,
 };

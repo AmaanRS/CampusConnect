@@ -32,6 +32,11 @@ const adminSchema = new Schema<IAdminDocument>(
 				enum: Object.values(AdminPosition),
 			},
 		],
+		postsLiked: {
+			type: [Schema.Types.ObjectId],
+			ref: "postModel",
+			default: [],
+		},
 		isProfileComplete: {
 			default: false,
 			type: Boolean,
