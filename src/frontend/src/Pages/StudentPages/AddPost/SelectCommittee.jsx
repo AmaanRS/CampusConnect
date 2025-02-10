@@ -29,12 +29,12 @@ export default function SelectCommittee({ handleChange }) {
     }
   }, [data]);
 
-  if (isLoading)
-    return (
-      <p className="">
-        <BarLoader size={9} />
-      </p>
-    );
+  // if (isLoading)
+  //   return (
+  //     <p className="">
+  //       <BarLoader size={9} />
+  //     </p>
+  //   );
   if (isError) return <p className="text-red-500">Error: {error.message}</p>;
 
   return (
@@ -54,9 +54,10 @@ export default function SelectCommittee({ handleChange }) {
         }),
       }}
       defaultValue={""}
-      isClearable
-      isSearchable
+      isClearable={true}
+      isSearchable={true}
       options={options}
+      isLoading={isLoading}
       onChange={handleChange}
     />
   );
