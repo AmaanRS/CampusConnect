@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { useQuery } from "@tanstack/react-query";
+import { PulseLoader } from "react-spinners";
 
 // Function to fetch data
 const fetchData = async () => {
@@ -28,8 +29,13 @@ export default function SelectCommittee({ handleChange }) {
     }
   }, [data]);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error: {error.message}</p>;
+  if (isLoading)
+    return (
+      <p className="">
+        <PulseLoader size={9} />
+      </p>
+    );
+  if (isError) return <p className="text-red-500">Error: {error.message}</p>;
 
   return (
     <Select

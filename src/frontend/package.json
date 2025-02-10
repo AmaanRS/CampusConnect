@@ -49,6 +49,7 @@
     "react-router-dom": "^6.24.0",
     "react-select": "^5.8.0",
     "react-simple-image-viewer": "^1.2.2",
+    "react-spinners": "^0.15.0",
     "react-toastify": "^10.0.5",
     "yup": "^1.4.0"
   },

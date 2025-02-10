@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 
 const fetchData = async () => {
-  const response = await axiosInstance.post("/post/getAllPosts", {}); // Replace with your API URL
+  const response = await axiosInstance.post("/post/getAllPosts", {});
   return response.data;
 };
 
@@ -17,7 +17,7 @@ export default function StudentHome() {
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error: {error.message}</p>;
   return (
-    <div className="max-w-3xl m-auto">
+    <div className="mx-1 max-w-2xl m-auto">
       <hr className="mb-2 mx-1" />
       {data?.data?.map((post) => {
         return <StudentPost key={post?.postId} postData={post} />;
