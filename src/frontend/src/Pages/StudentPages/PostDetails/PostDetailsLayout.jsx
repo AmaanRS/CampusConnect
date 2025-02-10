@@ -7,9 +7,12 @@ import CommitteeSidebar from "../Components/CommitteeSidebar/CommitteeSidebar";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import PostDetailSkeleton from "./Skeletons/PostDetailSkeleton";
+import SidebarSkeleton from "../Components/CommitteeSidebar/skeletons/SidebarSkeleton";
+import { toast } from "react-toastify";
+import ApiError from "../../../Components/Errors/ApiError";
 
 const fetchData = async ({ postId }) => {
-  const response = await axiosInstance.post(`/post/getPostById`, { postId }); // Replace with your API URL
+  const response = await axiosInstance.post(`/post/getPostByIds`, { postId }); // Replace with your API URL
   return response.data;
 };
 
@@ -22,17 +25,30 @@ export default function PostDetailsLayout() {
 
   if (isLoading)
     return (
-      <CentreMainContent>
-        <PostDetailSkeleton />;
-      </CentreMainContent>
+      <>
+        <CentreMainContent>
+          <PostDetailSkeleton />;
+        </CentreMainContent>
+        <RightSidebar>
+          <SidebarSkeleton />
+        </RightSidebar>
+      </>
     );
-  if (isError) return <p>Error: {error.message}</p>;
+  if (isError) {
+    toast.error("Error fetching data");
+    return (
+      <>
+        <div className="w-full h-96 flex justify-center items-center">
+          <ApiError isError={isError} error={error} />
+        </div>
+      </>
+    );
+  }
 
   console.log(data);
   return (
     <>
       <CentreMainContent>
-        <PostDetailSkeleton />
         <PostDetails postData={data?.data} />
       </CentreMainContent>
       <RightSidebar>

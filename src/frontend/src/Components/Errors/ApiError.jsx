@@ -1,6 +1,9 @@
 import React from "react";
 
-export default function ApiError({ error = "something went wrong", isError }) {
+export default function ApiError({
+  error = "something went wrong",
+  isError = true,
+}) {
   const errorClass = "text-red-600 ml-2 mt-1";
 
   return (

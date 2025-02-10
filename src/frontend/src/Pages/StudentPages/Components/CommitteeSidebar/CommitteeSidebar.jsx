@@ -10,8 +10,8 @@ export default function CommitteeSidebar({ committeeData }) {
     <div className=" bg-slate-50  py-2 mt-4   rounded-lg">
       <CommitteeSidebarTop
         name={committeeData?.name}
-        description={committeeData.description}
-        createdAt={committeeData.createdAt}
+        description={committeeData?.description}
+        createdAt={committeeData?.createdAt}
       />
       <CommitteSidebarQuant />
       <hr className="my-4 border-slate-300 rounded-full mx-4" />
@@ -20,8 +20,8 @@ export default function CommitteeSidebar({ committeeData }) {
       />
       <hr className="my-4 border-slate-300 rounded-full mx-4" />
       <CommiteeSidebarMemberList
-        facultyTeam={committeeData.facultyTeam}
-        members={committeeData.members}
+        facultyTeam={committeeData?.facultyTeam}
+        members={committeeData?.members}
       />
     </div>
   );
