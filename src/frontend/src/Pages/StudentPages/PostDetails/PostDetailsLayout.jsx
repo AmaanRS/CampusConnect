@@ -6,6 +6,7 @@ import PostDetails from "./PostDetails";
 import CommitteeSidebar from "../Components/CommitteeSidebar/CommitteeSidebar";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import PostDetailSkeleton from "./Skeletons/PostDetailSkeleton";
 
 const fetchData = async ({ postId }) => {
   const response = await axiosInstance.post(`/post/getPostById`, { postId }); // Replace with your API URL
@@ -19,13 +20,19 @@ export default function PostDetailsLayout() {
     queryFn: () => fetchData({ postId }), // Function to fetch data
   });
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading)
+    return (
+      <CentreMainContent>
+        <PostDetailSkeleton />;
+      </CentreMainContent>
+    );
   if (isError) return <p>Error: {error.message}</p>;
 
   console.log(data);
   return (
     <>
       <CentreMainContent>
+        <PostDetailSkeleton />
         <PostDetails postData={data?.data} />
       </CentreMainContent>
       <RightSidebar>

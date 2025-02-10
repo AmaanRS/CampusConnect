@@ -12,16 +12,18 @@ export default function PostDetails({ postData }) {
   console.log(isImage);
   return (
     <>
-      <div className="mx-4  max-w-3xl m-auto">
-        <PostTop
-          subname={postData?.committeeDocId.name}
-          createdAt={postData?.createdAt}
-        />
-        <PostTitle title={postData?.title} />
-        <PostBody content={postData?.content} />
-        {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
-        <PostActionBar postId={postData?.postId} />
-        <PostComment />
+      <div className="  max-w-3xl m-auto">
+        <div className="mx-4">
+          <PostTop
+            subname={postData?.committeeDocId.name}
+            createdAt={postData?.createdAt}
+          />
+          <PostTitle title={postData?.title} />
+          <PostBody content={postData?.content} />
+          {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
+          <PostActionBar postId={postData?.postId} />
+          <PostComment />
+        </div>
       </div>
     </>
   );
