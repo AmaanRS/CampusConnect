@@ -5,15 +5,15 @@ import axiosInstance from "../../../../utils/Axios/AxiosInstance";
 
 // Function to fetch data
 const fetchData = async () => {
-  const response = await axiosInstance.post("/student/getAllStudentsEmail", {});
+  const response = await axiosInstance.post("/teacher/getAllFacultysEmail", {});
   return response.data;
 };
 
-export default function StudentSelect({ handleStudentEmail }) {
+export default function TeacherSelect({ handleTeacherEmail = "" }) {
   const [options, setOptions] = useState([]);
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["StudentEmailList"],
+    queryKey: ["teacherEmailList"],
     queryFn: fetchData,
   });
 
@@ -51,7 +51,7 @@ export default function StudentSelect({ handleStudentEmail }) {
       isClearable={true}
       isSearchable={true}
       options={options}
-      onChange={handleStudentEmail}
+      onChange={handleTeacherEmail}
     />
   );
 }

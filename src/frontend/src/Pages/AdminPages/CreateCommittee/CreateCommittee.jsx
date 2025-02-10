@@ -22,6 +22,7 @@ import ApiError from "../../../Components/Errors/ApiError";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 import PopularCommittees from "../../StudentPages/Home/PopularCommittee/PopularCommittees";
 import StudentSelect from "./slect/StudentSelect";
+import TeacherSelect from "./slect/TeacherSelect";
 
 const options = [
   { value: Department.IT, label: Department.IT },
@@ -35,6 +36,7 @@ export default function CreateCommittee() {
   const [departments, setDepartments] = useState([]);
   const [depError, setDepError] = useState("");
   const [studentIncharge, setStudentIncharge] = useState("");
+  const [facultyIncharge, setFacultyIncharge] = useState("");
   const [selectError, setSelectError] = useState({
     type: "",
     message: "",
@@ -62,10 +64,6 @@ export default function CreateCommittee() {
       .string()
       .min(5, "should atleast have 5 characters")
       .required("description is required"),
-    facultyInchargeEmail: yup
-      .string()
-      .email("enter a valid email")
-      .required("student incharge mail is required"),
   });
 
   const {
@@ -117,6 +115,14 @@ export default function CreateCommittee() {
     setStudentIncharge(value?.value);
   }
 
+  function handleTeacherEmail(value) {
+    setSelectError({
+      type: "",
+      message: "",
+    });
+    setFacultyIncharge(value?.value);
+  }
+
   function onSubmit(data) {
     data.committeeOfDepartment = departments;
     if (departments.length === 0) {
@@ -133,7 +139,17 @@ export default function CreateCommittee() {
       });
       return;
     }
+    if (!facultyIncharge) {
+      setSelectError({
+        type: "facultyIncharge",
+        message: "Select faculty incharge",
+      });
+      return;
+    }
+
     data.studentIncharge = studentIncharge;
+    data.facultyInchargeEmail = facultyIncharge;
+    console.log(data);
     mutation.mutate({ data });
   }
 
@@ -178,29 +194,16 @@ export default function CreateCommittee() {
               <p className={errorClass}> {errors.description.message} </p>
             )}
           </div>
-          {/* <div>
+          {/* ------------------------------------------- */}
+          <div>
             <div className="mb-2 block">
-              <Label
-                htmlFor="student-incharge"
-                value="Student Incharge Email"
-              />
+              <Label value="Student Incharge Email" />
             </div>
-            <TextInput
-              theme={inputTheme}
-              id="student-incharge"
-              type="email"
-              placeholder="write email of student incharge"
-              required
-              {...register("studentIncharge")}
-            />
-            {errors.studentIncharge && (
-              <p className={errorClass}> {errors.studentIncharge.message} </p>
+            <StudentSelect handleStudentEmail={handleStudentEmail} />
+            {selectError.type === "studentIncharge" && (
+              <p className={errorClass}> {selectError.message} </p>
             )}
-          </div> */}
-          <StudentSelect handleStudentEmail={handleStudentEmail} />
-          {selectError.type === "studentIncharge" && (
-            <p className={errorClass}> {selectError.message} </p>
-          )}
+          </div>
 
           {/* ---------------------------------------- */}
           <div>
@@ -210,19 +213,9 @@ export default function CreateCommittee() {
                 value="Faculty Incharge Email"
               />
             </div>
-            <TextInput
-              theme={inputTheme}
-              id="faculty-incharge"
-              type="email"
-              placeholder="write email of Faculty incharge"
-              required
-              {...register("facultyInchargeEmail")}
-            />
-            {errors.facultyInchargeEmail && (
-              <p className={errorClass}>
-                {" "}
-                {errors.facultyInchargeEmail.message}{" "}
-              </p>
+            <TeacherSelect handleTeacherEmail={handleTeacherEmail} />
+            {selectError.type === "facultyIncharge" && (
+              <p className={errorClass}> {selectError.message} </p>
             )}
           </div>
           {/* ---------------------------------------- */}
