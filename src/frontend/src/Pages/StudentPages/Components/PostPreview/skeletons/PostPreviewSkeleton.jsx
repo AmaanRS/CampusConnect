@@ -25,9 +25,9 @@ export default function PostPreviewSkeleton() {
 
         {/* {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />} */}
         {/* <div className="w-full mt-3 my-1   bg-slate-200 animate-pulse h-20 rounded-2xl"></div> */}
-        <div class="flex items-center mt-3 rounded-2xl justify-center animate-pulse w-full h-60 bg-slate-200   ">
+        <div className="flex items-center mt-3 rounded-2xl justify-center animate-pulse w-full h-60 bg-slate-200   ">
           <svg
-            class="w-10 h-10 text-slate-300 animate-pulse"
+            className="w-10 h-10 text-slate-300 animate-pulse"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
