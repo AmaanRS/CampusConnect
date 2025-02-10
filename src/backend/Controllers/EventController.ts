@@ -472,7 +472,6 @@ const deleteEvent = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO: Write with pagination
 const getAllEvents = async (req: Request, res: Response) => {
 	try {
 		const {

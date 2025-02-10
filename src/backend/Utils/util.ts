@@ -346,6 +346,16 @@ const updateStudentInchargeOfCommittee = async ({
 			return response;
 		}
 
+		// Remove the studentIncharge from members array
+		newDataForCommittee.members = newDataForCommittee.members?.filter(
+			(member) => {
+				return (
+					member.toString() !==
+					(oldCommittee.studentIncharge._id as Types.ObjectId).toString()
+				);
+			},
+		);
+
 		const response: StandardResponse = {
 			message: "Updated studentIncharge successfully",
 			success: true,

@@ -7,6 +7,7 @@ import {
 	updateAdmin,
 	deleteAdmin,
 	changeUserAccountStatusByEmail,
+	restorePost,
 } from "../Controllers/AdminController";
 // import { authorizationMiddlewareFactory } from "../Middlewares/Authorization";
 // import { AccountType, AdminPosition } from "../Types/ModelTypes";
@@ -20,5 +21,7 @@ Router.route("/updateAdmin").post(updateAdmin);
 Router.route("/deleteAdmin").post(deleteAdmin);
 
 Router.route("/deleteUserByEmail").post(changeUserAccountStatusByEmail);
+
+Router.route("/restorePost").post(restorePost);
 
 export default Router;

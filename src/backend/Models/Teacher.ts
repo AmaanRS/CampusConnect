@@ -52,6 +52,11 @@ const teacherSchema = new Schema<ITeacherDocument>(
 			],
 			default: [],
 		},
+		postsLiked: {
+			type: [Schema.Types.ObjectId],
+			ref: "postModel",
+			default: [],
+		},
 		isProfileComplete: {
 			default: false,
 			type: Boolean,

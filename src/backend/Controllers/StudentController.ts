@@ -1,11 +1,5 @@
 import { Request, Response } from "express";
-import {
-	AccountType,
-	Department,
-	IStudent,
-	StudentPosition,
-	Year,
-} from "../Types/ModelTypes";
+import { AccountType, Department, IStudent, Year } from "../Types/ModelTypes";
 import {
 	DataResponse,
 	decodedTokenPayload,
@@ -411,7 +405,6 @@ const deleteStudent = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO: Write with pagination
 const getAllStudents = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -438,8 +431,17 @@ const getAllStudents = async (req: Request, res: Response) => {
 
 			return res.status(401).json(response);
 		}
+		let allStudents;
 
-		const allStudents = await studentModel.find();
+		if (decodedToken.accountType === AccountType.Admin) {
+			allStudents = await studentModel
+				.find({}, null, {
+					_skipInactiveStudentsInHook: true,
+				})
+				.lean();
+		} else {
+			allStudents = await studentModel.find().lean();
+		}
 
 		if (!allStudents || allStudents.length === 0) {
 			const response: StandardResponse = {

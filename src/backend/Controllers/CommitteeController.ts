@@ -25,7 +25,6 @@ import { teacherModel } from "../Models/Teacher";
 import { committeeModel } from "../Models/Committee";
 import mongoose, { Types } from "mongoose";
 
-// TODO: Only Admin can do this
 const createCommittee = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -342,7 +341,6 @@ const updateCommittee = async (req: Request, res: Response) => {
 			decodedToken: decodedTokenPayload | undefined;
 			committeeId: string | undefined;
 			description: string | undefined;
-			members: string[] | undefined;
 			studentIncharge: string | undefined;
 		} = req.body;
 

@@ -409,7 +409,6 @@ const deleteTeacher = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO: Write with pagination
 const getAllTeachers = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -437,7 +436,16 @@ const getAllTeachers = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const allTeachers = await teacherModel.find();
+		let allTeachers;
+		if (decodedToken.accountType === AccountType.Admin) {
+			allTeachers = await teacherModel
+				.find({}, null, {
+					_skipInactiveTeachersInHook: true,
+				})
+				.lean();
+		} else {
+			allTeachers = await teacherModel.find().lean();
+		}
 
 		if (allTeachers.length === 0) {
 			const response: StandardResponse = {

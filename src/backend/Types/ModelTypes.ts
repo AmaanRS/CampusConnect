@@ -102,6 +102,7 @@ export interface ITeacher {
 		committeeObjId?: mongoose.Types.ObjectId;
 		position?: TeacherPosition;
 	}[];
+	postsLiked?: Types.ObjectId[];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 }
@@ -113,6 +114,7 @@ export interface IAdmin {
 	password: string;
 	accType: AccountType;
 	position: AdminPosition[];
+	postsLiked?: Types.ObjectId[];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 }
@@ -178,7 +180,7 @@ export interface ICommitteeDocument extends ICommittee, Document {}
 
 export interface IPost {
 	postId: string;
-	committeeDocId: Types.ObjectId;
+	committeeObjId: Types.ObjectId;
 	postedBy: Types.ObjectId;
 	title: string;
 	content: string;
@@ -187,6 +189,8 @@ export interface IPost {
 		imagePath?: string;
 	}[];
 	likes?: Types.ObjectId[];
+	commentObjId: Types.ObjectId;
+	isPostDeleted: boolean;
 }
 
 export interface IPostDocument extends IPost, Document {}
@@ -204,3 +208,13 @@ export interface IEvent {
 }
 
 export interface IEventDocument extends IEvent, Document {}
+
+export interface IComment {
+	postObjId: Types.ObjectId;
+	comments?: {
+		userId?: Types.ObjectId;
+		comment?: string;
+	}[];
+}
+
+export interface ICommentDocument extends IComment, Document {}

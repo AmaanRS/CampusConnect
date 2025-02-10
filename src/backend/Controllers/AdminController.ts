@@ -7,7 +7,12 @@ import {
 } from "../Types/GeneralTypes";
 import { userModel } from "../Models/User";
 import { adminModel } from "../Models/Admin";
-import { AccountType, AdminPosition, IAdmin } from "../Types/ModelTypes";
+import {
+	AccountType,
+	AdminPosition,
+	CommitteeStatus,
+	IAdmin,
+} from "../Types/ModelTypes";
 import { runWithRetrySession } from "../Utils/util";
 import { userEmailRegex } from "../Utils/regexUtils";
 import { studentModel } from "../Models/Student";
@@ -15,6 +20,7 @@ import { teacherModel } from "../Models/Teacher";
 import { nonTeachingStaffModel } from "../Models/NonTeachingStaff";
 import { UpdateWriteOpResult } from "mongoose";
 import { createJwtToken } from "../Utils/jwtToken";
+import { postModel } from "../Models/Post";
 
 // When changing from any accountType to admin all the previous data will be lost so be careful
 // Creates admin using user jwt token
@@ -537,10 +543,81 @@ const changeUserAccountStatusByEmail = async (req: Request, res: Response) => {
 	}
 };
 
+const restorePost = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+			postId,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+			postId: string | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		if (!postId) {
+			const response: StandardResponse = {
+				message: "Please provide postId",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const isPostDeletedChanged = await postModel
+			.updateOne({ postId }, { isPostDeleted: true })
+			.lean();
+
+		if (!isPostDeletedChanged.acknowledged) {
+			const response: StandardResponse = {
+				message: "Could not change the status of the post",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+		const response: StandardResponse = {
+			message: "Status of post changed successfully",
+			success: true,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+
+		const response: StandardResponse = {
+			message:
+				"There is some problem while changing the status of the post" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
 export {
 	createAdmin,
 	getAdmin,
 	updateAdmin,
 	deleteAdmin,
 	changeUserAccountStatusByEmail,
+	restorePost,
 };

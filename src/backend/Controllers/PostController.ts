@@ -11,11 +11,15 @@ import {
 } from "../Utils/util";
 import { committeeModel } from "../Models/Committee";
 import {
-	IStudentDocument,
+	AccountType,
+	IUserDocument,
 	StudentPosition,
 	TeacherPosition,
 } from "../Types/ModelTypes";
 import { studentModel } from "../Models/Student";
+import { commentModel } from "../Models/Comment";
+import { adminModel } from "../Models/Admin";
+import { teacherModel } from "../Models/Teacher";
 
 const createPost = async (req: Request, res: Response) => {
 	try {
@@ -106,39 +110,88 @@ const createPost = async (req: Request, res: Response) => {
 			return res.status(401).json(resp);
 		}
 
-		let postedBy;
+		const result = await runWithRetrySession(async (session) => {
+			let postedBy;
 
-		if ("data" in resp) {
-			if (resp.data === StudentPosition.StudentIncharge) {
-				postedBy = committee.studentIncharge._id;
-			} else if (resp.data === TeacherPosition.FacultyIncharge) {
-				postedBy = committee.facultyIncharge._id;
+			if ("data" in resp) {
+				if (resp.data === StudentPosition.StudentIncharge) {
+					postedBy = committee.studentIncharge._id;
+				} else if (resp.data === TeacherPosition.FacultyIncharge) {
+					postedBy = committee.facultyIncharge._id;
+				}
 			}
-		}
 
-		const isPostCreated = await postModel.create({
-			committeeDocId: committee._id,
-			title,
-			content,
-			image,
-			postedBy: postedBy,
-		});
+			const isCommentSectionCreated = await commentModel.create(
+				[
+					{
+						comments: [],
+					},
+				],
+				{ session },
+			);
 
-		if (!isPostCreated) {
+			if (
+				!Array.isArray(isCommentSectionCreated) ||
+				isCommentSectionCreated.length === 0
+			) {
+				const response: StandardResponse = {
+					message: "Post could not be created",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isPostCreated = await postModel.create(
+				[
+					{
+						committeeObjId: committee._id,
+						title,
+						content,
+						image,
+						postedBy: postedBy,
+						commentObjId: isCommentSectionCreated[0]._id,
+					},
+				],
+				{ session },
+			);
+
+			if (!Array.isArray(isPostCreated) || isPostCreated.length === 0) {
+				const response: StandardResponse = {
+					message: "Post could not be created",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isCommentSectionUpdated = await commentModel
+				.updateOne(
+					{ _id: isCommentSectionCreated[0]._id },
+					{
+						postObjId: isPostCreated[0]._id,
+					},
+				)
+				.session(session);
+
+			if (!isCommentSectionUpdated.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not set the post id in comment model",
+					success: false,
+				};
+
+				return response;
+			}
+
 			const response: StandardResponse = {
-				message: "Post could not be created",
-				success: false,
+				message: "Post created successfully",
+				success: true,
 			};
 
-			return res.status(401).json(response);
-		}
+			return response;
+		});
 
-		const response: StandardResponse = {
-			message: "Post created successfully",
-			success: true,
-		};
-
-		return res.status(201).json(response);
+		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
 
@@ -193,7 +246,7 @@ const getPostById = async (req: Request, res: Response) => {
 		const post = await postModel
 			.findOne({ postId })
 			.populate({
-				path: "committeeDocId",
+				path: "committeeObjId",
 				populate: [
 					{ path: "postedBy", model: "userModel" },
 					{ path: "studentIncharge", model: "studentModel" },
@@ -201,6 +254,8 @@ const getPostById = async (req: Request, res: Response) => {
 					{ path: "facultyTeam", model: "teacherModel" },
 					{ path: "members", model: "userModel" },
 					{ path: "events", model: "eventModel" },
+					{ path: "commentObjId", model: "commentModel" },
+					{ path: "commentObjId", model: "commentModel" },
 				],
 			})
 			.lean();
@@ -393,10 +448,24 @@ const deletePost = async (req: Request, res: Response) => {
 
 			return res.status(401).json(response);
 		}
+		let isPostDeleted;
 
-		const isPostDeleted = await postModel.deleteOne({ postId });
+		if (decodedToken.accountType === AccountType.Admin) {
+			isPostDeleted = await postModel.updateOne(
+				{ postId },
+				{ isPostDeleted: true },
+				{
+					_skipdeletedPostsInHook: true,
+				},
+			);
+		} else {
+			isPostDeleted = await postModel.updateOne(
+				{ postId },
+				{ isPostDeleted: true },
+			);
+		}
 
-		if (!isPostDeleted.acknowledged || isPostDeleted.deletedCount === 0) {
+		if (!isPostDeleted.acknowledged) {
 			const response: StandardResponse = {
 				message: "Could not delete the post",
 				success: false,
@@ -425,7 +494,6 @@ const deletePost = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO: Write with pagination
 const getAllPosts = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -456,7 +524,7 @@ const getAllPosts = async (req: Request, res: Response) => {
 		const allPosts = await postModel
 			.find()
 			.populate([
-				{ path: "committeeDocId" },
+				{ path: "committeeObjId" },
 				{ path: "postedBy", model: "userModel" },
 			])
 			.lean();
@@ -491,7 +559,7 @@ const getAllPosts = async (req: Request, res: Response) => {
 	}
 };
 
-// If a student has already liked a post ie student exists in likes array of objects then remove him else add him
+// If a user has already liked a post ie user exists in likes array of objects then remove him else add him
 const togglePostLike = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -533,7 +601,7 @@ const togglePostLike = async (req: Request, res: Response) => {
 		const result = await runWithRetrySession(async (session) => {
 			const post = await postModel
 				.findOne({ postId })
-				.populate<{ likes: IStudentDocument[] }>("likes")
+				.populate<{ likes: IUserDocument[] }>("likes")
 				.session(session)
 				.lean();
 
@@ -547,6 +615,21 @@ const togglePostLike = async (req: Request, res: Response) => {
 			}
 
 			let likeRemoved: boolean = false;
+
+			let model: any;
+			switch (decodedToken.accountType) {
+				case AccountType.Student:
+					model = studentModel;
+					break;
+
+				case AccountType.Admin:
+					model = adminModel;
+					break;
+
+				case AccountType.Teacher:
+					model = teacherModel;
+					break;
+			}
 
 			if (Array.isArray(post.likes)) {
 				for (let i = 0; i < post.likes.length; i++) {
@@ -568,7 +651,7 @@ const togglePostLike = async (req: Request, res: Response) => {
 							return response;
 						}
 
-						const isStudentLikesUpdates = await studentModel
+						const isUserLikesUpdate = await model
 							.updateOne(
 								{
 									email,
@@ -579,9 +662,9 @@ const togglePostLike = async (req: Request, res: Response) => {
 							)
 							.session(session);
 
-						if (!isStudentLikesUpdates.acknowledged) {
+						if (!isUserLikesUpdate.acknowledged) {
 							const response: StandardResponse = {
-								message: "Could not update the likes in students",
+								message: "Could not update the likes",
 								success: false,
 							};
 
@@ -595,7 +678,7 @@ const togglePostLike = async (req: Request, res: Response) => {
 
 				// If like is not removed it should be added
 				if (!likeRemoved) {
-					const likeAddedInStudent = await studentModel
+					const likeAddedInUser = await model
 						.findOneAndUpdate(
 							{ email },
 							{ $push: { postsLiked: post._id } },
@@ -603,9 +686,9 @@ const togglePostLike = async (req: Request, res: Response) => {
 						.session(session)
 						.lean();
 
-					if (!likeAddedInStudent) {
+					if (!likeAddedInUser) {
 						const response: StandardResponse = {
-							message: "Could not update the likes in students",
+							message: "Could not update the likes",
 							success: false,
 						};
 
@@ -615,7 +698,7 @@ const togglePostLike = async (req: Request, res: Response) => {
 					const likeAddedInPost = await postModel
 						.updateOne(
 							{ postId },
-							{ $push: { likes: likeAddedInStudent._id } },
+							{ $push: { likes: likeAddedInUser._id } },
 						)
 						.session(session)
 						.lean();
