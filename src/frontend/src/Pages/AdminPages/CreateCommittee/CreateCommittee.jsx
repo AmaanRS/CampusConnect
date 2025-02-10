@@ -10,7 +10,7 @@ import {
 import { Department } from "../../../utils/enum";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "@tanstack/react-query";
@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import ApiError from "../../../Components/Errors/ApiError";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 import PopularCommittees from "../../StudentPages/Home/PopularCommittee/PopularCommittees";
+import StudentSelect from "./slect/StudentSelect";
 
 const options = [
   { value: Department.IT, label: Department.IT },
@@ -33,6 +34,11 @@ export default function CreateCommittee() {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [depError, setDepError] = useState("");
+  const [studentIncharge, setStudentIncharge] = useState("");
+  const [selectError, setSelectError] = useState({
+    type: "",
+    message: "",
+  });
   const errorClass = "text-red-600 ml-2 mt-1";
   const navigate = useNavigate();
 
@@ -42,7 +48,7 @@ export default function CreateCommittee() {
     onSuccess: (data) => {
       console.log(data);
       toast.success("created successfully");
-      navigate("/teacher");
+      navigate("/admin");
     },
     onError: (error) => {
       console.log(error);
@@ -56,10 +62,6 @@ export default function CreateCommittee() {
       .string()
       .min(5, "should atleast have 5 characters")
       .required("description is required"),
-    studentIncharge: yup
-      .string()
-      .email("enter a valid email")
-      .required("student incharge mail is required"),
     facultyInchargeEmail: yup
       .string()
       .email("enter a valid email")
@@ -85,17 +87,6 @@ export default function CreateCommittee() {
     },
   };
 
-  function onSubmit(data) {
-    data.committeeOfDepartment = departments;
-    if (departments.length === 0) {
-      setDepError("Select atleast one department");
-      return;
-    } else {
-      setDepError("");
-    }
-    mutation.mutate({ data });
-  }
-
   const handleSelect = (selected) => {
     setDepError("");
     setSelectedOptions(selected);
@@ -117,6 +108,34 @@ export default function CreateCommittee() {
       return newShowMulti;
     });
   };
+
+  function handleStudentEmail(value) {
+    setSelectError({
+      type: "",
+      message: "",
+    });
+    setStudentIncharge(value?.value);
+  }
+
+  function onSubmit(data) {
+    data.committeeOfDepartment = departments;
+    if (departments.length === 0) {
+      setDepError("Select atleast one department");
+      return;
+    } else {
+      setDepError("");
+    }
+    console.log(studentIncharge);
+    if (!studentIncharge) {
+      setSelectError({
+        type: "studentIncharge",
+        message: "Select student incharge",
+      });
+      return;
+    }
+    data.studentIncharge = studentIncharge;
+    mutation.mutate({ data });
+  }
 
   return (
     <>
@@ -159,7 +178,7 @@ export default function CreateCommittee() {
               <p className={errorClass}> {errors.description.message} </p>
             )}
           </div>
-          <div>
+          {/* <div>
             <div className="mb-2 block">
               <Label
                 htmlFor="student-incharge"
@@ -177,7 +196,11 @@ export default function CreateCommittee() {
             {errors.studentIncharge && (
               <p className={errorClass}> {errors.studentIncharge.message} </p>
             )}
-          </div>
+          </div> */}
+          <StudentSelect handleStudentEmail={handleStudentEmail} />
+          {selectError.type === "studentIncharge" && (
+            <p className={errorClass}> {selectError.message} </p>
+          )}
 
           {/* ---------------------------------------- */}
           <div>

@@ -54,7 +54,7 @@ export default function AddPostForm() {
 
   function handleChange(e) {
     setError("");
-    setCommittee(e.value);
+    setCommittee(e?.value);
   }
 
   function handleSubmit() {
