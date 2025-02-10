@@ -14,7 +14,7 @@ import SelectCommittee from "./SelectCommittee";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-
+import { useNavigate } from "react-router-dom";
 const postData = async (data) => {
   const response = await axiosInstance.post("/post/createPost", data);
   return response.data;
@@ -27,6 +27,7 @@ export default function AddPostForm() {
   const [title, setTitle] = useState("");
   const [committee, setCommittee] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   // Use the mutation hook
   const mutation = useMutation({
@@ -36,12 +37,13 @@ export default function AddPostForm() {
       setPublicUrl("");
       setFilePath("");
       toast.success("Data posted successfully!");
+      navigate("/student");
 
       // alert("Data posted successfully!");
     },
     onError: (error) => {
       console.error("Error posting data:", error);
-      alert("Error posting data");
+      toast.error("Error creating post!");
     },
   });
 
@@ -68,8 +70,9 @@ export default function AddPostForm() {
     if (filePath && publicURL) {
       obj.image = [{ imageUrl: publicURL, imagePath: filePath }];
     }
-    console.log(obj);
     mutation.mutate(obj); // Trigger the mutation
+    setPublicUrl("");
+    setFilePath("");
   }
 
   return (
@@ -107,6 +110,7 @@ export default function AddPostForm() {
 
         <div className="text-center">
           <Button
+            disabled={mutation.isPending}
             onClick={handleSubmit}
             color="blue"
             className=" inline-block text-center ml-auto mt-4"
