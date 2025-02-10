@@ -1,6 +1,12 @@
 import React from "react";
 import { Avatar } from "flowbite-react";
-export default function CommiteeSidebarMemberList() {
+
+export default function CommiteeSidebarMemberList({
+  facultyTeam = [],
+  members = [],
+}) {
+  console.log(facultyTeam, members);
+
   return (
     <div className="px-4 mb-4">
       <p className="text-sm font-medium text-slate-700  mb-2">Members</p>

@@ -19,7 +19,10 @@ export default function CommitteeSidebar({ committeeData }) {
         committeeOfDepartment={committeeData?.committeeOfDepartment}
       />
       <hr className="my-4 border-slate-300 rounded-full mx-4" />
-      <CommiteeSidebarMemberList />
+      <CommiteeSidebarMemberList
+        facultyTeam={committeeData.facultyTeam}
+        members={committeeData.members}
+      />
     </div>
   );
 }

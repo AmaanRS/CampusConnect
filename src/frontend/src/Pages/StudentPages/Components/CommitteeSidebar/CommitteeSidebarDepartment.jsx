@@ -9,7 +9,10 @@ export default function CommitteeSidebarDepartment({
       <div className="flex text-xs gap-2">
         {committeeOfDepartment.map((department) => {
           return (
-            <div className="bg-slate-200 px-2 py-1 rounded-full text-slate-800 ">
+            <div
+              key={department}
+              className="bg-slate-200 px-2 py-1 rounded-full text-slate-800 "
+            >
               {department}
             </div>
           );
