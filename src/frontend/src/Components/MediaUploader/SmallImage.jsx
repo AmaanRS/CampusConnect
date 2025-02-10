@@ -13,10 +13,10 @@ export default function SmallImage({
         style={{
           backgroundImage: `url("${images[0]}")`,
         }}
-        className="cursor-pointer border rounded-t-md  overflow-hidden  w-60  m-auto bg-cover bg-center "
+        className="cursor-pointer border rounded-t-md  overflow-hidden    w-60  m-auto bg-cover bg-center "
       >
         <img
-          className="h-full w-full rounded-t-md backdrop-blur-3xl max-h-60 object-contain"
+          className="h-full w-full rounded-t-md backdrop-blur-3xl max-h-60 min-h-40 object-contain"
           src={images[0]}
           onClick={() => openImageViewer()}
           width="300"

@@ -29,7 +29,7 @@ export default function PostDetailsLayout() {
         <PostDetails postData={data?.data} />
       </CentreMainContent>
       <RightSidebar>
-        <CommitteeSidebar />
+        <CommitteeSidebar committeeData={data?.data.committeeDocId} />
       </RightSidebar>
     </>
   );

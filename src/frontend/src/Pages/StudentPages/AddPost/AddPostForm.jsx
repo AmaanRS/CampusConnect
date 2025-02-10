@@ -6,13 +6,14 @@ import {
   Tabs,
   TextInput,
 } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TipTap from "../../../Components/RichTextEditor/TipTap";
 import MediaUploader from "../../../Components/MediaUploader/MediaUploader";
 import Title from "./Title";
 import SelectCommittee from "./SelectCommittee";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 const postData = async (data) => {
   const response = await axiosInstance.post("/post/createPost", data);
@@ -32,7 +33,11 @@ export default function AddPostForm() {
     mutationFn: postData,
     onSuccess: (data) => {
       console.log("Data posted successfully:", data);
-      alert("Data posted successfully!");
+      setPublicUrl("");
+      setFilePath("");
+      toast.success("Data posted successfully!");
+
+      // alert("Data posted successfully!");
     },
     onError: (error) => {
       console.error("Error posting data:", error);

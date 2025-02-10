@@ -27,18 +27,21 @@ export default function SidebarComponent() {
         icon={<IoCreateSharp size={20} />}
         text="Add Post"
       />
-      <SidebarItem to="page3" icon={<Search size={20} />} text="Search" />
-      {/* <SidebarItem icon={<HiOutlineUserGroup size={20} />} text="committees" />
+      <SidebarItem to="page3" icon={<Search size={20} />} text="Explore " />
+      <SidebarItem
+        icon={<HiOutlineUserGroup size={20} />}
+        text="Jobs/intenships/education"
+      />
       <SidebarItem
         icon={<LiaChalkboardTeacherSolid size={20} />}
-        text="Teachers"
+        text="online courses/certifications"
       />
       <SidebarItem icon={<PiStudent size={20} />} text="Students" />
       <SidebarItem icon={<TbDevicesQuestion size={20} />} text="Requests" />
 
       <hr className="my-3" />
       <SidebarItem icon={<User size={20} />} text="profile" />
-      <SidebarItem icon={<Settings size={20} />} text="Settings" /> */}
+      <SidebarItem icon={<Settings size={20} />} text="Settings" />
 
       <SidebarButton
         onClick={() => logOutUser()}

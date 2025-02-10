@@ -1,3 +1,5 @@
+import ReactPlayer from "react-player";
+
 export default function TestLayout() {
   return (
     <>
@@ -16,13 +18,16 @@ export default function TestLayout() {
 
       {/* Center Section - Main Content */}
       <div className="sm:ml-72 sm:mr-72 bg-white p-6 min-h-screen overflow-y-auto m-auto">
-        <h1 className="text-2xl font-semibold">Main Content</h1>
+        {/* <h1 className="text-2xl font-semibold">Main Content</h1>
         <p>This is the main content area. Scroll to see more content.</p>
         <div style={{ height: "1500px" }}>
           {" "}
-          {/* Placeholder for long content */}
           Add your scrollable content here.
-        </div>
+        </div> */}
+        <ReactPlayer
+          controls
+          url={"https://www.youtube.com/live/jfKfPfyJRdk?si=62CGTDlYb7P8Qz6T"}
+        />
       </div>
 
       {/* Right Section - Popular Committees */}
@@ -39,3 +44,13 @@ export default function TestLayout() {
     </>
   );
 }
+
+// post {
+//   ...,
+//   comment: [refID]
+// }
+
+// comment {
+//   postId,
+//   comment:[]
+// }

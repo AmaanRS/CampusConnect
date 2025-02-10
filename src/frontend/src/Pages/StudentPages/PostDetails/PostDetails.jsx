@@ -12,7 +12,7 @@ export default function PostDetails({ postData }) {
   console.log(isImage);
   return (
     <>
-      <div className="  max-w-3xl m-auto">
+      <div className="mx-4  max-w-3xl m-auto">
         <PostTop
           subname={postData?.committeeDocId.name}
           createdAt={postData?.createdAt}
@@ -21,7 +21,7 @@ export default function PostDetails({ postData }) {
         <PostBody content={postData?.content} />
         {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
         <PostActionBar postId={postData?.postId} />
-        {/* <PostComment /> */}
+        <PostComment />
       </div>
     </>
   );
