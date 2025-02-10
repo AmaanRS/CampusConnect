@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import ApiError from "../../../Components/Errors/ApiError";
 
 const fetchData = async ({ postId }) => {
-  const response = await axiosInstance.post(`/post/getPostByIds`, { postId }); // Replace with your API URL
+  const response = await axiosInstance.post(`/post/getPostById`, { postId }); // Replace with your API URL
   return response.data;
 };
 
