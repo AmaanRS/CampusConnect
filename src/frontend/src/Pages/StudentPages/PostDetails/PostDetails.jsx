@@ -15,7 +15,7 @@ export default function PostDetails({ postData }) {
       <div className="  max-w-3xl m-auto">
         <div className="mx-4">
           <PostTop
-            subname={postData?.committeeDocId.name}
+            subname={postData?.committeeDocId?.name}
             createdAt={postData?.createdAt}
           />
           <PostTitle title={postData?.title} />

@@ -36,9 +36,6 @@ export default function SelectCommittee({ handleChange }) {
   //     </p>
   //   );
   if (isError) return <p className="text-red-500">Error: {error.message}</p>;
-  if (data) {
-    console.log(data);
-  }
 
   return (
     <Select

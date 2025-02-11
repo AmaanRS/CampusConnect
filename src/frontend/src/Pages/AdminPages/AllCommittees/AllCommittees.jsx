@@ -11,7 +11,7 @@ import PopularCommittees from "../../StudentPages/Home/PopularCommittee/PopularC
 export default function AllCommittees() {
   const committeRequest = useQuery({
     queryKey: ["allCommittee"],
-    queryFn: () => axiosInstance.post("/getAllPendingCommittees"),
+    queryFn: () => axiosInstance.post("/committee/getAllCommittees"),
   });
 
   if (committeRequest.isError) {
@@ -24,6 +24,14 @@ export default function AllCommittees() {
       />
     );
   }
+
+  // if (committeRequest.isLoading) {
+  //   return <>Loading</>;
+  // }
+
+  console.log(committeRequest?.data?.data?.data);
+
+  // return <>Working</>;
 
   return (
     <>

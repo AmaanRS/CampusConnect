@@ -1,34 +1,35 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Card } from "flowbite-react";
-import { MdDelete, MdEdit, MdOutlineCancel } from "react-icons/md";
+import { MdDelete, MdEdit } from "react-icons/md";
+import { FaCheck } from "react-icons/fa6";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { toast } from "react-toastify";
+import { act } from "react";
 
 export default function AllCommitteeCard({ item }) {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (data) =>
-      axiosInstance.post("/committee/deleteCommittee", data),
+    mutationFn: (data) => axiosInstance.post("/changeStatusOfCommittee", data),
     onSuccess: (data) => {
       console.log("data is ", data);
       queryClient.invalidateQueries(["allCommittee"]);
-      toast.success("Deleted Committee");
+      toast.success("Accepted Committee");
     },
     onError: (error) => {
       console.log(error);
-      toast.error("failed to create");
+      toast.error("Request Failed");
     },
   });
 
-  function handleDelete() {
-    console.log(item._id);
+  function handleAccept() {
     mutation.mutate({
       committeeId: item.committeeId,
+      action: "ACCEPTED",
     });
   }
   return (
     <>
-      <Card className=" m-auto max-w-xl bg-white  shadow-lg rounded-lg overflow-hidden ">
+      <Card className=" m-auto  max-w-xl w-[500px] bg-white  shadow-lg rounded-lg overflow-hidden ">
         <h5 className="text-2xl font-bold tracking-tight capitalize text-gray-900  mb-1">
           {item.name}
         </h5>
@@ -62,15 +63,17 @@ export default function AllCommitteeCard({ item }) {
             Edit
           </Button>
 
-          <Button
-            disabled={mutation.isPending}
-            color={""}
-            onClick={handleDelete}
-            className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md transition duration-300"
-          >
-            <MdDelete className="mr-2 h-5 w-5" />
-            {mutation.isPending ? "Deleting" : "Delete"}
-          </Button>
+          {item.status == "PENDING" && (
+            <Button
+              disabled={mutation.isPending}
+              color={""}
+              onClick={() => handleAccept()}
+              className="inline-flex items-center bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-300"
+            >
+              <FaCheck className="mr-2 text-xl h-5 w-5" />
+              {mutation.isPending ? "Accepting" : "Accept"}
+            </Button>
+          )}
         </div>
       </Card>
     </>
