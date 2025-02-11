@@ -1,12 +1,5 @@
 import React, { useContext } from "react";
-import {
-  LayoutDashboard,
-  User,
-  Search,
-  Settings,
-  LogOutIcon,
-  Home,
-} from "lucide-react";
+import { User, Search, Settings, LogOutIcon, Home } from "lucide-react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 import { PiStudent } from "react-icons/pi";
@@ -19,6 +12,8 @@ import { IoCreateSharp } from "react-icons/io5";
 
 export default function SidebarComponent() {
   const { logOutUser } = useContext(UserContext);
+  console.log("SidebarComponent");
+
   return (
     <Sidebar>
       <SidebarItem to="/student" icon={<Home size={20} />} text="Home" />

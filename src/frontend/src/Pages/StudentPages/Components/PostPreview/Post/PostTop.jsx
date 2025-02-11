@@ -5,7 +5,7 @@ import { formatDistanceToNow } from "date-fns";
 
 export default function PostTop({
   mode = "home",
-  committeeId = "",
+  committeeId = "0",
   createdAt = new Date(),
   subname = "subname",
   username = "username",

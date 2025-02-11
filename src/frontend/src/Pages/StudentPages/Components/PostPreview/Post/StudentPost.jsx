@@ -6,10 +6,12 @@ import PostTitle from "./PostTitle";
 import PostActionBar from "./PostActionBar";
 import PostBody from "./PostBody";
 import PostImage from "./PostImage";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function StudentPost({ mode = "home", postData }) {
   let isImage = postData?.image?.length > 0;
+  const navigate = useNavigate();
+  console.log("committeId", postData?.committeeDocId?.committeeId);
   return (
     <>
       <div className="mx-4 my-2  hover:bg-slate-50 cursor-pointer rounded-2xl py-1 px-3 transition-colors duration-100 ">
@@ -19,10 +21,10 @@ export default function StudentPost({ mode = "home", postData }) {
           createdAt={postData?.createdAt}
           subname={postData?.committeeDocId?.name}
         />
-        <Link to={`/student/post/${postData?.postId}`}>
+        <div onClick={() => navigate(`/student/post/${postData?.postId}`)}>
           <PostTitle title={postData?.title} />
           <PostBody isImage={isImage} content={postData?.content} />
-        </Link>
+        </div>
         {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
 
         <PostActionBar postId={postData?.postId} />
