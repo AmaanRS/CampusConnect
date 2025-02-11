@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { User, Search, Settings, LogOutIcon, Home } from "lucide-react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
@@ -9,19 +9,47 @@ import SidebarItem from "../../../Components/Layout/Desktop/SidebarItem";
 import SidebarButton from "../../../Components/Layout/Desktop/SidebarButton";
 import { UserContext } from "../../../store/UserContextProvider";
 import { IoCreateSharp } from "react-icons/io5";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../../../utils/Axios/AxiosInstance";
+
+const fetchData = async () => {
+  console.log("sending request");
+  const response = await axiosInstance.post("/student/getAllStudentData", {}); // Pass an empty object if needed
+  return response.data;
+};
 
 export default function SidebarComponent() {
   const { logOutUser } = useContext(UserContext);
-  console.log("SidebarComponent");
+  const [showAddPost, setShowAddPost] = useState(false);
+
+  const { data, isError, error } = useQuery({
+    queryKey: ["canUserAddPost"],
+    queryFn: fetchData,
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (data?.data?.committeePositions?.length > 0) {
+      setShowAddPost(true);
+    } else {
+      setShowAddPost(false);
+    }
+  }, [data]);
+
+  if (isError) {
+    console.log(error.message, "\n", error);
+  }
 
   return (
     <Sidebar>
       <SidebarItem to="/student" icon={<Home size={20} />} text="Home" />
-      <SidebarItem
-        to="createPost"
-        icon={<IoCreateSharp size={20} />}
-        text="Add Post"
-      />
+      {showAddPost && (
+        <SidebarItem
+          to="createPost"
+          icon={<IoCreateSharp size={20} />}
+          text="Add Post"
+        />
+      )}
       <SidebarItem to="page3" icon={<Search size={20} />} text="Explore " />
       <SidebarItem
         icon={<HiOutlineUserGroup size={20} />}

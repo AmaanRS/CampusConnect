@@ -41,11 +41,6 @@ export function useFileUpload({
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      console.log(
-        "in useEffect cleanup",
-        filePathRef.current,
-        publicURLRef.current
-      );
       if (publicURLRef.current && filePathRef.current) {
         axiosInstance.post(
           `https://campusconnect-wep1.onrender.com/images/delete/${encodeURIComponent(
