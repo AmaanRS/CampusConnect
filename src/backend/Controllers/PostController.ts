@@ -29,12 +29,14 @@ const createPost = async (req: Request, res: Response) => {
 			content,
 			committeeId,
 			image,
+			links,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
 			title: string | undefined;
 			content: string | undefined;
 			committeeId: string | undefined;
 			image?: [{ imageUrl: string; imagePath: string }];
+			links?: string[];
 		} = req.body;
 
 		if (!decodedToken) {
@@ -68,6 +70,15 @@ const createPost = async (req: Request, res: Response) => {
 		if (!title || !content) {
 			const response: StandardResponse = {
 				message: "Give all of the required fields to create a post",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		if (links && (!Array.isArray(links) || links.length === 0)) {
+			const response: StandardResponse = {
+				message: "links should be given in an array",
 				success: false,
 			};
 
@@ -151,6 +162,7 @@ const createPost = async (req: Request, res: Response) => {
 						image,
 						postedBy: postedBy,
 						commentObjId: isCommentSectionCreated[0]._id,
+						relevantLinks: links,
 					},
 				],
 				{ session },
@@ -177,6 +189,23 @@ const createPost = async (req: Request, res: Response) => {
 			if (!isCommentSectionUpdated.acknowledged) {
 				const response: StandardResponse = {
 					message: "Could not set the post id in comment model",
+					success: false,
+				};
+
+				return response;
+			}
+
+			// Add post id in committee
+			const isPostIdAdded = await committeeModel
+				.updateOne(
+					{ committeeId },
+					{ $push: { posts: isPostCreated[0]._id } },
+				)
+				.session(session);
+
+			if (!isPostIdAdded.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not add the post id in committee model",
 					success: false,
 				};
 
@@ -245,19 +274,38 @@ const getPostById = async (req: Request, res: Response) => {
 
 		const post = await postModel
 			.findOne({ postId })
-			.populate({
-				path: "committeeObjId",
-				populate: [
-					{ path: "postedBy", model: "userModel" },
-					{ path: "studentIncharge", model: "studentModel" },
-					{ path: "facultyIncharge", model: "teacherModel" },
-					{ path: "facultyTeam", model: "teacherModel" },
-					{ path: "members", model: "userModel" },
-					{ path: "events", model: "eventModel" },
-					{ path: "commentObjId", model: "commentModel" },
-					{ path: "commentObjId", model: "commentModel" },
-				],
-			})
+			.populate([
+				{
+					path: "committeeObjId",
+					populate: [
+						{
+							path: "studentIncharge",
+							model: "studentModel",
+							select: "-password",
+						},
+						{
+							path: "facultyIncharge",
+							model: "teacherModel",
+							select: "-password",
+						},
+						{
+							path: "facultyTeam",
+							model: "teacherModel",
+							select: "-password",
+						},
+						{
+							path: "members",
+							model: "userModel",
+							select: "-password",
+						},
+						{ path: "events", model: "eventModel" },
+						{ path: "posts", model: "postModel" },
+					],
+				},
+				{ path: "postedBy", model: "userModel" },
+				{ path: "commentObjId", model: "commentModel" },
+				{ path: "likes", model: "userModel" },
+			])
 			.lean();
 
 		if (!post) {

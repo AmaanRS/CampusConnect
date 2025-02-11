@@ -186,9 +186,27 @@ const getStudentById = async (req: Request, res: Response) => {
 					{ password: 0 },
 					{ _skipInactiveStudentsInHook: true },
 				)
+				.populate([
+					{
+						path: "postsLiked",
+					},
+					{
+						path: "committeePositions.committeeObjId",
+					},
+				])
 				.lean();
 		} else {
-			student = await studentModel.findOne({ email }, { password: 0 }).lean();
+			student = await studentModel
+				.findOne({ email }, { password: 0 })
+				.populate([
+					{
+						path: "postsLiked",
+					},
+					{
+						path: "committeePositions.committeeObjId",
+					},
+				])
+				.lean();
 		}
 
 		if (!student) {

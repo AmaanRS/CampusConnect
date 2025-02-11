@@ -184,6 +184,7 @@ export interface IPost {
 	postedBy: Types.ObjectId;
 	title: string;
 	content: string;
+	relevantLinks: string[];
 	image?: {
 		imageUrl?: string;
 		imagePath?: string;
