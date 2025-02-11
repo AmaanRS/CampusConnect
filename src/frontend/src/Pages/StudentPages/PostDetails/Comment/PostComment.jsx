@@ -1,10 +1,10 @@
 import React from "react";
 import CommentInputLayout from "./CommentInputLayout";
 
-export default function PostComment() {
+export default function PostComment({ postId }) {
   return (
     <div>
-      <CommentInputLayout />
+      <CommentInputLayout postId={postId} />
     </div>
   );
 }

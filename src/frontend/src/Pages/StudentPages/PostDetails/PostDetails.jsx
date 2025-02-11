@@ -8,6 +8,8 @@ import PostComment from "./Comment/PostComment";
 
 export default function PostDetails({ postData }) {
   let isImage = postData?.image.length > 0;
+  console.log(postData);
+
   return (
     <>
       <div className="  max-w-3xl m-auto">
@@ -21,7 +23,7 @@ export default function PostDetails({ postData }) {
           <PostBody content={postData?.content} />
           {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
           <PostActionBar postId={postData?.postId} />
-          <PostComment />
+          <PostComment postId={postData?.postId} />
         </div>
       </div>
     </>

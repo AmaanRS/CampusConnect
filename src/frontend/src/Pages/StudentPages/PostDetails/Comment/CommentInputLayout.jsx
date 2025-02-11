@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import CommentInput from "./CommentInput";
 import EmptyComment from "./EmptyComment";
 
-export default function CommentInputLayout() {
+export default function CommentInputLayout({ postId }) {
   const [commentOn, setCommentOn] = useState(false);
   let nocomment = true;
   return (
@@ -17,7 +17,9 @@ export default function CommentInputLayout() {
             Add a comment
           </div>
         )}
-        {commentOn && <CommentInput setCommentOn={setCommentOn} />}
+        {commentOn && (
+          <CommentInput postId={postId} setCommentOn={setCommentOn} />
+        )}
         {nocomment && <EmptyComment />}
       </div>
     </>
