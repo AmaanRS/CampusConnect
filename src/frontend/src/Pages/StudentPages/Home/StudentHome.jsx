@@ -30,6 +30,7 @@ export default function StudentHome() {
         <ApiError isError={isError} error={error} />
       </div>
     );
+
   return (
     <div className=" max-w-2xl px-2 m-auto">
       <hr className="mb-2 mx-1" />

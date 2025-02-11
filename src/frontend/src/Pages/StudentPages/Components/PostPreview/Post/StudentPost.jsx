@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function StudentPost({ mode = "home", postData }) {
   let isImage = postData?.image?.length > 0;
   const navigate = useNavigate();
+  console.log(postData);
   return (
     <>
       <div className="mx-4 my-2  hover:bg-slate-50 cursor-pointer rounded-2xl py-1 px-3 transition-colors duration-100 ">
@@ -18,7 +19,8 @@ export default function StudentPost({ mode = "home", postData }) {
           mode={mode}
           committeeId={postData?.committeeDocId?.committeeId}
           createdAt={postData?.createdAt}
-          subname={postData?.committeeDocId?.name}
+          subname={postData?.committeeObjId?.name}
+          username={postData?.postedBy?.email?.split(".")[0]}
         />
         <div onClick={() => navigate(`/student/post/${postData?.postId}`)}>
           <PostTitle title={postData?.title} />
