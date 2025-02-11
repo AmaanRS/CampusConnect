@@ -5,17 +5,15 @@ export default function CommiteeSidebarMemberList({
   facultyTeam = [],
   members = [],
 }) {
-  console.log(facultyTeam, members);
-
   return (
     <div className="px-4 mb-4">
       <p className="text-sm font-medium text-slate-700  mb-2">Members</p>
       <div>
         {facultyTeam.map((member) => {
-          return <MemberList key={member} value={member} />;
+          return <MemberList key={member} value={member?.email} />;
         })}
         {members.map((member) => {
-          return <MemberList key={member} value={member} />;
+          return <MemberList key={member} value={member?.email} />;
         })}
       </div>
     </div>

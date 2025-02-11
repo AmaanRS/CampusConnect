@@ -13,7 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 
 const fetchData = async () => {
-  console.log("sending request");
   const response = await axiosInstance.post("/student/getAllStudentData", {}); // Pass an empty object if needed
   return response.data;
 };

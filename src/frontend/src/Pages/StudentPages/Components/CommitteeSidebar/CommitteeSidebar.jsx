@@ -12,7 +12,11 @@ export default function CommitteeSidebar({ committeeData }) {
         description={committeeData?.description}
         createdAt={committeeData?.createdAt}
       />
-      <CommitteSidebarQuant />
+      <CommitteSidebarQuant
+        members={
+          committeeData?.facultyTeam?.length + committeeData?.members.length
+        }
+      />
       <hr className="my-4 border-slate-300 rounded-full mx-4" />
       <CommitteeSidebarDepartment
         committeeOfDepartment={committeeData?.committeeOfDepartment}

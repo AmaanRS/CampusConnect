@@ -1,15 +1,15 @@
 import React from "react";
 
-export default function CommitteSidebarQuant() {
+export default function CommitteSidebarQuant({ members = 0, followers = 2 }) {
   return (
     <div className="px-4 flex justify-between">
       <div className="flex-col text-sm justify-center items-center">
-        <div className="font-bold text-center">2</div>
+        <div className="font-bold text-center">{members}</div>
         <div className="text-xs">Members</div>
       </div>
 
       <div className="flex-col  text-sm justify-center items-center">
-        <div className="font-bold text-center">2</div>
+        <div className="font-bold text-center"> {followers} </div>
         <div className="text-xs">Followers</div>
       </div>
 

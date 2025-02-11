@@ -7,16 +7,15 @@ import PostActionBar from "./PostActionBar";
 import PostComment from "./Comment/PostComment";
 
 export default function PostDetails({ postData }) {
-  console.log(postData);
   let isImage = postData?.image.length > 0;
-  console.log(isImage);
   return (
     <>
       <div className="  max-w-3xl m-auto">
         <div className="mx-4">
           <PostTop
-            subname={postData?.committeeDocId?.name}
+            subname={postData?.committeeObjId?.name}
             createdAt={postData?.createdAt}
+            username={postData?.postedBy?.email.split(".")[0]}
           />
           <PostTitle title={postData?.title} />
           <PostBody content={postData?.content} />

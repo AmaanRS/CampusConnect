@@ -45,14 +45,13 @@ export default function PostDetailsLayout() {
     );
   }
 
-  console.log(data);
   return (
     <>
       <CentreMainContent>
         <PostDetails postData={data?.data} />
       </CentreMainContent>
       <RightSidebar>
-        <CommitteeSidebar committeeData={data?.data.committeeDocId} />
+        <CommitteeSidebar committeeData={data?.data?.committeeObjId} />
       </RightSidebar>
     </>
   );
