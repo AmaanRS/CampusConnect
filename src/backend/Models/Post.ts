@@ -27,6 +27,10 @@ const postSchema = new Schema<IPostDocument>(
 			type: String,
 			required: true,
 		},
+		relevantLinks: {
+			type: [String],
+			default: [],
+		},
 		image: {
 			type: [
 				{

@@ -67,7 +67,7 @@ const getAllPendingCommitteesFunc = async (
 	if (!Array.isArray(pendingCommittees) || pendingCommittees.length === 0) {
 		const response: StandardResponse = {
 			message: "No pending committees found",
-			success: false,
+			success: true,
 		};
 
 		return response;

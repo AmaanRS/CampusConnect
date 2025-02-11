@@ -291,10 +291,52 @@ const getCommitteeById = async (req: Request, res: Response) => {
 					_skipPendingCheckInHook: true,
 					_skipDeletingCheckInHook: true,
 				})
+				.populate([
+					{
+						path: "studentIncharge",
+						select: "-password",
+					},
+					{
+						path: "facultyIncharge",
+						select: "-password",
+					},
+					{
+						path: "facultyTeam",
+						select: "-password",
+					},
+					{
+						path: "members",
+						select: "-password",
+					},
+
+					"events",
+					"posts",
+				])
 				.lean();
 		} else {
 			committee = await committeeModel
 				.findOne({ committeeId: committeeId })
+				.populate([
+					{
+						path: "studentIncharge",
+						select: "-password",
+					},
+					{
+						path: "facultyIncharge",
+						select: "-password",
+					},
+					{
+						path: "facultyTeam",
+						select: "-password",
+					},
+					{
+						path: "members",
+						select: "-password",
+					},
+
+					"events",
+					"posts",
+				])
 				.lean();
 		}
 
