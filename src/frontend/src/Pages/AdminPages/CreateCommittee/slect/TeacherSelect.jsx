@@ -19,7 +19,6 @@ export default function TeacherSelect({ handleTeacherEmail = "" }) {
 
   useEffect(() => {
     if (data?.data) {
-      console.log(data?.data);
       const temp = data?.data?.map((student) => ({
         value: student?.email,
         label: student?.email,

@@ -48,7 +48,6 @@ export default function CreateCommittee() {
     mutationFn: ({ data }) =>
       axiosInstance.post("/committee/createCommittee", data),
     onSuccess: (data) => {
-      console.log(data);
       toast.success("created successfully");
       navigate("/admin");
     },
