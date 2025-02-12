@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import ApiError from "../../../Components/Errors/ApiError";
 
 const fetchData = async ({ postId }) => {
-  const response = await axiosInstance.post(`/post/getPostById`, { postId }); // Replace with your API URL
+  const response = await axiosInstance.post(`/post/getPostById`, { postId });
   return response.data;
 };
 
@@ -48,7 +48,7 @@ export default function PostDetailsLayout() {
   return (
     <>
       <CentreMainContent>
-        <PostDetails postData={data?.data} committeeId={"s"} />
+        <PostDetails postData={data?.data} />
       </CentreMainContent>
       <RightSidebar>
         <CommitteeSidebar committeeData={data?.data?.committeeObjId} />

@@ -10,8 +10,6 @@ export default function PostTop({
   createdAt = new Date(),
   committeeId,
 }) {
-  console.log(committeeId);
-
   return (
     <>
       <div className="flex  text-neutral-800  h-8 00 items-center">
