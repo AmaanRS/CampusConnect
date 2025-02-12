@@ -23,7 +23,10 @@ export default function PostDetails({ postData }) {
           <PostBody content={postData?.content} />
           {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
           <PostActionBar postId={postData?.postId} />
-          <PostComment postId={postData?.postId} />
+          <PostComment
+            postId={postData?.postId}
+            commentList={postData?.commentObjId.comments}
+          />
         </div>
       </div>
     </>

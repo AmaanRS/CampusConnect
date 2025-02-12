@@ -27,7 +27,7 @@ export default function PostDetailsLayout() {
     return (
       <>
         <CentreMainContent>
-          <PostDetailSkeleton />;
+          <PostDetailSkeleton />
         </CentreMainContent>
         <RightSidebar>
           <SidebarSkeleton />

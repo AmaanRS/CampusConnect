@@ -5,7 +5,6 @@ import EmptyComment from "./EmptyComment";
 
 export default function CommentInputLayout({ postId }) {
   const [commentOn, setCommentOn] = useState(false);
-  let nocomment = true;
   return (
     <>
       <div className=" mt-4 mb-8  ">
@@ -20,7 +19,6 @@ export default function CommentInputLayout({ postId }) {
         {commentOn && (
           <CommentInput postId={postId} setCommentOn={setCommentOn} />
         )}
-        {nocomment && <EmptyComment />}
       </div>
     </>
   );
