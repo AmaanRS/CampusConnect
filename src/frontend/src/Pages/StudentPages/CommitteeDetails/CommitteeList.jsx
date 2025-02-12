@@ -3,8 +3,9 @@ import StudentPost from "../Components/PostPreview/Post/StudentPost";
 import { Avatar } from "flowbite-react";
 import { MdGroups } from "react-icons/md";
 
-export default function CommitteeList({ name = "committee name" }) {
+export default function CommitteeList({ name = "committee name", posts = [] }) {
   // return <>"work in progress"</>;
+  console.log(posts);
   return (
     <>
       <div className="flex bg-slate-100 rounded-lg items-center mb-4 px-4 ">
@@ -18,6 +19,12 @@ export default function CommitteeList({ name = "committee name" }) {
       </div>
       <div className="max-w-3xl m-auto">
         <hr className="mb-2 mx-1" />
+        {posts?.map((post) => {
+          return (
+            <StudentPost mode="committee" key={post?.postId} postData={post} />
+          );
+        })}
+
         {/* <StudentPost mode="committee" />
         <StudentPost mode="committee" />
         <StudentPost mode="committee" />

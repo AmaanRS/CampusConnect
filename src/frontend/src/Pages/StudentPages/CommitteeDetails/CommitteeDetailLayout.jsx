@@ -47,12 +47,12 @@ export default function CommitteeDetailLayout() {
     );
   }
 
-  console.log(data);
+  console.log(data?.data);
 
   return (
     <>
       <CentreMainContent>
-        <CommitteeList />
+        <CommitteeList posts={data?.data?.posts} name={data?.data?.name} />
       </CentreMainContent>
       <RightSidebar>
         <CommitteeSidebar committeeData={data.data} />
