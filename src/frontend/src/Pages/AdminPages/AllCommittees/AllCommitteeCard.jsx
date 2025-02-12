@@ -4,7 +4,6 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import { FaCheck } from "react-icons/fa6";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { toast } from "react-toastify";
-import { act } from "react";
 
 export default function AllCommitteeCard({ item }) {
   const queryClient = useQueryClient();
@@ -13,7 +12,7 @@ export default function AllCommitteeCard({ item }) {
     onSuccess: (data) => {
       console.log("data is ", data);
       queryClient.invalidateQueries(["allCommittee"]);
-      toast.success("Accepted Committee");
+      toast.success("Status Changed");
     },
     onError: (error) => {
       console.log(error);
@@ -27,6 +26,13 @@ export default function AllCommitteeCard({ item }) {
       action: "ACCEPTED",
     });
   }
+
+  function handleDelete() {
+    mutation.mutate({
+      committeeId: item.committeeId,
+      action: "DELETED",
+    });
+  }
   return (
     <>
       <Card className=" m-auto  max-w-xl w-[500px] bg-white  shadow-lg rounded-lg overflow-hidden ">
@@ -37,6 +43,8 @@ export default function AllCommitteeCard({ item }) {
         <p className="font-normal text-gray-700 dark:text-gray-400 custom-scrollbar overflow-hidden hover:overflow-auto max-h-60  mb-2 ">
           {item.description}
         </p>
+
+        <div>status = {item.status}</div>
 
         <div className="mb-1">
           <span className="font-semibold text-gray-900 dark:text-gray-300">
@@ -63,7 +71,7 @@ export default function AllCommitteeCard({ item }) {
             Edit
           </Button>
 
-          {item.status == "PENDING" && (
+          {item.status !== "ACCEPTED" && (
             <Button
               disabled={mutation.isPending}
               color={""}
@@ -72,6 +80,18 @@ export default function AllCommitteeCard({ item }) {
             >
               <FaCheck className="mr-2 text-xl h-5 w-5" />
               {mutation.isPending ? "Accepting" : "Accept"}
+            </Button>
+          )}
+
+          {item.status !== "DELETED" && (
+            <Button
+              disabled={mutation.isPending}
+              color={""}
+              onClick={() => handleDelete()}
+              className="inline-flex items-center bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md transition duration-300"
+            >
+              <MdDelete className="mr-2 text-xl h-5 w-5" />
+              {mutation.isPending ? "Deleting" : "Delete"}
             </Button>
           )}
         </div>
