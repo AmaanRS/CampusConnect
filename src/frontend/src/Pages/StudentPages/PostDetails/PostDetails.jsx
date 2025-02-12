@@ -1,16 +1,21 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import PostTop from "./PostTop";
 import PostTitle from "./PostTitle";
 import PostBody from "./PostBody";
 import PostImage from "./PostImage";
 import PostActionBar from "./PostActionBar";
 import PostComment from "./Comment/PostComment";
+import { UserContext } from "../../../store/UserContextProvider";
 
 export default function PostDetails({ postData }) {
   const [commentOn, setCommentOn] = useState(false);
+  const {
+    userState: { email },
+  } = useContext(UserContext);
 
   let isImage = postData?.image.length > 0;
-  console.log("PostData", postData);
+  console.log("PostData", postData?.likes);
+  console.log(email);
 
   return (
     <>

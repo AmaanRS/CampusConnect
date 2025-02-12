@@ -12,7 +12,7 @@ const fetchData = async () => {
 
 export default function StudentHome() {
   const { data, isLoading, error, isError } = useQuery({
-    queryKey: ["posts"],
+    queryKey: ["allPosts"],
     queryFn: fetchData,
   });
 
