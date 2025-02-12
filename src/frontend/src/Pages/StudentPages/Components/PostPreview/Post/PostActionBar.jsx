@@ -6,7 +6,7 @@ import { PiShareFat } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export default function PostActionBar({ postId, likes = 0 }) {
+export default function PostActionBar({ postId, likes }) {
   let active = false;
   const handleCopy = async () => {
     try {
@@ -38,7 +38,7 @@ export default function PostActionBar({ postId, likes = 0 }) {
           >
             <AiOutlineLike className="text-lg rounded-full m-1" />
             <div className="text-xs font-medium">
-              {numbro(likes).format({ average: true }).toUpperCase()}
+              {numbro(likes?.length).format({ average: true }).toUpperCase()}
             </div>
           </button>
         </div>

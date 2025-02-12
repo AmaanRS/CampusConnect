@@ -28,7 +28,7 @@ export default function StudentPost({ mode = "home", postData }) {
         </div>
         {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
 
-        <PostActionBar likes={0} postId={postData?.postId} />
+        <PostActionBar likes={postData?.likes} postId={postData?.postId} />
       </div>
       <div className="border-b-[1.3px] mx-1 border-slate-200 mt-1 mb-1"></div>
     </>
