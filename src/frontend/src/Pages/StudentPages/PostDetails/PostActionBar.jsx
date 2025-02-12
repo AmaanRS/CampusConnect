@@ -6,7 +6,12 @@ import { PiShareFat } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export default function PostActionBar({ postId, likes, comments }) {
+export default function PostActionBar({
+  postId,
+  likes,
+  comments,
+  setcommentOn,
+}) {
   let active = false;
   const handleCopy = async () => {
     try {
@@ -18,7 +23,15 @@ export default function PostActionBar({ postId, likes, comments }) {
       console.error("Failed to copy text: ", err);
     }
   };
-  console.log("comments", comments);
+
+  function handleLike() {
+    console.log("clicked");
+  }
+
+  function handleComment() {
+    setcommentOn(true);
+    console.log("comment clicked");
+  }
 
   return (
     <div className="flex mt-4">
@@ -29,6 +42,7 @@ export default function PostActionBar({ postId, likes, comments }) {
         }`}
       >
         <button
+          onClick={handleLike}
           type="button"
           className={`  rounded-full h-7 font-medium text-xs text-center inline-flex items-center hover:text-blue-600 ${
             active
@@ -46,6 +60,7 @@ export default function PostActionBar({ postId, likes, comments }) {
       {/* comment button */}
       <div className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1">
         <button
+          onClick={handleComment}
           type="button"
           className="text-black bg-slate-200 hover:text-blue-600  rounded-full font-medium text-xs text-center inline-flex items-center"
         >

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PostTop from "./PostTop";
 import PostTitle from "./PostTitle";
 import PostBody from "./PostBody";
@@ -7,8 +7,9 @@ import PostActionBar from "./PostActionBar";
 import PostComment from "./Comment/PostComment";
 
 export default function PostDetails({ postData }) {
+  const [commentOn, setCommentOn] = useState(false);
+
   let isImage = postData?.image.length > 0;
-  console.log(postData?.commentObjId?.comments?.length);
 
   return (
     <>
@@ -23,11 +24,14 @@ export default function PostDetails({ postData }) {
           <PostBody content={postData?.content} />
           {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
           <PostActionBar
+            setcommentOn={setCommentOn}
             comments={postData?.commentObjId.comments?.length}
             likes={postData?.commentObjId?.comments?.length}
             postId={postData?.postId}
           />
           <PostComment
+            commentOn={commentOn}
+            setCommentOn={setCommentOn}
             postId={postData?.postId}
             commentList={postData?.commentObjId.comments}
           />

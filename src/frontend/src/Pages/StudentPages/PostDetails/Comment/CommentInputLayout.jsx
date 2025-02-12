@@ -3,8 +3,11 @@ import React, { useState } from "react";
 import CommentInput from "./CommentInput";
 import EmptyComment from "./EmptyComment";
 
-export default function CommentInputLayout({ postId }) {
-  const [commentOn, setCommentOn] = useState(false);
+export default function CommentInputLayout({
+  postId,
+  commentOn,
+  setCommentOn,
+}) {
   return (
     <>
       <div className=" mt-4 mb-8  ">
