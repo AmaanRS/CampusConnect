@@ -10,7 +10,7 @@ export default function CommentInputLayout({
 }) {
   return (
     <>
-      <div className=" mt-4 mb-8  ">
+      <div className=" mt-4 mb-4  ">
         {!commentOn && (
           <div
             onClick={() => setCommentOn(true)}
