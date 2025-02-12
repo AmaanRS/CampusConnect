@@ -14,7 +14,7 @@ export default function CommitteeList() {
           rounded
           className="  rounded-full text-slate-300 "
         />
-        <p className="ml-2 font-bold text-2xl text-slate-700">Committee Name</p>
+        <p className="ml-2 font-bold text-2xl text-slate-600">Committee Name</p>
       </div>
       <div className="max-w-3xl m-auto">
         <hr className="mb-2 mx-1" />

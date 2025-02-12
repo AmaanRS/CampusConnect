@@ -45,7 +45,7 @@ export default function PostActionBar({ postId, likes }) {
       </Link>
 
       {/* comment button */}
-      <Link to={`/student/post/${postId}`}>
+      <Link to={`/student/post/${postId}#comment`}>
         <div className={` flex ml-2  items-center justify-center `}>
           <button
             type="button"

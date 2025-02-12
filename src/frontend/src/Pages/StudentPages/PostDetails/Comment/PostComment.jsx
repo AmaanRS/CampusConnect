@@ -9,7 +9,7 @@ export default function PostComment({
   setCommentOn,
 }) {
   return (
-    <div>
+    <div id="comment">
       <CommentInputLayout
         commentOn={commentOn}
         setCommentOn={setCommentOn}
