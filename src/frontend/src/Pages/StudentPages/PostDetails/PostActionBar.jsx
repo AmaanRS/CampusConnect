@@ -1,9 +1,7 @@
 import React from "react";
-import { AiOutlineLike } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa6";
 import numbro from "numbro";
 import { PiShareFat } from "react-icons/pi";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import LikeButton from "./LikeButton";
 
@@ -35,30 +33,28 @@ export default function PostActionBar({
       <LikeButton postId={postId} active={active} likes={likes} />
 
       {/* comment button */}
-      <div className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1">
+      <div className={` flex ml-2  items-center justify-center `}>
         <button
           onClick={handleComment}
           type="button"
-          className="text-black bg-slate-200 hover:text-blue-600  rounded-full font-medium text-xs text-center inline-flex items-center"
+          className={`min-w-16  my-0.5 ml-1 mb-1 mt-1  rounded-full h-8 font-medium text-xs text-center inline-flex items-center justify-center hover:text-blue-600 disabled:bg-opacity-50 disabled:cursor-not-allowed disabled:text-slate-300 bg-slate-200    `}
         >
           <FaRegComment className="text-base rounded-full m-1" />
-          <div className="text-xs font-medium">
+          <div className="text-xs mr-1  text-center font-medium">
             {numbro(comments).format({ average: true }).toUpperCase()}
           </div>
         </button>
       </div>
 
       {/* share button */}
-      <div
-        onClick={handleCopy}
-        className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1 "
-      >
+      <div className={` flex ml-2  items-center justify-center `}>
         <button
+          onClick={handleCopy}
           type="button"
-          className="text-black bg-slate-200  rounded-full font-medium text-xs text-center inline-flex items-center hover:text-blue-600"
+          className={`min-w-16 px-1 pr-2  my-0.5 ml-1 mb-1 mt-1  rounded-full h-8 font-medium text-xs text-center inline-flex items-center justify-center hover:text-blue-600 disabled:bg-opacity-50 disabled:cursor-not-allowed disabled:text-slate-300 bg-slate-200    `}
         >
           <PiShareFat className="text-lg rounded-full m-1" />
-          <div className=" font-medium text-xs">Share</div>
+          <div className="text-xs mr-1  text-center font-medium">Share</div>
         </button>
       </div>
     </div>
