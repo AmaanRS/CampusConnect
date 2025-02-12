@@ -8,7 +8,7 @@ import PostComment from "./Comment/PostComment";
 
 export default function PostDetails({ postData }) {
   let isImage = postData?.image.length > 0;
-  console.log(postData);
+  console.log(postData?.commentObjId?.comments?.length);
 
   return (
     <>
@@ -22,7 +22,11 @@ export default function PostDetails({ postData }) {
           <PostTitle title={postData?.title} />
           <PostBody content={postData?.content} />
           {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
-          <PostActionBar postId={postData?.postId} />
+          <PostActionBar
+            comments={postData?.commentObjId.comments?.length}
+            likes={postData?.commentObjId?.comments?.length}
+            postId={postData?.postId}
+          />
           <PostComment
             postId={postData?.postId}
             commentList={postData?.commentObjId.comments}
