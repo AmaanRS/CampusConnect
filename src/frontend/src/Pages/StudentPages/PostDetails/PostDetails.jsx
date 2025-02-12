@@ -10,6 +10,7 @@ export default function PostDetails({ postData }) {
   const [commentOn, setCommentOn] = useState(false);
 
   let isImage = postData?.image.length > 0;
+  console.log("PostData", postData);
 
   return (
     <>
@@ -26,7 +27,7 @@ export default function PostDetails({ postData }) {
           <PostActionBar
             setcommentOn={setCommentOn}
             comments={postData?.commentObjId.comments?.length}
-            likes={postData?.commentObjId?.comments?.length}
+            likes={postData?.likes}
             postId={postData?.postId}
           />
           <PostComment

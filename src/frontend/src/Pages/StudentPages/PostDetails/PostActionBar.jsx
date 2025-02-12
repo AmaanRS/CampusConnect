@@ -32,7 +32,7 @@ export default function PostActionBar({
   return (
     <div className="flex mt-4">
       {/* like button */}
-      <LikeButton active={active} likes={likes} />
+      <LikeButton postId={postId} active={active} likes={likes} />
 
       {/* comment button */}
       <div className="min-w-16 ml-3  bg-slate-200 rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1">
