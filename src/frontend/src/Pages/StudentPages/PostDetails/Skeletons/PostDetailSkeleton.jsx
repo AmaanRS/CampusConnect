@@ -65,7 +65,10 @@ export default function PostDetailSkeleton() {
 
         {/* comments */}
         <>
-          <div className="border my-4 py-2.5 h-8 cursor-text px-4 rounded-3xl bg-slate-200    w-full"></div>
+          <div
+            id="comment"
+            className="border my-4 py-2.5 h-8 cursor-text px-4 rounded-3xl bg-slate-200    w-full"
+          ></div>
         </>
       </div>
     </div>
