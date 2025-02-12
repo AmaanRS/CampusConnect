@@ -48,7 +48,7 @@ export default function PostDetailsLayout() {
   return (
     <>
       <CentreMainContent>
-        <PostDetails postData={data?.data} />
+        <PostDetails postData={data?.data} committeeId={"s"} />
       </CentreMainContent>
       <RightSidebar>
         <CommitteeSidebar committeeData={data?.data?.committeeObjId} />

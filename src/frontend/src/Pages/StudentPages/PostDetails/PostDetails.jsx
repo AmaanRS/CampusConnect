@@ -5,23 +5,19 @@ import PostBody from "./PostBody";
 import PostImage from "./PostImage";
 import PostActionBar from "./PostActionBar";
 import PostComment from "./Comment/PostComment";
-import { UserContext } from "../../../store/UserContextProvider";
 
 export default function PostDetails({ postData }) {
   const [commentOn, setCommentOn] = useState(false);
-  const {
-    userState: { email },
-  } = useContext(UserContext);
 
   let isImage = postData?.image.length > 0;
-  console.log("PostData", postData?.likes);
-  console.log(email);
+  console.log("PostData", postData?.committeeObjId?.committeeId);
 
   return (
     <>
       <div className="  max-w-3xl m-auto">
         <div className="mx-4">
           <PostTop
+            committeeId={postData?.committeeObjId?.committeeId}
             subname={postData?.committeeObjId?.name}
             createdAt={postData?.createdAt}
             username={postData?.postedBy?.email.split(".")[0]}

@@ -50,10 +50,8 @@ export default function LikeButton({ active, likes, postId }) {
     if (likes?.length > 0) {
       const emailExists = likes.some((like) => like.email === email);
       setAlreadyLiked(emailExists);
-      console.log(emailExists);
     }
   }, [likes]);
-  console.log(email, likes);
 
   return (
     <div className={` flex  items-center justify-center `}>

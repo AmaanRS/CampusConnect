@@ -17,7 +17,7 @@ export default function StudentPost({ mode = "home", postData }) {
       <div className="mx-4 my-2  hover:bg-slate-50 cursor-pointer rounded-2xl py-1 px-3 transition-colors duration-100 ">
         <PostTop
           mode={mode}
-          committeeId={postData?.committeeDocId?.committeeId}
+          committeeId={postData?.committeeObjId?.committeeId}
           createdAt={postData?.createdAt}
           subname={postData?.committeeObjId?.name}
           username={postData?.postedBy?.email?.split(".")[0]}

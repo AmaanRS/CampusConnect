@@ -5,8 +5,6 @@ import ApiError from "../../../Components/Errors/ApiError";
 import AllCommitteeCard from "./AllCommitteeCard";
 import AllCommitteesCardSkeleton from "./AllCommitteesCardSkeleton";
 import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
-import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
-import PopularCommittees from "../../StudentPages/Home/PopularCommittee/PopularCommittees";
 import { Tabs } from "flowbite-react";
 
 export default function AllCommittees() {
