@@ -55,7 +55,7 @@ export default function AllCommittees() {
   if (isLoading) {
     return (
       <>
-        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4 m-auto max-w-xl mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4 ml-4 max-w-xl mb-4">
           <AllCommitteesCardSkeleton />
           <AllCommitteesCardSkeleton />
           <AllCommitteesCardSkeleton />

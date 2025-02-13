@@ -31,7 +31,7 @@ export default function StudentSelect({ handleStudentEmail }) {
 
   return (
     <Select
-      placeholder="Select Committee"
+      placeholder="Select Student Incharge"
       styles={{
         input: (base) => ({
           ...base,

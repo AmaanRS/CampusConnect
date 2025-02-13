@@ -31,7 +31,7 @@ export default function TeacherSelect({ handleTeacherEmail = "" }) {
 
   return (
     <Select
-      placeholder="Select Committee"
+      placeholder="Select Teacher Incharge"
       styles={{
         input: (base) => ({
           ...base,
