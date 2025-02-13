@@ -1396,12 +1396,13 @@ const getAllCommittees = async (req: Request, res: Response) => {
 		}
 
 		if (!allCommittees || allCommittees.length === 0) {
-			const response: StandardResponse = {
+			const response: DataResponse = {
 				message: "No committee found",
-				success: false,
+				success: true,
+				data:[]
 			};
 
-			return res.status(401).json(response);
+			return res.status(201).json(response);
 		}
 
 		const response: DataResponse = {

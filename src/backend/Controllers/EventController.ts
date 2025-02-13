@@ -503,12 +503,13 @@ const getAllEvents = async (req: Request, res: Response) => {
 		const allEvents = await eventModel.find();
 
 		if (allEvents.length === 0) {
-			const response: StandardResponse = {
+			const response: DataResponse = {
 				message: "There are no events in db",
 				success: false,
+				data: [],
 			};
 
-			return res.status(401).json(response);
+			return res.status(201).json(response);
 		}
 
 		const response: DataResponse = {

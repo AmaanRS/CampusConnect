@@ -755,9 +755,10 @@ const getAllPosts = async (req: Request, res: Response) => {
 			.lean();
 
 		if (allPosts.length === 0) {
-			const response: StandardResponse = {
+			const response: DataResponse = {
 				message: "There are no posts",
 				success: true,
+				data: [],
 			};
 
 			return res.status(201).json(response);

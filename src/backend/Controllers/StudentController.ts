@@ -513,12 +513,13 @@ const getAllStudents = async (req: Request, res: Response) => {
 		}
 
 		if (!allStudents || allStudents.length === 0) {
-			const response: StandardResponse = {
+			const response: DataResponse = {
 				message: "No student found",
-				success: false,
+				success: true,
+				data: [],
 			};
 
-			return res.status(401).json(response);
+			return res.status(201).json(response);
 		}
 
 		const response: DataResponse = {
@@ -633,12 +634,13 @@ const getAllStudentsEmail = async (req: Request, res: Response) => {
 			.lean();
 
 		if (!Array.isArray(emails) || emails.length === 0) {
-			const response: StandardResponse = {
+			const response: DataResponse = {
 				message: "No student emails found in db",
-				success: false,
+				success: true,
+				data: [],
 			};
 
-			return res.status(401).json(response);
+			return res.status(201).json(response);
 		}
 
 		const response: DataResponse = {
