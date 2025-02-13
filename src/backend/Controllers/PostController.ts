@@ -23,6 +23,7 @@ import { studentModel } from "../Models/Student";
 import { commentModel } from "../Models/Comment";
 import { adminModel } from "../Models/Admin";
 import { teacherModel } from "../Models/Teacher";
+import { Types } from "mongoose";
 
 const createPost = async (req: Request, res: Response) => {
 	try {
@@ -278,7 +279,7 @@ const getPostById = async (req: Request, res: Response) => {
 
 		const post = await postModel
 			.findOne({ postId })
-			.populate([
+			.populate<{ commentObjId: { comments: { _id: Types.ObjectId }[] } }>([
 				{
 					path: "committeeObjId",
 					populate: [
@@ -309,7 +310,10 @@ const getPostById = async (req: Request, res: Response) => {
 				{ path: "postedBy", model: "userModel" },
 				{
 					path: "commentObjId",
-					populate: { path: "comments.userId", select: "email" },
+					populate: {
+						path: "comments",
+						populate: { path: "userId", select: "email" },
+					},
 				},
 				{ path: "likes", model: "userModel" },
 			])
@@ -323,6 +327,11 @@ const getPostById = async (req: Request, res: Response) => {
 
 			return res.status(401).json(response);
 		}
+
+		// Sort by recent comments
+		post.commentObjId.comments.sort((a, b) =>
+			b._id.toString().localeCompare(a._id.toString()),
+		);
 
 		const response: DataResponse = {
 			message: "Fetched the post successfully",
