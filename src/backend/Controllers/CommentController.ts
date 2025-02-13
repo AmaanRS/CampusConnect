@@ -43,10 +43,6 @@ const createComment = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		console.log(" Post id is " + postId);
-		console.log("req.body is \n");
-		console.log(req.body);
-
 		if (!postId) {
 			const response: StandardResponse = {
 				message: "Send post id",

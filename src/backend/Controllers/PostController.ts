@@ -307,7 +307,10 @@ const getPostById = async (req: Request, res: Response) => {
 					],
 				},
 				{ path: "postedBy", model: "userModel" },
-				{ path: "commentObjId", model: "commentModel" },
+				{
+					path: "commentObjId",
+					populate: { path: "comments.userId", select: "email" },
+				},
 				{ path: "likes", model: "userModel" },
 			])
 			.lean();
