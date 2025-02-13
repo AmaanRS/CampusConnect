@@ -43,6 +43,8 @@ const createComment = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
+		console.log(postId);
+
 		if (!postId) {
 			const response: StandardResponse = {
 				message: "Send post id",
@@ -87,7 +89,7 @@ const createComment = async (req: Request, res: Response) => {
 			}
 		} else if (decodedToken.accountType === AccountType.Admin) {
 			user = await adminModel.findOne({ email }).lean();
-			
+
 			if (!user) {
 				const response: StandardResponse = {
 					message: "User not found",
