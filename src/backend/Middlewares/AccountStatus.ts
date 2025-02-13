@@ -11,7 +11,12 @@ export const isAccountActive = async (
 ) => {
 	try {
 		// Paths to skip
-		if (isAccountActiveMiddlewarePathsToSkip.includes(req.path)) {
+		// TODO NOW:SSR check
+		if (
+			isAccountActiveMiddlewarePathsToSkip.some((regex) =>
+				regex.test(req.path),
+			)
+		) {
 			return next();
 		}
 

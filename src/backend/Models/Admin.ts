@@ -3,6 +3,8 @@ import { AccountType, IAdminDocument, AdminPosition } from "../Types/ModelTypes"
 import { userEmailRegex } from "../Utils/regexUtils";
 import { validateAndHash } from "../Utils/passwordUtils";
 
+//TODO: Try using virtuals to optimize code and do it in this project
+
 const adminSchema = new Schema<IAdminDocument>(
 	{
 		email: {
@@ -50,6 +52,8 @@ const adminSchema = new Schema<IAdminDocument>(
 		timestamps: true,
 	},
 );
+
+//TODO NOW:SSR ask if deleted admin should be shown or not or literally delete them
 
 adminSchema.pre("validate", async function (next) {
 	try {

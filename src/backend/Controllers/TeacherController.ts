@@ -9,8 +9,15 @@ import { onlyHodEmailRegex, onlyTeacherEmailRegex } from "../Utils/regexUtils";
 import { runWithRetrySession } from "../Utils/util";
 import { userModel } from "../Models/User";
 import { teacherModel } from "../Models/Teacher";
-import { AccountType, Department, ITeacher } from "../Types/ModelTypes";
+import {
+	AccountType,
+	Department,
+	ITeacher,
+	StudentPosition,
+	TeacherPosition,
+} from "../Types/ModelTypes";
 import { createJwtToken } from "../Utils/jwtToken";
+import { studentModel } from "../Models/Student";
 
 // Creates teacher using user jwt token
 const createTeacher = async (req: Request, res: Response) => {
@@ -336,14 +343,25 @@ const updateTeacher = async (req: Request, res: Response) => {
 	}
 };
 
-// Deletes the teacher whose jwt token is given
 const deleteTeacher = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
+		const {
+			decodedToken,
+			teacherEmail,
+		}: { decodedToken: decodedTokenPayload; teacherEmail: string | undefined } =
+			req.body;
 
 		if (!decodedToken) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		if (!teacherEmail) {
+			const response: StandardResponse = {
+				message: "Give teacher email",
 				success: false,
 			};
 			return res.status(401).json(response);
@@ -361,8 +379,40 @@ const deleteTeacher = async (req: Request, res: Response) => {
 
 		// Make account inactive instead of deleting it
 		const result = await runWithRetrySession(async (session) => {
+			const user = await teacherModel
+				.findOne({ email: teacherEmail })
+				.session(session);
+
+			if (!user) {
+				const response: StandardResponse = {
+					message: "Could not find the teacher",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isUserFacultyIncharge = user.committeePositions?.some(
+				(committeePosition) => {
+					return (
+						committeePosition.position ===
+						TeacherPosition.FacultyIncharge
+					);
+				},
+			);
+
+			if (isUserFacultyIncharge) {
+				const response: StandardResponse = {
+					message:
+						"The user is a faculty incharge of the committee, please replace him from the faculty incharge position then delete him",
+					success: false,
+				};
+
+				return response;
+			}
+
 			const isTeacherDeleted = await teacherModel
-				.updateOne({ email: email }, { isAccountActive: false })
+				.updateOne({ email: teacherEmail }, { isAccountActive: false })
 				.session(session);
 
 			if (!isTeacherDeleted.acknowledged) {
@@ -375,7 +425,7 @@ const deleteTeacher = async (req: Request, res: Response) => {
 			}
 
 			const isUserDeleted = await userModel
-				.updateOne({ email: email }, { isAccountActive: false })
+				.updateOne({ email: teacherEmail }, { isAccountActive: false })
 				.session(session);
 
 			if (!isUserDeleted.acknowledged) {
@@ -440,7 +490,7 @@ const getAllTeachers = async (req: Request, res: Response) => {
 		if (decodedToken.accountType === AccountType.Admin) {
 			allTeachers = await teacherModel
 				.find({}, null, {
-					_skipInactiveTeachersInHook: true,
+					_skipInactiveTeachersHook: true,
 				})
 				.lean();
 		} else {

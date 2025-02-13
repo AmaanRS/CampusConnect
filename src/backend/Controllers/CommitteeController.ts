@@ -245,6 +245,7 @@ const createCommittee = async (req: Request, res: Response) => {
 	}
 };
 
+// TODO: In every api where options to skip hooks in middleware is passes options should also be passed in populate of the fields in which you want deleted records also
 const getCommitteeById = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -308,9 +309,17 @@ const getCommitteeById = async (req: Request, res: Response) => {
 						path: "members",
 						select: "-password",
 					},
-
 					"events",
-					"posts",
+					{
+						path: "posts",
+						populate: [
+							{
+								path: "postedBy",
+								select: "-password",
+							},
+						],
+						model: "postModel",
+					},
 				])
 				.lean();
 		} else {
@@ -335,7 +344,17 @@ const getCommitteeById = async (req: Request, res: Response) => {
 					},
 
 					"events",
-					"posts",
+					{
+						path: "posts",
+						populate: [
+							{
+								path: "postedBy",
+								model: "userModel",
+								select: "-password",
+							},
+						],
+						model: "postModel",
+					},
 				])
 				.lean();
 		}
@@ -452,8 +471,9 @@ const updateCommittee = async (req: Request, res: Response) => {
 			};
 
 			const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
-				oldCommittee,
 				decodedToken,
+				studentInchargeEmail: oldCommittee.studentIncharge.email,
+				facultyInchargeEmail: oldCommittee.facultyIncharge.email,
 			});
 
 			if (!funcResponse.success) {
@@ -688,6 +708,7 @@ const updateCommittee = async (req: Request, res: Response) => {
 };
 
 // Both faculty incharge and student incharge can add members to the committee
+// TODO NOW: Duplicate members are being added
 const addMembersInCommittee = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -791,7 +812,8 @@ const addMembersInCommittee = async (req: Request, res: Response) => {
 				// Both faculty incharge and student incharge can add members to the committee
 				const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
 					decodedToken,
-					oldCommittee,
+					studentInchargeEmail: oldCommittee.studentIncharge.email,
+					facultyInchargeEmail: oldCommittee.facultyIncharge.email,
 				});
 
 				if (!funcResponse.success) {
@@ -1121,7 +1143,8 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 				// Both faculty incharge and student incharge can add members to the committee
 				const funcResponse = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
 					decodedToken,
-					oldCommittee,
+					studentInchargeEmail: oldCommittee.studentIncharge.email,
+					facultyInchargeEmail: oldCommittee.facultyIncharge.email,
 				});
 
 				if (!funcResponse.success) {
@@ -1134,8 +1157,7 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 				.find({
 					email: { $in: members },
 				})
-				.session(session)
-				.lean();
+				.session(session);
 
 			if (!Array.isArray(foundMembers) || foundMembers.length === 0) {
 				const response: StandardResponse = {
@@ -1213,7 +1235,7 @@ const removeMembersFromCommittee = async (req: Request, res: Response) => {
 
 			// Get each member from the members found in db
 			for (let i = 0; i < foundMembers.length; i++) {
-				const foundMemberData = foundMembers[i].toObject() as IStudent;
+				const foundMemberData = foundMembers[i].toObject();
 
 				const newDataForFoundMember = foundMemberData;
 

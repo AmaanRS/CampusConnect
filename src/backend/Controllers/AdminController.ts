@@ -369,35 +369,53 @@ const deleteAdmin = async (req: Request, res: Response) => {
 			};
 			return res.status(401).json(response);
 		}
+		const result = await runWithRetrySession(async (session) => {
+			const isAdminDeleted = await adminModel
+				.deleteOne({
+					email: email,
+				})
+				.session(session);
 
-		const isAdminDeleted = await adminModel.deleteOne({ email: email });
+			if (!isAdminDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not delete the admin",
+					success: false,
+				};
 
-		console.log(isAdminDeleted);
+				return response;
+			}
 
-		if (!isAdminDeleted.acknowledged) {
+			if (isAdminDeleted.deletedCount === 0) {
+				const response: StandardResponse = {
+					message: "Could not find the admin to delete",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isUserDeleted = await userModel
+				.deleteOne({ email })
+				.session(session);
+
+			if (isUserDeleted.deletedCount === 0) {
+				const response: StandardResponse = {
+					message: "Could not find the admin to delete in user collection",
+					success: false,
+				};
+
+				return response;
+			}
+
 			const response: StandardResponse = {
-				message: "Could not delete the admin",
-				success: false,
+				message: "Admin deleted successfully",
+				success: true,
 			};
 
-			return res.status(401).json(response);
-		}
+			return response;
+		});
 
-		if (isAdminDeleted.deletedCount === 0) {
-			const response: StandardResponse = {
-				message: "Could not find the admin to delete",
-				success: false,
-			};
-
-			return res.status(401).json(response);
-		}
-
-		const response: StandardResponse = {
-			message: "Admin deleted successfully",
-			success: true,
-		};
-
-		return res.status(201).json(response);
+		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
 		const response: StandardResponse = {
@@ -412,17 +430,15 @@ const deleteAdmin = async (req: Request, res: Response) => {
 };
 
 // This endpoint should only be callable by admin
-const changeUserAccountStatusByEmail = async (req: Request, res: Response) => {
+const reactivateUserAccount = async (req: Request, res: Response) => {
 	try {
 		// Admin's decoded token
 		const {
 			decodedToken,
 			userEmail,
-			toggle,
 		}: {
 			decodedToken: decodedTokenPayload;
 			userEmail: string | undefined;
-			toggle: boolean | undefined;
 		} = req.body;
 
 		if (!decodedToken) {
@@ -435,16 +451,7 @@ const changeUserAccountStatusByEmail = async (req: Request, res: Response) => {
 
 		if (!userEmail) {
 			const response: StandardResponse = {
-				message: "Send the user which has to be deleted",
-				success: false,
-			};
-			return res.status(401).json(response);
-		}
-
-		if (toggle === undefined) {
-			const response: StandardResponse = {
-				message:
-					"Send whether the user's account has to be made active or inactive",
+				message: "Send the user's email whose status has to be changed",
 				success: false,
 			};
 			return res.status(401).json(response);
@@ -471,8 +478,8 @@ const changeUserAccountStatusByEmail = async (req: Request, res: Response) => {
 		const result = await runWithRetrySession(async (session) => {
 			const toggledUser = await userModel.findOneAndUpdate(
 				{ email: userEmail },
-				{ isAccountActive: toggle },
-				{ session, new: true },
+				{ isAccountActive: true },
+				{ session, new: true, _skipInactiveUsersHook: true },
 			);
 
 			if (!toggledUser) {
@@ -507,8 +514,12 @@ const changeUserAccountStatusByEmail = async (req: Request, res: Response) => {
 			const toggledUserSpecificUser: UpdateWriteOpResult = await model
 				.updateOne(
 					{ email: userEmail },
-					{ isAccountActive: toggle },
-					{ session },
+					{ isAccountActive: true },
+					{
+						session,
+						_skipInactiveTeachersHook: true,
+						_skipInactiveStudentsHook: true,
+					},
 				)
 				.lean();
 
@@ -582,7 +593,11 @@ const restorePost = async (req: Request, res: Response) => {
 		}
 
 		const isPostDeletedChanged = await postModel
-			.updateOne({ postId }, { isPostDeleted: true })
+			.updateOne(
+				{ postId },
+				{ isPostDeleted: false },
+				{ _skipDeletedPostsHook: true },
+			)
 			.lean();
 
 		if (!isPostDeletedChanged.acknowledged) {
@@ -618,6 +633,6 @@ export {
 	getAdmin,
 	updateAdmin,
 	deleteAdmin,
-	changeUserAccountStatusByEmail,
+	reactivateUserAccount,
 	restorePost,
 };

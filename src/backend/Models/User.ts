@@ -169,6 +169,49 @@ userSchema.pre("validate", async function (next) {
 	}
 });
 
+// Hooks for which inactive user will not be returned
+const hooks = [
+	"find",
+	"findOne",
+	"findOneAndUpdate",
+	"deleteOne",
+	"deleteMany",
+	"updateOne",
+	"updateMany",
+] as const;
+
+// Programatically adds condition to remove inactive users from the query result
+// When inactive users are also needed and should not be excluded set _skipInactiveUsersHook
+// If in some place this code gives error then set _skipInactiveUsersHook as true
+hooks.forEach(function (hook) {
+	userSchema.pre(hook, function (next) {
+		const options = this.getOptions();
+		const query = this.getQuery();
+
+		// _skipInactiveUsersHook; flag when true, will allow hooks to show inactive users
+		if (options && !options["_skipInactiveUsersHook"]) {
+			// If "isAccountActive" already exists as an object
+			if (
+				query["isAccountActive"] &&
+				typeof query["isAccountActive"] === "object"
+			) {
+				if (query["isAccountActive"]["$nin"]) {
+					// Add false to $nin if it doesn't already exist
+					if (!query["status"]["$nin"].includes(false)) {
+						query["status"]["$nin"].push(false);
+					}
+				} else {
+					query["isAccountActive"]["$nin"] = [false];
+				}
+			} else {
+				// If "status" doesn't exist, create $nin with false
+				query["isAccountActive"] = { $ne: false };
+			}
+		}
+		next();
+	});
+});
+
 export const userModel: Model<IUserDocument> = model<IUserDocument>(
 	"userModel",
 	userSchema,

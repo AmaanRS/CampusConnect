@@ -413,6 +413,7 @@ const updateEvent = async (req: Request, res: Response) => {
 	}
 };
 
+// Events are permanently deleted, unlike other delete APIs, because when a committee is set to deleted, isEventDeleted should also be set to true. However, when the deleted committee is made active again, isEventDeleted in all the events becomes false, which is incorrect. This is because if isEventDeleted in a event was set to true before the committee was deleted, then when the deleted committee is made active again, all the deleted events will incorrectly become undeleted.
 const deleteEvent = async (req: Request, res: Response) => {
 	try {
 		const {

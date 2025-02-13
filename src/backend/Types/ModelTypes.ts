@@ -216,6 +216,7 @@ export interface IComment {
 		userId?: Types.ObjectId;
 		comment?: string;
 	}[];
+	isCommentSectionDeleted: boolean;
 }
 
 export interface ICommentDocument extends IComment, Document {}

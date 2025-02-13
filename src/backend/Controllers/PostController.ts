@@ -12,6 +12,9 @@ import {
 import { committeeModel } from "../Models/Committee";
 import {
 	AccountType,
+	IAdmin,
+	IStudentDocument,
+	ITeacherDocument,
 	IUserDocument,
 	StudentPosition,
 	TeacherPosition,
@@ -98,10 +101,10 @@ const createPost = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const committee = await committeeModel
-			.findOne({ committeeId })
-			.populate(["studentIncharge", "facultyIncharge"])
-			.lean();
+		const committee = await committeeModel.findOne({ committeeId }).populate<{
+			facultyIncharge: ITeacherDocument;
+			studentIncharge: IStudentDocument;
+		}>(["studentIncharge", "facultyIncharge"]);
 
 		if (!committee) {
 			const response: StandardResponse = {
@@ -114,7 +117,8 @@ const createPost = async (req: Request, res: Response) => {
 
 		const resp = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
 			decodedToken,
-			oldCommittee: committee,
+			studentInchargeEmail: committee.studentIncharge.email,
+			facultyInchargeEmail: committee.facultyIncharge.email,
 		});
 
 		if (!resp.success) {
@@ -338,6 +342,7 @@ const getPostById = async (req: Request, res: Response) => {
 	}
 };
 
+// Only facultyIncharge or studentIncharge or admin of that committee can update post
 const updatePost = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -405,6 +410,35 @@ const updatePost = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			if (decodedToken.accountType !== AccountType.Admin) {
+				const committee = await committeeModel
+					.findOne({ posts: { $in: oldPost._id } })
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["studentIncharge", "facultyIncharge"])
+					.session(session);
+
+				if (!committee) {
+					const response: StandardResponse = {
+						message: "Committee not found",
+						success: false,
+					};
+
+					return response;
+				}
+
+				const resp = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+					decodedToken,
+					studentInchargeEmail: committee.studentIncharge.email,
+					facultyInchargeEmail: committee.facultyIncharge.email,
+				});
+
+				if (!resp.success) {
+					return resp;
+				}
+			}
+
 			const isPostDeleted = await postModel
 				.deleteOne({ postId })
 				.session(session);
@@ -459,6 +493,7 @@ const updatePost = async (req: Request, res: Response) => {
 	}
 };
 
+// Posts are permanently deleted, unlike other delete APIs, because when a committee is set to deleted, isPostDeleted should also be set to true. However, when the deleted committee is made active again, isPostDeleted in all the posts becomes false, which is incorrect. This is because if isPostDeleted in a post was set to true before the committee was deleted, then when the deleted committee is made active again, all the deleted posts will incorrectly become undeleted.
 const deletePost = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -496,38 +531,177 @@ const deletePost = async (req: Request, res: Response) => {
 
 			return res.status(401).json(response);
 		}
+
 		let isPostDeleted;
 
-		if (decodedToken.accountType === AccountType.Admin) {
-			isPostDeleted = await postModel.updateOne(
-				{ postId },
-				{ isPostDeleted: true },
-				{
-					_skipdeletedPostsInHook: true,
-				},
-			);
-		} else {
-			isPostDeleted = await postModel.updateOne(
-				{ postId },
-				{ isPostDeleted: true },
-			);
-		}
+		const result = await runWithRetrySession(async (session) => {
+			const post = await postModel
+				.findOne({ postId })
+				.populate<{
+					committeeObjId: {
+						studentIncharge: IStudentDocument;
+						facultyIncharge: ITeacherDocument;
+					};
+				}>({
+					path: "committeeObjId",
+					populate: [
+						{
+							path: "studentIncharge",
+							model: "studentModel",
+							select: "email",
+						},
+						{
+							path: "facultyIncharge",
+							model: "teacherModel",
+							select: "email",
+						},
+					],
+					select: "studentIncharge facultyIncharge",
+				})
+				.session(session)
+				.lean();
 
-		if (!isPostDeleted.acknowledged) {
+			if (!post) {
+				const response: StandardResponse = {
+					message: "Post not found",
+					success: false,
+				};
+
+				return response;
+			}
+
+			// Only facultyIncharge or studentIncharge or admin of that committee can delete post
+			if (decodedToken.accountType !== AccountType.Admin) {
+				const resp = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+					decodedToken,
+					studentInchargeEmail: post.committeeObjId.studentIncharge.email,
+					facultyInchargeEmail: post.committeeObjId.facultyIncharge.email,
+				});
+
+				if (!resp.success) {
+					return resp;
+				}
+
+				isPostDeleted = await postModel
+					.findOneAndDelete({ postId: postId })
+					.populate<{ likes: IUserDocument[] }>(["likes"])
+					.session(session);
+			} else {
+				//Admin can literally delete the isPostDeleted:true posts also
+				isPostDeleted = await postModel
+					.findOneAndDelete(
+						{ postId: postId },
+						{ _skipDeletedPostsHook: true },
+					)
+					.populate<{ likes: IUserDocument[] }>(["likes"])
+					.session(session);
+			}
+
+			if (!isPostDeleted) {
+				const response: StandardResponse = {
+					message: "Could not delete the post",
+					success: false,
+				};
+
+				return response;
+			}
+
+			//If post is literally deleted its id should also be removed from committee
+			const isPostRemovedFromCommittee = await committeeModel
+				.updateOne(
+					{
+						posts: post._id,
+					},
+					{ $pull: { posts: post._id } },
+				)
+				.session(session);
+
+			if (!isPostRemovedFromCommittee.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could remove post from committee posts",
+					success: false,
+				};
+
+				return response;
+			}
+
+			//If post is literally deleted its id should also be removed from admin/teacher/student (Ask SSR whether to keep this code or not, by the way the code works properly)
+
+			const studentIds = isPostDeleted.likes
+				.filter((user) => user.accType === AccountType.Student)
+				.map((user) => user._id);
+
+			const teacherIds = isPostDeleted.likes
+				.filter((user) => user.accType === AccountType.Teacher)
+				.map((user) => user._id);
+
+			const adminIds = isPostDeleted.likes
+				.filter((user) => user.accType === AccountType.Admin)
+				.map((user) => user._id);
+
+			const [studentUpdate, teacherUpdate, adminUpdate] = await Promise.all([
+				studentModel
+					.updateMany(
+						{ _id: { $in: studentIds } },
+						{ $pull: { postsLiked: post._id } },
+					)
+					.session(session),
+				teacherModel
+					.updateMany(
+						{ _id: { $in: teacherIds } },
+						{ $pull: { postsLiked: post._id } },
+					)
+					.session(session),
+				adminModel
+					.updateMany(
+						{ _id: { $in: adminIds } },
+						{ $pull: { postsLiked: post._id } },
+					)
+					.session(session),
+			]);
+
+			if (
+				!(
+					studentUpdate.modifiedCount === studentIds.length &&
+					teacherUpdate.modifiedCount === teacherIds.length &&
+					adminUpdate.modifiedCount === adminIds.length
+				)
+			) {
+				const response: StandardResponse = {
+					message: "Could not remove the post from user's postLiked",
+					success: false,
+				};
+
+				return response;
+			}
+
+			//If post is literally deleted comment section should also be literally deleted
+			const isCommentSectionDeleted = await commentModel
+				.deleteOne({
+					postObjId: isPostDeleted._id,
+				})
+				.session(session);
+
+			if (!isCommentSectionDeleted) {
+				const response: StandardResponse = {
+					message:
+						"Could not delete the comment section while deleting the post",
+					success: false,
+				};
+
+				return response;
+			}
+			// TODO: Remove image from supabase if the post is permanently deleted
+
 			const response: StandardResponse = {
-				message: "Could not delete the post",
-				success: false,
+				message: "Post deleted succesfully",
+				success: true,
 			};
 
-			return res.status(401).json(response);
-		}
+			return response;
+		});
 
-		const response: StandardResponse = {
-			message: "Post deleted succesfully",
-			success: true,
-		};
-
-		return res.status(201).json(response);
+		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
 
@@ -573,17 +747,20 @@ const getAllPosts = async (req: Request, res: Response) => {
 			.find()
 			.populate([
 				{ path: "committeeObjId" },
+				{ path: "commentObjId" },
+				{ path: "likes" },
 				{ path: "postedBy", model: "userModel" },
 			])
+			.sort({ createdAt: -1 })
 			.lean();
 
 		if (allPosts.length === 0) {
 			const response: StandardResponse = {
-				message: "There are no posts in db",
-				success: false,
+				message: "There are no posts",
+				success: true,
 			};
 
-			return res.status(401).json(response);
+			return res.status(201).json(response);
 		}
 
 		const response: DataResponse = {
@@ -769,9 +946,10 @@ const togglePostLike = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			const response: StandardResponse = {
+			const response: DataResponse = {
 				message: "Successfully toggled the post like",
 				success: true,
+				data: !likeRemoved,
 			};
 
 			return response;

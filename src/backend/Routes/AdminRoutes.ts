@@ -6,7 +6,7 @@ import {
 	getAdmin,
 	updateAdmin,
 	deleteAdmin,
-	changeUserAccountStatusByEmail,
+	reactivateUserAccount,
 	restorePost,
 } from "../Controllers/AdminController";
 // import { authorizationMiddlewareFactory } from "../Middlewares/Authorization";
@@ -20,7 +20,7 @@ Router.route("/updateAdmin").post(updateAdmin);
 
 Router.route("/deleteAdmin").post(deleteAdmin);
 
-Router.route("/deleteUserByEmail").post(changeUserAccountStatusByEmail);
+Router.route("/reactivateUserAccount").post(reactivateUserAccount);
 
 Router.route("/restorePost").post(restorePost);
 

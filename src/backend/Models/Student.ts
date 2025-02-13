@@ -287,15 +287,15 @@ const hooks = [
 ] as const;
 
 // Programatically adds condition to remove inactive students from the query result
-// When inactive students are also needed and should not be excluded set _skipInactiveStudentsInHook
-// If in some place this code gives error then set _skipInactiveStudentsInHook as true
+// When inactive students are also needed and should not be excluded set _skipInactiveStudentsHook
+// If in some place this code gives error then set _skipInactiveStudentsHook as true
 hooks.forEach(function (hook) {
 	studentSchema.pre(hook, function (next) {
 		const options = this.getOptions();
 		const query = this.getQuery();
 
-		// _skipInactiveStudentsInHook; flag when true, will allow hooks to show inactive students
-		if (options && !options["_skipInactiveStudentsInHook"]) {
+		// _skipInactiveStudentsHook; flag when true, will allow hooks to show inactive students
+		if (options && !options["_skipInactiveStudentsHook"]) {
 			// If "isAccountActive" already exists as an object
 			if (
 				query["isAccountActive"] &&

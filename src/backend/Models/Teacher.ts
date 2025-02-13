@@ -99,15 +99,15 @@ const hooks = [
 ] as const;
 
 // Programatically adds condition to remove inactive teachers from the query result
-// When inactive teachers are also needed and should not be excluded set _skipInactiveTeachersInHook
-// If in some place this code gives error then set _skipInactiveTeachersInHook as true
+// When inactive teachers are also needed and should not be excluded set _skipInactiveTeachersHook
+// If in some place this code gives error then set _skipInactiveTeachersHook as true
 hooks.forEach(function (hook) {
 	teacherSchema.pre(hook, function (next) {
 		const options = this.getOptions();
 		const query = this.getQuery();
 
-		// _skipInactiveTeachersInHook; flag when true, will allow hooks to show inactive teachers
-		if (options && !options["_skipInactiveTeachersInHook"]) {
+		// _skipInactiveTeachersHook; flag when true, will allow hooks to show inactive teachers
+		if (options && !options["_skipInactiveTeachersHook"]) {
 			// If "isAccountActive" already exists as an object
 			if (
 				query["isAccountActive"] &&
