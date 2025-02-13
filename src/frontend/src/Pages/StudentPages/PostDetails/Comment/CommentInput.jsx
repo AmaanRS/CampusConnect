@@ -1,6 +1,6 @@
 import { Textarea } from "flowbite-react";
 import React, { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../../../../utils/Axios/AxiosInstance";
 import { toast } from "react-toastify";
 
@@ -10,12 +10,15 @@ const postData = async (data) => {
 };
 
 export default function CommentInput({ setCommentOn, postId }) {
+  const queryClient = useQueryClient();
   const [comment, setComment] = useState("");
   const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: postData,
     onSuccess: () => {
       console.log("Success");
       toast.success("commented successfully");
+      queryClient.invalidateQueries({ queryKey: ["post", postId] });
+      setCommentOn(false);
     },
     onError: (error) => {
       console.log(error);
@@ -30,7 +33,7 @@ export default function CommentInput({ setCommentOn, postId }) {
       comment,
     };
     console.log(data);
-    mutate({ data });
+    mutate(data);
     if (isSuccess) {
       setComment("");
       setCommentOn(false);

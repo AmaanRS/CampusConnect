@@ -8,6 +8,7 @@ export default function PostComment({
   commentOn,
   setCommentOn,
 }) {
+  console.log("post comments", commentList);
   return (
     <div id="comment">
       <CommentInputLayout
@@ -16,6 +17,21 @@ export default function PostComment({
         postId={postId}
       />
       {commentList?.length == 0 && <EmptyComment />}
+
+      {commentList?.length > 0 && (
+        <div>
+          {commentList.map((comment) => {
+            return (
+              <>
+                <br />
+                <p>{comment?.comment}</p>
+                <p> {comment?.userId?.email} </p>
+                <br />
+              </>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
