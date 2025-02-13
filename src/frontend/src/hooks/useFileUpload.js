@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import axiosInstance from "../utils/Axios/AxiosInstance";
 
-const MAX_FILE_SIZE = 11 * 1024; // 11 KB in bytes
+const MAX_FILE_SIZE = 100 * 1024; // 100 KB in bytes
 
 export function useFileUpload({
   dir,
@@ -55,7 +55,7 @@ export function useFileUpload({
   async function handleFileChange(image) {
     setError("");
     if (image && image.size > MAX_FILE_SIZE) {
-      setError("File size should not exceed 10 KB.");
+      setError("File size should not exceed 100 KB.");
       return;
     }
 

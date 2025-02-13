@@ -100,7 +100,7 @@ export default function AllCommittees() {
                   </>
                 )}
               </Tabs.Item>
-              <Tabs.Item title="Active">
+              <Tabs.Item active title="Active">
                 {list?.acceptedCommittees?.length !== 0 && (
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1  gap-4">
