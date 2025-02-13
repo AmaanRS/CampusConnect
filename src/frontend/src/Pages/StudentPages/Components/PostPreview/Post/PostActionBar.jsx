@@ -6,7 +6,7 @@ import { PiShareFat } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export default function PostActionBar({ postId, likes }) {
+export default function PostActionBar({ postId, likes, comments = 0 }) {
   let active = false;
   const handleCopy = async () => {
     try {
@@ -53,7 +53,7 @@ export default function PostActionBar({ postId, likes }) {
           >
             <FaRegComment className="text-base rounded-full m-1" />
             <div className="text-xs mr-1  text-center font-medium">
-              {numbro(10000).format({ average: true }).toUpperCase()}
+              {numbro(comments).format({ average: true }).toUpperCase()}
             </div>
           </button>
         </div>

@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function StudentPost({ mode = "home", postData }) {
   let isImage = postData?.image?.length > 0;
   const navigate = useNavigate();
+  console.log("studentpost", postData);
 
   return (
     <>
@@ -28,7 +29,11 @@ export default function StudentPost({ mode = "home", postData }) {
         </div>
         {isImage && <PostImage images={[postData?.image[0]?.imageUrl]} />}
 
-        <PostActionBar likes={postData?.likes} postId={postData?.postId} />
+        <PostActionBar
+          comments={postData?.commentObjId.comments?.length}
+          likes={postData?.likes}
+          postId={postData?.postId}
+        />
       </div>
       <div className="border-b-[1.3px] mx-1 border-slate-200 mt-1 mb-1"></div>
     </>
