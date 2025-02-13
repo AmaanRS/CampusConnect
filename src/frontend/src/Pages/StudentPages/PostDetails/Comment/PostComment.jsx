@@ -1,6 +1,7 @@
 import React from "react";
 import CommentInputLayout from "./CommentInputLayout";
 import EmptyComment from "./EmptyComment";
+import CommentItem from "./CommentItem";
 
 export default function PostComment({
   postId,
@@ -19,18 +20,15 @@ export default function PostComment({
       {commentList?.length == 0 && <EmptyComment />}
 
       {commentList?.length > 0 && (
-        <div>
+        <>
           {commentList.map((comment) => {
             return (
               <>
-                <br />
-                <p>{comment?.comment}</p>
-                <p> {comment?.userId?.email} </p>
-                <br />
+                <CommentItem key={comment?._id} comment={comment} />
               </>
             );
           })}
-        </div>
+        </>
       )}
     </div>
   );
