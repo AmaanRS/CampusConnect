@@ -1,10 +1,10 @@
 import numbro from "numbro";
 import React, { useContext, useEffect, useState } from "react";
 import { AiOutlineLike } from "react-icons/ai";
-import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { UserContext } from "../../../store/UserContextProvider";
+import axiosInstance from "../../../../../utils/Axios/AxiosInstance";
+import { UserContext } from "../../../../../store/UserContextProvider";
 
 const postData = async (data) => {
   const response = await axiosInstance.post("/post/togglePostLike", data);

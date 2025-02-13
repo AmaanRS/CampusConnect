@@ -5,6 +5,7 @@ import numbro from "numbro";
 import { PiShareFat } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import LikeButton from "./LikeButton";
 
 export default function PostActionBar({ postId, likes, comments = 0 }) {
   let active = false;
@@ -22,27 +23,8 @@ export default function PostActionBar({ postId, likes, comments = 0 }) {
   return (
     <div className="flex">
       {/* like button */}
-      <Link to={`/student/post/${postId}`}>
-        <div
-          className={`min-w-16   rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1 ${
-            active ? "text-white bg-blue-600 " : "bg-slate-200"
-          }`}
-        >
-          <button
-            type="button"
-            className={`  rounded-full font-medium text-xs text-center inline-flex items-center hover:text-blue-600 ${
-              active
-                ? "text-white bg-blue-600 hover:text-white hover:bg-blue-600"
-                : "text-black bg-slate-200"
-            } `}
-          >
-            <AiOutlineLike className="text-lg rounded-full m-1" />
-            <div className="text-xs font-medium">
-              {numbro(likes?.length).format({ average: true }).toUpperCase()}
-            </div>
-          </button>
-        </div>
-      </Link>
+
+      <LikeButton postId={postId} likes={likes} />
 
       {/* comment button */}
       <Link to={`/student/post/${postId}#comment`}>

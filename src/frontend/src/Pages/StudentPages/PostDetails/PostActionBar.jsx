@@ -11,7 +11,6 @@ export default function PostActionBar({
   comments,
   setcommentOn,
 }) {
-  let active = false;
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(
@@ -30,7 +29,7 @@ export default function PostActionBar({
   return (
     <div className="flex mt-4">
       {/* like button */}
-      <LikeButton postId={postId} active={active} likes={likes} />
+      <LikeButton postId={postId} likes={likes} />
 
       {/* comment button */}
       <div className={` flex ml-2  items-center justify-center `}>
