@@ -1,4 +1,8 @@
-import mongoose, { Document, Types } from "mongoose";
+import mongoose, { Document, Model, Types } from "mongoose";
+import { studentModel } from "../Models/Student";
+import { adminModel } from "../Models/Admin";
+import { nonTeachingStaffModel } from "../Models/NonTeachingStaff";
+import { teacherModel } from "../Models/Teacher";
 
 export enum Year {
 	"1ST" = 1,
@@ -65,6 +69,13 @@ export type PositionMap = {
 };
 
 export type PositionByAccountType<T extends AccountType> = PositionMap[T];
+
+export const modelMap: Readonly<Record<AccountType, any>> = {
+	[AccountType.Student]: studentModel,
+	[AccountType.Admin]: adminModel,
+	[AccountType.Teacher]: teacherModel,
+	[AccountType.NonTeachingStaff]: nonTeachingStaffModel,
+} as const;
 
 export interface IUser {
 	email: string;

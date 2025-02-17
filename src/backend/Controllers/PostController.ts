@@ -16,6 +16,7 @@ import {
 	IStudentDocument,
 	ITeacherDocument,
 	IUserDocument,
+	modelMap,
 	StudentPosition,
 	TeacherPosition,
 } from "../Types/ModelTypes";
@@ -597,7 +598,7 @@ const deletePost = async (req: Request, res: Response) => {
 					return resp;
 				}
 			}
-			
+
 			//Admin can literally delete the isPostDeleted:true posts also
 			isPostDeleted = await postModel
 				.findOneAndDelete(
@@ -852,20 +853,7 @@ const togglePostLike = async (req: Request, res: Response) => {
 
 			let likeRemoved: boolean = false;
 
-			let model: any;
-			switch (decodedToken.accountType) {
-				case AccountType.Student:
-					model = studentModel;
-					break;
-
-				case AccountType.Admin:
-					model = adminModel;
-					break;
-
-				case AccountType.Teacher:
-					model = teacherModel;
-					break;
-			}
+			let model = modelMap[decodedToken.accountType];
 
 			if (Array.isArray(post.likes)) {
 				for (let i = 0; i < post.likes.length; i++) {

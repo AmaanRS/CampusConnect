@@ -12,6 +12,7 @@ import {
 	AdminPosition,
 	CommitteeStatus,
 	IAdmin,
+	modelMap,
 } from "../Types/ModelTypes";
 import { runWithRetrySession } from "../Utils/util";
 import { userEmailRegex } from "../Utils/regexUtils";
@@ -492,24 +493,7 @@ const reactivateUserAccount = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			let model: any;
-			switch (toggledUser.accType) {
-				case AccountType.Student:
-					model = studentModel;
-					break;
-
-				case AccountType.Admin:
-					model = adminModel;
-					break;
-
-				case AccountType.Teacher:
-					model = teacherModel;
-					break;
-
-				case AccountType.NonTeachingStaff:
-					model = nonTeachingStaffModel;
-					break;
-			}
+			let model = modelMap[toggledUser.accType];
 
 			const toggledUserSpecificUser: UpdateWriteOpResult = await model
 				.updateOne(
