@@ -1,9 +1,8 @@
-import { Model, MongooseError, Schema, model } from "mongoose";
+import { Model, MongooseError, Schema, Types, model } from "mongoose";
 import { AccountType, IAdminDocument, AdminPosition } from "../Types/ModelTypes";
 import { userEmailRegex } from "../Utils/regexUtils";
 import { validateAndHash } from "../Utils/passwordUtils";
-
-//TODO: Try using virtuals to optimize code and do it in this project
+import _ from "lodash";
 
 const adminSchema = new Schema<IAdminDocument>(
 	{
@@ -27,16 +26,32 @@ const adminSchema = new Schema<IAdminDocument>(
 			required: true,
 			enum: Object.values(AccountType),
 		},
-		position: [
-			{
-				type: String,
-				required: true,
-				enum: Object.values(AdminPosition),
-			},
-		],
+		position: {
+			type: [
+				{
+					type: String,
+					required: true,
+					enum: Object.values(AdminPosition),
+				},
+			],
+			default: [],
+		},
 		postsLiked: {
-			type: [Schema.Types.ObjectId],
-			ref: "postModel",
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "postModel",
+				},
+			],
+			default: [],
+		},
+		followingCommittees: {
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "committeeModel",
+				},
+			],
 			default: [],
 		},
 		isProfileComplete: {
@@ -57,10 +72,6 @@ const adminSchema = new Schema<IAdminDocument>(
 
 adminSchema.pre("validate", async function (next) {
 	try {
-		if (this.position === undefined) {
-			this.position = [];
-		}
-
 		if (this.position.length === 0) {
 			throw new MongooseError("Position for admin cannot be empty");
 		}
@@ -87,6 +98,18 @@ adminSchema.pre("validate", async function (next) {
 
 		// Converted set to array because i need position to be unique but mongodb supports array not set
 		this.position = [...new Set(this.position)];
+
+		this.postsLiked = _.chain(this.postsLiked)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
+
+		this.followingCommittees = _.chain(this.followingCommittees)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
 
 		next();
 	} catch (err) {

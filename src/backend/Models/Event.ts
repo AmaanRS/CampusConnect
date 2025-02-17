@@ -1,8 +1,9 @@
-import { Model, MongooseError, Schema, model } from "mongoose";
+import { Model, MongooseError, Schema, Types, model } from "mongoose";
 import { IEventDocument, ModelTypes } from "../Types/ModelTypes";
 import { generateUniqueId } from "../Utils/uniqueId";
 import { DataResponse } from "../Types/GeneralTypes";
 import { isValidDateTimeRange } from "../Utils/dateTime";
+import _ from "lodash";
 
 const eventSchema = new Schema<IEventDocument>(
 	{
@@ -94,7 +95,11 @@ eventSchema.pre("validate", async function (next) {
 			throw new MongooseError("There should be some hosting committee");
 		}
 
-		this.hostingCommittees = [...new Set(this.hostingCommittees)];
+		this.hostingCommittees = _.chain(this.hostingCommittees)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
 
 		next();
 	} catch (err) {

@@ -553,7 +553,7 @@ const reactivateUserAccount = async (req: Request, res: Response) => {
 		return res.status(401).json(response);
 	}
 };
-
+//Deprecated
 const restorePost = async (req: Request, res: Response) => {
 	try {
 		const {

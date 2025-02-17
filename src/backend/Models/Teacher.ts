@@ -1,4 +1,4 @@
-import { Model, MongooseError, Schema, model } from "mongoose";
+import { Model, MongooseError, Schema, Types, model } from "mongoose";
 import {
 	Department,
 	AccountType,
@@ -7,6 +7,7 @@ import {
 } from "../Types/ModelTypes";
 import { teacherEmailRegex } from "../Utils/regexUtils";
 import { validateAndHash } from "../Utils/passwordUtils";
+import _ from "lodash";
 
 const teacherSchema = new Schema<ITeacherDocument>(
 	{
@@ -53,8 +54,21 @@ const teacherSchema = new Schema<ITeacherDocument>(
 			default: [],
 		},
 		postsLiked: {
-			type: [Schema.Types.ObjectId],
-			ref: "postModel",
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "postModel",
+				},
+			],
+			default: [],
+		},
+		followingCommittees: {
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "committeeModel",
+				},
+			],
 			default: [],
 		},
 		isProfileComplete: {
@@ -79,7 +93,43 @@ teacherSchema.pre("validate", async function (next) {
 		// By default
 		this.isProfileComplete = false;
 
+		if (
+			this.committeePositions &&
+			Array.isArray(this.committeePositions) &&
+			this.committeePositions.length !== 0
+		) {
+			for (let i = 0; i < this.committeePositions.length; i++) {
+				//Validate structure of object within the array
+				if (
+					!("committeeObjId" in this.committeePositions[i]) ||
+					!("position" in this.committeePositions[i])
+				) {
+					throw new MongooseError(
+						"Give both committeeObjId and positions in the committee",
+					);
+				}
+			}
+
+			// To get unique objects in the array
+			this.committeePositions = _.uniqBy(
+				this.committeePositions,
+				"committeeObjId",
+			);
+		}
+
 		this.accType = AccountType.Teacher;
+
+		this.postsLiked = _.chain(this.postsLiked)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
+
+		this.followingCommittees = _.chain(this.followingCommittees)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
 
 		next();
 	} catch (err) {

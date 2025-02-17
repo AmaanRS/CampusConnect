@@ -486,16 +486,13 @@ const getAllTeachers = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		let allTeachers;
-		if (decodedToken.accountType === AccountType.Admin) {
-			allTeachers = await teacherModel
-				.find({}, null, {
-					_skipInactiveTeachersHook: true,
-				})
-				.lean();
-		} else {
-			allTeachers = await teacherModel.find().lean();
-		}
+		const isAdmin = decodedToken.accountType === AccountType.Admin;
+
+		const allTeachers = await teacherModel
+			.find({}, null, {
+				_skipInactiveTeachersHook: isAdmin,
+			})
+			.lean();
 
 		if (allTeachers.length === 0) {
 			const response: DataResponse = {

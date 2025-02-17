@@ -8,6 +8,7 @@ import {
 } from "../Types/ModelTypes";
 import { generateUniqueId } from "../Utils/uniqueId";
 import { DataResponse } from "../Types/GeneralTypes";
+import _ from "lodash";
 
 const committeeSchema = new Schema<ICommitteeDocument>(
 	{
@@ -35,24 +36,33 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 			ref: "teacherModel",
 			required: true,
 		},
-		facultyTeam: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: "teacherModel",
-			},
-		],
-		members: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: "userModel",
-			},
-		],
-		events: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: "eventModel",
-			},
-		],
+		facultyTeam: {
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "teacherModel",
+				},
+			],
+			default: [],
+		},
+		members: {
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "userModel",
+				},
+			],
+			default: [],
+		},
+		events: {
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "eventModel",
+				},
+			],
+			default: [],
+		},
 		posts: {
 			type: [
 				{
@@ -75,6 +85,23 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 				enum: [...Object.values(Department), ...Object.values(College)],
 			},
 		],
+		followers: {
+			type: [
+				{
+					userId: {
+						type: Schema.Types.ObjectId,
+						required: true,
+						refPath: "followers.userType",
+					},
+					userType: {
+						type: String,
+						required: true,
+						enum: Object.values(ModelTypes),
+					},
+				},
+			],
+			default: [],
+		},
 	},
 	{
 		timestamps: true,
@@ -150,15 +177,23 @@ committeeSchema.pre("validate", async function (next) {
 			return next(new MongooseError("Invalid ObjectId in posts array"));
 		}
 
-		if (this.posts === undefined) this.posts = [];
+		this.facultyTeam = _.chain(this.facultyTeam)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
 
-		this.facultyTeam = this.facultyTeam
-			? [...new Set(this.facultyTeam)]
-			: undefined;
+		this.members = _.chain(this.members)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
 
-		this.members = this.members ? [...new Set(this.members)] : undefined;
-
-		this.events = this.events ? [...new Set(this.events)] : undefined;
+		this.events = _.chain(this.events)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
 
 		this.committeeOfDepartment = [...new Set(this.committeeOfDepartment)];
 

@@ -45,6 +45,9 @@ export enum ModelTypes {
 	COMMITTEE_MODEL = "committeeModel",
 	EVENT_MODEL = "eventModel",
 	POST_MODEL = "postModel",
+	STUDENT_MODEL = "studentModel",
+	TEACHER_MODEL = "teacherModel",
+	ADMIN_MODEL = "adminModel",
 }
 
 export type UserPosition =
@@ -86,6 +89,7 @@ export interface IStudent {
 		committeeObjId?: mongoose.Types.ObjectId;
 		position?: StudentPosition;
 	}[];
+	followingCommittees: Types.ObjectId[];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 	postsLiked?: Types.ObjectId[];
@@ -103,6 +107,7 @@ export interface ITeacher {
 		position?: TeacherPosition;
 	}[];
 	postsLiked?: Types.ObjectId[];
+	followingCommittees: Types.ObjectId[];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 }
@@ -115,6 +120,7 @@ export interface IAdmin {
 	accType: AccountType;
 	position: AdminPosition[];
 	postsLiked?: Types.ObjectId[];
+	followingCommittees: Types.ObjectId[];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 }
@@ -160,6 +166,7 @@ export interface ICommittee {
 	posts?: Types.ObjectId[] | undefined;
 	status: CommitteeStatus;
 	committeeOfDepartment: Department[] | College;
+	followers: { userId: Types.ObjectId; userType: ModelTypes }[];
 }
 
 //

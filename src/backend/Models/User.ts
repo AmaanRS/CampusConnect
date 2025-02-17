@@ -34,12 +34,14 @@ const userSchema = new Schema<IUserDocument>(
 			type: String,
 			enum: Object.values(AccountType),
 		},
-		position: [
-			{
-				type: String,
-				required: true,
-			},
-		],
+		position: {
+			type: [
+				{
+					type: String,
+					required: true,
+				},
+			],
+		},
 		isProfileComplete: {
 			default: false,
 			type: Boolean,

@@ -1,7 +1,8 @@
-import { Model, MongooseError, Schema, model } from "mongoose";
+import { Model, MongooseError, Schema, Types, model } from "mongoose";
 import { IPostDocument, ModelTypes } from "../Types/ModelTypes";
 import { generateUniqueId } from "../Utils/uniqueId";
 import { DataResponse } from "../Types/GeneralTypes";
+import _ from "lodash";
 
 const postSchema = new Schema<IPostDocument>(
 	{
@@ -28,7 +29,11 @@ const postSchema = new Schema<IPostDocument>(
 			required: true,
 		},
 		relevantLinks: {
-			type: [String],
+			type: [
+				{
+					type: String,
+				},
+			],
 			default: [],
 		},
 		image: {
@@ -47,8 +52,12 @@ const postSchema = new Schema<IPostDocument>(
 			default: [],
 		},
 		likes: {
-			type: [Schema.Types.ObjectId],
-			ref: "userModel",
+			type: [
+				{
+					type: [Schema.Types.ObjectId],
+					ref: "userModel",
+				},
+			],
 			default: [],
 		},
 		commentObjId: {
@@ -129,8 +138,11 @@ postSchema.pre("validate", async function (next) {
 			throw new MongooseError("Give image in proper structure");
 		}
 
-		if (this.image === undefined) this.image = [];
-		if (this.likes === undefined) this.likes = [];
+		this.likes = _.chain(this.likes)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
 
 		next();
 	} catch (error) {

@@ -184,37 +184,24 @@ const getStudentById = async (req: Request, res: Response) => {
 			};
 			return res.status(401).json(response);
 		}
-		let student: IStudent | null;
 
-		if (decodedToken.accountType === AccountType.Admin) {
-			student = await studentModel
-				.findOne(
-					{ email },
-					{ password: 0 },
-					{ _skipInactiveStudentsHook: true },
-				)
-				.populate([
-					{
-						path: "postsLiked",
-					},
-					{
-						path: "committeePositions.committeeObjId",
-					},
-				])
-				.lean();
-		} else {
-			student = await studentModel
-				.findOne({ email }, { password: 0 })
-				.populate([
-					{
-						path: "postsLiked",
-					},
-					{
-						path: "committeePositions.committeeObjId",
-					},
-				])
-				.lean();
-		}
+		const isAdmin = decodedToken.accountType === AccountType.Admin;
+
+		const student = await studentModel
+			.findOne(
+				{ email },
+				{ password: 0 },
+				{ _skipInactiveStudentsHook: isAdmin },
+			)
+			.populate([
+				{
+					path: "postsLiked",
+				},
+				{
+					path: "committeePositions.committeeObjId",
+				},
+			])
+			.lean();
 
 		if (!student) {
 			const response: StandardResponse = {
@@ -500,17 +487,14 @@ const getAllStudents = async (req: Request, res: Response) => {
 
 			return res.status(401).json(response);
 		}
-		let allStudents;
 
-		if (decodedToken.accountType === AccountType.Admin) {
-			allStudents = await studentModel
-				.find({}, null, {
-					_skipInactiveStudentsHook: true,
-				})
-				.lean();
-		} else {
-			allStudents = await studentModel.find().lean();
-		}
+		const isAdmin = decodedToken.accountType === AccountType.Admin;
+
+		const allStudents = await studentModel
+			.find({}, null, {
+				_skipInactiveStudentsHook: isAdmin,
+			})
+			.lean();
 
 		if (!allStudents || allStudents.length === 0) {
 			const response: DataResponse = {

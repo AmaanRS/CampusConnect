@@ -582,8 +582,11 @@ const deletePost = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			const isAdmin = decodedToken.accountType === AccountType.Admin;
+
 			// Only facultyIncharge or studentIncharge or admin of that committee can delete post
-			if (decodedToken.accountType !== AccountType.Admin) {
+			// if (decodedToken.accountType !== AccountType.Admin) {
+			if (!isAdmin) {
 				const resp = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
 					decodedToken,
 					studentInchargeEmail: post.committeeObjId.studentIncharge.email,
@@ -593,21 +596,16 @@ const deletePost = async (req: Request, res: Response) => {
 				if (!resp.success) {
 					return resp;
 				}
-
-				isPostDeleted = await postModel
-					.findOneAndDelete({ postId: postId })
-					.populate<{ likes: IUserDocument[] }>(["likes"])
-					.session(session);
-			} else {
-				//Admin can literally delete the isPostDeleted:true posts also
-				isPostDeleted = await postModel
-					.findOneAndDelete(
-						{ postId: postId },
-						{ _skipDeletedPostsHook: true },
-					)
-					.populate<{ likes: IUserDocument[] }>(["likes"])
-					.session(session);
 			}
+			
+			//Admin can literally delete the isPostDeleted:true posts also
+			isPostDeleted = await postModel
+				.findOneAndDelete(
+					{ postId: postId },
+					{ _skipDeletedPostsHook: isAdmin },
+				)
+				.populate<{ likes: IUserDocument[] }>(["likes"])
+				.session(session);
 
 			if (!isPostDeleted) {
 				const response: StandardResponse = {
