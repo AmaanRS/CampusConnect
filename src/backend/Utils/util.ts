@@ -130,16 +130,17 @@ export const runWithRetrySession = async (
 
 const checkIfFacultyOrStudentInchargeOfCommitteeFunc = ({
 	decodedToken,
-	oldCommittee,
+	studentInchargeEmail,
+	facultyInchargeEmail,
 }: {
 	decodedToken: decodedTokenPayload;
-	// Used any because the type was too complex
-	oldCommittee: any;
+	studentInchargeEmail: string;
+	facultyInchargeEmail: string;
 }): StandardResponse | DataResponse => {
 	try {
 		if (decodedToken.accountType === AccountType.Teacher) {
 			//Check if FacultyIncharge, is incharge of the committee she is trying to update
-			if (oldCommittee.facultyIncharge.email !== decodedToken.email) {
+			if (facultyInchargeEmail !== decodedToken.email) {
 				const response: StandardResponse = {
 					message:
 						"You must be the faculty incharge of the given committee",
@@ -158,7 +159,7 @@ const checkIfFacultyOrStudentInchargeOfCommitteeFunc = ({
 			return response;
 		} else if (decodedToken.accountType === AccountType.Student) {
 			//Check if StudentIncharge is incharge of the committee she is trying to update
-			if (oldCommittee.studentIncharge.email !== decodedToken.email) {
+			if (studentInchargeEmail !== decodedToken.email) {
 				const response: StandardResponse = {
 					message:
 						"You must be the student incharge of the given committee",

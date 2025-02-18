@@ -39,6 +39,7 @@
 		"@supabase/supabase-js": "^2.48.1",
 		"@types/jest": "^29.5.12",
 		"bcrypt": "^5.1.1",
+		"clean-deep": "^3.4.0",
 		"cookie-parser": "^1.4.6",
 		"cors": "^2.8.5",
 		"dayjs": "^1.11.12",

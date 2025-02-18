@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import { AccountType, Department, IStudent, Year } from "../Types/ModelTypes";
+import {
+	AccountType,
+	Department,
+	IStudent,
+	StudentPosition,
+	Year,
+} from "../Types/ModelTypes";
 import {
 	DataResponse,
 	decodedTokenPayload,
@@ -10,6 +16,7 @@ import { runWithRetrySession } from "../Utils/util";
 import { userModel } from "../Models/User";
 import { studentModel } from "../Models/Student";
 import { createJwtToken } from "../Utils/jwtToken";
+import { commentModel } from "../Models/Comment";
 
 const createStudent = async (req: Request, res: Response) => {
 	try {
@@ -184,7 +191,7 @@ const getStudentById = async (req: Request, res: Response) => {
 				.findOne(
 					{ email },
 					{ password: 0 },
-					{ _skipInactiveStudentsInHook: true },
+					{ _skipInactiveStudentsHook: true },
 				)
 				.populate([
 					{
@@ -353,11 +360,23 @@ const updateStudent = async (req: Request, res: Response) => {
 
 const deleteStudent = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
+		const {
+			decodedToken,
+			studentEmail,
+		}: { decodedToken: decodedTokenPayload; studentEmail: string | undefined } =
+			req.body;
 
 		if (!decodedToken) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		if (!studentEmail) {
+			const response: StandardResponse = {
+				message: "Give student email",
 				success: false,
 			};
 			return res.status(401).json(response);
@@ -375,8 +394,40 @@ const deleteStudent = async (req: Request, res: Response) => {
 
 		// Make account inactive instead of deleting it
 		const result = await runWithRetrySession(async (session) => {
+			const user = await studentModel
+				.findOne({ email: studentEmail })
+				.session(session);
+
+			if (!user) {
+				const response: StandardResponse = {
+					message: "Could not find the student",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isUserStudentIncharge = user.committeePositions?.some(
+				(committeePosition) => {
+					return (
+						committeePosition.position ===
+						StudentPosition.StudentIncharge
+					);
+				},
+			);
+
+			if (isUserStudentIncharge) {
+				const response: StandardResponse = {
+					message:
+						"The user is a student incharge of the committee, please replace him from the student incharge position then delete him",
+					success: false,
+				};
+
+				return response;
+			}
+
 			const isStudentDeleted = await studentModel
-				.updateOne({ email: email }, { isAccountActive: false })
+				.updateOne({ email: studentEmail }, { isAccountActive: false })
 				.session(session);
 
 			if (!isStudentDeleted.acknowledged) {
@@ -389,7 +440,7 @@ const deleteStudent = async (req: Request, res: Response) => {
 			}
 
 			const isUserDeleted = await userModel
-				.updateOne({ email: email }, { isAccountActive: false })
+				.updateOne({ email: studentEmail }, { isAccountActive: false })
 				.session(session);
 
 			if (!isUserDeleted.acknowledged) {
@@ -454,7 +505,7 @@ const getAllStudents = async (req: Request, res: Response) => {
 		if (decodedToken.accountType === AccountType.Admin) {
 			allStudents = await studentModel
 				.find({}, null, {
-					_skipInactiveStudentsInHook: true,
+					_skipInactiveStudentsHook: true,
 				})
 				.lean();
 		} else {
@@ -462,12 +513,13 @@ const getAllStudents = async (req: Request, res: Response) => {
 		}
 
 		if (!allStudents || allStudents.length === 0) {
-			const response: StandardResponse = {
+			const response: DataResponse = {
 				message: "No student found",
-				success: false,
+				success: true,
+				data: [],
 			};
 
-			return res.status(401).json(response);
+			return res.status(201).json(response);
 		}
 
 		const response: DataResponse = {
@@ -582,12 +634,13 @@ const getAllStudentsEmail = async (req: Request, res: Response) => {
 			.lean();
 
 		if (!Array.isArray(emails) || emails.length === 0) {
-			const response: StandardResponse = {
+			const response: DataResponse = {
 				message: "No student emails found in db",
-				success: false,
+				success: true,
+				data: [],
 			};
 
-			return res.status(401).json(response);
+			return res.status(201).json(response);
 		}
 
 		const response: DataResponse = {

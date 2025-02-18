@@ -20,6 +20,8 @@ import {
 	updateStudentInchargeOfCommittee,
 } from "../Utils/util";
 import { Types } from "mongoose";
+import { postModel } from "../Models/Post";
+import { commentModel } from "../Models/Comment";
 
 const getAllPendingCommitteesFunc = async (
 	decodedToken: decodedTokenPayload | undefined,
@@ -259,28 +261,137 @@ const changeStatusOfCommittee = async (req: Request, res: Response) => {
 
 			return res.status(401).json(response);
 		}
+		const result = await runWithRetrySession(async (session) => {
+			const isCommitteeStatusChanged = await committeeModel
+				.findOneAndUpdate(
+					{ committeeId: committeeId },
+					{ status: action },
+					{
+						_skipPendingCheckInHook: true,
+						_skipDeletingCheckInHook: true,
+					},
+				)
+				.session(session);
 
-		const isCommitteeStatusChanged = await committeeModel.findOneAndUpdate(
-			{ committeeId: committeeId },
-			{ status: action },
-			{ _skipPendingCheckInHook: true, _skipDeletingCheckInHook: true },
-		);
+			if (!isCommitteeStatusChanged) {
+				const response: StandardResponse = {
+					message: "Could not change the committee status",
+					success: false,
+				};
 
-		if (!isCommitteeStatusChanged) {
+				return response;
+			}
+			// If committee is deleted the posts inside it should also be deleted
+			// If post is deleted comment should also be deleted or undeleted
+			if (
+				isCommitteeStatusChanged.posts &&
+				isCommitteeStatusChanged.posts.length !== 0
+			) {
+				if (action === CommitteeStatus.DELETED) {
+					const isPostsDeleted = await postModel
+						.updateMany(
+							{
+								_id: { $in: isCommitteeStatusChanged.posts },
+							},
+							{
+								isPostDeleted: true,
+							},
+						)
+						.session(session);
+
+					if (
+						isPostsDeleted.matchedCount !==
+						isCommitteeStatusChanged.posts.length
+					) {
+						const response: StandardResponse = {
+							message:
+								"Could not delete the posts associated with the committee",
+							success: false,
+						};
+
+						return response;
+					}
+
+					const isCommentSectionDeleted = await commentModel
+						.updateMany(
+							{
+								postObjId: { $in: isCommitteeStatusChanged.posts },
+							},
+							{ isCommentSectionDeleted: true },
+						)
+						.session(session);
+
+					if (
+						isCommentSectionDeleted.matchedCount !==
+						isCommitteeStatusChanged.posts.length
+					) {
+						const response: StandardResponse = {
+							message:
+								"Could not delete the comment section associated with the committee's post",
+							success: false,
+						};
+
+						return response;
+					}
+				} else if (action === CommitteeStatus.ACCEPTED) {
+					// During making the committee active ensure that those posts which were deleted even before the committee was deleted should not be made active (If posts gets literally deleted you can make all the posts active which has isPostDeleted true)
+					const isPostsUnDeleted = await postModel
+						.updateMany(
+							{
+								_id: { $in: isCommitteeStatusChanged.posts },
+							},
+							{ isPostDeleted: false },
+							{ _skipDeletedPostsHook: true },
+						)
+						.session(session);
+
+					if (
+						isPostsUnDeleted.matchedCount !==
+						isCommitteeStatusChanged.posts.length
+					) {
+						const response: StandardResponse = {
+							message:
+								"Could not undelete the posts associated with the committee",
+							success: false,
+						};
+
+						return response;
+					}
+
+					const isCommentSectionUnDeleted = await commentModel
+						.updateMany(
+							{
+								postObjId: { $in: isCommitteeStatusChanged.posts },
+							},
+							{ isCommentSectionDeleted: false },
+							{ _skipDeletedCommentSectionInHook: true },
+						)
+						.session(session);
+
+					if (
+						isCommentSectionUnDeleted.matchedCount !==
+						isCommitteeStatusChanged.posts.length
+					) {
+						const response: StandardResponse = {
+							message:
+								"Could not undelete the comment section associated with the committee's post",
+							success: false,
+						};
+
+						return response;
+					}
+				}
+			}
+
 			const response: StandardResponse = {
-				message: "Could not change the committee status",
-				success: false,
+				message: "Committee status changed successfully",
+				success: true,
 			};
 
-			return res.status(401).json(response);
-		}
+			return response;
+		});
 
-		const response: StandardResponse = {
-			message: "Committee deleted successfully",
-			success: true,
-		};
-
-		return res.status(201).json(response);
+		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
 		const response: StandardResponse = {

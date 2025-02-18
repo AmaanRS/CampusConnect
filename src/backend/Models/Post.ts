@@ -78,15 +78,15 @@ const hooks = [
 ] as const;
 
 // Programatically adds condition to remove inactive teachers from the query result
-// When inactive teachers are also needed and should not be excluded set _skipdeletedPostsInHook
-// If in some place this code gives error then set _skipdeletedPostsInHook as true
+// When inactive teachers are also needed and should not be excluded set _skipDeletedPostsHook
+// If in some place this code gives error then set _skipDeletedPostsHook as true
 hooks.forEach(function (hook) {
 	postSchema.pre(hook, function (next) {
 		const options = this.getOptions();
 		const query = this.getQuery();
 
-		// _skipdeletedPostsInHook; flag when true, will allow hooks to show inactive teachers
-		if (options && !options["_skipdeletedPostsInHook"]) {
+		// _skipDeletedPostsHook; flag when true, will allow hooks to show inactive teachers
+		if (options && !options["_skipDeletedPostsHook"]) {
 			// If "isPostDeleted" already exists as an object
 			if (
 				query["isPostDeleted"] &&
