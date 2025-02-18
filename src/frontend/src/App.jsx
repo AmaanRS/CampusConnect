@@ -30,6 +30,7 @@ import AddPost from "./Pages/StudentPages/AddPost/AddPost";
 import StudentHomeLayout from "./Pages/StudentPages/Home/StudentHomeLayout";
 import PostDetailsLayout from "./Pages/StudentPages/PostDetails/PostDetailsLayout";
 import CommitteeDetailLayout from "./Pages/StudentPages/CommitteeDetails/CommitteeDetailLayout";
+import Explore from "./Pages/StudentPages/Explore/Explore";
 
 const queryClient = new QueryClient();
 function App() {
@@ -102,7 +103,7 @@ function App() {
               children: [
                 { index: true, element: <StudentHomeLayout /> },
                 { path: "createPost", element: <AddPost /> },
-                { path: "page3", element: <>Page 3</> },
+                { path: "explore", element: <Explore /> },
                 { path: "post/:postId", element: <PostDetailsLayout /> },
                 {
                   path: "committee/:committeeId",

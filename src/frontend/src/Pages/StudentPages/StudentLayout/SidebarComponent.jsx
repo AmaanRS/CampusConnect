@@ -49,7 +49,7 @@ export default function SidebarComponent() {
           text="Add Post"
         />
       )}
-      <SidebarItem to="page3" icon={<Search size={20} />} text="Explore " />
+      <SidebarItem to="explore" icon={<Search size={20} />} text="Explore " />
       <SidebarItem
         icon={<HiOutlineUserGroup size={20} />}
         text="Jobs/intenships/education"
