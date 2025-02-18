@@ -50,6 +50,7 @@ export default function LikeButton({ likes, postId }) {
     if (likes?.length > 0) {
       const emailExists = likes.some((like) => like.email === email);
       setAlreadyLiked(emailExists);
+      setCurrLike(likes?.length);
     }
   }, [likes]);
 

@@ -5,7 +5,6 @@ import { MdGroups } from "react-icons/md";
 
 export default function CommitteeList({ name = "committee name", posts = [] }) {
   // return <>"work in progress"</>;
-  console.log(posts);
   return (
     <>
       <div className="flex bg-slate-100 rounded-lg items-center mb-4 px-4 ">
