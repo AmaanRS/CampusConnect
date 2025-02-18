@@ -11,7 +11,7 @@ export default function RTEButton({
     <>
       <div className="m-1">
         <Tooltip
-          className="text-xs"
+          className="text-xs hover:hidden "
           animation="duration-300"
           content={children}
         >
