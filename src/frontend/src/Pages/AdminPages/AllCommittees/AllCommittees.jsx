@@ -90,14 +90,12 @@ export default function AllCommittees() {
                     base: "flex items-center justify-center rounded-t-lg p-4 text-sm font-medium first:ml-0 focus:outline-none  disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500",
                     variant: {
                       default: {
-                        base: "rounded-t-lg",
                         active: {
-                          on: "bg-blue-100 text-blue-700",
+                          on: "bg-indigo-100 text-indigo-700",
                           off: "text-gray-500 hover:bg-gray-50 hover:text-gray-600 ",
                         },
                       },
                     },
-                    icon: "mr-2 h-5 w-5",
                   },
                 },
                 tabitemcontainer: {
