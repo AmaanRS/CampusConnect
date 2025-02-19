@@ -83,8 +83,37 @@ export default function AllCommittees() {
 
           {/* tabs */}
           <>
-            <Tabs aria-label="Default tabs" variant="default">
-              <Tabs.Item active title="Pending">
+            <Tabs
+              theme={{
+                tablist: {
+                  tabitem: {
+                    base: "flex items-center justify-center rounded-t-lg p-4 text-sm font-medium first:ml-0 focus:outline-none  disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500",
+                    variant: {
+                      default: {
+                        base: "rounded-t-lg",
+                        active: {
+                          on: "bg-blue-100 text-blue-700",
+                          off: "text-gray-500 hover:bg-gray-50 hover:text-gray-600 ",
+                        },
+                      },
+                    },
+                    icon: "mr-2 h-5 w-5",
+                  },
+                },
+                tabitemcontainer: {
+                  base: "",
+                  variant: {
+                    default: "",
+                    underline: "",
+                    pills: "",
+                    fullWidth: "",
+                  },
+                },
+                tabpanel: "py-3",
+              }}
+              variant="default"
+            >
+              <Tabs.Item title="Pending">
                 {list?.pendingCommittees?.length !== 0 && (
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1  gap-4">
@@ -98,6 +127,9 @@ export default function AllCommittees() {
                       })}
                     </div>
                   </>
+                )}
+                {list?.pendingCommittees?.length == 0 && (
+                  <p>No pending committees</p>
                 )}
               </Tabs.Item>
               <Tabs.Item active title="Active">
@@ -115,6 +147,9 @@ export default function AllCommittees() {
                     </div>
                   </>
                 )}
+                {list?.acceptedCommittees?.length == 0 && (
+                  <p>No Active committees</p>
+                )}
               </Tabs.Item>
               <Tabs.Item title="Deleted">
                 {list?.deletedCommittees?.length !== 0 && (
@@ -130,6 +165,9 @@ export default function AllCommittees() {
                       })}
                     </div>
                   </>
+                )}
+                {list?.deletedCommittees?.length == 0 && (
+                  <p>No deleted committees</p>
                 )}
               </Tabs.Item>
             </Tabs>
