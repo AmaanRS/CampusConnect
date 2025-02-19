@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Types } from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 import { studentModel } from "../Models/Student";
 import { adminModel } from "../Models/Admin";
 import { nonTeachingStaffModel } from "../Models/NonTeachingStaff";
@@ -61,7 +61,7 @@ export type UserPosition =
 	| NonTeachingStaffPosition;
 
 // Mapping between AccountType and UserPosition
-export type PositionMap = {
+type PositionMap = {
 	[AccountType.Student]: StudentPosition[];
 	[AccountType.Teacher]: TeacherPosition[];
 	[AccountType.Admin]: AdminPosition[];
@@ -76,6 +76,12 @@ export const modelMap: Readonly<Record<AccountType, any>> = {
 	[AccountType.Teacher]: teacherModel,
 	[AccountType.NonTeachingStaff]: nonTeachingStaffModel,
 } as const;
+
+export enum Tags {
+	SPORTS = "sports",
+	LITERATURE = "literature",
+	SCIENCE = "science",
+}
 
 export interface IUser {
 	email: string;
@@ -101,6 +107,7 @@ export interface IStudent {
 		position?: StudentPosition;
 	}[];
 	followingCommittees: Types.ObjectId[];
+	tags?: Tags[] | [];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 	postsLiked?: Types.ObjectId[];
@@ -118,6 +125,7 @@ export interface ITeacher {
 		position?: TeacherPosition;
 	}[];
 	postsLiked?: Types.ObjectId[];
+	tags?: Tags[] | [];
 	followingCommittees: Types.ObjectId[];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
@@ -132,6 +140,7 @@ export interface IAdmin {
 	position: AdminPosition[];
 	postsLiked?: Types.ObjectId[];
 	followingCommittees: Types.ObjectId[];
+	tags?: Tags[] | [];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 }
@@ -178,21 +187,8 @@ export interface ICommittee {
 	status: CommitteeStatus;
 	committeeOfDepartment: Department[] | College;
 	followers: { userId: Types.ObjectId; userType: ModelTypes }[];
+	tags?: Tags[] | [];
 }
-
-//
-// I don't know why i did'nt use this
-//
-// export interface ICommittee {
-// 	name: string;
-// 	description: string;
-// 	studentIncharge: IUser;
-// 	facultyIncharge: ITeacher;
-// 	facultyTeam?: ITeacher[];
-// 	members?: IUser[];
-// 	events?: IEvent[];
-// 	isAccountActive?: boolean;
-// }"
 
 export interface ICommitteeDocument extends ICommittee, Document {}
 

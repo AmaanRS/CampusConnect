@@ -7,13 +7,12 @@ import {
 import {
 	AccountType,
 	Department,
-	ICommittee,
 	ICommitteeDocument,
-	IStudent,
 	IStudentDocument,
 	ITeacherDocument,
 	modelMap,
 	StudentPosition,
+	Tags,
 	TeacherPosition,
 } from "../Types/ModelTypes";
 import {
@@ -25,7 +24,6 @@ import { studentModel } from "../Models/Student";
 import { teacherModel } from "../Models/Teacher";
 import { committeeModel } from "../Models/Committee";
 import mongoose, { Types } from "mongoose";
-import { adminModel } from "../Models/Admin";
 
 const createCommittee = async (req: Request, res: Response) => {
 	try {
@@ -36,6 +34,7 @@ const createCommittee = async (req: Request, res: Response) => {
 			studentIncharge: studentInchargeEmail,
 			facultyInchargeEmail,
 			committeeOfDepartment,
+			tags,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
 			name: string | undefined;
@@ -43,6 +42,7 @@ const createCommittee = async (req: Request, res: Response) => {
 			studentIncharge: string | undefined;
 			facultyInchargeEmail: string | undefined;
 			committeeOfDepartment: Department[] | undefined;
+			tags?: Tags[] | [];
 		} = req.body;
 
 		if (!decodedToken) {
@@ -58,6 +58,15 @@ const createCommittee = async (req: Request, res: Response) => {
 		if (!adminEmail) {
 			const response: StandardResponse = {
 				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		if (!tags || !Array.isArray(tags) || tags.length === 0) {
+			const response: StandardResponse = {
+				message: "Give tags",
 				success: false,
 			};
 
@@ -135,6 +144,7 @@ const createCommittee = async (req: Request, res: Response) => {
 						studentIncharge: student._id,
 						facultyIncharge: teacher._id,
 						committeeOfDepartment,
+						tags: tags,
 					},
 				],
 				{ session },

@@ -12,7 +12,6 @@ import {
 import { committeeModel } from "../Models/Committee";
 import {
 	AccountType,
-	IAdmin,
 	IStudentDocument,
 	ITeacherDocument,
 	IUserDocument,

@@ -10,15 +10,14 @@ import { adminModel } from "../Models/Admin";
 import {
 	AccountType,
 	AdminPosition,
-	CommitteeStatus,
 	IAdmin,
 	modelMap,
+	Tags,
 } from "../Types/ModelTypes";
 import { runWithRetrySession } from "../Utils/util";
 import { userEmailRegex } from "../Utils/regexUtils";
 import { studentModel } from "../Models/Student";
 import { teacherModel } from "../Models/Teacher";
-import { nonTeachingStaffModel } from "../Models/NonTeachingStaff";
 import { UpdateWriteOpResult } from "mongoose";
 import { createJwtToken } from "../Utils/jwtToken";
 import { postModel } from "../Models/Post";
@@ -27,7 +26,10 @@ import { postModel } from "../Models/Post";
 // Creates admin using user jwt token
 const createAdmin = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
+		const {
+			decodedToken,
+			tags = [],
+		}: { decodedToken: decodedTokenPayload; tags?: Tags[] | [] } = req.body;
 
 		if (!decodedToken) {
 			const response: StandardResponse = {
@@ -122,9 +124,12 @@ const createAdmin = async (req: Request, res: Response) => {
 			}
 
 			// This will return an array
-			const newAdmin: IAdmin[] = await adminModel.create([dataForNewAdmin], {
-				session,
-			});
+			const newAdmin: IAdmin[] = await adminModel.create(
+				[dataForNewAdmin, tags],
+				{
+					session,
+				},
+			);
 
 			if (!newAdmin || newAdmin.length === 0) {
 				const response: StandardResponse = {

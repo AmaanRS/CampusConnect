@@ -1,5 +1,10 @@
 import { Model, MongooseError, Schema, Types, model } from "mongoose";
-import { AccountType, IAdminDocument, AdminPosition } from "../Types/ModelTypes";
+import {
+	AccountType,
+	IAdminDocument,
+	AdminPosition,
+	Tags,
+} from "../Types/ModelTypes";
 import { userEmailRegex } from "../Utils/regexUtils";
 import { validateAndHash } from "../Utils/passwordUtils";
 import _ from "lodash";
@@ -50,6 +55,15 @@ const adminSchema = new Schema<IAdminDocument>(
 				{
 					type: Schema.Types.ObjectId,
 					ref: "committeeModel",
+				},
+			],
+			default: [],
+		},
+		tags: {
+			type: [
+				{
+					type: String,
+					enum: Object.values(Tags),
 				},
 			],
 			default: [],

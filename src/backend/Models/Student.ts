@@ -5,6 +5,7 @@ import {
 	AccountType,
 	IStudentDocument,
 	StudentPosition,
+	Tags,
 } from "../Types/ModelTypes";
 import { studentEmailRegex } from "../Utils/regexUtils";
 import { validateAndHash } from "../Utils/passwordUtils";
@@ -76,6 +77,15 @@ const studentSchema = new Schema<IStudentDocument>(
 				{
 					type: Schema.Types.ObjectId,
 					ref: "committeeModel",
+				},
+			],
+			default: [],
+		},
+		tags: {
+			type: [
+				{
+					type: String,
+					enum: Object.values(Tags),
 				},
 			],
 			default: [],

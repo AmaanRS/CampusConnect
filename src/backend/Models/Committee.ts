@@ -5,6 +5,7 @@ import {
 	Department,
 	ICommitteeDocument,
 	ModelTypes,
+	Tags,
 } from "../Types/ModelTypes";
 import { generateUniqueId } from "../Utils/uniqueId";
 import { DataResponse } from "../Types/GeneralTypes";
@@ -98,6 +99,15 @@ const committeeSchema = new Schema<ICommitteeDocument>(
 						required: true,
 						enum: Object.values(ModelTypes),
 					},
+				},
+			],
+			default: [],
+		},
+		tags: {
+			type: [
+				{
+					type: String,
+					enum: Object.values(Tags),
 				},
 			],
 			default: [],

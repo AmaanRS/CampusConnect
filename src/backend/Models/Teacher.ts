@@ -4,6 +4,7 @@ import {
 	AccountType,
 	ITeacherDocument,
 	TeacherPosition,
+	Tags,
 } from "../Types/ModelTypes";
 import { teacherEmailRegex } from "../Utils/regexUtils";
 import { validateAndHash } from "../Utils/passwordUtils";
@@ -67,6 +68,15 @@ const teacherSchema = new Schema<ITeacherDocument>(
 				{
 					type: Schema.Types.ObjectId,
 					ref: "committeeModel",
+				},
+			],
+			default: [],
+		},
+		tags: {
+			type: [
+				{
+					type: String,
+					enum: Object.values(Tags),
 				},
 			],
 			default: [],

@@ -4,6 +4,7 @@ import {
 	Department,
 	IStudent,
 	StudentPosition,
+	Tags,
 	Year,
 } from "../Types/ModelTypes";
 import {
@@ -16,7 +17,6 @@ import { runWithRetrySession } from "../Utils/util";
 import { userModel } from "../Models/User";
 import { studentModel } from "../Models/Student";
 import { createJwtToken } from "../Utils/jwtToken";
-import { commentModel } from "../Models/Comment";
 
 const createStudent = async (req: Request, res: Response) => {
 	try {
@@ -24,10 +24,12 @@ const createStudent = async (req: Request, res: Response) => {
 			decodedToken,
 			department,
 			year,
+			tags = [],
 		}: {
 			decodedToken: decodedTokenPayload;
 			department: Department;
 			year: Year;
+			tags?: Tags[] | [];
 		} = req.body;
 
 		if (!decodedToken) {
@@ -74,8 +76,6 @@ const createStudent = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			// const { _id: userId, ...user } = userFromDb;
-
 			// Passing old objectId ensures that objectid remains same
 			const userId = userFromDb._id;
 			const { ...user } = userFromDb;
@@ -101,7 +101,7 @@ const createStudent = async (req: Request, res: Response) => {
 			newStudentData.department = department;
 
 			const newStudent: IStudent[] = await studentModel.create(
-				[newStudentData],
+				[newStudentData, tags],
 				{
 					session,
 				},
