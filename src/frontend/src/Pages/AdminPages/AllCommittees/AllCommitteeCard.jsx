@@ -44,7 +44,11 @@ export default function AllCommitteeCard({ item }) {
           {item.description}
         </p>
 
-        <div>status = {item.status}</div>
+        <div>
+          <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs">
+            {item.status}
+          </span>
+        </div>
 
         <div className="mb-1">
           <span className="font-semibold text-gray-900 dark:text-gray-300">
