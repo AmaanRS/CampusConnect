@@ -29,6 +29,12 @@ export default function CommitteeDetailLayout() {
     return (
       <>
         <CentreMainContent>
+          <div className="flex animate-pulse bg-slate-100 py-2 rounded-lg items-center mb-4 px-4 ">
+            <div className="  rounded-full bg-slate-200 h-16 w-16 "></div>
+
+            <p className="ml-6 rounded-md h-6 w-20 bg-slate-200"> </p>
+          </div>
+
           <PostDetailSkeleton />
         </CentreMainContent>
         <RightSidebar>

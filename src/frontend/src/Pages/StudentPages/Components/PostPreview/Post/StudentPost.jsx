@@ -1,4 +1,3 @@
-import { Avatar, Button, HR } from "flowbite-react";
 import React from "react";
 import "./post.scss";
 import PostTop from "./PostTop";
@@ -11,7 +10,6 @@ import { Link, useNavigate } from "react-router-dom";
 export default function StudentPost({ mode = "home", postData }) {
   let isImage = postData?.image?.length > 0;
   const navigate = useNavigate();
-  console.log("studentpost", postData);
 
   return (
     <>
