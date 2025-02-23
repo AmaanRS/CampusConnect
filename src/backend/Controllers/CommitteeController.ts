@@ -10,11 +10,11 @@ import {
 	ICommitteeDocument,
 	IStudentDocument,
 	ITeacherDocument,
-	modelMap,
 	StudentPosition,
 	Tags,
 	TeacherPosition,
 } from "../Types/ModelTypes";
+import { modelMap } from "../Types/GeneralTypes";
 import {
 	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
 	runWithRetrySession,
