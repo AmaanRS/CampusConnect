@@ -77,8 +77,8 @@ export default function Topbar() {
 function Logo() {
   return (
     <div className="logo">
-      <h1 className="text-2xl font-bold text-blue-dark">
-        Campus<span className="text-blue-light">Connect</span>
+      <h1 className="text-2xl font-bold text-blue-700">
+        Campus<span className="text-blue-500">Connect</span>
       </h1>
     </div>
   );
