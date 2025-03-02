@@ -1,10 +1,11 @@
-import { Model, MongooseError, Schema, model } from "mongoose";
+import { Model, MongooseError, Schema, Types, model } from "mongoose";
 import {
 	Year,
 	Department,
 	AccountType,
 	IStudentDocument,
 	StudentPosition,
+	Tags,
 } from "../Types/ModelTypes";
 import { studentEmailRegex } from "../Utils/regexUtils";
 import { validateAndHash } from "../Utils/passwordUtils";
@@ -71,6 +72,24 @@ const studentSchema = new Schema<IStudentDocument>(
 			],
 			default: [],
 		},
+		followingCommittees: {
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "committeeModel",
+				},
+			],
+			default: [],
+		},
+		tags: {
+			type: [
+				{
+					type: String,
+					enum: Object.values(Tags),
+				},
+			],
+			default: [],
+		},
 		isProfileComplete: {
 			default: false,
 			type: Boolean,
@@ -80,8 +99,12 @@ const studentSchema = new Schema<IStudentDocument>(
 			type: Boolean,
 		},
 		postsLiked: {
-			type: [Schema.Types.ObjectId],
-			ref: "postModel",
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: "postModel",
+				},
+			],
 			default: [],
 		},
 	},
@@ -89,128 +112,6 @@ const studentSchema = new Schema<IStudentDocument>(
 		timestamps: true,
 	},
 );
-
-// function validatePosition(this: IStudent) {
-// 	// User cannot give more than two positions but i am adding student to the positions set and it is not a bug
-// 	// if (this.position.size > 2) {
-// 	// 	throw new MongooseError(
-// 	// 		"Do not give more than two positions while creating student",
-// 	// 	);
-// 	// }
-
-// 	if (this.position === undefined) {
-// 		throw new MongooseError("Position cannot be empty");
-// 	}
-
-// 	if (this.position.length === 1) {
-// 		validateSinglePosition(this);
-// 	} else if (this.position.length === 2) {
-// 		validateMultiplePositions(this);
-// 	} else if (
-// 		this.position.length > 2 &&
-// 		this.position.length !== Object.keys(StudentPosition).length
-// 	) {
-// 		throw new MongooseError(
-// 			"Add validations for student positions because you increased the keys in Student Position enum but did not write a validation for it",
-// 		);
-// 	}
-// }
-
-// function validateSinglePosition(student: IStudent) {
-// 	const position = [...student.position][0];
-
-// 	switch (position) {
-// 		case StudentPosition.Student:
-// 			if (
-// 				//If isInChargeOfCommittees is given
-// 				(student.isInChargeOfCommittees &&
-// 					student.isInChargeOfCommittees?.length > 0) ||
-// 				//If isMemberOfCommittees is given
-// 				(student.isMemberOfCommittees &&
-// 					student.isMemberOfCommittees?.length > 0)
-// 			) {
-// 				throw new MongooseError(
-// 					"If position is student then isInChargeOfCommittees and isMemberOfCommittees cannot be given",
-// 				);
-// 			}
-// 			break;
-// 		case StudentPosition.StudentIncharge:
-// 			// Add position student to the set of positions since a studentincharge is also a student
-// 			student.position.push(StudentPosition.Student);
-
-// 			if (
-// 				//If isMemberOfCommittees is given
-// 				(student.isMemberOfCommittees &&
-// 					student.isMemberOfCommittees?.length > 0) ||
-// 				//If isInChargeOfCommittees is not given
-// 				(student.isInChargeOfCommittees &&
-// 					student.isInChargeOfCommittees?.length <= 0)
-// 			) {
-// 				throw new MongooseError(
-// 					"If position is StudentIncharge then isMemberOfCommittees cannot be given and isInChargeOfCommittees should be given",
-// 				);
-// 			}
-// 			break;
-// 		case StudentPosition.CommitteeMember:
-// 			// Add position student to the set of positions since a CommitteeMember is also a student
-// 			student.position.push(StudentPosition.Student);
-
-// 			if (
-// 				//If isInChargeOfCommittees is given
-// 				(student.isInChargeOfCommittees &&
-// 					student.isInChargeOfCommittees.length > 0) ||
-// 				//If isMemberOfCommittees is not given
-// 				(student.isMemberOfCommittees &&
-// 					student.isMemberOfCommittees.length <= 0)
-// 			) {
-// 				throw new MongooseError(
-// 					"If position is CommitteeMember then isInChargeOfCommittees cannot be given and isMemberOfCommittees should be given",
-// 				);
-// 			}
-// 			break;
-// 		default:
-// 			throw new MongooseError("Invalid student position");
-// 	}
-// }
-
-// //
-// // Check the below code if it works or not, it may not because of "this"
-// //
-// function validateMultiplePositions(student: IStudent) {
-// 	const { position, isInChargeOfCommittees, isMemberOfCommittees } = student;
-
-// 	// Add position student to the set of positions since a StudentIncharge and CommitteeMember is also a student
-// 	student.position.push(StudentPosition.Student);
-
-// 	// Check this if it works
-// 	if (
-// 		position.includes(StudentPosition.StudentIncharge) &&
-// 		position.includes(StudentPosition.CommitteeMember) &&
-// 		((isInChargeOfCommittees && isInChargeOfCommittees.length <= 0) ||
-// 			(isMemberOfCommittees && isMemberOfCommittees.length <= 0))
-// 	) {
-// 		throw new MongooseError(
-// 			"If position is both StudentIncharge and CommitteeMember, then both isInChargeOfCommittees and isMemberOfCommittees should be given",
-// 		);
-// 	}
-// }
-
-// export function validCombinationsFunc(value: string[]) {
-// 	const allowedCombinations: string[][] = [
-// 		[StudentPosition.Student],
-// 		[StudentPosition.Student, StudentPosition.CommitteeMember],
-// 		[
-// 			StudentPosition.Student,
-// 			StudentPosition.CommitteeMember,
-// 			StudentPosition.StudentIncharge,
-// 		],
-// 	];
-// 	return allowedCombinations.some(
-// 		(combination) =>
-// 			combination.every((pos) => value.includes(pos)) &&
-// 			value.every((pos) => combination.includes(pos)),
-// 	);
-// }
 
 studentSchema.pre("validate", async function (next) {
 	try {
@@ -259,15 +160,17 @@ studentSchema.pre("validate", async function (next) {
 
 		this.studentId = stuId;
 
-		if (this.postsLiked === undefined) this.postsLiked = [];
+		this.followingCommittees = _.chain(this.followingCommittees)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
 
-		// this.isInChargeOfCommittees = this.isInChargeOfCommittees
-		// 	? [...new Set(this.isInChargeOfCommittees)]
-		// 	: undefined;
-
-		// this.isMemberOfCommittees = this.isMemberOfCommittees
-		// 	? [...new Set(this.isMemberOfCommittees)]
-		// 	: undefined;
+		this.postsLiked = _.chain(this.postsLiked)
+			.map(String)
+			.uniq()
+			.map((id) => new Types.ObjectId(id))
+			.value();
 
 		next();
 	} catch (err) {

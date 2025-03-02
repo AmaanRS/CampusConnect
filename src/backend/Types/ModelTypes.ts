@@ -1,4 +1,8 @@
 import mongoose, { Document, Types } from "mongoose";
+import { studentModel } from "../Models/Student";
+import { adminModel } from "../Models/Admin";
+import { nonTeachingStaffModel } from "../Models/NonTeachingStaff";
+import { teacherModel } from "../Models/Teacher";
 
 export enum Year {
 	"1ST" = 1,
@@ -45,6 +49,9 @@ export enum ModelTypes {
 	COMMITTEE_MODEL = "committeeModel",
 	EVENT_MODEL = "eventModel",
 	POST_MODEL = "postModel",
+	STUDENT_MODEL = "studentModel",
+	TEACHER_MODEL = "teacherModel",
+	ADMIN_MODEL = "adminModel",
 }
 
 export type UserPosition =
@@ -54,7 +61,7 @@ export type UserPosition =
 	| NonTeachingStaffPosition;
 
 // Mapping between AccountType and UserPosition
-export type PositionMap = {
+type PositionMap = {
 	[AccountType.Student]: StudentPosition[];
 	[AccountType.Teacher]: TeacherPosition[];
 	[AccountType.Admin]: AdminPosition[];
@@ -62,6 +69,19 @@ export type PositionMap = {
 };
 
 export type PositionByAccountType<T extends AccountType> = PositionMap[T];
+
+export const modelMap: Readonly<Record<AccountType, any>> = {
+	[AccountType.Student]: studentModel,
+	[AccountType.Admin]: adminModel,
+	[AccountType.Teacher]: teacherModel,
+	[AccountType.NonTeachingStaff]: nonTeachingStaffModel,
+} as const;
+
+export enum Tags {
+	SPORTS = "sports",
+	LITERATURE = "literature",
+	SCIENCE = "science",
+}
 
 export interface IUser {
 	email: string;
@@ -86,6 +106,8 @@ export interface IStudent {
 		committeeObjId?: mongoose.Types.ObjectId;
 		position?: StudentPosition;
 	}[];
+	followingCommittees: Types.ObjectId[];
+	tags?: Tags[] | [];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 	postsLiked?: Types.ObjectId[];
@@ -103,6 +125,8 @@ export interface ITeacher {
 		position?: TeacherPosition;
 	}[];
 	postsLiked?: Types.ObjectId[];
+	tags?: Tags[] | [];
+	followingCommittees: Types.ObjectId[];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 }
@@ -115,6 +139,8 @@ export interface IAdmin {
 	accType: AccountType;
 	position: AdminPosition[];
 	postsLiked?: Types.ObjectId[];
+	followingCommittees: Types.ObjectId[];
+	tags?: Tags[] | [];
 	isProfileComplete?: boolean;
 	isAccountActive?: boolean;
 }
@@ -160,21 +186,9 @@ export interface ICommittee {
 	posts?: Types.ObjectId[] | undefined;
 	status: CommitteeStatus;
 	committeeOfDepartment: Department[] | College;
+	followers: { userId: Types.ObjectId; userType: ModelTypes }[];
+	tags?: Tags[] | [];
 }
-
-//
-// I don't know why i did'nt use this
-//
-// export interface ICommittee {
-// 	name: string;
-// 	description: string;
-// 	studentIncharge: IUser;
-// 	facultyIncharge: ITeacher;
-// 	facultyTeam?: ITeacher[];
-// 	members?: IUser[];
-// 	events?: IEvent[];
-// 	isAccountActive?: boolean;
-// }"
 
 export interface ICommitteeDocument extends ICommittee, Document {}
 

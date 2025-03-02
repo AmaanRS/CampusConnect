@@ -12,10 +12,10 @@ import {
 import { committeeModel } from "../Models/Committee";
 import {
 	AccountType,
-	IAdmin,
 	IStudentDocument,
 	ITeacherDocument,
 	IUserDocument,
+	modelMap,
 	StudentPosition,
 	TeacherPosition,
 } from "../Types/ModelTypes";
@@ -582,8 +582,11 @@ const deletePost = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			const isAdmin = decodedToken.accountType === AccountType.Admin;
+
 			// Only facultyIncharge or studentIncharge or admin of that committee can delete post
-			if (decodedToken.accountType !== AccountType.Admin) {
+			// if (decodedToken.accountType !== AccountType.Admin) {
+			if (!isAdmin) {
 				const resp = checkIfFacultyOrStudentInchargeOfCommitteeFunc({
 					decodedToken,
 					studentInchargeEmail: post.committeeObjId.studentIncharge.email,
@@ -593,21 +596,16 @@ const deletePost = async (req: Request, res: Response) => {
 				if (!resp.success) {
 					return resp;
 				}
-
-				isPostDeleted = await postModel
-					.findOneAndDelete({ postId: postId })
-					.populate<{ likes: IUserDocument[] }>(["likes"])
-					.session(session);
-			} else {
-				//Admin can literally delete the isPostDeleted:true posts also
-				isPostDeleted = await postModel
-					.findOneAndDelete(
-						{ postId: postId },
-						{ _skipDeletedPostsHook: true },
-					)
-					.populate<{ likes: IUserDocument[] }>(["likes"])
-					.session(session);
 			}
+
+			//Admin can literally delete the isPostDeleted:true posts also
+			isPostDeleted = await postModel
+				.findOneAndDelete(
+					{ postId: postId },
+					{ _skipDeletedPostsHook: isAdmin },
+				)
+				.populate<{ likes: IUserDocument[] }>(["likes"])
+				.session(session);
 
 			if (!isPostDeleted) {
 				const response: StandardResponse = {
@@ -854,20 +852,7 @@ const togglePostLike = async (req: Request, res: Response) => {
 
 			let likeRemoved: boolean = false;
 
-			let model: any;
-			switch (decodedToken.accountType) {
-				case AccountType.Student:
-					model = studentModel;
-					break;
-
-				case AccountType.Admin:
-					model = adminModel;
-					break;
-
-				case AccountType.Teacher:
-					model = teacherModel;
-					break;
-			}
+			let model = modelMap[decodedToken.accountType];
 
 			if (Array.isArray(post.likes)) {
 				for (let i = 0; i < post.likes.length; i++) {

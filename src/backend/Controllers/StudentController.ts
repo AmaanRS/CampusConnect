@@ -4,6 +4,7 @@ import {
 	Department,
 	IStudent,
 	StudentPosition,
+	Tags,
 	Year,
 } from "../Types/ModelTypes";
 import {
@@ -16,7 +17,6 @@ import { runWithRetrySession } from "../Utils/util";
 import { userModel } from "../Models/User";
 import { studentModel } from "../Models/Student";
 import { createJwtToken } from "../Utils/jwtToken";
-import { commentModel } from "../Models/Comment";
 
 const createStudent = async (req: Request, res: Response) => {
 	try {
@@ -24,10 +24,12 @@ const createStudent = async (req: Request, res: Response) => {
 			decodedToken,
 			department,
 			year,
+			tags = [],
 		}: {
 			decodedToken: decodedTokenPayload;
 			department: Department;
 			year: Year;
+			tags?: Tags[] | [];
 		} = req.body;
 
 		if (!decodedToken) {
@@ -74,8 +76,6 @@ const createStudent = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			// const { _id: userId, ...user } = userFromDb;
-
 			// Passing old objectId ensures that objectid remains same
 			const userId = userFromDb._id;
 			const { ...user } = userFromDb;
@@ -101,7 +101,7 @@ const createStudent = async (req: Request, res: Response) => {
 			newStudentData.department = department;
 
 			const newStudent: IStudent[] = await studentModel.create(
-				[newStudentData],
+				[newStudentData, tags],
 				{
 					session,
 				},
@@ -184,37 +184,24 @@ const getStudentById = async (req: Request, res: Response) => {
 			};
 			return res.status(401).json(response);
 		}
-		let student: IStudent | null;
 
-		if (decodedToken.accountType === AccountType.Admin) {
-			student = await studentModel
-				.findOne(
-					{ email },
-					{ password: 0 },
-					{ _skipInactiveStudentsHook: true },
-				)
-				.populate([
-					{
-						path: "postsLiked",
-					},
-					{
-						path: "committeePositions.committeeObjId",
-					},
-				])
-				.lean();
-		} else {
-			student = await studentModel
-				.findOne({ email }, { password: 0 })
-				.populate([
-					{
-						path: "postsLiked",
-					},
-					{
-						path: "committeePositions.committeeObjId",
-					},
-				])
-				.lean();
-		}
+		const isAdmin = decodedToken.accountType === AccountType.Admin;
+
+		const student = await studentModel
+			.findOne(
+				{ email },
+				{ password: 0 },
+				{ _skipInactiveStudentsHook: isAdmin },
+			)
+			.populate([
+				{
+					path: "postsLiked",
+				},
+				{
+					path: "committeePositions.committeeObjId",
+				},
+			])
+			.lean();
 
 		if (!student) {
 			const response: StandardResponse = {
@@ -500,17 +487,14 @@ const getAllStudents = async (req: Request, res: Response) => {
 
 			return res.status(401).json(response);
 		}
-		let allStudents;
 
-		if (decodedToken.accountType === AccountType.Admin) {
-			allStudents = await studentModel
-				.find({}, null, {
-					_skipInactiveStudentsHook: true,
-				})
-				.lean();
-		} else {
-			allStudents = await studentModel.find().lean();
-		}
+		const isAdmin = decodedToken.accountType === AccountType.Admin;
+
+		const allStudents = await studentModel
+			.find({}, null, {
+				_skipInactiveStudentsHook: isAdmin,
+			})
+			.lean();
 
 		if (!allStudents || allStudents.length === 0) {
 			const response: DataResponse = {

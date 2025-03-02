@@ -13,16 +13,18 @@ import {
 	AccountType,
 	Department,
 	ITeacher,
-	StudentPosition,
+	Tags,
 	TeacherPosition,
 } from "../Types/ModelTypes";
 import { createJwtToken } from "../Utils/jwtToken";
-import { studentModel } from "../Models/Student";
 
 // Creates teacher using user jwt token
 const createTeacher = async (req: Request, res: Response) => {
 	try {
-		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
+		const {
+			decodedToken,
+			tags = [],
+		}: { decodedToken: decodedTokenPayload; tags?: Tags[] | [] } = req.body;
 
 		let department: Department | undefined = req.body.department;
 
@@ -84,8 +86,6 @@ const createTeacher = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			// const { _id: userId, ...user } = userFromDb;
-
 			// Passing old objectId ensures that objectid remains same
 			const userId = userFromDb._id;
 			const { ...user } = userFromDb;
@@ -113,7 +113,7 @@ const createTeacher = async (req: Request, res: Response) => {
 			if (!user.department) newTeacherData.department = department;
 
 			const newTeacher: ITeacher[] = await teacherModel.create(
-				[newTeacherData],
+				[newTeacherData, tags],
 				{
 					session,
 				},
@@ -486,16 +486,13 @@ const getAllTeachers = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		let allTeachers;
-		if (decodedToken.accountType === AccountType.Admin) {
-			allTeachers = await teacherModel
-				.find({}, null, {
-					_skipInactiveTeachersHook: true,
-				})
-				.lean();
-		} else {
-			allTeachers = await teacherModel.find().lean();
-		}
+		const isAdmin = decodedToken.accountType === AccountType.Admin;
+
+		const allTeachers = await teacherModel
+			.find({}, null, {
+				_skipInactiveTeachersHook: isAdmin,
+			})
+			.lean();
 
 		if (allTeachers.length === 0) {
 			const response: DataResponse = {
