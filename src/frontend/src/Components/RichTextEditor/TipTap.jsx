@@ -108,7 +108,7 @@ const extensions = [
   Superscript,
   Subscript,
   Placeholder.configure({
-    placeholder: "Write Post Content Here",
+    placeholder: "Write Content Here",
   }),
 ];
 

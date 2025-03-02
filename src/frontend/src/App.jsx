@@ -31,6 +31,7 @@ import StudentHomeLayout from "./Pages/StudentPages/Home/StudentHomeLayout";
 import PostDetailsLayout from "./Pages/StudentPages/PostDetails/PostDetailsLayout";
 import CommitteeDetailLayout from "./Pages/StudentPages/CommitteeDetails/CommitteeDetailLayout";
 import Explore from "./Pages/StudentPages/Explore/Explore";
+import AddEvent from "./Pages/StudentPages/AddEvent/AddEvent";
 
 const queryClient = new QueryClient();
 function App() {
@@ -103,6 +104,7 @@ function App() {
               children: [
                 { index: true, element: <StudentHomeLayout /> },
                 { path: "createPost", element: <AddPost /> },
+                { path: "createEvent", element: <AddEvent /> },
                 { path: "explore", element: <Explore /> },
                 { path: "post/:postId", element: <PostDetailsLayout /> },
                 {

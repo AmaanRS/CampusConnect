@@ -15,6 +15,7 @@ import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+
 const postData = async (data) => {
   const response = await axiosInstance.post("/post/createPost", data);
   return response.data;

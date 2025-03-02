@@ -11,6 +11,7 @@ import { UserContext } from "../../../store/UserContextProvider";
 import { IoCreateSharp } from "react-icons/io5";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import { MdOutlineEventNote } from "react-icons/md";
 
 const fetchData = async () => {
   const response = await axiosInstance.post("/student/getAllStudentData", {}); // Pass an empty object if needed
@@ -43,11 +44,18 @@ export default function SidebarComponent() {
     <Sidebar>
       <SidebarItem to="/student" icon={<Home size={20} />} text="Home" />
       {showAddPost && (
-        <SidebarItem
-          to="createPost"
-          icon={<IoCreateSharp size={20} />}
-          text="Add Post"
-        />
+        <>
+          <SidebarItem
+            to="createPost"
+            icon={<IoCreateSharp size={20} />}
+            text="Add Post"
+          />
+          <SidebarItem
+            to="createEvent"
+            icon={<MdOutlineEventNote size={20} />}
+            text="Add Event"
+          />
+        </>
       )}
       <SidebarItem to="explore" icon={<Search size={20} />} text="Explore " />
       <SidebarItem
@@ -58,12 +66,6 @@ export default function SidebarComponent() {
         icon={<LiaChalkboardTeacherSolid size={20} />}
         text="online courses/certifications"
       />
-      <SidebarItem icon={<PiStudent size={20} />} text="Students" />
-      <SidebarItem icon={<TbDevicesQuestion size={20} />} text="Requests" />
-
-      <hr className="my-3" />
-      <SidebarItem icon={<User size={20} />} text="profile" />
-      <SidebarItem icon={<Settings size={20} />} text="Settings" />
 
       <SidebarButton
         onClick={() => logOutUser()}

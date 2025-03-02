@@ -8,7 +8,7 @@ export default function SidebarItem({ icon, text, alert, to = "/" }) {
         {({ isActive }) => {
           return (
             <li
-              className={`relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${
+              className={`relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors duration-200 group ${
                 isActive
                   ? "bg-blue-600 text-white"
                   : "hover:bg-indigo-50 text-gray-600"
