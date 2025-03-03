@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function CommitteSidebarQuant({ members = 0, followers = 2 }) {
+export default function CommitteSidebarQuant({ members = 0, followers = 0 }) {
   return (
     <div className="px-4 flex justify-between">
       <div className="flex-col text-sm justify-center items-center">

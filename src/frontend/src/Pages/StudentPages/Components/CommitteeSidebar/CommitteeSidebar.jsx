@@ -16,6 +16,7 @@ export default function CommitteeSidebar({ committeeData }) {
         members={
           committeeData?.facultyTeam?.length + committeeData?.members.length
         }
+        followers={committeeData?.followers?.length}
       />
       <hr className="my-4 border-slate-300 rounded-full mx-4" />
       <CommitteeSidebarDepartment
