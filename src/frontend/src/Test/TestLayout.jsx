@@ -1,4 +1,14 @@
 import ReactPlayer from "react-player";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  LinkedinShareButton,
+  FacebookIcon,
+  TwitterIcon,
+  LinkedinIcon,
+  RedditShareButton,
+  RedditIcon,
+} from "react-share";
 
 export default function TestLayout() {
   return (
@@ -24,10 +34,29 @@ export default function TestLayout() {
           {" "}
           Add your scrollable content here.
         </div> */}
-        <ReactPlayer
+        {/* <ReactPlayer
           controls
           url={"https://www.youtube.com/live/jfKfPfyJRdk?si=62CGTDlYb7P8Qz6T"}
-        />
+        /> */}
+
+        <div>
+          <FacebookShareButton url="https://www.npmjs.com/package/react-share">
+            <FacebookIcon size={32} round />
+          </FacebookShareButton>
+          <RedditShareButton url="https://github.com/">
+            <RedditIcon size={32} />
+          </RedditShareButton>
+
+          {/* <TwitterShareButton url={postUrl}>
+            <TwitterIcon size={32} round />
+          </TwitterShareButton>
+
+          <LinkedinShareButton url={postUrl}>
+            <LinkedinIcon size={32} round />
+          </LinkedinShareButton> */}
+
+          {/* Add more platforms as needed */}
+        </div>
       </div>
 
       {/* Right Section - Popular Committees */}
