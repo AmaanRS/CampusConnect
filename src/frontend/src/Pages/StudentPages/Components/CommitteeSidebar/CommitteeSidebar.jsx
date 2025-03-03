@@ -5,12 +5,14 @@ import CommitteeSidebarDepartment from "./CommitteeSidebarDepartment";
 import CommiteeSidebarMemberList from "./CommiteeSidebarMemberList";
 
 export default function CommitteeSidebar({ committeeData }) {
+  console.log(committeeData.committeeId);
   return (
     <div className=" bg-slate-50  py-2 mt-4   rounded-lg">
       <CommitteeSidebarTop
         name={committeeData?.name}
         description={committeeData?.description}
         createdAt={committeeData?.createdAt}
+        committeeId={committeeData?.committeeId}
       />
       <CommitteSidebarQuant
         members={
