@@ -19,7 +19,13 @@ export default function AllCommitteeItem({ item }) {
                 {item?.name}
               </p>
               <p className="text-xs text-slate-500">
-                {item?.facultyTeam?.length + item?.members?.length} members
+                {!item?.followers && <>0 follower</>}
+                {item?.followers?.length < 2 && (
+                  <>{item?.followers?.length} follower</>
+                )}
+                {item?.followers?.length > 1 && (
+                  <>{item?.followers?.length} followers</>
+                )}
               </p>
             </div>
           </div>

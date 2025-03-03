@@ -1,6 +1,6 @@
 import React from "react";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 const postData = async (data) => {
@@ -12,11 +12,15 @@ const postData = async (data) => {
 };
 
 export default function Follow({ committeeId = "" }) {
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: postData,
     onSuccess: (data) => {
       console.log("following", data);
       // alert("Data posted successfully!");
+      queryClient.invalidateQueries({
+        queryKey: ["allcommittees"],
+      });
     },
     onError: (error) => {
       console.error("Error posting data:", error);
