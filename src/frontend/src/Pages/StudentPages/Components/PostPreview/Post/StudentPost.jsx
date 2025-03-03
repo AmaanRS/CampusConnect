@@ -13,7 +13,7 @@ export default function StudentPost({ mode = "home", postData }) {
 
   return (
     <>
-      <div className="mx-4 my-2  hover:bg-slate-50 cursor-pointer rounded-2xl py-1 px-3 transition-colors duration-100 ">
+      <div className="mx-4 my-2  hover:bg-slate-50  rounded-2xl py-1 px-3 transition-colors duration-100 ">
         <PostTop
           mode={mode}
           committeeId={postData?.committeeObjId?.committeeId}
@@ -21,7 +21,10 @@ export default function StudentPost({ mode = "home", postData }) {
           subname={postData?.committeeObjId?.name}
           username={postData?.postedBy?.email?.split(".")[0]}
         />
-        <div onClick={() => navigate(`/student/post/${postData?.postId}`)}>
+        <div
+          className="cursor-pointer"
+          onClick={() => navigate(`/student/post/${postData?.postId}`)}
+        >
           <PostTitle title={postData?.title} />
           <PostBody isImage={isImage} content={postData?.content} />
         </div>
