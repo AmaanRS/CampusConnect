@@ -59,6 +59,7 @@ export default function SidebarComponent() {
           />
         </>
       )}
+
       <SidebarItem to="explore" icon={<Search size={20} />} text="Explore " />
       <SidebarItem
         icon={<HiOutlineUserGroup size={20} />}
@@ -69,10 +70,13 @@ export default function SidebarComponent() {
         text="online courses/certifications"
       />
       <hr />
-
-      {/* user committees */}
-      <MyCommittees committeeArray={data?.data?.committeePositions} />
-      <hr />
+      {showAddPost && (
+        <>
+          {/* user committees */}
+          <MyCommittees committeeArray={data?.data?.committeePositions} />
+          <hr />
+        </>
+      )}
       {/* user following committees */}
       <Accordion className="border-none">
         <Accordion.Panel>
@@ -87,6 +91,7 @@ export default function SidebarComponent() {
           </Accordion.Content>
         </Accordion.Panel>
       </Accordion>
+      <hr />
 
       <SidebarButton
         onClick={() => logOutUser()}
