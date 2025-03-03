@@ -44,12 +44,7 @@ export default function Explore() {
       <p className="mb-6 text-3xl font-bold">Explore Committees</p>
       <div className=" grid grid-cols-3  gap-4">
         {data?.data?.map((item) => (
-          <Link
-            key={item?.committeeId}
-            to={`/student/committee/${item?.committeeId}`}
-          >
-            <AllCommitteeItem item={item} />
-          </Link>
+          <AllCommitteeItem item={item} />
         ))}
       </div>
     </div>
