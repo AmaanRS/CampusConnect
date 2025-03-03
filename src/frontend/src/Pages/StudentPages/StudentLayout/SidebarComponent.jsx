@@ -41,7 +41,7 @@ export default function SidebarComponent() {
   if (isError) {
     console.log(error.message, "\n", error);
   }
-
+  console.log(data?.data?.followingCommittees);
   return (
     <Sidebar>
       <SidebarItem to="/student" icon={<Home size={20} />} text="Home" />
@@ -73,6 +73,20 @@ export default function SidebarComponent() {
       {/* user committees */}
       <MyCommittees committeeArray={data?.data?.committeePositions} />
       <hr />
+      {/* user following committees */}
+      <Accordion className="border-none">
+        <Accordion.Panel>
+          <Accordion.Title className="bg-white border-none outline-none shadow-none  ring-0 focus:ring-0 p-0  py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors duration-200 group hover:bg-indigo-50 text-gray-600">
+            Following
+          </Accordion.Title>
+
+          <Accordion.Content className="p-0">
+            {data?.data?.followingCommittees.map((item) => {
+              return <p>{item}</p>;
+            })}
+          </Accordion.Content>
+        </Accordion.Panel>
+      </Accordion>
 
       <SidebarButton
         onClick={() => logOutUser()}
