@@ -209,6 +209,7 @@ export interface IEvent {
 	startTime: String;
 	endTime: String;
 	venue: string;
+	isEventDeleted: boolean;
 }
 
 export interface IEventDocument extends IEvent, Document {}
