@@ -1,6 +1,7 @@
 import { Avatar } from "flowbite-react";
 import React from "react";
 import { Link } from "react-router-dom";
+import Follow from "./Follow";
 
 export default function AllCommitteeItem({ item }) {
   console.log(item);
@@ -25,14 +26,7 @@ export default function AllCommitteeItem({ item }) {
         </Link>
 
         {/* follow button */}
-        <div>
-          <button
-            type="button"
-            className="bg-blue-700 hover:bg-blue-800 font-medium text-sm py-2 px-4 rounded-full text-white transition-colors duration-200"
-          >
-            Follow
-          </button>
-        </div>
+        <Follow committeeId={item?.committeeId} />
       </div>
       <Link
         key={item?.committeeId}
