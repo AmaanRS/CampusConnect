@@ -1,12 +1,5 @@
-import {
-  Button,
-  Dropdown,
-  Label,
-  Select,
-  Tabs,
-  TextInput,
-} from "flowbite-react";
-import React, { useEffect, useRef, useState } from "react";
+import { Button, Label } from "flowbite-react";
+import React, { useState } from "react";
 import TipTap from "../../../Components/RichTextEditor/TipTap";
 import { format, isAfter, parse } from "date-fns";
 
@@ -80,7 +73,7 @@ const datePickerTheme = {
 };
 
 const postData = async (data) => {
-  const response = await axiosInstance.post("/post/createPost", data);
+  const response = await axiosInstance.post("/event/createEvent", data);
   return response.data;
 };
 
@@ -132,6 +125,7 @@ export default function AddEvent() {
   function handleChange(e) {
     setError("");
     setCommittee(e?.value);
+    console.log(e);
   }
 
   // clearing form
@@ -188,6 +182,8 @@ export default function AddEvent() {
     };
 
     console.log(data);
+    // sending data
+    mutation.mutate(data);
   }
 
   return (
@@ -214,6 +210,7 @@ export default function AddEvent() {
             <sup className="text-red-500 text-base">*</sup>
           </div>
           <input
+            disabled={mutation.isPending}
             value={name}
             onChange={(e) => {
               setName(e.target.value);
@@ -246,6 +243,7 @@ export default function AddEvent() {
               <sup className="text-red-500 text-base">*</sup>
             </div>
             <Datepicker
+              disabled={mutation.isPending}
               onSelectedDateChanged={(date) => {
                 setStartDate(format(date, "MMMM dd, yyyy"));
                 setError("");
@@ -267,6 +265,7 @@ export default function AddEvent() {
               <sup className="text-red-500 text-base">*</sup>
             </div>
             <Datepicker
+              disabled={mutation.isPending}
               id="enddate"
               onSelectedDateChanged={(date) => {
                 setEndtDate(format(date, "MMMM dd, yyyy"));
@@ -292,6 +291,7 @@ export default function AddEvent() {
               <sup className="text-red-500 text-base">*</sup>
             </div>
             <input
+              disabled={mutation.isPending}
               type="time"
               value={startTime}
               onChange={(e) => {
@@ -313,6 +313,7 @@ export default function AddEvent() {
               <sup className="text-red-500 text-base">*</sup>
             </div>
             <input
+              disabled={mutation.isPending}
               id="endtime"
               type="time"
               value={endTime}
@@ -336,6 +337,7 @@ export default function AddEvent() {
             <sup className="text-red-500 text-base">*</sup>
           </div>
           <input
+            disabled={mutation.isPending}
             value={venue}
             onChange={(e) => {
               setVenue(e.target.value);
@@ -370,6 +372,11 @@ export default function AddEvent() {
 
         {error != "" && (
           <p className="text-center mt-2 text-red-600">{error}</p>
+        )}
+        {mutation.isError && (
+          <p className="text-center mt-2 text-red-600">
+            {mutation.error.message}
+          </p>
         )}
       </form>
     </div>
