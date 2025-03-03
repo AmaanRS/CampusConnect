@@ -23,7 +23,8 @@ export default function Follow({ committeeId = "" }) {
     onSuccess: (data) => {
       console.log("following", data);
       // alert("Data posted successfully!");
-      //   queryClient.invalidateQueries({ queryKey: ["committee", committeeId] });
+      console.log(["committee", committeeId]);
+      queryClient.invalidateQueries(["committee", committeeId]);
     },
     onError: (error) => {
       console.error("Error posting data:", error);
