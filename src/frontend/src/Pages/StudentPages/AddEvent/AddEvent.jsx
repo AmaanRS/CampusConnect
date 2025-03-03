@@ -243,6 +243,7 @@ export default function AddEvent() {
               <sup className="text-red-500 text-base">*</sup>
             </div>
             <Datepicker
+              placeholder="select start date"
               disabled={mutation.isPending}
               onSelectedDateChanged={(date) => {
                 setStartDate(format(date, "MMMM dd, yyyy"));
@@ -265,6 +266,7 @@ export default function AddEvent() {
               <sup className="text-red-500 text-base">*</sup>
             </div>
             <Datepicker
+              placeholder="select end date"
               disabled={mutation.isPending}
               id="enddate"
               onSelectedDateChanged={(date) => {
