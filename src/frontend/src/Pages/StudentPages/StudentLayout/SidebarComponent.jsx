@@ -2,8 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { User, Search, Settings, LogOutIcon, Home } from "lucide-react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
-import { PiStudent } from "react-icons/pi";
-import { TbDevicesQuestion } from "react-icons/tb";
 import Sidebar from "../../../Components/Layout/Desktop/Sidebar";
 import SidebarItem from "../../../Components/Layout/Desktop/SidebarItem";
 import SidebarButton from "../../../Components/Layout/Desktop/SidebarButton";
@@ -12,6 +10,10 @@ import { IoCreateSharp } from "react-icons/io5";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { MdOutlineEventNote } from "react-icons/md";
+import { Accordion, Avatar } from "flowbite-react";
+import { MdGroups } from "react-icons/md";
+import { Link } from "react-router-dom";
+import MyCommittees from "./MyCommittees";
 
 const fetchData = async () => {
   const response = await axiosInstance.post("/student/getAllStudentData", {}); // Pass an empty object if needed
@@ -66,6 +68,11 @@ export default function SidebarComponent() {
         icon={<LiaChalkboardTeacherSolid size={20} />}
         text="online courses/certifications"
       />
+      <hr />
+
+      {/* user committees */}
+      <MyCommittees committeeArray={data?.data?.committeePositions} />
+      <hr />
 
       <SidebarButton
         onClick={() => logOutUser()}
