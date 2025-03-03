@@ -1,5 +1,9 @@
 import { JwtPayload } from "jsonwebtoken";
 import { AccountType, IEvent } from "./ModelTypes";
+import { studentModel } from "../Models/Student";
+import { adminModel } from "../Models/Admin";
+import { nonTeachingStaffModel } from "../Models/NonTeachingStaff";
+import { teacherModel } from "../Models/Teacher";
 
 export interface StandardResponse {
 	message: string;
@@ -28,3 +32,10 @@ export interface decodedTokenPayload extends JwtPayload {
 	isProfileComplete: boolean;
 	isAccountActive: boolean;
 }
+
+export const modelMap: Readonly<Record<AccountType, any>> = {
+	[AccountType.Student]: studentModel,
+	[AccountType.Admin]: adminModel,
+	[AccountType.Teacher]: teacherModel,
+	[AccountType.NonTeachingStaff]: nonTeachingStaffModel,
+} as const;

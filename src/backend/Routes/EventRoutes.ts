@@ -3,7 +3,7 @@ const Router = express.Router();
 
 import {
 	createEvent,
-	getEvent,
+	getEventById,
 	updateEvent,
 	deleteEvent,
 	getAllEvents,
@@ -11,7 +11,7 @@ import {
 
 Router.route("/createEvent").post(createEvent);
 
-Router.route("/getEvent").post(getEvent);
+Router.route("/getEventById").post(getEventById);
 
 Router.route("/updateEvent").post(updateEvent);
 

@@ -7,13 +7,8 @@ import {
 } from "../Types/GeneralTypes";
 import { userModel } from "../Models/User";
 import { adminModel } from "../Models/Admin";
-import {
-	AccountType,
-	AdminPosition,
-	IAdmin,
-	modelMap,
-	Tags,
-} from "../Types/ModelTypes";
+import { AccountType, AdminPosition, IAdmin, Tags } from "../Types/ModelTypes";
+import { modelMap } from "../Types/GeneralTypes";
 import { runWithRetrySession } from "../Utils/util";
 import { userEmailRegex } from "../Utils/regexUtils";
 import { studentModel } from "../Models/Student";

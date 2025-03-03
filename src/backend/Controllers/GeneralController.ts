@@ -22,6 +22,7 @@ import {
 import { Types } from "mongoose";
 import { postModel } from "../Models/Post";
 import { commentModel } from "../Models/Comment";
+import { eventModel } from "../Models/Event";
 
 const getAllPendingCommitteesFunc = async (
 	decodedToken: decodedTokenPayload | undefined,
@@ -281,7 +282,7 @@ const changeStatusOfCommittee = async (req: Request, res: Response) => {
 
 				return response;
 			}
-			// If committee is deleted the posts inside it should also be deleted
+			// If committee is deleted the posts and events inside it should also be deleted
 			// If post is deleted comment should also be deleted or undeleted
 			if (
 				isCommitteeStatusChanged.posts &&
@@ -375,6 +376,55 @@ const changeStatusOfCommittee = async (req: Request, res: Response) => {
 						const response: StandardResponse = {
 							message:
 								"Could not undelete the comment section associated with the committee's post",
+							success: false,
+						};
+
+						return response;
+					}
+				}
+			}
+
+			if (
+				isCommitteeStatusChanged.events &&
+				isCommitteeStatusChanged.events.length !== 0
+			) {
+				if (action === CommitteeStatus.DELETED) {
+					const isEventDeleted = await eventModel.updateMany(
+						{ _id: { $in: isCommitteeStatusChanged.events } },
+						{ isEventDeleted: true },
+						{ session },
+					);
+
+					if (
+						isEventDeleted.matchedCount !==
+						isCommitteeStatusChanged.events?.length
+					) {
+						const response: StandardResponse = {
+							message:
+								"Could not delete the events associated with the committee",
+							success: false,
+						};
+
+						return response;
+					}
+				} else if (action === CommitteeStatus.ACCEPTED) {
+					const isEventsUnDeleted = await eventModel
+						.updateMany(
+							{
+								_id: { $in: isCommitteeStatusChanged.events },
+							},
+							{ isEventDeleted: false },
+							{ _skipDeletedEventsHook: true },
+						)
+						.session(session);
+
+					if (
+						isEventsUnDeleted.matchedCount !==
+						isCommitteeStatusChanged.events?.length
+					) {
+						const response: StandardResponse = {
+							message:
+								"Could not undelete the events associated with the committee",
 							success: false,
 						};
 

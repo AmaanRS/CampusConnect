@@ -10,11 +10,11 @@ import {
 	ICommitteeDocument,
 	IStudentDocument,
 	ITeacherDocument,
-	modelMap,
 	StudentPosition,
 	Tags,
 	TeacherPosition,
 } from "../Types/ModelTypes";
+import { modelMap } from "../Types/GeneralTypes";
 import {
 	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
 	runWithRetrySession,
@@ -320,13 +320,21 @@ const getCommitteeById = async (req: Request, res: Response) => {
 					path: "members",
 					select: "-password",
 				},
-				"events",
+				{
+					path: "events",
+				},
 				{
 					path: "posts",
 					populate: [
 						{
 							path: "postedBy",
 							select: "-password",
+						},
+						{
+							path: "likes",
+						},
+						{
+							path: "commentObjId",
 						},
 					],
 					model: "postModel",

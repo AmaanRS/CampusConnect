@@ -15,10 +15,10 @@ import {
 	IStudentDocument,
 	ITeacherDocument,
 	IUserDocument,
-	modelMap,
 	StudentPosition,
 	TeacherPosition,
 } from "../Types/ModelTypes";
+import { modelMap } from "../Types/GeneralTypes";
 import { studentModel } from "../Models/Student";
 import { commentModel } from "../Models/Comment";
 import { adminModel } from "../Models/Admin";

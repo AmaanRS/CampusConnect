@@ -1,13 +1,20 @@
-import { Request } from "express";
-import { Response } from "express";
+import { Request, Response } from "express";
 import {
 	DataResponse,
 	decodedTokenPayload,
 	StandardResponse,
 } from "../Types/GeneralTypes";
-import { runWithRetrySession } from "../Utils/util";
+import {
+	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
+	runWithRetrySession,
+} from "../Utils/util";
 import { committeeModel } from "../Models/Committee";
 import { eventModel } from "../Models/Event";
+import {
+	ITeacherDocument,
+	IStudentDocument,
+	AccountType,
+} from "../Types/ModelTypes";
 
 const createEvent = async (req: Request, res: Response) => {
 	try {
@@ -78,9 +85,12 @@ const createEvent = async (req: Request, res: Response) => {
 			const hostingCommitteesExists = await committeeModel
 				.find({
 					committeeId: { $in: hostingCommitteesId },
-					name: { $ne: name },
 				})
 				.session(session)
+				.populate<{
+					facultyIncharge: ITeacherDocument;
+					studentIncharge: IStudentDocument;
+				}>(["studentIncharge", "facultyIncharge"])
 				.lean();
 
 			if (!hostingCommitteesExists || hostingCommitteesExists.length === 0) {
@@ -94,6 +104,10 @@ const createEvent = async (req: Request, res: Response) => {
 
 			const foundCommitteeIds = hostingCommitteesExists.map(
 				(committee) => committee.committeeId,
+			);
+
+			const foundCommitteeObjIds = hostingCommitteesExists.map(
+				(committee) => committee._id,
 			);
 
 			// Identify the missing committee IDs (ie committee ids which are not present in db or are marked as deleted)
@@ -110,21 +124,41 @@ const createEvent = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			// Get obect ids corresponding to committee ids
-			const hostingCommitteesObjectId = await committeeModel
-				.find(
-					{ committeeId: { $in: hostingCommitteesId } },
-					{ _id: 1 },
-					{ session },
-				)
-				.lean();
+			const isStudOrTeachIncharge = hostingCommitteesExists.some(
+				(committee) => {
+					return checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+						decodedToken,
+						studentInchargeEmail: committee.studentIncharge.email,
+						facultyInchargeEmail: committee.facultyIncharge.email,
+					}).success;
+				},
+			);
+
+			if (!isStudOrTeachIncharge) {
+				const response: StandardResponse = {
+					message:
+						"You should be studentIncharge or facultyIncharge of one of the committee under whom you are trying to create an event",
+					success: false,
+				};
+
+				return response;
+			}
+
+			// Get object ids corresponding to committee ids
+			// const hostingCommitteesObjectId = await committeeModel
+			// 	.find(
+			// 		{ committeeId: { $in: hostingCommitteesId } },
+			// 		{ _id: 1 },
+			// 		{ session },
+			// 	)
+			// 	.lean();
 
 			const newEvent = await eventModel.create(
 				[
 					{
 						name,
 						description,
-						hostingCommittees: hostingCommitteesObjectId,
+						hostingCommittees: foundCommitteeObjIds,
 						startDate,
 						endDate,
 						startTime,
@@ -138,6 +172,26 @@ const createEvent = async (req: Request, res: Response) => {
 			if (!newEvent || newEvent.length === 0) {
 				const response: StandardResponse = {
 					message: "Could not create new event",
+					success: false,
+				};
+
+				return response;
+			}
+
+			// Add event in committees
+			const isEventAddedInCommittee = await committeeModel.updateMany(
+				{
+					committeeId: { $in: foundCommitteeIds },
+				},
+				{
+					$addToSet: { events: newEvent[0]._id },
+				},
+				{ session },
+			);
+
+			if (!isEventAddedInCommittee) {
+				const response: StandardResponse = {
+					message: "Could not add event to the committee",
 					success: false,
 				};
 
@@ -165,7 +219,7 @@ const createEvent = async (req: Request, res: Response) => {
 	}
 };
 
-const getEvent = async (req: Request, res: Response) => {
+const getEventById = async (req: Request, res: Response) => {
 	try {
 		const {
 			decodedToken,
@@ -194,7 +248,20 @@ const getEvent = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const eventData = await eventModel.findOne({ eventId: eventId });
+		if (!eventId) {
+			const response: StandardResponse = {
+				message: "Send eventId",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const eventData = await eventModel.findOne({ eventId: eventId }).populate([
+			{
+				path: "hostingCommittees",
+			},
+		]);
 
 		if (!eventData) {
 			const response: StandardResponse = {
@@ -231,7 +298,6 @@ const updateEvent = async (req: Request, res: Response) => {
 			eventId,
 			name,
 			description,
-			hostingCommitteesId,
 			startDate,
 			endDate,
 			startTime,
@@ -242,7 +308,6 @@ const updateEvent = async (req: Request, res: Response) => {
 			eventId: string | undefined;
 			name: string | undefined;
 			description: string | undefined;
-			hostingCommitteesId: string[] | undefined;
 			startDate: string | undefined;
 			endDate: string | undefined;
 			startTime: string | undefined;
@@ -279,13 +344,12 @@ const updateEvent = async (req: Request, res: Response) => {
 		}
 
 		if (
-			!name ||
-			!description ||
-			!hostingCommitteesId ||
-			!startDate ||
-			!endDate ||
-			!startTime ||
-			!endTime ||
+			!name &&
+			!description &&
+			!startDate &&
+			!endDate &&
+			!startTime &&
+			!endTime &&
 			!venue
 		) {
 			const response: StandardResponse = {
@@ -297,57 +361,45 @@ const updateEvent = async (req: Request, res: Response) => {
 		}
 
 		const result = await runWithRetrySession(async (session) => {
-			if (hostingCommitteesId && hostingCommitteesId.length !== 0) {
-				//Should not include deleted committtees (done in model)
-				const hostingCommitteesExists = await committeeModel
-					.find({
-						committeeId: { $in: hostingCommitteesId },
-					})
-					.session(session)
-					.lean();
+			// if (hostingCommitteesId && hostingCommitteesId.length !== 0) {
+			// 	//Should not include deleted committtees (done in model)
+			// 	const hostingCommitteesExists = await committeeModel
+			// 		.find({
+			// 			committeeId: { $in: hostingCommitteesId },
+			// 		})
+			// 		.session(session)
+			// 		.lean();
 
-				if (
-					!hostingCommitteesExists ||
-					hostingCommitteesExists.length === 0
-				) {
-					const response: StandardResponse = {
-						message: "None of the given committee exists",
-						success: false,
-					};
+			// 	if (
+			// 		!hostingCommitteesExists ||
+			// 		hostingCommitteesExists.length === 0
+			// 	) {
+			// 		const response: StandardResponse = {
+			// 			message: "None of the given committee exists",
+			// 			success: false,
+			// 		};
 
-					return response;
-				}
+			// 		return response;
+			// 	}
 
-				const foundCommitteeIds = hostingCommitteesExists.map(
-					(committee) => committee.committeeId,
-				);
+			// 	const foundCommitteeIds = hostingCommitteesExists.map(
+			// 		(committee) => committee.committeeId,
+			// 	);
 
-				// Identify the missing committee IDs
-				const missingCommitteeIds = hostingCommitteesId.filter(
-					(id) => !foundCommitteeIds.includes(id),
-				);
+			// 	// Identify the missing committee IDs
+			// 	const missingCommitteeIds = hostingCommitteesId.filter(
+			// 		(id) => !foundCommitteeIds.includes(id),
+			// 	);
 
-				if (missingCommitteeIds.length > 0) {
-					const response: StandardResponse = {
-						message: `The following committees do not exist: ${missingCommitteeIds.join(", ")}`,
-						success: false,
-					};
+			// 	if (missingCommitteeIds.length > 0) {
+			// 		const response: StandardResponse = {
+			// 			message: `The following committees do not exist: ${missingCommitteeIds.join(", ")}`,
+			// 			success: false,
+			// 		};
 
-					return response;
-				}
-			}
-
-			const newDataForEvent = {
-				eventId,
-				name,
-				description,
-				hostingCommitteesId,
-				startDate,
-				endDate,
-				startTime,
-				endTime,
-				venue,
-			};
+			// 		return response;
+			// 	}
+			// }
 
 			// Get the old event
 			const oldEvent = await eventModel
@@ -358,6 +410,35 @@ const updateEvent = async (req: Request, res: Response) => {
 			if (!oldEvent) {
 				const response: StandardResponse = {
 					message: "Could not find the event",
+					success: false,
+				};
+
+				return response;
+			}
+
+			//Get the committee whose event user is trying to update
+			const committees = await committeeModel
+				.find({
+					_id: { $in: oldEvent.hostingCommittees },
+				})
+				.populate<{
+					facultyIncharge: ITeacherDocument;
+					studentIncharge: IStudentDocument;
+				}>(["studentIncharge", "facultyIncharge"])
+				.session(session);
+
+			if (
+				!committees.some((committee) => {
+					return checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+						decodedToken,
+						studentInchargeEmail: committee.studentIncharge.email,
+						facultyInchargeEmail: committee.facultyIncharge.email,
+					}).success;
+				})
+			) {
+				const response: StandardResponse = {
+					message:
+						"You should be studentIncharge or facultyIncharge of one of the committee under whom you are trying to update an event",
 					success: false,
 				};
 
@@ -379,11 +460,25 @@ const updateEvent = async (req: Request, res: Response) => {
 				return response;
 			}
 
+			let newDataForEvent = { ...oldEvent };
+
+			if (name) newDataForEvent.name = name;
+			if (description) newDataForEvent.description = description;
+			if (startDate) newDataForEvent.startDate = startDate;
+			if (endDate) newDataForEvent.endDate = endDate;
+			if (startTime) newDataForEvent.startTime = startTime;
+			if (endTime) newDataForEvent.endTime = endTime;
+			if (venue) newDataForEvent.venue = venue;
+
 			const updatedEvent = await eventModel.create([newDataForEvent], {
 				session,
 			});
 
-			if (!updatedEvent) {
+			if (
+				!updatedEvent ||
+				!Array.isArray(updatedEvent) ||
+				updateEvent.length === 0
+			) {
 				const response: StandardResponse = {
 					message: "Could not create the event while updating",
 					success: false,
@@ -444,23 +539,105 @@ const deleteEvent = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const isEventDeleted = await eventModel.deleteOne({ eventId: eventId });
-
-		if (!isEventDeleted.acknowledged) {
+		if (!eventId) {
 			const response: StandardResponse = {
-				message: "Event could not be deleted",
+				message: "Send id of the event to be deleted",
 				success: false,
 			};
 
 			return res.status(401).json(response);
 		}
 
-		const response: StandardResponse = {
-			message: "Event deleted successfully",
-			success: true,
-		};
+		const result = await runWithRetrySession(async (session) => {
+			const isAdmin = decodedToken.accountType === AccountType.Admin;
 
-		return res.status(201).json(response);
+			const event = await eventModel
+				.findOne({ eventId }, null, { _skipDeletedEventsHook: isAdmin })
+				.session(session)
+				.lean();
+
+			if (!event) {
+				const response: StandardResponse = {
+					message: "Event not found",
+					success: false,
+				};
+
+				return response;
+			}
+
+			if (!isAdmin) {
+				const committees = await committeeModel
+					.find({
+						events: { $in: event._id },
+					})
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["studentIncharge", "facultyIncharge"])
+					.session(session)
+					.lean();
+
+				if (
+					!committees.some((committee) => {
+						return checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+							decodedToken,
+							studentInchargeEmail: committee.studentIncharge.email,
+							facultyInchargeEmail: committee.facultyIncharge.email,
+						}).success;
+					})
+				) {
+					const response: StandardResponse = {
+						message:
+							"You should be studentIncharge or facultyIncharge of one of the committee under whom you are trying to detele the event",
+						success: false,
+					};
+
+					return response;
+				}
+			}
+
+			//Delete eventid from committee
+			const isEventRemovedFromCommittee = await committeeModel.updateMany(
+				{
+					events: { $in: event._id },
+				},
+				{
+					$pull: { events: event._id },
+				},
+				{ session },
+			);
+
+			if (!isEventRemovedFromCommittee.acknowledged) {
+				const response: StandardResponse = {
+					message: "Event could not be removed from committee",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isEventDeleted = await eventModel
+				.deleteOne({ eventId: eventId }, { _skipDeletedEventsHook: isAdmin })
+				.session(session);
+
+			if (!isEventDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Event could not be deleted",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const response: StandardResponse = {
+				message: "Event deleted successfully",
+				success: true,
+			};
+
+			return response;
+		});
+
+		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
 		const response: StandardResponse = {
@@ -500,12 +677,17 @@ const getAllEvents = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const allEvents = await eventModel.find();
+		const isAdmin = decodedToken.accountType === AccountType.Admin;
+
+		const allEvents = await eventModel.find(
+			{},
+			{ _skipDeletedEventsHook: isAdmin },
+		);
 
 		if (allEvents.length === 0) {
 			const response: DataResponse = {
 				message: "There are no events in db",
-				success: false,
+				success: true,
 				data: [],
 			};
 
@@ -533,4 +715,6 @@ const getAllEvents = async (req: Request, res: Response) => {
 	}
 };
 
-export { createEvent, getEvent, updateEvent, deleteEvent, getAllEvents };
+//TODO NOW: Create api for adding and removing hosting committees in one function
+
+export { createEvent, getEventById, updateEvent, deleteEvent, getAllEvents };
