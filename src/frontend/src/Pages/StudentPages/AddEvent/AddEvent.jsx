@@ -134,6 +134,19 @@ export default function AddEvent() {
     setCommittee(e?.value);
   }
 
+  // clearing form
+  function handleClear() {
+    setName("");
+    setCommittee("");
+    setError("");
+    setDescription("");
+    setStartDate("");
+    setEndtDate("");
+    setStarTime("");
+    setEndtTime("");
+    setVenue("");
+  }
+
   // submitting form
   function handleSubmit() {
     // mutation.mutate(obj); // Trigger the mutation
@@ -163,17 +176,18 @@ export default function AddEvent() {
       setError("Invalid End date");
       return;
     }
-
-    console.log(
-      committee,
+    const data = {
       name,
       description,
       startDate,
       endDate,
-      formatTime(startTime),
-      formatTime(endTime),
-      venue
-    );
+      startTime: formatTime(startTime),
+      endTime: formatTime(endTime),
+      venue,
+      hostingCommitteesId: committee,
+    };
+
+    console.log(data);
   }
 
   return (
@@ -337,7 +351,7 @@ export default function AddEvent() {
         <div className="text-right">
           <Button
             disabled={mutation.isPending}
-            onClick={handleSubmit}
+            onClick={handleClear}
             color="error"
             className=" inline-block text-center ml-auto mt-4 mr-4 bg-red-600  text-white hover:bg-red-700 "
           >
