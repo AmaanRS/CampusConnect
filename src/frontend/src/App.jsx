@@ -24,7 +24,6 @@ import CreateCommittee from "./Pages/AdminPages/CreateCommittee/CreateCommittee"
 import AllCommittees from "./Pages/AdminPages/AllCommittees/AllCommittees";
 import AllTeachers from "./Pages/AdminPages/Teachers/AllTeachers";
 import AllStudents from "./Pages/AdminPages/Students/AllStudents";
-import CreatePost from "./Pages/StudentPages/AddPost/CreatePost";
 import TestLayout from "./Test/TestLayout";
 import AddPost from "./Pages/StudentPages/AddPost/AddPost";
 import StudentHomeLayout from "./Pages/StudentPages/Home/StudentHomeLayout";
@@ -33,6 +32,7 @@ import CommitteeDetailLayout from "./Pages/StudentPages/CommitteeDetails/Committ
 import Explore from "./Pages/StudentPages/Explore/Explore";
 import AddEvent from "./Pages/StudentPages/AddEvent/AddEvent";
 import AllEvents from "./Pages/StudentPages/AllEvents/AllEvents";
+import AllEventsLayout from "./Pages/StudentPages/AllEvents/AllEventsLayout";
 
 const queryClient = new QueryClient();
 function App() {
@@ -97,7 +97,7 @@ function App() {
                   path: "committee/:committeeId",
                   element: <CommitteeDetailLayout />,
                 },
-                { path: "events", element: <AllEvents /> },
+                { path: "events", element: <AllEventsLayout /> },
               ],
             },
             {
