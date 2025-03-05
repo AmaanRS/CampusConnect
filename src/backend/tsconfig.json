@@ -1,0 +1,43 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"esModuleInterop": true,
+		"useDefineForClassFields": true,
+		"lib": ["ES2020", "ES2022"],
+		"module": "ES2022",
+		"skipLibCheck": true,
+		"outDir": "./dist",
+		"rootDir": "../",
+		"sourceMap": true,
+		"declaration": true,
+		"noImplicitAny": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"preserveConstEnums": true,
+		"importHelpers": true,
+
+		/* Bundler mode */
+		"moduleResolution": "Bundler",
+		"allowImportingTsExtensions": false,
+		// "allowImportingTsExtensions": true,
+		// "emitDeclarationOnly": true,
+		"isolatedModules": true,
+		"noEmit": false,
+
+		/* Linting */
+		"strict": true,
+		"allowUnreachableCode": null,
+		"allowUnusedLabels": null,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true
+		// "types": ["jest"]
+	},
+	"ts-node": {
+		"esm": true
+	},
+	"include": ["**/*"],
+	"exclude": ["node_modules", "./dist"]
+}

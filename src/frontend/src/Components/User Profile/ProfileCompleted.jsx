@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
-import imgcom from "../../utils/pics/profilecompleted.svg";
+import imgcom from "../../assets/pics/profilecompleted.svg";
+
 import { useNavigate } from "react-router-dom";
 
 const ProfileCompleted = () => {
@@ -8,15 +9,15 @@ const ProfileCompleted = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/dashboard");
+      navigate("/");
     }, 2000);
 
     return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
-    <div className="flex items-center justify-center mt-32 flex-col gap-10 m-3 text-center">
-      <img src={imgcom} alt="" className="w-[45%]" />
+    <div className="w-screen h-screen flex items-center justify-center flex-col gap-10 text-center ">
+      <img src={imgcom} alt="" className="w-[40%] md:w-[20%]" />
       <h2 className="text-blue-light text-4xl sm:text-6xl font-bold">
         Profile Completed
       </h2>

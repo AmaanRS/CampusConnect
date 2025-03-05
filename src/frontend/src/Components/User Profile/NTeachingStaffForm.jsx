@@ -4,7 +4,6 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate } from "react-router-dom";
-import { AuthContext } from "../Auth & Authorization/AuthContext";
 
 const schema = yup.object({
   position: yup
@@ -14,7 +13,7 @@ const schema = yup.object({
 });
 
 const StudentForm = () => {
-  const { user, setUser } = useContext(AuthContext);
+  // const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const { handleSubmit, register, formState } = useForm({
     resolver: yupResolver(schema),
@@ -22,13 +21,13 @@ const StudentForm = () => {
 
   const formSubmit = (data) => {
     console.log(data);
-    navigate("/userprofile/profilecompleted");
     const userData = {
       email: data.email,
       department: data.department,
       position: data.position,
     };
-    setUser(userData);
+    // setUser(userData);
+    return navigate("/userprofile/profilecompleted");
   };
 
   return (
@@ -48,7 +47,7 @@ const StudentForm = () => {
           type="text"
           name="email"
           id="email"
-          value={user?.email}
+          // value={user?.email}
           readOnly
           className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light"
           placeholder="Enter Email"

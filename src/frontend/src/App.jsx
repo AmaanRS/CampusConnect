@@ -1,40 +1,53 @@
 /* eslint-disable no-unused-vars */
+import "./CardScroll.css";
+import "./Components/RichTextEditor/styles.scss";
 import React from "react";
-import LocomotiveScroll from "locomotive-scroll";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import About from "./Components/Landing Page/About";
-import Contact from "./Components/Landing Page/Contact";
-import Login, { loginLoader } from "./Components/Auth & Authorization/Login";
-import Signup, { SignupLoader } from "./Components/Auth & Authorization/Signup";
-import Layout from "./Components/Landing Page/Layout";
-import ErrorPage from "./utils/Alerts & animations/ErrorPage";
+import About from "./Pages/Landing Page/About";
+import { ToastContainer } from "react-toastify";
+import Contact from "./Pages/Landing Page/Contact";
+import Layout from "./Pages/Landing Page/Layout";
 import UserProfile from "./Components/User Profile/UserProfile";
-import StudentForm from "./Components/User Profile/StudentForm";
-import TeachingStaffForm from "./Components/User Profile/TeachingStaffForm";
-import NTeachingStaffForm from "./Components/User Profile/NTeachingStaffForm";
-import ProfileCompleted from "./Components/User Profile/ProfileCompleted";
-import Dashboard, { dashboardLoader } from "./Components/Dashboard/Dashboard";
-import {
-  AuthContext,
-  AuthProvider,
-} from "./Components/Auth & Authorization/AuthContext";
-import MainProfile from "./Components/Dashboard/MainProfile";
-import SearchProfile from "./Components/Dashboard/SearchProfile";
-import Home from "./Components/Dashboard/Home";
+import AdminLayout from "./Pages/AdminPages/AdminLayout/AdminLayout";
+import Dashboard from "./Pages/AdminPages/Dashboard/Dashboard";
+import ErrorPage from "./Components/Alerts & animations/ErrorPage";
+import Login from "./Pages/Auth/Login";
+import Signup from "./Pages/Auth/Signup";
+import ProtectedRoutes from "./Pages/Auth/ProtectedRoutes";
+import { UserContextProvider } from "./store/UserContextProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import StudentLayout from "./Pages/StudentPages/StudentLayout/StudentLayout";
+import TeacherLayout from "./Pages/TeacherPages/TeacherLayout/TeacherLayout";
+import TeacherDashboard from "./Pages/TeacherPages/Dashboard/TeacherDashboard";
+import AppLayout from "./Components/Layout/AppLayout";
+import CreateCommittee from "./Pages/AdminPages/CreateCommittee/CreateCommittee";
+import AllCommittees from "./Pages/AdminPages/AllCommittees/AllCommittees";
+import AllTeachers from "./Pages/AdminPages/Teachers/AllTeachers";
+import AllStudents from "./Pages/AdminPages/Students/AllStudents";
+import CreatePost from "./Pages/StudentPages/AddPost/CreatePost";
+import TestLayout from "./Test/TestLayout";
+import AddPost from "./Pages/StudentPages/AddPost/AddPost";
+import StudentHomeLayout from "./Pages/StudentPages/Home/StudentHomeLayout";
+import PostDetailsLayout from "./Pages/StudentPages/PostDetails/PostDetailsLayout";
+import CommitteeDetailLayout from "./Pages/StudentPages/CommitteeDetails/CommitteeDetailLayout";
+import Explore from "./Pages/StudentPages/Explore/Explore";
+import AddEvent from "./Pages/StudentPages/AddEvent/AddEvent";
 
+const queryClient = new QueryClient();
 function App() {
-  const locomotiveScroll = new LocomotiveScroll();
   const router = createBrowserRouter([
     {
       path: "/",
+      element: <AppLayout />,
       errorElement: <ErrorPage />,
-      // action: homeAction,
       children: [
         {
           index: true,
           element: <Layout />,
-          // action: homeAction,
-          // loader: homeLoader,
+        },
+        {
+          path: "test",
+          element: <TestLayout />,
         },
         {
           path: "about",
@@ -47,47 +60,70 @@ function App() {
         {
           path: "login",
           element: <Login />,
-          loader: loginLoader,
         },
         {
           path: "signup",
           element: <Signup />,
-          loader: SignupLoader,
         },
         {
           path: "userprofile",
           element: <UserProfile />,
-          children: [
-            {
-              path: "sform",
-              element: <StudentForm />,
-            },
-            {
-              path: "tform",
-              element: <TeachingStaffForm />,
-            },
-            {
-              path: "ntform",
-              element: <NTeachingStaffForm />,
-            },
-            {
-              path: "profilecompleted",
-              element: <ProfileCompleted />,
-            },
-          ],
         },
         {
-          path: "error",
-          element: <ErrorPage />,
-        },
-        {
-          path: "dashboard",
-          element: <Dashboard />,
-          loader: dashboardLoader,
+          element: <ProtectedRoutes />,
           children: [
-            // { path: "home", element: <Home /> },
-            { path: "userprof", element: <MainProfile /> },
-            { path: "searchprof", element: <SearchProfile /> },
+            {
+              path: "admin",
+              element: <AdminLayout />,
+              children: [
+                {
+                  index: true,
+                  element: <Dashboard />,
+                },
+                {
+                  path: "allCommittee",
+                  element: <AllCommittees />,
+                },
+                {
+                  path: "createcommittee",
+                  element: <CreateCommittee />,
+                },
+                {
+                  path: "teachers",
+                  element: <AllTeachers />,
+                },
+                {
+                  path: "students",
+                  element: <AllStudents />,
+                },
+              ],
+            },
+            {
+              path: "student",
+              element: <StudentLayout />,
+              children: [
+                { index: true, element: <StudentHomeLayout /> },
+                { path: "createPost", element: <AddPost /> },
+                { path: "createEvent", element: <AddEvent /> },
+                { path: "explore", element: <Explore /> },
+                { path: "post/:postId", element: <PostDetailsLayout /> },
+                {
+                  path: "committee/:committeeId",
+                  element: <CommitteeDetailLayout />,
+                },
+              ],
+            },
+            {
+              path: "teacher",
+              element: <TeacherLayout />,
+              children: [
+                { index: true, element: <TeacherDashboard /> },
+                {
+                  path: "createcommittee",
+                  element: <CreateCommittee />,
+                },
+              ],
+            },
           ],
         },
       ],
@@ -95,11 +131,25 @@ function App() {
   ]);
 
   return (
-    <AuthProvider>
-      <div className="bg-blue-extralight w-full font-openSans overflow-x-hidden h-full">
-        <RouterProvider router={router} />
-      </div>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <UserContextProvider>
+        <div className="bg-blue-extralight w-full font-openSans overflow-x-hidden h-full">
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable
+            pauseOnHover={false}
+            theme="light"
+          />
+          <RouterProvider router={router} />
+        </div>
+      </UserContextProvider>
+    </QueryClientProvider>
   );
 }
 
