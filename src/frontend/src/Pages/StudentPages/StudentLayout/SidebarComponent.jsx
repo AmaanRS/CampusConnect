@@ -11,6 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { MdOutlineEventNote } from "react-icons/md";
 import { Accordion, Avatar } from "flowbite-react";
+import { MdEvent } from "react-icons/md";
+
 import { MdGroups } from "react-icons/md";
 import { Link } from "react-router-dom";
 import MyCommittees from "./MyCommittees";
@@ -45,6 +47,8 @@ export default function SidebarComponent() {
   return (
     <Sidebar>
       <SidebarItem to="/student" icon={<Home size={20} />} text="Home" />
+      <SidebarItem to="events" icon={<MdEvent size={20} />} text="Events" />
+
       {showAddPost && (
         <>
           <SidebarItem
