@@ -61,6 +61,7 @@ export default function SidebarComponent() {
       )}
 
       <SidebarItem to="explore" icon={<Search size={20} />} text="Explore " />
+
       <SidebarItem
         icon={<HiOutlineUserGroup size={20} />}
         text="Jobs/intenships/education"
