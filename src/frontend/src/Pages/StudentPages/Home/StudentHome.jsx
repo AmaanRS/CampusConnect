@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import PostPreviewSkeleton from "../Components/PostPreview/skeletons/PostPreviewSkeleton";
 import ApiError from "../../../Components/Errors/ApiError";
-<ApiError />;
+
 const fetchData = async () => {
   const response = await axiosInstance.post("/post/getAllPosts", {});
   return response.data;
