@@ -77,16 +77,6 @@ const postData = async (data) => {
   return response.data;
 };
 
-const formatTime = (timeString) => {
-  const [hours, minutes] = timeString.split(":");
-  const date = new Date();
-  date.setHours(hours);
-  date.setMinutes(minutes);
-
-  // Format the time in 12-hour format with AM/PM
-  return format(date, "hh:mm a");
-};
-
 const formatDate = (inputDate) => {
   const parsedDate = parse(inputDate, "MMMM dd, yyyy", new Date());
   const formattedDate = format(parsedDate, "dd-MM-yyyy");

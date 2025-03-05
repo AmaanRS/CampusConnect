@@ -1,12 +1,17 @@
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow, parse } from "date-fns";
 import { Avatar } from "flowbite-react";
 import React from "react";
 import { Link } from "react-router-dom";
-import parse from "html-react-parser";
-import { FaRegHeart, FaRegComment, FaShare } from "react-icons/fa";
+import htmlParse from "html-react-parser";
+
+const formatDate = (inputDate) => {
+  const parsedDate = parse(inputDate, "dd-MM-yyyy", new Date());
+  const formattedDate = format(parsedDate, "MMMM dd, yyyy");
+
+  return formattedDate;
+};
 
 export default function EventPost({ eventData, mode = "allEvents" }) {
-  console.log(eventData);
   return (
     <>
       <div className="mx-4 border my-3 bg-white hover:bg-gray-50 rounded-xl p-4 transition-all duration-200 shadow-md mb-6">
@@ -36,7 +41,7 @@ export default function EventPost({ eventData, mode = "allEvents" }) {
 
         {/* Post Body */}
         <div className="tiptap  text-gray-700 text-sm mb-3">
-          {parse(eventData?.description)}
+          {htmlParse(eventData?.description)}
         </div>
 
         {/* Event Details */}
@@ -44,7 +49,7 @@ export default function EventPost({ eventData, mode = "allEvents" }) {
           <div className="grid grid-cols-2 gap-2">
             <p className="flex items-center gap-1">
               📅 <span className="font-medium">Start:</span>{" "}
-              {eventData?.startDate}
+              {formatDate(eventData?.startDate)}
             </p>
             <p className="flex items-center gap-1">
               🏁 <span className="font-medium">End:</span> {eventData?.endDate}
