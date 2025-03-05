@@ -2,6 +2,7 @@ import React from "react";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { useQuery } from "@tanstack/react-query";
 import ApiError from "../../../Components/Errors/ApiError";
+import EventPost from "./EventPost";
 
 const fetchData = async () => {
   const response = await axiosInstance.post("/event/getAllEvents", {});
@@ -21,6 +22,13 @@ export default function AllEvents() {
         <ApiError isError={isError} error={error} />
       </div>
     );
-  console.log(data);
-  return <div>AllEvents</div>;
+  console.log(data?.data[0]);
+  return (
+    <div className=" max-w-2xl px-2 m-auto">
+      <hr className="mb-2 mx-1" />
+      {data?.data?.map((event) => {
+        return <EventPost key={event?._id} eventData={event} />;
+      })}
+    </div>
+  );
 }
