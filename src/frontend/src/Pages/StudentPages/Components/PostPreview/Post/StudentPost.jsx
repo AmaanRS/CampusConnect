@@ -13,7 +13,7 @@ export default function StudentPost({ mode = "home", postData }) {
 
   return (
     <>
-      <div className="mx-4 my-2  hover:bg-slate-50  rounded-2xl py-1 px-3 transition-colors duration-100 ">
+      <div className="mx-4 border my-3 bg-white hover:bg-gray-50 rounded-xl p-4 pb-2 transition-all duration-200 shadow-md mb-6">
         <PostTop
           mode={mode}
           committeeId={postData?.committeeObjId?.committeeId}
@@ -36,7 +36,7 @@ export default function StudentPost({ mode = "home", postData }) {
           postId={postData?.postId}
         />
       </div>
-      <div className="border-b-[1.3px] mx-1 border-slate-200 mt-1 mb-1"></div>
+      {/* <div className="border-b-[1.3px] mx-1 border-slate-200 mt-1 mb-1"></div> */}
     </>
   );
 }
