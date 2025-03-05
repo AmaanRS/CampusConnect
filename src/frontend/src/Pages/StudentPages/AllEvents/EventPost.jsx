@@ -9,7 +9,7 @@ export default function EventPost({ eventData, mode = "allEvents" }) {
   console.log(eventData);
   return (
     <>
-      <div className="mx-4 border my-3 bg-white hover:bg-gray-50 rounded-xl p-4 transition-all duration-200 shadow-md">
+      <div className="mx-4 border my-3 bg-white hover:bg-gray-50 rounded-xl p-4 transition-all duration-200 shadow-md mb-6">
         {/* Post Header */}
         <div className="flex items-center gap-3 text-neutral-600">
           <Avatar rounded size="sm" />
@@ -59,8 +59,6 @@ export default function EventPost({ eventData, mode = "allEvents" }) {
           </div>
         </div>
       </div>
-
-      <div className="border-b border-gray-200 mx-1 mt-2"></div>
     </>
   );
 }
