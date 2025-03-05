@@ -10,7 +10,7 @@ const fetchData = async () => {
   return response.data;
 };
 
-export default function SelectCommittee({ handleChange }) {
+export default function SelectCommittee({ handleChange, isMulti = false }) {
   const [options, setOptions] = useState([]);
 
   // Fetch data using React Query
@@ -40,6 +40,7 @@ export default function SelectCommittee({ handleChange }) {
   return (
     <Select
       placeholder="Select Committee"
+      isMulti={isMulti}
       styles={{
         input: (base) => ({
           ...base,

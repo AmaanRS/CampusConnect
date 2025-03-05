@@ -77,10 +77,26 @@ const postData = async (data) => {
   return response.data;
 };
 
+const formatTime = (timeString) => {
+  const [hours, minutes] = timeString.split(":");
+  const date = new Date();
+  date.setHours(hours);
+  date.setMinutes(minutes);
+
+  // Format the time in 12-hour format with AM/PM
+  return format(date, "hh:mm a");
+};
+
+const formatDate = (inputDate) => {
+  const parsedDate = parse(inputDate, "MMMM dd, yyyy", new Date());
+  const formattedDate = format(parsedDate, "dd-MM-yyyy");
+  return formattedDate;
+};
+
 export default function AddEvent() {
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
-  const [committee, setCommittee] = useState("");
+  const [committee, setCommittee] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndtDate] = useState("");
   const [startTime, setStarTime] = useState("");
@@ -95,14 +111,14 @@ export default function AddEvent() {
     mutationFn: postData,
     onSuccess: (data) => {
       console.log("Data posted successfully:", data);
-      toast.success("Data posted successfully!");
+      toast.success("Event Created successfully!");
       navigate("/student");
 
       // alert("Data posted successfully!");
     },
     onError: (error) => {
       console.error("Error posting data:", error);
-      toast.error("Error creating post!");
+      toast.error("Error creating Event!");
     },
   });
 
@@ -124,7 +140,8 @@ export default function AddEvent() {
   // setting committe id
   function handleChange(e) {
     setError("");
-    setCommittee(e?.value);
+    let arr = e?.map(({ value }) => value);
+    setCommittee(arr);
     console.log(e);
   }
 
@@ -147,7 +164,7 @@ export default function AddEvent() {
 
     // checkinng for null values
     if (
-      !committee ||
+      committee?.length < 1 ||
       !name ||
       !description ||
       !startDate ||
@@ -173,8 +190,8 @@ export default function AddEvent() {
     const data = {
       name,
       description,
-      startDate,
-      endDate,
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate),
       startTime: formatTime(startTime),
       endTime: formatTime(endTime),
       venue,
@@ -196,7 +213,7 @@ export default function AddEvent() {
           <p className="my-2  text-lg font-semibold">
             Select Committee <sup className="text-red-500">*</sup>{" "}
           </p>
-          <SelectCommittee handleChange={handleChange} />
+          <SelectCommittee isMulti={true} handleChange={handleChange} />
         </div>
 
         {/* name input */}
@@ -372,6 +389,7 @@ export default function AddEvent() {
           </Button>
         </div>
 
+        {/* error display */}
         {error != "" && (
           <p className="text-center mt-2 text-red-600">{error}</p>
         )}
