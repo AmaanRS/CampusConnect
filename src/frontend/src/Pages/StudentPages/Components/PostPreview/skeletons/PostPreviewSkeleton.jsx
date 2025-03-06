@@ -3,7 +3,7 @@ import React from "react";
 export default function PostPreviewSkeleton() {
   return (
     <div className="m-auto  ">
-      <div className="mx-4 my-2 pt-2 bg-slate-50   rounded-2xl py-1 px-3 transition-colors duration-100 ">
+      <div className="mx-4 border my-3 bg-white hover:bg-gray-50 rounded-xl p-4 pb-2 transition-all duration-200 shadow-md mb-6">
         {/* post top */}
         <div className="flex text-slate-200 items-center">
           <div className="h-6 w-6 rounded-full bg-slate-200 animate-pulse"></div>
@@ -45,7 +45,6 @@ export default function PostPreviewSkeleton() {
           <div className="min-w-16 h-7  rounded-full flex  items-center justify-center py-0.5 pl-1 pr-3 mb-1 mt-1  bg-slate-200"></div>
         </div>
       </div>
-      <div className="border-b-[1.3px] mx-1 border-slate-200 mt-1 mb-1"></div>
     </div>
   );
 }

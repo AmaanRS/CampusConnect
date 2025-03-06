@@ -33,7 +33,7 @@ export default function StudentHome() {
 
   return (
     <div className=" max-w-2xl px-2 m-auto">
-      <hr className="mb-2 mx-1" />
+      {/* <hr className="mb-2 mx-1" /> */}
       {data?.data?.map((post) => {
         return <StudentPost key={post?.postId} postData={post} />;
       })}
