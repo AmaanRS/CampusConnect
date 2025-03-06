@@ -19,15 +19,11 @@ export default function EventPost({ eventData, mode = "allEvents" }) {
         <div className="flex items-center gap-3 text-neutral-600">
           <Avatar rounded size="sm" />
           <div className="flex flex-col">
-            {mode === "allEvents" ? (
-              <Link to={`/student/committee/${eventData?.committeeId || 1}`}>
-                <span className="text-sm font-semibold hover:text-blue-500 transition">
-                  {"eventData?.subname"}
-                </span>
-              </Link>
-            ) : (
-              <span className="text-sm font-semibold">{username}</span>
-            )}
+            <Link to={`/student/committee/${eventData?.committeeId || 1}`}>
+              <span className="text-sm font-semibold hover:text-blue-500 transition">
+                {"eventData?.subname"}
+              </span>
+            </Link>
             <span className="text-xs text-gray-500">
               {formatDistanceToNow(eventData?.createdAt, { addSuffix: true })}
             </span>
