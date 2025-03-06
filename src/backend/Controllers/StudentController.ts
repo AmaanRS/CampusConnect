@@ -17,6 +17,7 @@ import { runWithRetrySession } from "../Utils/util";
 import { userModel } from "../Models/User";
 import { studentModel } from "../Models/Student";
 import { createJwtToken } from "../Utils/jwtToken";
+import { populate } from "dotenv";
 
 const createStudent = async (req: Request, res: Response) => {
 	try {
@@ -555,7 +556,22 @@ const getAllStudentData = async (req: Request, res: Response) => {
 
 		const studentData = await studentModel
 			.findOne({ email }, { password: 0 })
-			.populate("committeePositions.committeeObjId");
+			.populate([
+				{
+					path: "committeePositions",
+					populate: [
+						{
+							path: "committeeObjId",
+							populate: [
+								{
+									path: "followers.userId",
+									select: "-password",
+								},
+							],
+						},
+					],
+				},
+			]);
 
 		if (!studentData) {
 			const response: StandardResponse = {

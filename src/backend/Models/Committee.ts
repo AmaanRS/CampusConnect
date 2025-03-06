@@ -205,6 +205,18 @@ committeeSchema.pre("validate", async function (next) {
 			.map((id) => new Types.ObjectId(id))
 			.value();
 
+		this.followers = _.chain(this.followers)
+			.map((follower) => ({
+				userId: follower.userId.toString(),
+				userType: follower.userType,
+			}))
+			.uniqBy("userId")
+			.map((follower) => ({
+				userId: new Types.ObjectId(follower.userId),
+				userType: follower.userType,
+			}))
+			.value();
+
 		this.committeeOfDepartment = [...new Set(this.committeeOfDepartment)];
 
 		next();

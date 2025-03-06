@@ -54,7 +54,7 @@ const postSchema = new Schema<IPostDocument>(
 		likes: {
 			type: [
 				{
-					type: [Schema.Types.ObjectId],
+					type: Schema.Types.ObjectId,
 					ref: "userModel",
 				},
 			],
