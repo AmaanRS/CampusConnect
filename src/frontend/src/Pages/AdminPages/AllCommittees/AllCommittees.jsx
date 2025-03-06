@@ -6,6 +6,7 @@ import AllCommitteeCard from "./AllCommitteeCard";
 import AllCommitteesCardSkeleton from "./AllCommitteesCardSkeleton";
 import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
 import { Tabs } from "flowbite-react";
+import EmptyComment from "../../StudentPages/PostDetails/Comment/EmptyComment";
 
 export default function AllCommittees() {
   const {
@@ -126,8 +127,9 @@ export default function AllCommittees() {
                     </div>
                   </>
                 )}
+
                 {list?.pendingCommittees?.length == 0 && (
-                  <p>No pending committees</p>
+                  <EmptyComment type="pending committes" />
                 )}
               </Tabs.Item>
               <Tabs.Item active title="Active">
@@ -146,7 +148,7 @@ export default function AllCommittees() {
                   </>
                 )}
                 {list?.acceptedCommittees?.length == 0 && (
-                  <p>No Active committees</p>
+                  <EmptyComment type="Active committes" />
                 )}
               </Tabs.Item>
               <Tabs.Item title="Deleted">
@@ -165,7 +167,7 @@ export default function AllCommittees() {
                   </>
                 )}
                 {list?.deletedCommittees?.length == 0 && (
-                  <p>No deleted committees</p>
+                  <EmptyComment type="deleted committees" />
                 )}
               </Tabs.Item>
             </Tabs>

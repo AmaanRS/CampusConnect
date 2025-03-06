@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import Follow from "./Follow";
 
 export default function AllCommitteeItem({ item }) {
-  console.log(item);
   return (
     <div className="border hover:bg-slate-50  transition-colors duration-200 p-4 rounded-xl border-slate-300 shadow-sm hover:shadow-lg">
       <div className="flex w-full justify-between">

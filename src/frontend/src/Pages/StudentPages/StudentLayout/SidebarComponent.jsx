@@ -90,7 +90,14 @@ export default function SidebarComponent() {
           </Accordion.Title>
 
           <Accordion.Content className="p-0">
-            {data?.data?.followingCommittees.map((item) => {
+            {/* in case of not following any committee */}
+            {data?.data?.followingCommittees?.length == 0 && (
+              <p className="relative flex items-center py-2 px-3 my-1 font-medium   text-gray-600">
+                No Committees
+              </p>
+            )}
+
+            {data?.data?.followingCommittees?.map((item) => {
               return <p>{item}</p>;
             })}
           </Accordion.Content>

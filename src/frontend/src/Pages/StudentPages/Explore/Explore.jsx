@@ -6,6 +6,7 @@ import ExploreSkeleton from "./ExploreSkeleton";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import ApiError from "../../../Components/Errors/ApiError";
+import EmptyComment from "../PostDetails/Comment/EmptyComment";
 
 const fetchData = async () => {
   const response = await axiosInstance.post("/committee/getAllCommittees", {});
@@ -43,6 +44,7 @@ export default function Explore() {
     <div className="mx-2">
       <p className="mb-6 text-3xl font-bold">Explore Committees</p>
       <div className=" grid grid-cols-3  gap-4">
+        {data?.data?.length == 0 && <EmptyComment type="Committees" />}
         {data?.data?.map((item) => (
           <AllCommitteeItem key={item._id} item={item} />
         ))}
