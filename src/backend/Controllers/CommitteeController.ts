@@ -7,9 +7,11 @@ import {
 import {
 	AccountType,
 	Department,
+	IAdminDocument,
 	ICommitteeDocument,
 	IStudentDocument,
 	ITeacherDocument,
+	ModelTypes,
 	StudentPosition,
 	Tags,
 	TeacherPosition,
@@ -332,12 +334,12 @@ const getCommitteeById = async (req: Request, res: Response) => {
 						},
 						{
 							path: "likes",
+							select: "-password",
 						},
 						{
 							path: "commentObjId",
 						},
 					],
-					model: "postModel",
 				},
 				{
 					path: "followers",
@@ -383,7 +385,6 @@ const getCommitteeById = async (req: Request, res: Response) => {
 // This updateCommittee is for facultyIncharge and studentIncharge
 // StudentIncharge can update desc
 // FacultyIncharge can update desc and studentIncharge
-// TODO NOW: Duplicate members are being added
 const updateCommittee = async (req: Request, res: Response) => {
 	try {
 		const {
@@ -1200,6 +1201,12 @@ const getAllCommittees = async (req: Request, res: Response) => {
 				_skipPendingCheckInHook: isAdmin,
 				_skipDeletingCheckInHook: isAdmin,
 			})
+			.populate([
+				{
+					path: "followers.userId",
+					select: "-password",
+				},
+			])
 			.lean();
 
 		if (!allCommittees || allCommittees.length === 0) {
@@ -1232,7 +1239,8 @@ const getAllCommittees = async (req: Request, res: Response) => {
 	}
 };
 
-const addFollowerToCommittee = async (req: Request, res: Response) => {
+// If a user is already the follower of a committee ie user exists in follower array of objects then remove him else add him
+const toggleFollower = async (req: Request, res: Response) => {
 	try {
 		const {
 			decodedToken,
@@ -1263,67 +1271,149 @@ const addFollowerToCommittee = async (req: Request, res: Response) => {
 
 		if (!committeeId) {
 			const response: StandardResponse = {
-				message: "Send committeeId",
+				message: "Send committee id",
 				success: false,
 			};
 
 			return res.status(401).json(response);
 		}
 
-		let model = modelMap[decodedToken.accountType];
-
 		const result = await runWithRetrySession(async (session) => {
-			const follower = await model.findOne({ email }).session(session);
+			const committee = await committeeModel
+				.findOne({ committeeId })
+				.populate<{
+					followers: {
+						userId: IStudentDocument | IAdminDocument | ITeacherDocument;
+						userType: ModelTypes;
+					}[];
+				}>("followers.userId")
+				.session(session)
+				.lean();
 
-			if (!follower) {
+			if (!committee) {
 				const response: StandardResponse = {
-					message: "User to add not found",
+					message: "Committee not found",
 					success: false,
 				};
 
 				return response;
 			}
 
-			const isCommitteeUpdated = await committeeModel.findOneAndUpdate(
-				{ committeeId },
-				{
-					$push: {
-						followers: {
-							userId: follower._id,
-							userType: model.modelName,
-						},
-					},
-				},
-				{ session },
-			);
+			let followerRemoved: boolean = false;
 
-			if (!isCommitteeUpdated) {
+			let model = modelMap[decodedToken.accountType];
+
+			if (Array.isArray(committee.followers)) {
+				for (let i = 0; i < committee.followers.length; i++) {
+					if (committee.followers[i].userId.email === email) {
+						const removeFollower = await committeeModel
+							.updateOne(
+								{ committeeId },
+								{
+									$pull: {
+										followers: {
+											userId: committee.followers[i].userId
+												._id,
+										},
+									},
+								},
+							)
+							.session(session)
+							.lean();
+
+						if (!removeFollower.acknowledged) {
+							const response: StandardResponse = {
+								message:
+									"Could not update the followers in committee",
+								success: false,
+							};
+
+							return response;
+						}
+
+						const isUserFollowingCommitteesUpdated = await model
+							.updateOne(
+								{
+									email,
+								},
+								{
+									$pull: { followingCommittees: committee._id },
+								},
+							)
+							.session(session);
+
+						if (!isUserFollowingCommitteesUpdated.acknowledged) {
+							const response: StandardResponse = {
+								message:
+									"Could not update following committees in user",
+								success: false,
+							};
+
+							return response;
+						}
+
+						followerRemoved = true;
+						break;
+					}
+				}
+
+				// If follower is not removed it should be added
+				if (!followerRemoved) {
+					const followingCommitteesAddedInUser = await model
+						.findOneAndUpdate(
+							{ email },
+							{ $push: { followingCommittees: committee._id } },
+						)
+						.session(session)
+						.lean();
+
+					if (!followingCommitteesAddedInUser) {
+						const response: StandardResponse = {
+							message:
+								"Could not update the following committee in user",
+							success: false,
+						};
+
+						return response;
+					}
+
+					const isfollowerAddedInCommittee = await committeeModel
+						.updateOne(
+							{ committeeId },
+							{
+								$push: {
+									followers: {
+										userId: followingCommitteesAddedInUser._id,
+										userType: model.modelName,
+									},
+								},
+							},
+						)
+						.session(session)
+						.lean();
+
+					if (!isfollowerAddedInCommittee.acknowledged) {
+						const response: StandardResponse = {
+							message: "Could not update the follower in committee",
+							success: false,
+						};
+
+						return response;
+					}
+				}
+			} else {
 				const response: StandardResponse = {
-					message: "Could not follow the committee",
+					message: "There was some problem while following the committee",
 					success: false,
 				};
 
 				return response;
 			}
 
-			const isFollowerAdded = await model.updateOne(
-				{ email },
-				{ $push: { followingCommittees: isCommitteeUpdated._id } },
-				{ session },
-			);
-
-			if (!isFollowerAdded) {
-				const response: StandardResponse = {
-					message: "Could not add committee in following",
-					success: false,
-				};
-
-				return response;
-			}
-
-			const response: StandardResponse = {
-				message: "Started following the committee",
+			const response: DataResponse = {
+				message: "Successfully toggled the follower in committee",
 				success: true,
+				data: !followerRemoved,
 			};
 
 			return response;
@@ -1332,119 +1422,10 @@ const addFollowerToCommittee = async (req: Request, res: Response) => {
 		return res.status(result.success ? 201 : 401).json(result);
 	} catch (e) {
 		console.log((e as Error).message);
+
 		const response: StandardResponse = {
 			message:
-				"There is some problem while adding follower to committee" +
-				(e as Error).message,
-			success: false,
-		};
-
-		return res.status(401).json(response);
-	}
-};
-
-const removeFollowerFromCommittee = async (req: Request, res: Response) => {
-	try {
-		const {
-			decodedToken,
-			committeeId,
-		}: {
-			decodedToken: decodedTokenPayload | undefined;
-			committeeId: string | undefined;
-		} = req.body;
-
-		if (!decodedToken) {
-			const response: StandardResponse = {
-				message: "User is not authenticated",
-				success: false,
-			};
-			return res.status(401).json(response);
-		}
-
-		const email = decodedToken.email;
-
-		if (!email) {
-			const response: StandardResponse = {
-				message: "User is not authenticated",
-				success: false,
-			};
-
-			return res.status(401).json(response);
-		}
-
-		if (!committeeId) {
-			const response: StandardResponse = {
-				message: "Send committeeId",
-				success: false,
-			};
-
-			return res.status(401).json(response);
-		}
-
-		let model = modelMap[decodedToken.accountType];
-
-		const result = await runWithRetrySession(async (session) => {
-			const follower = await model.findOne({ email }).session(session);
-
-			if (!follower) {
-				const response: StandardResponse = {
-					message: "User to remove not found",
-					success: false,
-				};
-
-				return response;
-			}
-
-			const isCommitteeUpdated = await committeeModel.findOneAndUpdate(
-				{ committeeId },
-				{
-					$pull: {
-						followers: {
-							userId: follower._id,
-						},
-					},
-				},
-				{ session },
-			);
-
-			if (!isCommitteeUpdated) {
-				const response: StandardResponse = {
-					message: "Could not remove follower from the committee",
-					success: false,
-				};
-
-				return response;
-			}
-
-			const isFollowerRemoved = await model.updateOne(
-				{ email },
-				{ $pull: { followingCommittees: isCommitteeUpdated._id } },
-				{ session },
-			);
-
-			if (!isFollowerRemoved) {
-				const response: StandardResponse = {
-					message: "Could not remove committee from the following",
-					success: false,
-				};
-
-				return response;
-			}
-
-			const response: StandardResponse = {
-				message: "Stopped following the committee",
-				success: true,
-			};
-
-			return response;
-		});
-
-		return res.status(result.success ? 201 : 401).json(result);
-	} catch (e) {
-		console.log((e as Error).message);
-		const response: StandardResponse = {
-			message:
-				"There is some problem while removing follower from committee" +
+				"There is some problem while updating follower of committee" +
 				(e as Error).message,
 			success: false,
 		};
@@ -1460,6 +1441,5 @@ export {
 	addMembersInCommittee,
 	removeMembersFromCommittee,
 	getAllCommittees,
-	addFollowerToCommittee,
-	removeFollowerFromCommittee,
+	toggleFollower,
 };

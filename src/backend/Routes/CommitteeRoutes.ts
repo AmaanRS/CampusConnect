@@ -8,8 +8,7 @@ import {
 	addMembersInCommittee,
 	removeMembersFromCommittee,
 	getAllCommittees,
-	addFollowerToCommittee,
-	removeFollowerFromCommittee,
+	toggleFollower,
 } from "../Controllers/CommitteeController";
 
 Router.route("/createCommittee").post(createCommittee);
@@ -24,8 +23,6 @@ Router.route("/removeMembersFromCommittee").post(removeMembersFromCommittee);
 
 Router.route("/getAllCommittees").post(getAllCommittees);
 
-Router.route("/addFollowerToCommittee").post(addFollowerToCommittee);
-
-Router.route("/removeFollowerFromCommittee").post(removeFollowerFromCommittee);
+Router.route("/toggleFollower").post(toggleFollower);
 
 export default Router;

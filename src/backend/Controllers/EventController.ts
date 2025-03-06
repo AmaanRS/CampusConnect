@@ -715,6 +715,6 @@ const getAllEvents = async (req: Request, res: Response) => {
 	}
 };
 
-//TODO NOW: Create api for adding and removing hosting committees in one function
+//TODO: Create api for adding and removing hosting committees in one function
 
 export { createEvent, getEventById, updateEvent, deleteEvent, getAllEvents };

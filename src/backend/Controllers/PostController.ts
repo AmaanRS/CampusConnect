@@ -305,6 +305,10 @@ const getPostById = async (req: Request, res: Response) => {
 						},
 						{ path: "events", model: "eventModel" },
 						{ path: "posts", model: "postModel" },
+						{
+							path: "followers.userId",
+							select: "-password",
+						},
 					],
 				},
 				{ path: "postedBy", model: "userModel" },
@@ -837,7 +841,9 @@ const togglePostLike = async (req: Request, res: Response) => {
 		const result = await runWithRetrySession(async (session) => {
 			const post = await postModel
 				.findOne({ postId })
-				.populate<{ likes: IUserDocument[] }>("likes")
+				.populate<{ likes: IUserDocument[] }>([
+					{ path: "likes", model: "userModel" },
+				])
 				.session(session)
 				.lean();
 
