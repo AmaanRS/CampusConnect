@@ -11,7 +11,11 @@ const formatDate = (inputDate) => {
   return formattedDate;
 };
 
-export default function EventPost({ eventData, mode = "allEvents" }) {
+export default function EventPost({
+  eventData,
+  mode = "allEvents",
+  committeeName = "",
+}) {
   return (
     <>
       <div className="mx-4 border my-3 bg-white hover:bg-slate-50 rounded-xl p-4 transition-all duration-200 shadow-md mb-6">
@@ -19,11 +23,15 @@ export default function EventPost({ eventData, mode = "allEvents" }) {
         <div className="flex items-center gap-3 text-neutral-600">
           <Avatar rounded size="sm" />
           <div className="flex flex-col">
-            <Link to={`/student/committee/${eventData?.committeeId || 1}`}>
-              <span className="text-sm font-semibold hover:text-blue-500 transition">
-                {"eventData?.subname"}
-              </span>
-            </Link>
+            {mode === "allEvents" ? (
+              <Link to={`/student/committee/${eventData?.committeeId || 1}`}>
+                <span className="text-sm font-semibold hover:text-blue-500 transition">
+                  {"eventData?.subname"}
+                </span>
+              </Link>
+            ) : (
+              <span className="text-sm font-semibold">{committeeName}</span>
+            )}
             <span className="text-xs text-gray-500">
               {formatDistanceToNow(eventData?.createdAt, { addSuffix: true })}
             </span>
@@ -41,7 +49,7 @@ export default function EventPost({ eventData, mode = "allEvents" }) {
         </div>
 
         {/* Event Details */}
-        <div className="bg-gray-100 p-3 rounded-lg text-sm text-gray-700">
+        <div className="bg-slate-100 border-slate-300 p-3 rounded-lg text-sm text-gray-700">
           <div className="grid grid-cols-2 gap-2">
             <p className="flex items-center gap-1">
               📅 <span className="font-medium">Start:</span>{" "}

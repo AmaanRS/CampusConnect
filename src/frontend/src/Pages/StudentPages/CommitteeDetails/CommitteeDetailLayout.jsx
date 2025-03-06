@@ -58,7 +58,11 @@ export default function CommitteeDetailLayout() {
   return (
     <>
       <CentreMainContent>
-        <CommitteeList posts={data?.data?.posts} name={data?.data?.name} />
+        <CommitteeList
+          posts={data?.data?.posts}
+          name={data?.data?.name}
+          events={data?.data?.events}
+        />
       </CentreMainContent>
       <RightSidebar>
         <CommitteeSidebar committeeData={data.data} />

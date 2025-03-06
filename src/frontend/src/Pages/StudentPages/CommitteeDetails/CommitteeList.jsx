@@ -4,9 +4,13 @@ import { Avatar, Tabs } from "flowbite-react";
 import { MdGroups } from "react-icons/md";
 import { AiOutlineFileText } from "react-icons/ai";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import EventPost from "../AllEvents/EventPost";
 
-export default function CommitteeList({ name = "committee name", posts = [] }) {
-  // return <>"work in progress"</>;
+export default function CommitteeList({
+  name = "committee name",
+  posts = [],
+  events = [],
+}) {
   return (
     <>
       <div className="flex bg-slate-100 rounded-lg items-center mb-4 px-4 ">
@@ -43,7 +47,7 @@ export default function CommitteeList({ name = "committee name", posts = [] }) {
                   icon: "mr-2 h-5 w-5",
                 },
               },
-              tabpanel: "py-3",
+              tabpanel: "py-0",
             }}
             aria-label="Tabs with underline"
             variant="underline"
@@ -60,13 +64,16 @@ export default function CommitteeList({ name = "committee name", posts = [] }) {
               })}
             </Tabs.Item>
             <Tabs.Item title="Events" icon={FaRegCalendarAlt}>
-              This is{" "}
-              <span className="font-medium text-gray-800 dark:text-white">
-                Dashboard tab's associated content
-              </span>
-              . Clicking another tab will toggle the visibility of this one for
-              the next. The tab JavaScript swaps classes to control the content
-              visibility and styling.
+              {events?.map((event) => {
+                return (
+                  <EventPost
+                    committeeName={name}
+                    mode="committee"
+                    key={event?._id}
+                    eventData={event}
+                  />
+                );
+              })}
             </Tabs.Item>
           </Tabs>
         </div>
