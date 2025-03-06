@@ -56,7 +56,8 @@ export default function EventPost({
               {formatDate(eventData?.startDate)}
             </p>
             <p className="flex items-center gap-1">
-              🏁 <span className="font-medium">End:</span> {eventData?.endDate}
+              🏁 <span className="font-medium">End:</span>{" "}
+              {formatDate(eventData?.endDate)}
             </p>
             <p className="flex items-center gap-1">
               ⏰ <span className="font-medium">Time:</span>{" "}
