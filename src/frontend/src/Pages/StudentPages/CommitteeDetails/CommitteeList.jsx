@@ -5,6 +5,7 @@ import { MdGroups } from "react-icons/md";
 import { AiOutlineFileText } from "react-icons/ai";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import EventPost from "../AllEvents/EventPost";
+import EmptyComment from "../PostDetails/Comment/EmptyComment";
 
 const tabTheme = {
   tablist: {
@@ -55,27 +56,31 @@ export default function CommitteeList({
             variant="underline"
           >
             <Tabs.Item active title="Posts" icon={AiOutlineFileText}>
-              {posts?.map((post) => {
-                return (
-                  <StudentPost
-                    mode="committee"
-                    key={post?.postId}
-                    postData={post}
-                  />
-                );
-              })}
+              {posts?.length == 0 && <EmptyComment type="posts" />}
+              {posts?.length > 0 &&
+                posts?.map((post) => {
+                  return (
+                    <StudentPost
+                      mode="committee"
+                      key={post?.postId}
+                      postData={post}
+                    />
+                  );
+                })}
             </Tabs.Item>
             <Tabs.Item title="Events" icon={FaRegCalendarAlt}>
-              {events?.map((event) => {
-                return (
-                  <EventPost
-                    committeeName={name}
-                    mode="committee"
-                    key={event?._id}
-                    eventData={event}
-                  />
-                );
-              })}
+              {events?.length == 0 && <EmptyComment type="events" />}
+              {events?.length > 0 &&
+                events?.map((event) => {
+                  return (
+                    <EventPost
+                      committeeName={name}
+                      mode="committee"
+                      key={event?._id}
+                      eventData={event}
+                    />
+                  );
+                })}
             </Tabs.Item>
           </Tabs>
         </div>

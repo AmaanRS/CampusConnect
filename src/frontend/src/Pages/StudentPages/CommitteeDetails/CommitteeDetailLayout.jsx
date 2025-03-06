@@ -8,8 +8,7 @@ import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { useQuery } from "@tanstack/react-query";
 import ApiError from "../../../Components/Errors/ApiError";
 import { toast } from "react-toastify";
-import PostDetailSkeleton from "../PostDetails/Skeletons/PostDetailSkeleton";
-import SidebarSkeleton from "../Components/CommitteeSidebar/skeletons/SidebarSkeleton";
+
 import CommitteeDetailSkeleton from "./CommitteeDetailSkeleton";
 
 const fetchData = async ({ committeeId }) => {
@@ -48,7 +47,7 @@ export default function CommitteeDetailLayout() {
         />
       </CentreMainContent>
       <RightSidebar>
-        <CommitteeSidebar committeeData={data.data} />
+        <CommitteeSidebar committeeData={data?.data} />
       </RightSidebar>
     </>
   );

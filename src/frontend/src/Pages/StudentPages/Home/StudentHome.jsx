@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import PostPreviewSkeleton from "../Components/PostPreview/skeletons/PostPreviewSkeleton";
 import ApiError from "../../../Components/Errors/ApiError";
+import EmptyComment from "../PostDetails/Comment/EmptyComment";
 
 const fetchData = async () => {
   const response = await axiosInstance.post("/post/getAllPosts", {});
@@ -36,6 +37,7 @@ export default function StudentHome() {
   return (
     <div className=" max-w-2xl px-2 m-auto">
       {/* <hr className="mb-2 mx-1" /> */}
+      {data?.data?.length == 0 && <EmptyComment type="posts" />}
       {data?.data?.map((post) => {
         return <StudentPost key={post?.postId} postData={post} />;
       })}
