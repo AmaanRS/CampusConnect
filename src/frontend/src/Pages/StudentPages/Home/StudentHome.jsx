@@ -19,9 +19,11 @@ export default function StudentHome() {
   if (isLoading)
     return (
       <>
-        <PostPreviewSkeleton />
-        <PostPreviewSkeleton />
-        <PostPreviewSkeleton />
+        <div className=" max-w-2xl px-2 m-auto">
+          <PostPreviewSkeleton />
+          <PostPreviewSkeleton />
+          <PostPreviewSkeleton />
+        </div>
       </>
     );
   if (isError)
