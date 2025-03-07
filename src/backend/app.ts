@@ -15,6 +15,7 @@ import CommentRouter from "./Routes/CommentRoutes";
 import { fileURLToPath } from "url";
 import { isAccountActive } from "./Middlewares/AccountStatus";
 import uploadRoutes from "./Routes/UploadRoutes";
+import PromotionRouter from "./Routes/PromotionRoutes";
 
 dotenv.config();
 const app = express();
@@ -35,6 +36,7 @@ app.use("/post", PostRouter);
 app.use("/event", EventRouter);
 app.use("/images", uploadRoutes);
 app.use("/comment", CommentRouter);
+app.use("/promotion", PromotionRouter);
 
 // Connects with db then express server
 async function connectToDbAndStartServer(

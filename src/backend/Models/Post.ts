@@ -75,7 +75,7 @@ const postSchema = new Schema<IPostDocument>(
 	},
 );
 
-// Hooks for which inactive teacher will not be returned
+// Hooks for which deleted posts will not be returned
 const hooks = [
 	"find",
 	"findOne",
@@ -86,15 +86,15 @@ const hooks = [
 	"updateMany",
 ] as const;
 
-// Programatically adds condition to remove inactive teachers from the query result
-// When inactive teachers are also needed and should not be excluded set _skipDeletedPostsHook
+// Programatically adds condition to remove deleted posts from the query result
+// When deleted posts are also needed and should not be excluded set _skipDeletedPostsHook
 // If in some place this code gives error then set _skipDeletedPostsHook as true
 hooks.forEach(function (hook) {
 	postSchema.pre(hook, function (next) {
 		const options = this.getOptions();
 		const query = this.getQuery();
 
-		// _skipDeletedPostsHook; flag when true, will allow hooks to show inactive teachers
+		// _skipDeletedPostsHook; flag when true, will allow hooks to show deleted posts
 		if (options && !options["_skipDeletedPostsHook"]) {
 			// If "isPostDeleted" already exists as an object
 			if (
