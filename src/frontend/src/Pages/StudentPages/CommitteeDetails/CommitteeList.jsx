@@ -6,6 +6,8 @@ import { AiOutlineFileText } from "react-icons/ai";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import EventPost from "../AllEvents/EventPost";
 import EmptyComment from "../PostDetails/Comment/EmptyComment";
+import { MdPersonAddAlt } from "react-icons/md";
+import AddMembers from "./AddMembers";
 
 const tabTheme = {
   tablist: {
@@ -33,6 +35,7 @@ export default function CommitteeList({
   name = "committee name",
   posts = [],
   events = [],
+  committeeId = "",
 }) {
   return (
     <>
@@ -81,6 +84,9 @@ export default function CommitteeList({
                     />
                   );
                 })}
+            </Tabs.Item>
+            <Tabs.Item title="Add Members" icon={MdPersonAddAlt}>
+              <AddMembers committeeId={committeeId} />
             </Tabs.Item>
           </Tabs>
         </div>

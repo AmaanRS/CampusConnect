@@ -7,11 +7,15 @@ export default function CommiteeSidebarMemberList({
 }) {
   return (
     <div className="px-4 mb-4">
-      <p className="text-sm font-medium text-slate-700  mb-2">Members</p>
+      <p className="text-sm font-medium text-slate-700  mb-2">Faculty</p>
       <div>
         {facultyTeam.map((member) => {
           return <MemberList key={member} value={member?.email} />;
         })}
+      </div>
+
+      <p className="text-sm font-medium text-slate-700  mb-2">Students</p>
+      <div>
         {members.map((member) => {
           return <MemberList key={member} value={member?.email} />;
         })}

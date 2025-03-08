@@ -10,7 +10,6 @@ export default function AllCommitteeCard({ item }) {
   const mutation = useMutation({
     mutationFn: (data) => axiosInstance.post("/changeStatusOfCommittee", data),
     onSuccess: (data) => {
-      console.log("data is ", data);
       queryClient.invalidateQueries(["allCommittee"]);
       toast.success("Status Changed");
     },

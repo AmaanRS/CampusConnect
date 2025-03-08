@@ -41,6 +41,7 @@ export default function CommitteeDetailLayout() {
     <>
       <CentreMainContent>
         <CommitteeList
+          committeeId={data?.data?.committeeId}
           posts={data?.data?.posts}
           name={data?.data?.name}
           events={data?.data?.events}

@@ -130,7 +130,6 @@ export default function CreateCommittee() {
     } else {
       setDepError("");
     }
-    console.log(studentIncharge);
     if (!studentIncharge) {
       setSelectError({
         type: "studentIncharge",
@@ -148,7 +147,6 @@ export default function CreateCommittee() {
 
     data.studentIncharge = studentIncharge;
     data.facultyInchargeEmail = facultyIncharge;
-    console.log(data);
     mutation.mutate({ data });
   }
 
