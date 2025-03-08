@@ -8,10 +8,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../../utils/Axios/AxiosInstance";
 
 const postData = async (data) => {
-  const response = await axiosInstance.post(
-    "/committee/addFollowerToCommittee",
-    data
-  );
+  const response = await axiosInstance.post("/committee/toggleFollower", data);
   return response.data;
 };
 

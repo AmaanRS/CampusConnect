@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import "./CardScroll.css";
 import "./Components/RichTextEditor/styles.scss";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import About from "./Pages/Landing Page/About";
 import { ToastContainer } from "react-toastify";
@@ -33,9 +33,24 @@ import Explore from "./Pages/StudentPages/Explore/Explore";
 import AddEvent from "./Pages/StudentPages/AddEvent/AddEvent";
 import AllEvents from "./Pages/StudentPages/AllEvents/AllEvents";
 import AllEventsLayout from "./Pages/StudentPages/AllEvents/AllEventsLayout";
+import PreLoader from "./PreLoader";
 
 const queryClient = new QueryClient();
+
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading process (e.g., fetching data, assets, etc.)
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false); // Set loading to false after 2 seconds (or when your data is ready)
+    }, 2000);
+  }, []);
+
+  if (isLoading) {
+    return <PreLoader />;
+  }
+
   const router = createBrowserRouter([
     {
       path: "/",

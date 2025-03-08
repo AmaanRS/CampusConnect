@@ -4,10 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 const postData = async (data) => {
-  const response = await axiosInstance.post(
-    "/committee/addFollowerToCommittee",
-    data
-  );
+  const response = await axiosInstance.post("/committee/toggleFollower", data);
   return response.data;
 };
 
