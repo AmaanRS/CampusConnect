@@ -27,7 +27,7 @@ export default function SidebarComponent() {
   const [showAddPost, setShowAddPost] = useState(false);
 
   const { data, isError, error } = useQuery({
-    queryKey: ["canUserAddPost"],
+    queryKey: ["getAllStudentData"],
     queryFn: fetchData,
     refetchOnWindowFocus: false,
   });

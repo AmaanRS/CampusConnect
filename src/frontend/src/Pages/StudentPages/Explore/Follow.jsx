@@ -24,6 +24,9 @@ export default function Follow({ committeeId = "", followArray = [] }) {
       queryClient.invalidateQueries({
         queryKey: ["allcommittees"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["getAllStudentData"],
+      });
       setAlreadyFollowing((prev) => !prev);
     },
     onError: (error) => {
