@@ -1,14 +1,52 @@
-import { format, formatDistanceToNow, parse } from "date-fns";
+import {
+  format,
+  formatDistanceToNow,
+  parse,
+  isBefore,
+  isAfter,
+  isWithinInterval,
+} from "date-fns";
 import { Avatar } from "flowbite-react";
 import React from "react";
 import { Link } from "react-router-dom";
 import htmlParse from "html-react-parser";
+import HostingCommittee from "./HostingCommittee";
 
 const formatDate = (inputDate) => {
+  if (!inputDate) return "";
   const parsedDate = parse(inputDate, "dd-MM-yyyy", new Date());
-  const formattedDate = format(parsedDate, "MMMM dd, yyyy");
+  return format(parsedDate, "MMMM dd, yyyy");
+};
 
-  return formattedDate;
+// Function to determine event status
+const getEventStatus = (startDate, endDate, startTime, endTime) => {
+  if (!startDate || !endDate || !startTime || !endTime) return "Unknown";
+
+  // Parse date and time into valid Date objects
+  const startDateTime = parse(
+    `${startDate} ${startTime}`,
+    "dd-MM-yyyy hh:mm a",
+    new Date()
+  );
+  const endDateTime = parse(
+    `${endDate} ${endTime}`,
+    "dd-MM-yyyy hh:mm a",
+    new Date()
+  );
+
+  //  current timestamp
+  const now = new Date();
+
+  // Determine event status
+  if (isBefore(now, startDateTime)) {
+    return "Upcoming";
+  } else if (
+    isWithinInterval(now, { start: startDateTime, end: endDateTime })
+  ) {
+    return "Ongoing";
+  } else {
+    return "Finished";
+  }
 };
 
 export default function EventPost({
@@ -16,6 +54,16 @@ export default function EventPost({
   mode = "allEvents",
   committeeName = "",
 }) {
+  // Get event status
+  const eventStatus = getEventStatus(
+    eventData?.startDate,
+    eventData?.endDate,
+    eventData?.startTime,
+    eventData?.endTime
+  );
+
+  console.log(eventData?.hostingCommittees);
+
   return (
     <>
       <div className="mx-4 border my-3 bg-white hover:bg-slate-50 rounded-xl p-4 transition-all duration-200 shadow-md mb-6">
@@ -24,11 +72,7 @@ export default function EventPost({
           <Avatar rounded size="sm" />
           <div className="flex flex-col">
             {mode === "allEvents" ? (
-              <Link to={`/student/committee/${eventData?.committeeId || 1}`}>
-                <span className="text-sm font-semibold hover:text-blue-500 transition">
-                  {"eventData?.subname"}
-                </span>
-              </Link>
+              <HostingCommittee committees={eventData?.hostingCommittees} />
             ) : (
               <span className="text-sm font-semibold">{committeeName}</span>
             )}
@@ -67,6 +111,22 @@ export default function EventPost({
               📍 <span className="font-medium">Venue:</span> {eventData?.venue}
             </p>
           </div>
+        </div>
+
+        {/* Event Status */}
+        <div className="mt-3 text-sm font-semibold text-center">
+          Status:{" "}
+          <span
+            className={`px-2 py-1 rounded-lg ${
+              eventStatus === "Upcoming"
+                ? "bg-blue-100 text-blue-600"
+                : eventStatus === "Ongoing"
+                ? "bg-green-100 text-green-600"
+                : "bg-gray-200 text-gray-600"
+            }`}
+          >
+            {eventStatus}
+          </span>
         </div>
       </div>
     </>
