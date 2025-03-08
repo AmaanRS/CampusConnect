@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import StudentSelect from "./StudentSelect";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const postData = async (data) => {
   const response = await axiosInstance.post(
@@ -13,6 +14,8 @@ const postData = async (data) => {
 };
 
 export default function AddMembers({ committeeId }) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [members, setMembers] = useState([]);
   const [formError, setFormError] = useState("");
 
@@ -20,9 +23,11 @@ export default function AddMembers({ committeeId }) {
     mutationFn: postData,
     onSuccess: (data) => {
       toast.success("Memberd addded successfully!");
+      navigate(`/student/committee/${committeeId}`);
+      queryClient.invalidateQueries({
+        queryKey: ["committee", committeeId],
+      });
       //   navigate("/student");
-
-      // alert("Data posted successfully!");
     },
     onError: (error) => {
       console.error("Error adding member:", error);
@@ -41,9 +46,7 @@ export default function AddMembers({ committeeId }) {
       setFormError("Please select some value");
       return;
     }
-    console.log(members);
     const data = { committeeId, members };
-    console.log(data);
     mutation.mutate(data);
   }
 
@@ -61,7 +64,7 @@ export default function AddMembers({ committeeId }) {
             onClick={handleSubmit}
             className="mt-2  bg-blue-600 text-white rounded-lg py-2 px-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Submit
+            Add Members
           </button>
         </div>
         {formError && (

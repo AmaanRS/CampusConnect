@@ -10,14 +10,14 @@ export default function CommiteeSidebarMemberList({
       <p className="text-sm font-medium text-slate-700  mb-2">Faculty</p>
       <div>
         {facultyTeam.map((member) => {
-          return <MemberList key={member} value={member?.email} />;
+          return <MemberList key={member?.email} value={member?.email} />;
         })}
       </div>
 
       <p className="text-sm font-medium text-slate-700  mb-2">Students</p>
       <div>
         {members.map((member) => {
-          return <MemberList key={member} value={member?.email} />;
+          return <MemberList key={member?.email} value={member?.email} />;
         })}
       </div>
     </div>

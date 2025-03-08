@@ -98,7 +98,7 @@ export default function SidebarComponent() {
             )}
 
             {data?.data?.followingCommittees?.map((item) => {
-              return <p>{item}</p>;
+              return <p key={item}>{item}</p>;
             })}
           </Accordion.Content>
         </Accordion.Panel>

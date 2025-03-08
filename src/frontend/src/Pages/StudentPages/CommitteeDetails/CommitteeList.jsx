@@ -8,6 +8,7 @@ import EventPost from "../AllEvents/EventPost";
 import EmptyComment from "../PostDetails/Comment/EmptyComment";
 import { MdPersonAddAlt } from "react-icons/md";
 import AddMembers from "./AddMembers";
+import CommitteMembers from "./CommitteMembers";
 
 const tabTheme = {
   tablist: {
@@ -85,8 +86,8 @@ export default function CommitteeList({
                   );
                 })}
             </Tabs.Item>
-            <Tabs.Item title="Add Members" icon={MdPersonAddAlt}>
-              <AddMembers committeeId={committeeId} />
+            <Tabs.Item title="Members" icon={MdPersonAddAlt}>
+              <CommitteMembers committeeId={committeeId} />
             </Tabs.Item>
           </Tabs>
         </div>
