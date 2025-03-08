@@ -8,12 +8,13 @@ export default function CommitteeSidebarTop({
   description = "description",
   createdAt = new Date(),
   committeeId,
+  followArray = [],
 }) {
   return (
     <div className="px-4 pt-4 ">
       <div className="flex justify-between items-center">
         <p className="font-bold  text-slate-800">{name}</p>
-        <Follow committeeId={committeeId} />
+        <Follow followArray={followArray} committeeId={committeeId} />
       </div>
       <div className="text-sm mt-4 text-slate-700 ">{description}</div>
       <div className="flex my-2 items-center">

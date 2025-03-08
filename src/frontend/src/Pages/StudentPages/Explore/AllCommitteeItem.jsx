@@ -31,7 +31,7 @@ export default function AllCommitteeItem({ item }) {
         </Link>
 
         {/* follow button */}
-        <Follow committeeId={item?.committeeId} />
+        <Follow followArray={item?.followers} committeeId={item?.committeeId} />
       </div>
       <Link
         key={item?.committeeId}
