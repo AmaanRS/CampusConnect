@@ -80,6 +80,21 @@ export default function EventPost({
               {formatDistanceToNow(eventData?.createdAt, { addSuffix: true })}
             </span>
           </div>
+          <div className="text-right ml-auto">
+            <div className="mt-3 text-sm font-semibold text-center">
+              <span
+                className={`px-2 py-1.5 rounded-lg ${
+                  eventStatus === "Upcoming"
+                    ? "bg-blue-100 text-blue-600"
+                    : eventStatus === "Ongoing"
+                    ? "bg-green-100 text-green-600"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+              >
+                {eventStatus}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Post Title */}
@@ -111,22 +126,6 @@ export default function EventPost({
               📍 <span className="font-medium">Venue:</span> {eventData?.venue}
             </p>
           </div>
-        </div>
-
-        {/* Event Status */}
-        <div className="mt-3 text-sm font-semibold text-center">
-          Status:{" "}
-          <span
-            className={`px-2 py-1 rounded-lg ${
-              eventStatus === "Upcoming"
-                ? "bg-blue-100 text-blue-600"
-                : eventStatus === "Ongoing"
-                ? "bg-green-100 text-green-600"
-                : "bg-gray-200 text-gray-600"
-            }`}
-          >
-            {eventStatus}
-          </span>
         </div>
       </div>
     </>
