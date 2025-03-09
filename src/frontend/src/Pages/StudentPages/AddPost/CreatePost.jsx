@@ -17,7 +17,6 @@ export default function CreatePost() {
   const mutation = useMutation({
     mutationFn: ({ data }) => axiosInstance.post("/post/createPost", data),
     onSuccess: (data) => {
-      console.log(data);
       toast.success("created successfully");
       navigate("/teacher");
     },
@@ -58,7 +57,6 @@ export default function CreatePost() {
       data.content + ":urlText:" + data.urlText + ":url:" + data.url;
     let [text, utext] = data.content.split(":urlText:");
     let [ut, u] = utext.split(":url:");
-    console.log(data);
     mutation.mutate({ data });
   }
 

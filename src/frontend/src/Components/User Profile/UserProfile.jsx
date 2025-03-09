@@ -58,9 +58,7 @@ function UserProfile() {
 
   // async function getProfileStatus() {
   //   const res = await axiosInstance.post("/getUserProfileStatus");
-  //   console.log(res);
   //   let position = res.data.data.position.toString().toUpperCase();
-  //   console.log(position);
   //   setPosition(position);
   // }
 

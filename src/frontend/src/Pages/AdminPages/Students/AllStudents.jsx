@@ -15,11 +15,8 @@ export default function AllTeachers() {
   });
 
   if (students.isError) {
-    console.log(students.error);
-
     return <ApiError error={students.error} isError={students.isError} />;
   }
-  console.log("data is ", students?.data?.data?.data);
   return (
     <>
       <CentreMainContent>

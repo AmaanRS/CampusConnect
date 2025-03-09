@@ -3,7 +3,6 @@ import React from "react";
 import TeacherImg from "../../../assets/Dummy/user.png";
 
 export default function StudentItem({ email }) {
-  console.log("email is ", email);
   let [name] = email?.split(".");
   return (
     <List.Item className="py-3 sm:py-2">

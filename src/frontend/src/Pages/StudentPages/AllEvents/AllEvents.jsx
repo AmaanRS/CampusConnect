@@ -32,7 +32,6 @@ export default function AllEvents() {
         <ApiError isError={isError} error={error} />
       </div>
     );
-  console.log(data?.data[0]);
   return (
     <div className=" max-w-2xl px-2 m-auto">
       {data?.data?.map((event) => {

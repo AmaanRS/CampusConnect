@@ -52,8 +52,6 @@ const StudentForm = () => {
     mutate({ year, department });
   };
 
-  // console.log(data, error);
-
   return (
     <div className="flex flex-col items-center justify-center w-full h-full overflow-y-hidden">
       <form

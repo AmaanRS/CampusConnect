@@ -15,7 +15,6 @@ export default function CommentInput({ setCommentOn, postId }) {
   const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: postData,
     onSuccess: () => {
-      console.log("Success");
       toast.success("commented successfully");
       queryClient.invalidateQueries({ queryKey: ["post", postId] });
       setCommentOn(false);
@@ -27,12 +26,10 @@ export default function CommentInput({ setCommentOn, postId }) {
   });
 
   function handleComment() {
-    console.log("clicked");
     const data = {
       postId: postId,
       comment,
     };
-    console.log(data);
     mutate(data);
     if (isSuccess) {
       setComment("");

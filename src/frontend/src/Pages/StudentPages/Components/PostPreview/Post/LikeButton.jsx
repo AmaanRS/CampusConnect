@@ -23,7 +23,6 @@ export default function LikeButton({ likes, postId }) {
   const mutation = useMutation({
     mutationFn: postData,
     onSuccess: (data) => {
-      console.log("Data posted successfully:", data);
       queryClient.invalidateQueries({ queryKey: ["post", postId] });
       queryClient.invalidateQueries({ queryKey: ["allPosts"] });
 
@@ -42,7 +41,6 @@ export default function LikeButton({ likes, postId }) {
   });
 
   function handleLike() {
-    console.log("clicked");
     mutation.mutate({ postId });
   }
 

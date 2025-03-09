@@ -2,7 +2,6 @@ import React from "react";
 import { Avatar } from "flowbite-react";
 
 export default function CommentItem({ comment }) {
-  console.log(comment);
   return (
     <div
       key={comment?._id}

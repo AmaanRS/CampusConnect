@@ -22,8 +22,6 @@ const TeachingStaffForm = () => {
       return axiosInstance.post("/teacher/createTeacher", { department });
     },
     onSuccess: (data) => {
-      console.log(data);
-
       const decodedToken = jwtDecode(data.data.token);
       Cookies.set("token", data.data.token);
       setUserState(decodedToken);
@@ -38,7 +36,6 @@ const TeachingStaffForm = () => {
   });
 
   const formSubmit = (data) => {
-    console.log("submission start");
     mutate({ department: data.department });
   };
   return (

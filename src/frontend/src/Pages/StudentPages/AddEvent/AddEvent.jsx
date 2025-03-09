@@ -100,7 +100,6 @@ export default function AddEvent() {
   const mutation = useMutation({
     mutationFn: postData,
     onSuccess: (data) => {
-      console.log("Data posted successfully:", data);
       toast.success("Event Created successfully!");
       navigate("/student");
 
@@ -132,7 +131,6 @@ export default function AddEvent() {
     setError("");
     let arr = e?.map(({ value }) => value);
     setCommittee(arr);
-    console.log(e);
   }
 
   // clearing form
@@ -188,7 +186,6 @@ export default function AddEvent() {
       hostingCommitteesId: committee,
     };
 
-    console.log(data);
     // sending data
     mutation.mutate(data);
   }

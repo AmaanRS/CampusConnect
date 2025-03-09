@@ -26,7 +26,6 @@ export default function DeleteEvent({ eventId, committeeId }) {
   });
 
   function handleSubmit() {
-    console.log(eventId);
     const data = { eventId };
     mutation.mutate(data);
   }

@@ -9,7 +9,6 @@ export default function PostComment({
   commentOn,
   setCommentOn,
 }) {
-  console.log("post comments", commentList);
   return (
     <div id="comment">
       <CommentInputLayout

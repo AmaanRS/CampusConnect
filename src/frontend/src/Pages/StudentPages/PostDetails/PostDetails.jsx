@@ -10,7 +10,6 @@ export default function PostDetails({ postData }) {
   const [commentOn, setCommentOn] = useState(false);
 
   let isImage = postData?.image.length > 0;
-  console.log("PostData", postData?.committeeObjId?.committeeId);
 
   return (
     <>

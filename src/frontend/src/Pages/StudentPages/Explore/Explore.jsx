@@ -38,8 +38,6 @@ export default function Explore() {
     );
   }
 
-  console.log(data?.data);
-
   return (
     <div className="mx-2">
       <p className="mb-6 text-3xl font-bold">Explore Committees</p>

@@ -34,7 +34,6 @@ export default function AddPostForm() {
   const mutation = useMutation({
     mutationFn: postData,
     onSuccess: (data) => {
-      console.log("Data posted successfully:", data);
       setPublicUrl("");
       setFilePath("");
       toast.success("Data posted successfully!");

@@ -21,7 +21,6 @@ export default function StudentPost({ data, email }) {
   const handleLike = () => {
     setLikes(likes + 1);
   };
-  console.log(urlText, url);
 
   return (
     <div className=" sm:max-w-xl mx-auto my-6 md:px-4">

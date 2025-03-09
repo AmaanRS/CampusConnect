@@ -19,7 +19,6 @@ export default function Follow({ committeeId = "", followArray = [] }) {
   const mutation = useMutation({
     mutationFn: postData,
     onSuccess: (data) => {
-      console.log("following", data);
       // alert("Data posted successfully!");
       queryClient.invalidateQueries({
         queryKey: ["committee", committeeId],
@@ -36,7 +35,6 @@ export default function Follow({ committeeId = "", followArray = [] }) {
     },
   });
 
-  console.log(followArray[0]?.userId?.email);
   useEffect(() => {
     // if (followArray?.length > 0) {
     const emailExists = followArray.some(

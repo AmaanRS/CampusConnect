@@ -71,7 +71,6 @@ export function useFileUpload({
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      console.log(res);
       setPublicUrl(res.data.data.publicURL);
       setFilePath(currFilePath);
     } catch (error) {
