@@ -3,12 +3,15 @@ import React from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
+import DeleteEvent from "../CommitteeDetails/DeleteEvent";
 
-export default function UpdateEvent() {
+export default function UpdateEvent({ eventId, committeeId }) {
   return (
     <div className="ml-4">
       {" "}
-      <Popover content={<PopMenu />}>
+      <Popover
+        content={<PopMenu eventId={eventId} committeeId={committeeId} />}
+      >
         <button className="rounded-full hover:bg-slate-200 p-2">
           <BsThreeDotsVertical />{" "}
         </button>
@@ -17,7 +20,7 @@ export default function UpdateEvent() {
   );
 }
 
-function PopMenu() {
+function PopMenu({ eventId, committeeId }) {
   return (
     <>
       <div className="shadow-2xl ">
@@ -28,10 +31,7 @@ function PopMenu() {
           </button>
         </div>
         <div>
-          <button className="w-full flex items-center justify-center text-left py-2 px-5 hover:bg-slate-100">
-            <MdDelete className="mr-2 text-lg" />
-            <span className="font-medium">Delete</span>
-          </button>
+          <DeleteEvent committeeId={committeeId} eventId={eventId} />
         </div>
       </div>
     </>

@@ -3,7 +3,6 @@ import React from "react";
 import MemberItem from "./MemberItem";
 
 export default function MemberList({ members = [], committeeId }) {
-  console.log(members[0]);
   return (
     <List
       unstyled

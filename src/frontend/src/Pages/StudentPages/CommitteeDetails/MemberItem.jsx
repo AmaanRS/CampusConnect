@@ -1,6 +1,5 @@
 import { Avatar, List } from "flowbite-react";
 import React, { useContext } from "react";
-import { MdOutlinePersonRemoveAlt1 } from "react-icons/md";
 import RemoveButton from "./RemoveButton";
 import { UserContext } from "../../../store/UserContextProvider";
 

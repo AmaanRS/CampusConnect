@@ -74,7 +74,6 @@ export default function EventPost({
   if (mode == "committee") {
     isIncharge = email === committeeData?.studentIncharge?.email;
   }
-  console.log(committeeData?.studentIncharge?.email);
 
   return (
     <>
@@ -106,7 +105,12 @@ export default function EventPost({
                 {eventStatus}
               </span>
             </div>
-            {isIncharge && <UpdateEvent />}
+            {isIncharge && (
+              <UpdateEvent
+                eventId={eventData?.eventId}
+                committeeId={committeeData?.committeeId}
+              />
+            )}
           </div>
         </div>
 

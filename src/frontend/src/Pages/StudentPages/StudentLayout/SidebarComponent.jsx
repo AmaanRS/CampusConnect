@@ -13,8 +13,6 @@ import { MdOutlineEventNote } from "react-icons/md";
 import { Accordion, Avatar } from "flowbite-react";
 import { MdEvent } from "react-icons/md";
 
-import { MdGroups } from "react-icons/md";
-import { Link } from "react-router-dom";
 import MyCommittees from "./MyCommittees";
 
 const fetchData = async () => {
@@ -43,7 +41,6 @@ export default function SidebarComponent() {
   if (isError) {
     console.log(error.message, "\n", error);
   }
-  console.log(data?.data?.followingCommittees);
   return (
     <Sidebar>
       <SidebarItem to="/student" icon={<Home size={20} />} text="Home" />
