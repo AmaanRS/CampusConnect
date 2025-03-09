@@ -7,10 +7,13 @@ import {
   isWithinInterval,
 } from "date-fns";
 import { Avatar } from "flowbite-react";
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import htmlParse from "html-react-parser";
 import HostingCommittee from "./HostingCommittee";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import UpdateEvent from "./UpdateEvent";
+import { UserContext } from "../../../store/UserContextProvider";
 
 const formatDate = (inputDate) => {
   if (!inputDate) return "";
@@ -53,6 +56,7 @@ export default function EventPost({
   eventData,
   mode = "allEvents",
   committeeName = "",
+  committeeData,
 }) {
   // Get event status
   const eventStatus = getEventStatus(
@@ -62,7 +66,15 @@ export default function EventPost({
     eventData?.endTime
   );
 
-  console.log(eventData?.hostingCommittees);
+  const {
+    userState: { email },
+  } = useContext(UserContext);
+
+  let isIncharge = false;
+  if (mode == "committee") {
+    isIncharge = email === committeeData?.studentIncharge?.email;
+  }
+  console.log(committeeData?.studentIncharge?.email);
 
   return (
     <>
@@ -80,8 +92,8 @@ export default function EventPost({
               {formatDistanceToNow(eventData?.createdAt, { addSuffix: true })}
             </span>
           </div>
-          <div className="text-right ml-auto">
-            <div className="mt-3 text-sm font-semibold text-center">
+          <div className="text-right ml-auto flex items-center mt-3">
+            <div className=" text-sm font-semibold text-center">
               <span
                 className={`px-2 py-1.5 rounded-lg ${
                   eventStatus === "Upcoming"
@@ -94,6 +106,7 @@ export default function EventPost({
                 {eventStatus}
               </span>
             </div>
+            {isIncharge && <UpdateEvent />}
           </div>
         </div>
 

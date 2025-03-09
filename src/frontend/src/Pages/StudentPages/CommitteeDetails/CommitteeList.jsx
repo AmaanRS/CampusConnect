@@ -86,6 +86,7 @@ export default function CommitteeList({
                 events?.map((event) => {
                   return (
                     <EventPost
+                      committeeData={committeeData}
                       committeeName={name}
                       mode="committee"
                       key={event?._id}
