@@ -1,9 +1,14 @@
 import { Avatar, List } from "flowbite-react";
-import React from "react";
+import React, { useContext } from "react";
 import { MdOutlinePersonRemoveAlt1 } from "react-icons/md";
 import RemoveButton from "./RemoveButton";
+import { UserContext } from "../../../store/UserContextProvider";
 
 export default function MemberItem({ member, committeeId }) {
+  const {
+    userState: { email },
+  } = useContext(UserContext);
+  const isIncharge = email == member?.email;
   return (
     <div>
       <List.Item className=" pb-2 pt-3">
@@ -17,12 +22,14 @@ export default function MemberItem({ member, committeeId }) {
               {member?.email}
             </p>
           </div>
-          <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-            <RemoveButton
-              committeeId={committeeId}
-              memberEmail={[member?.email]}
-            />
-          </div>
+          {!isIncharge && (
+            <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+              <RemoveButton
+                committeeId={committeeId}
+                memberEmail={[member?.email]}
+              />
+            </div>
+          )}
         </div>
       </List.Item>
     </div>

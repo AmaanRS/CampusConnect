@@ -1,6 +1,6 @@
 import { Popover } from "flowbite-react";
 import React from "react";
-import { BsThreeDots, BsThreeDotsVertical } from "react-icons/bs";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 
