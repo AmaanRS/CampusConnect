@@ -19,7 +19,6 @@ export default function Follow({ committeeId = "", followArray = [] }) {
   const mutation = useMutation({
     mutationFn: postData,
     onSuccess: (data) => {
-      console.log("following", data);
       // alert("Data posted successfully!");
       queryClient.invalidateQueries({
         queryKey: ["allcommittees"],
@@ -35,7 +34,6 @@ export default function Follow({ committeeId = "", followArray = [] }) {
     },
   });
 
-  console.log(followArray[0]?.userId?.email);
   useEffect(() => {
     // if (followArray?.length > 0) {
     const emailExists = followArray.some(
@@ -66,7 +64,7 @@ export default function Follow({ committeeId = "", followArray = [] }) {
           disabled={mutation.isPending}
           onClick={handleFollow}
           type="button"
-          className="bg-white border-slate-700 hover:bg-slate-100 border text-black font-medium text-sm py-2 px-4 rounded-full  transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-white border-slate-300 hover:bg-slate-100 border text-black font-medium text-sm py-2 px-4 rounded-full  transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Following
         </button>

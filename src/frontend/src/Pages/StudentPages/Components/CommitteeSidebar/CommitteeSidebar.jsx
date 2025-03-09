@@ -5,7 +5,6 @@ import CommitteeSidebarDepartment from "./CommitteeSidebarDepartment";
 import CommiteeSidebarMemberList from "./CommiteeSidebarMemberList";
 
 export default function CommitteeSidebar({ committeeData }) {
-  console.log(committeeData?.followers);
   return (
     <div className=" bg-slate-50  py-2 mt-4   rounded-lg">
       <CommitteeSidebarTop

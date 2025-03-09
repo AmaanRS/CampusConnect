@@ -21,7 +21,7 @@ export default function ExploreSkeleton() {
 function CommitteSkeleton() {
   return (
     <>
-      <div className="border hover:bg-slate-50  transition-colors duration-200 p-4 rounded-xl border-slate-200 shadow-sm hover:shadow-lg">
+      <div className="border   transition-colors duration-200 p-4 rounded-xl border-slate-200 shadow-sm ">
         <div className="flex w-full justify-between">
           <div className="flex items-center">
             <div className="bg-slate-200 h-10 w-10 rounded-full"></div>

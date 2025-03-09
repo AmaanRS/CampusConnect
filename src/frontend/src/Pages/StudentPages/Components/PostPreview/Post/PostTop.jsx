@@ -1,5 +1,5 @@
 import { Avatar } from "flowbite-react";
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 
@@ -9,6 +9,7 @@ export default function PostTop({
   createdAt = new Date(),
   subname = "subname",
   username = "username",
+  isIncharge,
 }) {
   return (
     <>
@@ -35,6 +36,7 @@ export default function PostTop({
           {" "}
           {formatDistanceToNow(createdAt, { addSuffix: true })}
         </div>
+        {isIncharge && <div className="ml-auto">Edit</div>}
       </div>
     </>
   );

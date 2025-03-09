@@ -67,6 +67,7 @@ export default function CommitteeList({
             aria-label="Tabs with underline"
             variant="underline"
           >
+            {/* post list */}
             <Tabs.Item active title="Posts" icon={AiOutlineFileText}>
               {posts?.length == 0 && <EmptyComment type="posts" />}
               {posts?.length > 0 &&
@@ -76,10 +77,13 @@ export default function CommitteeList({
                       mode="committee"
                       key={post?.postId}
                       postData={post}
+                      isIncharge={isStudentIncharge}
                     />
                   );
                 })}
             </Tabs.Item>
+
+            {/* event list */}
             <Tabs.Item title="Events" icon={FaRegCalendarAlt}>
               {events?.length == 0 && <EmptyComment type="events" />}
               {events?.length > 0 &&
@@ -95,6 +99,8 @@ export default function CommitteeList({
                   );
                 })}
             </Tabs.Item>
+
+            {/* members tab */}
             {isStudentIncharge && (
               <Tabs.Item title="Members" icon={MdPersonAddAlt}>
                 <CommitteMembers committeeId={committeeId} members={members} />

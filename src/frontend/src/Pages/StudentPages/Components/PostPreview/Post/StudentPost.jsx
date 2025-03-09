@@ -7,14 +7,18 @@ import PostBody from "./PostBody";
 import PostImage from "./PostImage";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function StudentPost({ mode = "home", postData }) {
+export default function StudentPost({
+  mode = "home",
+  postData,
+  isIncharge = false,
+}) {
   let isImage = postData?.image?.length > 0;
   const navigate = useNavigate();
-
   return (
     <>
       <div className="mx-4 border my-3 bg-white hover:bg-gray-50 rounded-xl p-4 pb-2 transition-all duration-200 shadow-md mb-6">
         <PostTop
+          isIncharge={isIncharge}
           mode={mode}
           committeeId={postData?.committeeObjId?.committeeId}
           createdAt={postData?.createdAt}

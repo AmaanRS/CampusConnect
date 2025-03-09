@@ -8,7 +8,6 @@ import DeleteEvent from "../CommitteeDetails/DeleteEvent";
 export default function UpdateEvent({ eventId, committeeId }) {
   return (
     <div className="ml-4">
-      {" "}
       <Popover
         content={<PopMenu eventId={eventId} committeeId={committeeId} />}
       >
