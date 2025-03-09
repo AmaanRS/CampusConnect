@@ -45,6 +45,8 @@ export default function CommitteeDetailLayout() {
           posts={data?.data?.posts}
           name={data?.data?.name}
           events={data?.data?.events}
+          members={data?.data?.members}
+          committeeData={data?.data}
         />
       </CentreMainContent>
       <RightSidebar>

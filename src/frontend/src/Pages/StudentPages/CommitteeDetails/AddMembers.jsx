@@ -18,6 +18,7 @@ export default function AddMembers({ committeeId }) {
   const queryClient = useQueryClient();
   const [members, setMembers] = useState([]);
   const [formError, setFormError] = useState("");
+  const [selectKey, setSelectKey] = useState("dsad");
 
   const mutation = useMutation({
     mutationFn: postData,
@@ -48,6 +49,8 @@ export default function AddMembers({ committeeId }) {
     }
     const data = { committeeId, members };
     mutation.mutate(data);
+    setSelectKey(Math.random());
+    setMembers([]);
   }
 
   return (
@@ -55,6 +58,7 @@ export default function AddMembers({ committeeId }) {
       <div className="mt-6 mx-2">
         <div className="text-slate-700 font-medium mb-2">Select Students</div>
         <StudentSelect
+          key={selectKey}
           isDisabled={mutation.isPending}
           handleStudentEmail={handleStudentEmail}
         />

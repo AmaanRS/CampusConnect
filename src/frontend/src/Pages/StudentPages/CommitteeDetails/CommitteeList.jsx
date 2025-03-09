@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import StudentPost from "../Components/PostPreview/Post/StudentPost";
 import { Avatar, Tabs } from "flowbite-react";
 import { MdGroups } from "react-icons/md";
@@ -9,6 +9,7 @@ import EmptyComment from "../PostDetails/Comment/EmptyComment";
 import { MdPersonAddAlt } from "react-icons/md";
 import AddMembers from "./AddMembers";
 import CommitteMembers from "./CommitteMembers";
+import { UserContext } from "../../../store/UserContextProvider";
 
 const tabTheme = {
   tablist: {
@@ -37,7 +38,14 @@ export default function CommitteeList({
   posts = [],
   events = [],
   committeeId = "",
+  members = [],
+  committeeData,
 }) {
+  const {
+    userState: { email },
+  } = useContext(UserContext);
+  const isStudentIncharge = committeeData?.studentIncharge?.email === email;
+
   return (
     <>
       <div className="flex bg-slate-100 rounded-lg items-center mb-4 px-4 ">
@@ -86,9 +94,11 @@ export default function CommitteeList({
                   );
                 })}
             </Tabs.Item>
-            <Tabs.Item title="Members" icon={MdPersonAddAlt}>
-              <CommitteMembers committeeId={committeeId} />
-            </Tabs.Item>
+            {isStudentIncharge && (
+              <Tabs.Item title="Members" icon={MdPersonAddAlt}>
+                <CommitteMembers committeeId={committeeId} members={members} />
+              </Tabs.Item>
+            )}
           </Tabs>
         </div>
       </div>
