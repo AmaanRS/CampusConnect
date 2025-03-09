@@ -14,7 +14,6 @@ const postData = async (data) => {
 };
 
 export default function AddMembers({ committeeId }) {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [members, setMembers] = useState([]);
   const [formError, setFormError] = useState("");
@@ -24,7 +23,6 @@ export default function AddMembers({ committeeId }) {
     mutationFn: postData,
     onSuccess: (data) => {
       toast.success("Memberd addded successfully!");
-      navigate(`/student/committee/${committeeId}`);
       queryClient.invalidateQueries({
         queryKey: ["committee", committeeId],
       });

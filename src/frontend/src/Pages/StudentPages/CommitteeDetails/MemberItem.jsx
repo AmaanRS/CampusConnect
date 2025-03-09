@@ -1,9 +1,9 @@
 import { Avatar, List } from "flowbite-react";
 import React from "react";
 import { MdOutlinePersonRemoveAlt1 } from "react-icons/md";
+import RemoveButton from "./RemoveButton";
 
-export default function MemberItem({ member }) {
-  console.log(member);
+export default function MemberItem({ member, committeeId }) {
   return (
     <div>
       <List.Item className=" pb-2 pt-3">
@@ -18,13 +18,10 @@ export default function MemberItem({ member }) {
             </p>
           </div>
           <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-            <button
-              type="button"
-              className="bg-red-600 hover:bg-red-700 flex justify-center items-center text-white py-1.5 px-2 rounded-lg text-xs  "
-            >
-              <MdOutlinePersonRemoveAlt1 className="text-lg mr-1 font-bold" />
-              Remove
-            </button>
+            <RemoveButton
+              committeeId={committeeId}
+              memberEmail={[member?.email]}
+            />
           </div>
         </div>
       </List.Item>

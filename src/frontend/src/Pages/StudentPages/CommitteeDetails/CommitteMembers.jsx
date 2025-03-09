@@ -10,7 +10,7 @@ export default function CommitteMembers({ committeeId, members }) {
       <HR className="my-6" />
       <div className="m-3">
         <p className="font-medium text-lg  text-slate-700">Committee Members</p>
-        <MemberList members={members} />
+        <MemberList committeeId={committeeId} members={members} />
       </div>
     </div>
   );
