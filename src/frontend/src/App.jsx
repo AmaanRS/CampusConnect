@@ -34,6 +34,7 @@ import AddEvent from "./Pages/StudentPages/AddEvent/AddEvent";
 import AllEvents from "./Pages/StudentPages/AllEvents/AllEvents";
 import AllEventsLayout from "./Pages/StudentPages/AllEvents/AllEventsLayout";
 import PreLoader from "./PreLoader";
+import EventUpdateForm from "./Pages/StudentPages/AllEvents/EventUpdateForm";
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,7 @@ function App() {
                 { path: "createEvent", element: <AddEvent /> },
                 { path: "explore", element: <Explore /> },
                 { path: "post/:postId", element: <PostDetailsLayout /> },
+                { path: "edit/event/:eventId", element: <EventUpdateForm /> },
                 {
                   path: "committee/:committeeId",
                   element: <CommitteeDetailLayout />,
