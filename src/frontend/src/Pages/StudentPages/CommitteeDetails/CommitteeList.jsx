@@ -74,6 +74,7 @@ export default function CommitteeList({
                 posts?.map((post) => {
                   return (
                     <StudentPost
+                      committeeId={committeeData?.committeeId}
                       mode="committee"
                       key={post?.postId}
                       postData={post}

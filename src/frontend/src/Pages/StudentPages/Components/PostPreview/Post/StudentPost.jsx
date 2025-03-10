@@ -11,6 +11,7 @@ export default function StudentPost({
   mode = "home",
   postData,
   isIncharge = false,
+  committeeId = "",
 }) {
   let isImage = postData?.image?.length > 0;
   const navigate = useNavigate();
@@ -18,9 +19,10 @@ export default function StudentPost({
     <>
       <div className="mx-4 border my-3 bg-white hover:bg-gray-50 rounded-xl p-4 pb-2 transition-all duration-200 shadow-md mb-6">
         <PostTop
+          postId={postData?.postId}
           isIncharge={isIncharge}
           mode={mode}
-          committeeId={postData?.committeeObjId?.committeeId}
+          committeeId={postData?.committeeObjId?.committeeId || committeeId}
           createdAt={postData?.createdAt}
           subname={postData?.committeeObjId?.name}
           username={postData?.postedBy?.email?.split(".")[0]}
