@@ -21,11 +21,7 @@ export default function PostComment({
       {commentList?.length > 0 && (
         <>
           {commentList.map((comment) => {
-            return (
-              <>
-                <CommentItem key={comment?._id} comment={comment} />
-              </>
-            );
+            return <CommentItem key={comment?._id} comment={comment} />;
           })}
         </>
       )}

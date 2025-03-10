@@ -2,7 +2,7 @@ import { Button, Label } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import TipTap from "../../../Components/RichTextEditor/TipTap";
 import { format, isAfter, parse } from "date-fns";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { Datepicker } from "flowbite-react";
@@ -73,7 +73,7 @@ const datePickerTheme = {
 };
 
 const postData = async (data) => {
-  const response = await axiosInstance.post("/event/createEvent", data);
+  const response = await axiosInstance.post("/event/updateEvent", data);
   return response.data;
 };
 
@@ -83,6 +83,12 @@ const formatDate = (inputDate) => {
   return formattedDate;
 };
 
+const formatDateReverse = (inputDate) => {
+  if (!inputDate) return "";
+  const parsedDate = parse(inputDate, "dd-MM-yyyy", new Date());
+  return format(parsedDate, "MMMM dd, yyyy");
+};
+
 const fetchData = async ({ eventId }) => {
   const response = await axiosInstance.post(`/event/getEventById`, {
     eventId,
@@ -90,7 +96,25 @@ const fetchData = async ({ eventId }) => {
   return response.data;
 };
 
-export default function AddEvent() {
+const formatTime = (timeString) => {
+  const [hours, minutes] = timeString.split(":");
+  const date = new Date();
+  date.setHours(hours);
+  date.setMinutes(minutes);
+
+  // Format the time in 12-hour format with AM/PM
+  return format(date, "hh:mm a");
+};
+
+const reverseFormatTime = (inputTime) => {
+  const parsedTime = parse(inputTime, "hh:mm a", new Date());
+  const formattedTime = format(parsedTime, "HH:mm"); // 24-hour format
+
+  return formattedTime;
+};
+
+export default function EventUpdateForm() {
+  const queryClient = useQueryClient();
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -117,20 +141,29 @@ export default function AddEvent() {
   const mutation = useMutation({
     mutationFn: postData,
     onSuccess: (data) => {
-      toast.success("Event Created successfully!");
-      navigate("/student");
+      toast.success("Event Updated successfully!");
+      queryClient.invalidateQueries({
+        queryKey: ["event", eventId],
+      });
+      navigate("/student/events");
 
       // alert("Data posted successfully!");
     },
     onError: (error) => {
-      console.error("Error posting data:", error);
-      toast.error("Error creating Event!");
+      toast.error("Error Updating Event!");
     },
   });
 
   useEffect(() => {
     if (data) {
-      console.log(data);
+      console.log(data?.data);
+      setName(data?.data?.name);
+      setDescription(data?.data?.description);
+      setStartDate(formatDateReverse(data?.data?.startDate));
+      setEndtDate(formatDateReverse(data?.data?.endDate));
+      setStarTime(reverseFormatTime(data?.data?.startTime));
+      setEndtTime(reverseFormatTime(data?.data?.endTime));
+      setVenue(data?.data?.venue);
     }
   }, [data]);
 
@@ -147,16 +180,6 @@ export default function AddEvent() {
   if (isError) {
     return <ApiError isError={isError} error={fetchError} />;
   }
-
-  const formatTime = (timeString) => {
-    const [hours, minutes] = timeString.split(":");
-    const date = new Date();
-    date.setHours(hours);
-    date.setMinutes(minutes);
-
-    // Format the time in 12-hour format with AM/PM
-    return format(date, "hh:mm a");
-  };
 
   function getEditorContent(richText) {
     setError("");
@@ -209,6 +232,7 @@ export default function AddEvent() {
       startTime: formatTime(startTime),
       endTime: formatTime(endTime),
       venue,
+      eventId,
     };
 
     // sending data
@@ -248,7 +272,9 @@ export default function AddEvent() {
           <p className="my-2  text-lg font-semibold">
             Description <sup className="text-red-500">*</sup>
           </p>
-          <TipTap getEditorContent={getEditorContent} />
+          {description && (
+            <TipTap content={description} getEditorContent={getEditorContent} />
+          )}
         </div>
 
         {/* date input */}
