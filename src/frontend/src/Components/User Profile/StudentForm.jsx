@@ -14,12 +14,9 @@ import ApiError from "../Errors/ApiError";
 import Select from "react-select";
 
 const options = [
-  { value: "one", label: "one" },
-  { value: "two", label: "two" },
-  { value: "three", label: "three" },
-  { value: "four", label: "four" },
-  { value: "five", label: "five" },
-  { value: "six", label: "six" },
+  { value: "science", label: "science" },
+  { value: "literature", label: "literature" },
+  { value: "sports", label: "sports" },
 ];
 
 const schema = yup.object({

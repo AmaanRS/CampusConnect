@@ -10,7 +10,7 @@ import PopularCommittees from "../../StudentPages/Home/PopularCommittee/PopularC
 
 export default function AllTeachers() {
   const teachers = useQuery({
-    queryKey: ["teachers"],
+    queryKey: ["allteachers"],
     queryFn: () => axiosInstance.post("/teacher/getAllTeachers"),
   });
 
@@ -38,7 +38,11 @@ export default function AllTeachers() {
               className="divide-y divide-gray-200 dark:divide-gray-700"
             >
               {teachers?.data?.data?.data.map((item) => (
-                <TeacherItem key={item._id} email={item.email} />
+                <TeacherItem
+                  key={item._id}
+                  email={item?.email}
+                  isActive={item?.isAccountActive}
+                />
               ))}
             </List>
           )}
