@@ -11,6 +11,16 @@ import { Department } from "../../utils/enum";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import ApiError from "../Errors/ApiError";
+import Select from "react-select";
+
+const options = [
+  { value: "one", label: "one" },
+  { value: "two", label: "two" },
+  { value: "three", label: "three" },
+  { value: "four", label: "four" },
+  { value: "five", label: "five" },
+  { value: "six", label: "six" },
+];
 
 const schema = yup.object({
   year: yup
@@ -22,14 +32,17 @@ const schema = yup.object({
 });
 
 const StudentForm = () => {
+  const [tags, setTags] = useState([]);
+  const [tagErr, setTagErr] = useState("");
   const navigate = useNavigate();
   const { setUserState, userState, logOutUser } = useContext(UserContext);
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: ({ department, year }) => {
+    mutationFn: ({ department, year, tags }) => {
       return axiosInstance.post("/student/createStudent", {
         department,
         year,
+        tags,
       });
     },
 
@@ -49,7 +62,13 @@ const StudentForm = () => {
 
   const formSubmit = async (dataObj) => {
     const { year, department } = dataObj;
-    mutate({ year, department });
+    const arr = tags.map(({ value }) => value);
+    if (arr.length == 0) {
+      setTagErr("Please select some interests");
+      return;
+    }
+    console.log(year, department, arr);
+    mutate({ year, department, tags: arr });
   };
 
   return (
@@ -59,7 +78,7 @@ const StudentForm = () => {
         onSubmit={handleSubmit(formSubmit)}
       >
         {/* Email Input */}
-        <label
+        {/* <label
           htmlFor="email"
           className="my-2 lg:my-3 font-medium text-blue-light text-lg xl:text-xl"
         >
@@ -74,7 +93,7 @@ const StudentForm = () => {
           className="rounded-md px-3 py-1 md:py-2 border-[1px] border-blue-dark xl:text-xl text-blue-light  bg-white"
           {...register("email")}
         />
-        <span className="text-red-500 text-xs md:text-sm mt-1 lg:mt-2"></span>
+        <span className="text-red-500 text-xs md:text-sm mt-1 lg:mt-2"></span> */}
 
         {/* Year Input */}
         <label
@@ -121,6 +140,40 @@ const StudentForm = () => {
           </option>
         </select>
 
+        {/* tags */}
+        <>
+          <label className="my-2 lg:my-3 font-medium text-blue-light text-lg xl:text-xl">
+            Interests
+          </label>
+          <Select
+            className="basic-multi-select"
+            classNamePrefix="select"
+            isMulti
+            isClearable
+            isSearchable
+            value={tags}
+            options={options}
+            onChange={(selected) => {
+              setTagErr("");
+              setTags(selected);
+            }}
+            styles={{
+              input: (base) => ({
+                ...base,
+                "input:focus": {
+                  boxShadow: "none",
+                },
+                cursor: "text",
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                padding: "8px",
+              }),
+            }}
+          />
+        </>
+
+        {tagErr && <p className="text-red-600 text-sm">{tagErr}</p>}
         <div className="btn flex gap-4 items-center justify-center mt-12">
           <NavLink
             onClick={() => logOutUser()}
