@@ -400,14 +400,14 @@ export default function EventUpdateForm() {
 
         {/* submit button */}
         <div className="text-right">
-          <Button
+          {/* <Button
             disabled={mutation.isPending}
             onClick={handleClear}
             color="error"
             className=" inline-block text-center ml-auto mt-4 mr-4 bg-red-600  text-white hover:bg-red-700 "
           >
             clear
-          </Button>
+          </Button> */}
 
           <Button
             disabled={mutation.isPending}

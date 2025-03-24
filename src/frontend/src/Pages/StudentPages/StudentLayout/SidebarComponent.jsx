@@ -63,14 +63,14 @@ export default function SidebarComponent() {
 
       <SidebarItem to="explore" icon={<Search size={20} />} text="Explore " />
 
-      <SidebarItem
+      {/* <SidebarItem
         icon={<HiOutlineUserGroup size={20} />}
         text="Jobs/intenships/education"
       />
       <SidebarItem
         icon={<LiaChalkboardTeacherSolid size={20} />}
         text="online courses/certifications"
-      />
+      /> */}
       <hr />
       {showAddPost && (
         <>
