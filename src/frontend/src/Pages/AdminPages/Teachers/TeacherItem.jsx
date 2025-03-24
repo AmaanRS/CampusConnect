@@ -10,9 +10,9 @@ export default function TeacherItem({ email, isActive }) {
   return (
     <List.Item className="py-3 sm:py-2">
       <div className="flex items-center p-4 bg-white dark:bg-gray-800 rounded-lg transition-transform transform  ">
-        <Avatar img={TeacherImg} alt="Thomas Lean" rounded size="sm" />
+        <Avatar alt="Thomas Lean" rounded size="sm" />
         <div className="min-w-0 flex-1 pl-4">
-          <p className="truncate text-lg font-semibold text-gray-900 dark:text-white">
+          <p className="truncate capitalize text-lg font-semibold text-gray-900 dark:text-white">
             {name + " " + lastname}
           </p>
           <p className="truncate text-sm text-gray-500 dark:text-gray-400">
