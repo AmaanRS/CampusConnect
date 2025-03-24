@@ -679,10 +679,11 @@ const getAllEvents = async (req: Request, res: Response) => {
 
 		const isAdmin = decodedToken.accountType === AccountType.Admin;
 
-		const allEvents = await eventModel.find(
-			{},
-			{ _skipDeletedEventsHook: isAdmin },
-		);
+		//TODO NOW: Test this
+		const allEvents = await eventModel
+			.find({}, { _skipDeletedEventsHook: isAdmin })
+			.populate("hostingCommittees")
+			.lean();
 
 		if (allEvents.length === 0) {
 			const response: DataResponse = {

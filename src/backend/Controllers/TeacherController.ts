@@ -46,6 +46,15 @@ const createTeacher = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
+		if (!tags || !Array.isArray(tags) || tags.length === 0) {
+			const response: StandardResponse = {
+				message: "Give tags as an non empty array",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
 		// If user is hod remove department given from user since it should already exist in user
 		if (onlyHodEmailRegex.test(email)) {
 			department = undefined;
@@ -107,13 +116,13 @@ const createTeacher = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			let newTeacherData = user;
+			let newTeacherData = { ...user, tags };
 
 			//If department property does not exists on user in db then user is teacher else if department property exists then user is hod
 			if (!user.department) newTeacherData.department = department;
 
 			const newTeacher: ITeacher[] = await teacherModel.create(
-				[newTeacherData, tags],
+				[newTeacherData],
 				{
 					session,
 				},

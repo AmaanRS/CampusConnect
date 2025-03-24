@@ -14,7 +14,8 @@ export const generateUniqueId = async (
 			let uniqueId = nanoid();
 
 			//Prefix added to the generated unique id to show which model the id belongs to
-			uniqueId = `${ModelTypes[0].toUpperCase()}${uniqueId}`;
+			//TODO NOW:Test this
+			uniqueId = `${ModelTypes[0].toUpperCase()}${ModelTypes[1].toUpperCase()}${uniqueId}`;
 
 			// Check if the ID already exists before inserting
 			const existingId = await uniqueIdModel

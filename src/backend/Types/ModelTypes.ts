@@ -48,6 +48,7 @@ export enum ModelTypes {
 	STUDENT_MODEL = "studentModel",
 	TEACHER_MODEL = "teacherModel",
 	ADMIN_MODEL = "adminModel",
+	PROMOTION_MODEL = "promotionModel",
 }
 
 export type UserPosition =
@@ -224,3 +225,16 @@ export interface IComment {
 }
 
 export interface ICommentDocument extends IComment, Document {}
+
+export interface IPromotion {
+	promoId: string;
+	promoImage?: {
+		imageUrl?: string;
+		imagePath?: string;
+	}[];
+	promoLink: string;
+	promotedBy: Types.ObjectId[];
+	isPromotionDeleted: boolean;
+}
+
+export interface IPromotionDocument extends IPromotion, Document {}

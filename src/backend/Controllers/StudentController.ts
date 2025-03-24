@@ -17,7 +17,6 @@ import { runWithRetrySession } from "../Utils/util";
 import { userModel } from "../Models/User";
 import { studentModel } from "../Models/Student";
 import { createJwtToken } from "../Utils/jwtToken";
-import { populate } from "dotenv";
 
 const createStudent = async (req: Request, res: Response) => {
 	try {
@@ -52,9 +51,18 @@ const createStudent = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if (!department || !year) {
+		if (!department || !year || !tags) {
 			const response: StandardResponse = {
-				message: "Give department and year",
+				message: "Give department and year and tags",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		if(!Array.isArray(tags) || tags.length === 0){
+			const response: StandardResponse = {
+				message: "Give tags as an non empty array",
 				success: false,
 			};
 
@@ -98,11 +106,11 @@ const createStudent = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			let newStudentData = { ...user, year: year };
+			let newStudentData = { ...user, year: year, tags: tags };
 			newStudentData.department = department;
 
 			const newStudent: IStudent[] = await studentModel.create(
-				[newStudentData, tags],
+				[newStudentData],
 				{
 					session,
 				},
@@ -570,6 +578,7 @@ const getAllStudentData = async (req: Request, res: Response) => {
 							],
 						},
 					],
+					//TODO NOW:Populate followingCommittees
 				},
 			]);
 
