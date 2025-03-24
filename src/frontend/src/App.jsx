@@ -37,6 +37,7 @@ import PreLoader from "./PreLoader";
 import EventUpdateForm from "./Pages/StudentPages/AllEvents/EventUpdateForm";
 import PostUpdateForm from "./Pages/StudentPages/Components/PostPreview/Post/PostUpdateForm";
 import Preloader from "./PreLoader";
+import AddPromotion from "./Pages/AdminPages/Promotions/AddPromotion";
 
 const queryClient = new QueryClient();
 
@@ -98,6 +99,7 @@ function App() {
                 { index: true, element: <Dashboard /> },
                 { path: "allCommittee", element: <AllCommittees /> },
                 { path: "createcommittee", element: <CreateCommittee /> },
+                { path: "addPromotion", element: <AddPromotion /> },
                 { path: "teachers", element: <AllTeachers /> },
                 { path: "students", element: <AllStudents /> },
               ],

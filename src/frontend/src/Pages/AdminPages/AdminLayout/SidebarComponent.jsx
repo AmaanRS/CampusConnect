@@ -15,6 +15,7 @@ import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 import { PiStudent } from "react-icons/pi";
 import { TbDevicesQuestion } from "react-icons/tb";
 import SidebarButton from "../../../Components/Layout/Desktop/SidebarButton";
+import { PiMoneyWavyLight } from "react-icons/pi";
 
 export default function SidebarComponent() {
   const { logOutUser } = useContext(UserContext);
@@ -27,6 +28,13 @@ export default function SidebarComponent() {
           text="Create Committee"
           icon={<HiOutlineUserGroup size={20} />}
         />
+
+        <SidebarItem
+          to={"addPromotion"}
+          text="Add Promotion"
+          icon={<PiMoneyWavyLight size={20} />}
+        />
+
         <SidebarItem
           to="allCommittee"
           icon={<LayoutDashboard size={20} />}
