@@ -5,8 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import ApiError from "../../../Components/Errors/ApiError";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
-import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
-import PopularCommittees from "../../StudentPages/Home/PopularCommittee/PopularCommittees";
 import { PulseLoader } from "react-spinners";
 import EmptyComment from "../../StudentPages/PostDetails/Comment/EmptyComment";
 
