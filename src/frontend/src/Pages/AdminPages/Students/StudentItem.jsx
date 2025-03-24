@@ -1,8 +1,10 @@
 import { Avatar, List, Button } from "flowbite-react";
 import React from "react";
 import TeacherImg from "../../../assets/Dummy/user.png";
+import DeleteButton from "./DeleteButton";
+import ActiveButton from "./ActiveButton";
 
-export default function StudentItem({ email }) {
+export default function StudentItem({ email, isActive }) {
   let [name] = email?.split(".");
   return (
     <List.Item className="py-3 sm:py-2">
@@ -17,14 +19,8 @@ export default function StudentItem({ email }) {
           </p>
         </div>
         <div className="inline-flex flex-col items-end">
-          <Button
-            size="sm"
-            color="white"
-            className="text-blue-500  "
-            // onClick={() => alert("View Details")}
-          >
-            View Details
-          </Button>
+          {isActive && <DeleteButton studentEmail={email} />}
+          {!isActive && <ActiveButton userEmail={email} />}
         </div>
       </div>
     </List.Item>

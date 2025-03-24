@@ -20,14 +20,6 @@ export default function TeacherItem({ email, isActive }) {
           </p>
         </div>
         <div className="inline-flex flex-col items-end">
-          {/* <button
-            size="sm"
-            color="red"
-            className="text-blue-500  "
-            // onClick={() => alert("View Details")}
-          >
-            Delete
-          </button> */}
           {isActive && <DeleteButton teacherEmail={email} />}
           {!isActive && <ActiveButton userEmail={email} />}
         </div>
