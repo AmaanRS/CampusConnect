@@ -96,7 +96,7 @@ const createAdmin = async (req: Request, res: Response) => {
 
 			// Passing old objectId ensures that objectid remains same
 			const userId = user._id;
-			const { ...dataForNewAdmin } = user;
+			const dataForNewAdmin = { ...user, tags };
 
 			// Now that the user is complete set isProfileComplete to true
 			const changedUser = await userModel.updateOne(
@@ -119,12 +119,9 @@ const createAdmin = async (req: Request, res: Response) => {
 			}
 
 			// This will return an array
-			const newAdmin: IAdmin[] = await adminModel.create(
-				[dataForNewAdmin, tags],
-				{
-					session,
-				},
-			);
+			const newAdmin: IAdmin[] = await adminModel.create([dataForNewAdmin], {
+				session,
+			});
 
 			if (!newAdmin || newAdmin.length === 0) {
 				const response: StandardResponse = {
