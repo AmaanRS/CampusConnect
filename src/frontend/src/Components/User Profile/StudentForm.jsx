@@ -67,7 +67,6 @@ const StudentForm = () => {
       setTagErr("Please select some interests");
       return;
     }
-    console.log(year, department, arr);
     mutate({ year, department, tags: arr });
   };
 

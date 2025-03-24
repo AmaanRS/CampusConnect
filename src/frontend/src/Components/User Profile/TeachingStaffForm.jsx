@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,15 +11,29 @@ import { Department } from "../../utils/enum";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import ApiError from "../Errors/ApiError";
+import Select from "react-select";
+
+const options = [
+  { value: "one", label: "one" },
+  { value: "two", label: "two" },
+  { value: "three", label: "three" },
+  { value: "four", label: "four" },
+  { value: "five", label: "five" },
+  { value: "six", label: "six" },
+];
 
 const schema = yup.object({});
+
 const TeachingStaffForm = () => {
+  const [tags, setTags] = useState([]);
+  const [tagErr, setTagErr] = useState("");
+
   const navigate = useNavigate();
   const { setUserState, logOutUser } = useContext(UserContext);
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: ({ department }) => {
-      return axiosInstance.post("/teacher/createTeacher", { department });
+    mutationFn: ({ department, tags }) => {
+      return axiosInstance.post("/teacher/createTeacher", { department, tags });
     },
     onSuccess: (data) => {
       const decodedToken = jwtDecode(data.data.token);
@@ -36,7 +50,13 @@ const TeachingStaffForm = () => {
   });
 
   const formSubmit = (data) => {
-    mutate({ department: data.department });
+    const arr = tags.map(({ value }) => value);
+    if (arr.length == 0) {
+      setTagErr("Please select some interests");
+      return;
+    }
+
+    mutate({ department: data.department, tags: arr });
   };
   return (
     <div className="flex flex-col items-center justify-center w-full h-full overflow-y-hidden sm:overflow-y-auto">
@@ -93,6 +113,41 @@ const TeachingStaffForm = () => {
             AIDS (Artificial Intelligence & Data Science)
           </option>
         </select>
+
+        {/* tags */}
+        <>
+          <label className="my-2 lg:my-3 font-medium text-blue-light text-lg xl:text-xl">
+            Interests
+          </label>
+          <Select
+            className="basic-multi-select"
+            classNamePrefix="select"
+            isMulti
+            isClearable
+            isSearchable
+            value={tags}
+            options={options}
+            onChange={(selected) => {
+              setTagErr("");
+              setTags(selected);
+            }}
+            styles={{
+              input: (base) => ({
+                ...base,
+                "input:focus": {
+                  boxShadow: "none",
+                },
+                cursor: "text",
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                padding: "8px",
+              }),
+            }}
+          />
+        </>
+
+        {tagErr && <p className="text-red-600 text-sm">{tagErr}</p>}
 
         <div className="btn flex gap-4 items-center justify-center mt-12">
           <NavLink
