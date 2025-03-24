@@ -20,7 +20,7 @@ export default function AllTeachers() {
   return (
     <>
       <CentreMainContent>
-        <div className="max-w-xl mx-auto my-6 p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <div className="max-w-xl border mx-auto my-6 p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             All Students
           </h2>

@@ -43,12 +43,8 @@ export default function SidebarComponent() {
           icon={<PiStudent size={20} />}
           text="Students"
         />
-        <SidebarItem icon={<Search size={20} />} text="Search" />
-        <SidebarItem icon={<TbDevicesQuestion size={20} />} text="Requests" />
 
         <hr className="my-3" />
-        <SidebarItem icon={<User size={20} />} text="profile" />
-        <SidebarItem icon={<Settings size={20} />} text="Settings" />
 
         <SidebarButton
           onClick={() => logOutUser()}

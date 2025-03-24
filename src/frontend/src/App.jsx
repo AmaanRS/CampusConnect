@@ -36,6 +36,7 @@ import AllEventsLayout from "./Pages/StudentPages/AllEvents/AllEventsLayout";
 import PreLoader from "./PreLoader";
 import EventUpdateForm from "./Pages/StudentPages/AllEvents/EventUpdateForm";
 import PostUpdateForm from "./Pages/StudentPages/Components/PostPreview/Post/PostUpdateForm";
+import Preloader from "./PreLoader";
 
 const queryClient = new QueryClient();
 
@@ -49,9 +50,9 @@ function App() {
     }, 2000);
   }, []);
 
-  if (isLoading) {
-    return <PreLoader />;
-  }
+  // if (isLoading) {
+  //   return <PreLoader />;
+  // }
 
   const router = createBrowserRouter([
     {
@@ -152,6 +153,7 @@ function App() {
             pauseOnHover={false}
             theme="light"
           />
+          {isLoading && <Preloader />}
           <RouterProvider router={router} />
         </div>
       </UserContextProvider>
