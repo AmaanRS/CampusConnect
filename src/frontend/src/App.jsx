@@ -153,7 +153,7 @@ function App() {
             pauseOnHover={false}
             theme="light"
           />
-          {isLoading && <Preloader />}
+          {/* {isLoading && <Preloader />} */}
           <RouterProvider router={router} />
         </div>
       </UserContextProvider>

@@ -7,6 +7,12 @@ import AllCommitteesCardSkeleton from "./AllCommitteesCardSkeleton";
 import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
 import { Tabs } from "flowbite-react";
 import EmptyComment from "../../StudentPages/PostDetails/Comment/EmptyComment";
+import {
+  BarLoader,
+  ClimbingBoxLoader,
+  HashLoader,
+  PulseLoader,
+} from "react-spinners";
 
 export default function AllCommittees() {
   const {
@@ -56,10 +62,13 @@ export default function AllCommittees() {
   if (isLoading) {
     return (
       <>
-        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4 ml-4 max-w-xl mb-4">
-          <AllCommitteesCardSkeleton />
-          <AllCommitteesCardSkeleton />
-          <AllCommitteesCardSkeleton />
+        <div className="h-screen w-full flex items-center justify-center pb-32">
+          <PulseLoader
+            color="#1a56db"
+            size={16}
+            speedMultiplier={1}
+            className="m-auto"
+          />
         </div>
       </>
     );

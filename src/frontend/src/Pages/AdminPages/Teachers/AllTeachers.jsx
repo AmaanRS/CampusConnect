@@ -7,12 +7,28 @@ import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import CentreMainContent from "../../../Components/Layout/Desktop/CentreMainContent";
 import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 import PopularCommittees from "../../StudentPages/Home/PopularCommittee/PopularCommittees";
+import { PulseLoader } from "react-spinners";
 
 export default function AllTeachers() {
   const teachers = useQuery({
     queryKey: ["allteachers"],
     queryFn: () => axiosInstance.post("/teacher/getAllTeachers"),
   });
+
+  if (teachers.isLoading) {
+    return (
+      <>
+        <div className="h-screen w-full flex items-center justify-center pb-32">
+          <PulseLoader
+            color="#1a56db"
+            size={16}
+            speedMultiplier={1}
+            className="m-auto"
+          />
+        </div>
+      </>
+    );
+  }
 
   if (teachers.isError) {
     console.log(teachers.error);
@@ -27,11 +43,6 @@ export default function AllTeachers() {
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             All Teachers
           </h2>
-          {teachers.isLoading && (
-            <>
-              <p>Loading...</p>
-            </>
-          )}
           {!teachers.isLoading && (
             <List
               unstyled
@@ -48,9 +59,6 @@ export default function AllTeachers() {
           )}
         </div>
       </CentreMainContent>
-      <RightSidebar>
-        <PopularCommittees />
-      </RightSidebar>
     </>
   );
 }
