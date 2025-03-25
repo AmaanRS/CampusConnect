@@ -12,7 +12,7 @@ export default function MobileDrawer({
 
   return (
     <>
-      <Drawer open={isDrawerOpen} onClose={handleClose}>
+      <Drawer className="z-[51]" open={isDrawerOpen} onClose={handleClose}>
         <Drawer.Header title="MENU" titleIcon={() => <></>} />
         <Drawer.Items>
           <Sidebar
