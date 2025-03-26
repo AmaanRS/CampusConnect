@@ -54,7 +54,7 @@ export default function AllCommittees() {
   }, [committees]);
 
   if (isError) {
-    console.log(error);
+    console.error(error);
 
     return <ApiError error={error} isError={isError} />;
   }

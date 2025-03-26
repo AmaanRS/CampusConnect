@@ -172,6 +172,7 @@ export default function CreateCommittee() {
           onSubmit={handleSubmit(onSubmit)}
           className=" flex  max-w-lg flex-col gap-4"
         >
+          {/* name */}
           <div>
             <div className="mb-2 block">
               <Label htmlFor="committee-name" value="Committee name" />
@@ -188,6 +189,7 @@ export default function CreateCommittee() {
               <p className={errorClass}> {errors.name.message} </p>
             )}
           </div>
+          {/* description */}
           <div className="max-w-lg">
             <div className="mb-2 block">
               <Label htmlFor="description" value="Description" />
@@ -205,7 +207,7 @@ export default function CreateCommittee() {
               <p className={errorClass}> {errors.description.message} </p>
             )}
           </div>
-          {/* ------------------------------------------- */}
+          {/* ------------student mail------------------------------- */}
           <div>
             <div className="mb-2 block">
               <Label value="Student Incharge Email" />
@@ -216,7 +218,7 @@ export default function CreateCommittee() {
             )}
           </div>
 
-          {/* ---------------------------------------- */}
+          {/* ----------teacher mail------------------------------ */}
           <div>
             <div className="mb-2 block">
               <Label
@@ -265,7 +267,7 @@ export default function CreateCommittee() {
 
           {tagErr && <p className="text-red-600 text-sm">{tagErr}</p>}
 
-          {/* ---------------------------------------- */}
+          {/* ------------select department---------------------------- */}
 
           <HR className="m-1" />
           <div>
@@ -302,6 +304,7 @@ export default function CreateCommittee() {
             {depError && <p className={errorClass}> {depError} </p>}
           </div>
 
+          {/* submission button */}
           <Button
             disabled={mutation.isPending}
             color={""}

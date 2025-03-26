@@ -9,7 +9,10 @@ const fetchData = async () => {
   return response.data;
 };
 
-export default function TeacherSelect({ handleTeacherEmail = "" }) {
+export default function TeacherSelect({
+  handleTeacherEmail = "",
+  defaultValue = "",
+}) {
   const [options, setOptions] = useState([]);
 
   const { data, isLoading, isError, error } = useQuery({
@@ -46,7 +49,7 @@ export default function TeacherSelect({ handleTeacherEmail = "" }) {
         }),
       }}
       isLoading={isLoading}
-      defaultValue={""}
+      defaultValue={defaultValue}
       isClearable={true}
       isSearchable={true}
       options={options}
