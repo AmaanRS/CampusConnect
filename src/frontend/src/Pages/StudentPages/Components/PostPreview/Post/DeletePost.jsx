@@ -18,6 +18,10 @@ export default function DeletePost({ committeeId, postId }) {
       queryClient.invalidateQueries({
         queryKey: ["committee", committeeId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["allPosts"],
+      });
+
       //   navigate("/student");
     },
     onError: (error) => {

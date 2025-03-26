@@ -14,6 +14,7 @@ import HostingCommittee from "./HostingCommittee";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import UpdateEvent from "./UpdateEvent";
 import { UserContext } from "../../../store/UserContextProvider";
+import { AccountType } from "../../../utils/enum";
 
 const formatDate = (inputDate) => {
   if (!inputDate) return "";
@@ -67,7 +68,7 @@ export default function EventPost({
   );
 
   const {
-    userState: { email },
+    userState: { email, accountType },
   } = useContext(UserContext);
 
   let isIncharge = false;
@@ -105,7 +106,7 @@ export default function EventPost({
                 {eventStatus}
               </span>
             </div>
-            {isIncharge && (
+            {(isIncharge || accountType === AccountType.Admin) && (
               <UpdateEvent
                 eventId={eventData?.eventId}
                 committeeId={committeeData?.committeeId}

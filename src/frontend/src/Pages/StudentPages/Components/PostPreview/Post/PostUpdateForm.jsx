@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../../../utils/Axios/AxiosInstance";
 import { HashLoader } from "react-spinners";
@@ -7,6 +7,7 @@ import ApiError from "../../../../../Components/Errors/ApiError";
 import { Button, Label } from "flowbite-react";
 import TipTap from "../../../../../Components/RichTextEditor/TipTap";
 import { toast } from "react-toastify";
+import { UserContext } from "../../../../../store/UserContextProvider";
 
 const fetchData = async ({ postId }) => {
   const response = await axiosInstance.post(`/post/getPostById`, {
@@ -27,6 +28,9 @@ export default function PostUpdateForm() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
 
   const {
     data,
@@ -41,11 +45,11 @@ export default function PostUpdateForm() {
   const mutation = useMutation({
     mutationFn: postData,
     onSuccess: (data) => {
-      toast.success("Event Updated successfully!");
+      toast.success("Post Updated successfully!");
       queryClient.invalidateQueries({
         queryKey: ["post", postId],
       });
-      navigate("/student");
+      navigate(`/${accountType.toLowerCase()}`);
 
       // alert("Data posted successfully!");
     },

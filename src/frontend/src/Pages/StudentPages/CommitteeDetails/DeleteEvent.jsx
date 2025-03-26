@@ -18,6 +18,7 @@ export default function DeleteEvent({ eventId, committeeId }) {
       queryClient.invalidateQueries({
         queryKey: ["committee", committeeId],
       });
+      queryClient.invalidateQueries("allEvents");
       //   navigate("/student");
     },
     onError: (error) => {

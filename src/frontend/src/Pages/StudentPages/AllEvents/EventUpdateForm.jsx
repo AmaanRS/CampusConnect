@@ -424,9 +424,9 @@ export default function EventUpdateForm() {
           <p className="text-center mt-2 text-red-600">{error}</p>
         )}
         {mutation.isError && (
-          <p className="text-center mt-2 text-red-600">
-            {mutation.error.message}
-          </p>
+          <div className="text-center mt-2 text-red-600">
+            <ApiError isError={mutation.isError} error={mutation.error} />
+          </div>
         )}
       </form>
     </div>

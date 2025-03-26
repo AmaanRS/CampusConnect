@@ -96,6 +96,8 @@ function App() {
                   path: "committee/edit/:committeeId",
                   element: <EditCommittee />,
                 },
+                { path: "edit/post/:postId", element: <PostUpdateForm /> },
+                { path: "edit/event/:eventId", element: <EventUpdateForm /> },
               ],
             },
             {
@@ -128,7 +130,6 @@ function App() {
                   path: "committee/:committeeId",
                   element: <CommitteeDetailLayout />,
                 },
-
                 ,
               ],
             },

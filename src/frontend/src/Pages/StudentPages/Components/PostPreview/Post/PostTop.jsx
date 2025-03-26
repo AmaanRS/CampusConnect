@@ -53,7 +53,7 @@ export default function PostTop({
           {" "}
           {formatDistanceToNow(createdAt, { addSuffix: true })}
         </div>
-        {isIncharge && (
+        {(isIncharge || accountType === AccountType.Admin) && (
           <div className="ml-auto">
             <UpdatePost committeeId={committeeId} postId={postId} />
           </div>
