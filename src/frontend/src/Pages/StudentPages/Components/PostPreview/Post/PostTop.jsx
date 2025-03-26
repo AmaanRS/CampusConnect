@@ -3,6 +3,8 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import UpdatePost from "./UpdatePost";
+import { UserContext } from "../../../../../store/UserContextProvider";
+import { AccountType } from "../../../../../utils/enum";
 
 export default function PostTop({
   mode = "home",
@@ -13,6 +15,19 @@ export default function PostTop({
   isIncharge,
   postId,
 }) {
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
+
+  let link = "";
+  if (accountType == "STUDENT") {
+    link = `/student/committee/${committeeId || 1}`;
+  } else if (accountType == AccountType.Admin) {
+    link = `/admin/committee/${committeeId || 1}`;
+  } else {
+    link = `/teacher/committee/${committeeId || 1}`;
+  }
+
   return (
     <>
       <div className="flex text-neutral-600 items-center">
@@ -20,7 +35,7 @@ export default function PostTop({
           <Avatar rounded size={"xs"} />
         </div>
         {mode === "home" && (
-          <Link to={`/student/committee/${committeeId || 1}`}>
+          <Link to={link}>
             <div className="text-xs font-semibold ml-2 hover:text-blue-500 transition-colors duration-150">
               {subname}
             </div>

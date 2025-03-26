@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./post.scss";
 import PostTop from "./PostTop";
 import PostTitle from "./PostTitle";
@@ -6,6 +6,7 @@ import PostActionBar from "./PostActionBar";
 import PostBody from "./PostBody";
 import PostImage from "./PostImage";
 import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../../../../../store/UserContextProvider";
 
 export default function StudentPost({
   mode = "home",
@@ -13,6 +14,9 @@ export default function StudentPost({
   isIncharge = false,
   committeeId = "",
 }) {
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
   let isImage = postData?.image?.length > 0;
   const navigate = useNavigate();
   return (
@@ -29,7 +33,9 @@ export default function StudentPost({
         />
         <div
           className="cursor-pointer"
-          onClick={() => navigate(`/student/post/${postData?.postId}`)}
+          onClick={() =>
+            navigate(`/${accountType.toLowerCase()}/post/${postData?.postId}`)
+          }
         >
           <PostTitle title={postData?.title} />
           <PostBody isImage={isImage} content={postData?.content} />

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { FaRegComment } from "react-icons/fa6";
 import numbro from "numbro";
 import { PiShareFat } from "react-icons/pi";
 import { toast } from "react-toastify";
 import LikeButton from "./LikeButton";
+import { UserContext } from "../../../store/UserContextProvider";
 
 export default function PostActionBar({
   postId,
@@ -11,10 +12,13 @@ export default function PostActionBar({
   comments,
   setcommentOn,
 }) {
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(
-        `http://localhost:5173/student/post/${postId}`
+        `https://campusconnect-frontend-3crd.onrender.com/${accountType.toLowerCase()}/post/${postId}`
       );
       toast.success("Link Copied");
     } catch (err) {

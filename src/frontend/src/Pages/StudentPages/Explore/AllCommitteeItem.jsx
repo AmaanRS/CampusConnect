@@ -1,15 +1,19 @@
 import { Avatar } from "flowbite-react";
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import Follow from "./Follow";
+import { UserContext } from "../../../store/UserContextProvider";
 
 export default function AllCommitteeItem({ item }) {
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
   return (
     <div className="border hover:bg-slate-50  transition-colors duration-200 p-4 rounded-xl border-slate-300 shadow-md hover:shadow-lg">
       <div className="flex w-full justify-between">
         <Link
           key={item?.committeeId}
-          to={`/student/committee/${item?.committeeId}`}
+          to={`/${accountType.toLowerCase()}/committee/${item?.committeeId}`}
         >
           <div className="flex items-center">
             <Avatar className="text-slate-400" size={"md"} rounded />
@@ -35,7 +39,7 @@ export default function AllCommitteeItem({ item }) {
       </div>
       <Link
         key={item?.committeeId}
-        to={`/student/committee/${item?.committeeId}`}
+        to={`/${accountType.toLowerCase()}/committee/${item?.committeeId}`}
       >
         <div className="line-clamp-2 mt-3 text-xs text-slate-600 font-normal">
           {item?.description}

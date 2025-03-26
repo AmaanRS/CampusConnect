@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { AiOutlineLike } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa6";
 import numbro from "numbro";
@@ -6,13 +6,17 @@ import { PiShareFat } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import LikeButton from "./LikeButton";
+import { UserContext } from "../../../../../store/UserContextProvider";
 
 export default function PostActionBar({ postId, likes, comments = 0 }) {
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
   let active = false;
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(
-        `http://localhost:5173/student/post/${postId}`
+        `https://campusconnect-frontend-3crd.onrender.com/${accountType.toLowerCase()}/post/${postId}`
       );
       toast.success("Link Copied");
     } catch (err) {
@@ -27,7 +31,7 @@ export default function PostActionBar({ postId, likes, comments = 0 }) {
       <LikeButton postId={postId} likes={likes} />
 
       {/* comment button */}
-      <Link to={`/student/post/${postId}#comment`}>
+      <Link to={`/${accountType.toLowerCase()}/post/${postId}#comment`}>
         <div className={` flex ml-2  items-center justify-center `}>
           <button
             type="button"

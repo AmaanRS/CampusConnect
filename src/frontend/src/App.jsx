@@ -80,9 +80,13 @@ function App() {
               element: <AdminLayout />,
               children: [
                 { index: true, element: <AllPostsLayout /> },
+                { path: "post/:postId", element: <PostDetailsLayout /> },
+                {
+                  path: "committee/:committeeId",
+                  element: <CommitteeDetailLayout />,
+                },
                 { path: "events", element: <AllEventLayout /> },
                 { path: "explore", element: <Explore /> },
-
                 { path: "allCommittee", element: <AllCommittees /> },
                 { path: "createcommittee", element: <CreateCommittee /> },
                 { path: "addPromotion", element: <AddPromotion /> },

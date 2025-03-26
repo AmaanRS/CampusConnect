@@ -1,8 +1,9 @@
 import { Avatar } from "flowbite-react";
-import React from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BackButton from "./BackButton";
 import { formatDistanceToNow } from "date-fns";
+import { UserContext } from "../../../store/UserContextProvider";
 
 export default function PostTop({
   subname = "subname",
@@ -10,6 +11,9 @@ export default function PostTop({
   createdAt = new Date(),
   committeeId,
 }) {
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
   return (
     <>
       <div className="flex  text-neutral-800  h-8 00 items-center">
@@ -23,7 +27,9 @@ export default function PostTop({
 
         <div className="flex-col ml-2 ">
           <div className="flex h-4 items-center gap-1 ">
-            <Link to={`/student/committee/${committeeId || 1}`}>
+            <Link
+              to={`/${accountType.toLowerCase()}/committee/${committeeId || 1}`}
+            >
               <div className="text-xs font-bold transition-colors duration-150  hover:text-blue-500">
                 {subname}
               </div>
