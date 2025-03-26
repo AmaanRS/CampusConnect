@@ -10,6 +10,8 @@ import { MdPersonAddAlt } from "react-icons/md";
 import AddMembers from "./AddMembers";
 import CommitteMembers from "./CommitteMembers";
 import { UserContext } from "../../../store/UserContextProvider";
+import { PiMoneyWavyLight } from "react-icons/pi";
+import Promotion from "./Promotion";
 
 const tabTheme = {
   tablist: {
@@ -105,6 +107,13 @@ export default function CommitteeList({
             {isStudentIncharge && (
               <Tabs.Item title="Members" icon={MdPersonAddAlt}>
                 <CommitteMembers committeeId={committeeId} members={members} />
+              </Tabs.Item>
+            )}
+
+            {/* promotions */}
+            {isStudentIncharge && (
+              <Tabs.Item title="Promotions" icon={PiMoneyWavyLight}>
+                <Promotion committeeId={committeeId} />
               </Tabs.Item>
             )}
           </Tabs>
