@@ -21,14 +21,18 @@ export default function DeleteButton({ teacherEmail }) {
       //   navigate("/student");
     },
     onError: (error) => {
-      console.error("Error Removing user:", error);
+      console.error(
+        "Error Removing user:",
+        error?.response?.data?.message || error?.message
+      );
+      alert(error?.response?.data?.message || error?.message);
+
       toast.error("Error Removing User!");
     },
   });
 
   function handleSubmit() {
     const data = { teacherEmail };
-    console.log(data);
     mutation.mutate(data);
   }
 

@@ -21,7 +21,12 @@ export default function DeleteButton({ studentEmail }) {
       //   navigate("/student");
     },
     onError: (error) => {
-      console.error("Error Removing user:", error);
+      console.error(
+        "Error Removing user:",
+        error?.response?.data?.message || error?.message
+      );
+      alert(error?.response?.data?.message || error?.message);
+
       toast.error("Error Removing User!");
     },
   });
