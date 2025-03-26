@@ -10,7 +10,7 @@ import {
 import { Department } from "../../../utils/enum";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "@tanstack/react-query";
@@ -23,6 +23,12 @@ import RightSidebar from "../../../Components/Layout/Desktop/RightSidebar";
 import PopularCommittees from "../../StudentPages/Home/PopularCommittee/PopularCommittees";
 import StudentSelect from "./slect/StudentSelect";
 import TeacherSelect from "./slect/TeacherSelect";
+
+const option = [
+  { value: "science", label: "science" },
+  { value: "literature", label: "literature" },
+  { value: "sports", label: "sports" },
+];
 
 const options = [
   { value: Department.IT, label: Department.IT },
@@ -43,6 +49,8 @@ export default function CreateCommittee() {
   });
   const errorClass = "text-red-600 ml-2 mt-1";
   const navigate = useNavigate();
+  const [tags, setTags] = useState([]);
+  const [tagErr, setTagErr] = useState("");
 
   const mutation = useMutation({
     mutationFn: ({ data }) =>
@@ -147,6 +155,12 @@ export default function CreateCommittee() {
 
     data.studentIncharge = studentIncharge;
     data.facultyInchargeEmail = facultyIncharge;
+    const arr = tags.map(({ value }) => value);
+    if (arr.length == 0) {
+      setTagErr("Please select some interests");
+      return;
+    }
+    data.tags = arr;
     mutation.mutate({ data });
   }
 
@@ -215,6 +229,42 @@ export default function CreateCommittee() {
               <p className={errorClass}> {selectError.message} </p>
             )}
           </div>
+
+          {/* committee tags */}
+          <>
+            <div className="mb-1 block">
+              <Label value="Committee Tags" />
+            </div>
+            <Select
+              className="basic-multi-select"
+              classNamePrefix="select"
+              isMulti
+              isClearable
+              isSearchable
+              value={tags}
+              options={option}
+              onChange={(selected) => {
+                setTagErr("");
+                setTags(selected);
+              }}
+              styles={{
+                input: (base) => ({
+                  ...base,
+                  "input:focus": {
+                    boxShadow: "none",
+                  },
+                  cursor: "text",
+                }),
+                valueContainer: (base) => ({
+                  ...base,
+                  padding: "8px",
+                }),
+              }}
+            />
+          </>
+
+          {tagErr && <p className="text-red-600 text-sm">{tagErr}</p>}
+
           {/* ---------------------------------------- */}
 
           <HR className="m-1" />

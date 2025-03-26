@@ -30,12 +30,6 @@ export default function SidebarComponent() {
         />
 
         <SidebarItem
-          to={"addPromotion"}
-          text="Add Promotion"
-          icon={<PiMoneyWavyLight size={20} />}
-        />
-
-        <SidebarItem
           to="allCommittee"
           icon={<LayoutDashboard size={20} />}
           text="All Committee"
