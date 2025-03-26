@@ -4,9 +4,11 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import { FaCheck } from "react-icons/fa6";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-export default function AllCommitteeCard({ item }) {
+export default function AllCommitteeCard({ item, type = "ACTIVE" }) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const mutation = useMutation({
     mutationFn: (data) => axiosInstance.post("/changeStatusOfCommittee", data),
     onSuccess: (data) => {
@@ -66,13 +68,18 @@ export default function AllCommitteeCard({ item }) {
         </div>
 
         <div className="flex space-x-3">
-          <Button
-            color={""}
-            className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition duration-300"
-          >
-            <MdEdit className="mr-2 h-5 w-5" />
-            Edit
-          </Button>
+          {type !== "DELETED" && (
+            <Button
+              onClick={() =>
+                navigate(`/admin/committee/edit/${item.committeeId}`)
+              }
+              color={""}
+              className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition duration-300"
+            >
+              <MdEdit className="mr-2 h-5 w-5" />
+              Edit
+            </Button>
+          )}
 
           {item.status !== "ACCEPTED" && (
             <Button

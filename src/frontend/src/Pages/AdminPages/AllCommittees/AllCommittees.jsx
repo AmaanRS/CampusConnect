@@ -121,6 +121,7 @@ export default function AllCommittees() {
               }}
               variant="default"
             >
+              {/* pending committee */}
               <Tabs.Item title="Pending">
                 {list?.pendingCommittees?.length !== 0 && (
                   <>
@@ -128,6 +129,7 @@ export default function AllCommittees() {
                       {list.pendingCommittees.map((item) => {
                         return (
                           <AllCommitteeCard
+                            type="PENDING"
                             key={item.committeeId}
                             item={item}
                           />
@@ -141,6 +143,7 @@ export default function AllCommittees() {
                   <EmptyComment type="pending committes" />
                 )}
               </Tabs.Item>
+              {/* active committees */}
               <Tabs.Item active title="Active">
                 {list?.acceptedCommittees?.length !== 0 && (
                   <>
@@ -148,6 +151,7 @@ export default function AllCommittees() {
                       {list.acceptedCommittees.map((item) => {
                         return (
                           <AllCommitteeCard
+                            type="ACTIVE"
                             key={item.committeeId}
                             item={item}
                           />
@@ -160,6 +164,7 @@ export default function AllCommittees() {
                   <EmptyComment type="Active committes" />
                 )}
               </Tabs.Item>
+              {/* deleted committees */}
               <Tabs.Item title="Deleted">
                 {list?.deletedCommittees?.length !== 0 && (
                   <>
@@ -167,6 +172,7 @@ export default function AllCommittees() {
                       {list.deletedCommittees.map((item) => {
                         return (
                           <AllCommitteeCard
+                            type="DELETED"
                             key={item.committeeId}
                             item={item}
                           />
