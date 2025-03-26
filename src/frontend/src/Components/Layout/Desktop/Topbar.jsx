@@ -6,7 +6,10 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../../../store/UserContextProvider";
 
 export default function Topbar() {
-  const { logOutUser } = useContext(UserContext);
+  const {
+    logOutUser,
+    userState: { email },
+  } = useContext(UserContext);
   return (
     <div className="border-b-[1px] z-50 fixed w-full border-gray-300 ">
       <div className="flex px-3 bg-white justify-between h-[52.3px] items-center">
@@ -55,9 +58,9 @@ export default function Topbar() {
           >
             <Dropdown.Header>
               <span className="block capitalize  font-bold text-sm">
-                John Doe
+                {email.split(".")[0]}
               </span>
-              <span className=" block truncate text-sm ">john@gmail.com</span>
+              <span className=" block truncate text-sm "> {email} </span>
             </Dropdown.Header>
             <Dropdown.Item className="font-semibold">Profile</Dropdown.Item>
             <Dropdown.Divider />
