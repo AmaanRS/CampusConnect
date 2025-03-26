@@ -22,7 +22,7 @@ const fetchData = async () => {
 
 export default function SidebarComponent() {
   const { logOutUser } = useContext(UserContext);
-  const [showAddPost, setShowAddPost] = useState(false);
+  const [inchargeArr, setInchargeArr] = useState([]);
 
   const { data, isError, error } = useQuery({
     queryKey: ["getAllStudentData"],
@@ -32,21 +32,23 @@ export default function SidebarComponent() {
 
   useEffect(() => {
     if (data?.data?.committeePositions?.length > 0) {
-      setShowAddPost(true);
-    } else {
-      setShowAddPost(false);
+      const memberarr = data?.data?.committeePositions?.filter(
+        (item) => item?.position == "STUDENT_INCHARGE" && item.committeeObjId
+      );
+      setInchargeArr(memberarr);
     }
   }, [data]);
 
   if (isError) {
-    console.log(error.message, "\n", error);
+    console.error(error.message, "\n", error);
   }
+
   return (
     <Sidebar>
       <SidebarItem to="/student" icon={<Home size={20} />} text="Home" />
       <SidebarItem to="events" icon={<MdEvent size={20} />} text="Events" />
 
-      {showAddPost && (
+      {inchargeArr?.length > 0 && (
         <>
           <SidebarItem
             to="createPost"
@@ -63,19 +65,11 @@ export default function SidebarComponent() {
 
       <SidebarItem to="explore" icon={<Search size={20} />} text="Explore " />
 
-      {/* <SidebarItem
-        icon={<HiOutlineUserGroup size={20} />}
-        text="Jobs/intenships/education"
-      />
-      <SidebarItem
-        icon={<LiaChalkboardTeacherSolid size={20} />}
-        text="online courses/certifications"
-      /> */}
       <hr />
-      {showAddPost && (
+      {inchargeArr?.length > 0 && (
         <>
           {/* user committees */}
-          <MyCommittees committeeArray={data?.data?.committeePositions} />
+          <MyCommittees committeeArray={inchargeArr} />
           <hr />
         </>
       )}

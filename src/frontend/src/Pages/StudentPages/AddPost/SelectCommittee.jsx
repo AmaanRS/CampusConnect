@@ -21,7 +21,10 @@ export default function SelectCommittee({ handleChange, isMulti = false }) {
 
   useEffect(() => {
     if (data?.data?.committeePositions) {
-      const temp = data?.data?.committeePositions?.map((position) => ({
+      const memberarr = data?.data?.committeePositions?.filter(
+        (item) => item?.position == "STUDENT_INCHARGE" && item.committeeObjId
+      );
+      const temp = memberarr?.map((position) => ({
         value: position?.committeeObjId?.committeeId,
         label: position?.committeeObjId?.name,
       }));
