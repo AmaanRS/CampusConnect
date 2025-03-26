@@ -120,11 +120,16 @@ function App() {
               path: "teacher",
               element: <TeacherLayout />,
               children: [
-                { index: true, element: <TeacherDashboard /> },
+                { index: true, element: <StudentHomeLayout /> },
+                { path: "explore", element: <Explore /> },
+                { path: "events", element: <AllEventsLayout /> },
+                { path: "post/:postId", element: <PostDetailsLayout /> },
                 {
-                  path: "createcommittee",
-                  element: <CreateCommittee />,
+                  path: "committee/:committeeId",
+                  element: <CommitteeDetailLayout />,
                 },
+
+                ,
               ],
             },
           ],
