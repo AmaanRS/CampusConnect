@@ -33,6 +33,7 @@ import Explore from "./Pages/StudentPages/Explore/Explore";
 import AddEvent from "./Pages/StudentPages/AddEvent/AddEvent";
 import AllEvents from "./Pages/StudentPages/AllEvents/AllEvents";
 import AllEventsLayout from "./Pages/StudentPages/AllEvents/AllEventsLayout";
+
 import PreLoader from "./PreLoader";
 import EventUpdateForm from "./Pages/StudentPages/AllEvents/EventUpdateForm";
 import PostUpdateForm from "./Pages/StudentPages/Components/PostPreview/Post/PostUpdateForm";
@@ -40,6 +41,7 @@ import Preloader from "./PreLoader";
 import AddPromotion from "./Pages/AdminPages/Promotions/AddPromotion";
 import EditCommittee from "./Pages/AdminPages/EditCommitte/EditCommittee";
 import AllPostsLayout from "./Pages/AdminPages/AllPosts/AllPostsLayout";
+import AllEventLayout from "./Pages/AdminPages/AllEvents/AllEventLayout";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +80,9 @@ function App() {
               element: <AdminLayout />,
               children: [
                 { index: true, element: <AllPostsLayout /> },
+                { path: "events", element: <AllEventLayout /> },
+                { path: "explore", element: <Explore /> },
+
                 { path: "allCommittee", element: <AllCommittees /> },
                 { path: "createcommittee", element: <CreateCommittee /> },
                 { path: "addPromotion", element: <AddPromotion /> },

@@ -43,9 +43,13 @@ export default function Explore() {
       <p className="mb-6 text-3xl font-bold">Explore Committees</p>
       <div className=" grid grid-cols-3  gap-4">
         {data?.data?.length == 0 && <EmptyComment type="Committees" />}
-        {data?.data?.map((item) => (
-          <AllCommitteeItem key={item._id} item={item} />
-        ))}
+        {data?.data?.map((item) =>
+          item?.status === "ACCEPTED" ? (
+            <AllCommitteeItem key={item._id} item={item} />
+          ) : (
+            ""
+          )
+        )}
       </div>
     </div>
   );

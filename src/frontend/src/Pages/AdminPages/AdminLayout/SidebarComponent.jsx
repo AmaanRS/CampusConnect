@@ -28,7 +28,8 @@ export default function SidebarComponent() {
           to="/admin"
           text="Posts"
         />
-        {/* <SidebarItem to="events" icon={<MdEvent size={20} />} text="Events" /> */}
+        <SidebarItem to="events" icon={<MdEvent size={20} />} text="Events" />
+        <SidebarItem to="explore" icon={<Search size={20} />} text="Explore " />
 
         <SidebarItem
           to={"createcommittee"}
