@@ -15,14 +15,21 @@ import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 import { PiStudent } from "react-icons/pi";
 import { TbDevicesQuestion } from "react-icons/tb";
 import SidebarButton from "../../../Components/Layout/Desktop/SidebarButton";
-import { PiMoneyWavyLight } from "react-icons/pi";
+import { MdEvent } from "react-icons/md";
+import { AiOutlineFileText } from "react-icons/ai";
 
 export default function SidebarComponent() {
   const { logOutUser } = useContext(UserContext);
   return (
     <>
       <Sidebar>
-        <SidebarItem icon={<Home size={20} />} to="/admin" text="Home" />
+        <SidebarItem
+          icon={<AiOutlineFileText size={20} />}
+          to="/admin"
+          text="Posts"
+        />
+        {/* <SidebarItem to="events" icon={<MdEvent size={20} />} text="Events" /> */}
+
         <SidebarItem
           to={"createcommittee"}
           text="Create Committee"

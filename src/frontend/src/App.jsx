@@ -39,6 +39,7 @@ import PostUpdateForm from "./Pages/StudentPages/Components/PostPreview/Post/Pos
 import Preloader from "./PreLoader";
 import AddPromotion from "./Pages/AdminPages/Promotions/AddPromotion";
 import EditCommittee from "./Pages/AdminPages/EditCommitte/EditCommittee";
+import AllPostsLayout from "./Pages/AdminPages/AllPosts/AllPostsLayout";
 
 const queryClient = new QueryClient();
 
@@ -62,34 +63,13 @@ function App() {
       element: <AppLayout />,
       errorElement: <ErrorPage />,
       children: [
-        {
-          index: true,
-          element: <Layout />,
-        },
-        {
-          path: "test",
-          element: <TestLayout />,
-        },
-        {
-          path: "about",
-          element: <About />,
-        },
-        {
-          path: "contact",
-          element: <Contact />,
-        },
-        {
-          path: "login",
-          element: <Login />,
-        },
-        {
-          path: "signup",
-          element: <Signup />,
-        },
-        {
-          path: "userprofile",
-          element: <UserProfile />,
-        },
+        { index: true, element: <Layout /> },
+        { path: "test", element: <TestLayout /> },
+        { path: "about", element: <About /> },
+        { path: "contact", element: <Contact /> },
+        { path: "login", element: <Login /> },
+        { path: "signup", element: <Signup /> },
+        { path: "userprofile", element: <UserProfile /> },
         {
           element: <ProtectedRoutes />,
           children: [
@@ -97,7 +77,7 @@ function App() {
               path: "admin",
               element: <AdminLayout />,
               children: [
-                { index: true, element: <Dashboard /> },
+                { index: true, element: <AllPostsLayout /> },
                 { path: "allCommittee", element: <AllCommittees /> },
                 { path: "createcommittee", element: <CreateCommittee /> },
                 { path: "addPromotion", element: <AddPromotion /> },
