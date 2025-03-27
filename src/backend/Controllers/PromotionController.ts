@@ -75,7 +75,7 @@ const createPromotion = async (req: Request, res: Response) => {
 
 		if (!promotedBy || !Array.isArray(promotedBy) || promotedBy.length === 0) {
 			const response: StandardResponse = {
-				message: "Give the committee who is promoting",
+				message: "Give the committee who is promoting in an array",
 				success: false,
 			};
 
@@ -117,10 +117,16 @@ const createPromotion = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
+		let promotedByIds = [];
+
+		for (let i = 0; i < committees.length; i++) {
+			promotedByIds.push(committees[i]._id);
+		}
+
 		const isPromotionCreated = await promotionModel.create({
 			promoImage: image,
 			promoLink: link,
-			promotedBy,
+			promotedBy: promotedByIds,
 		});
 
 		if (!isPromotionCreated) {

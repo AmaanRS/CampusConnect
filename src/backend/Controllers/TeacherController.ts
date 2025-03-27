@@ -595,6 +595,88 @@ const getAllFacultysEmail = async (req: Request, res: Response) => {
 	}
 };
 
+const getAllTeacherData = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const teacherData = await teacherModel
+			.findOne({ email }, { password: 0 })
+			.populate([
+				{
+					path: "committeePositions",
+					populate: [
+						{
+							path: "committeeObjId",
+							populate: [
+								{
+									path: "followers.userId",
+									select: "-password",
+								},
+								{
+									path: "facultyIncharge",
+									select: "-password",
+								},
+							],
+						},
+					],
+				},
+				{
+					path: "followingCommittees",
+				},
+			]);
+
+		if (!teacherData) {
+			const response: StandardResponse = {
+				message: "Teacher not found",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Teacher found successfully",
+			success: true,
+			data: teacherData,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all the data of teacher" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
 export {
 	createTeacher,
 	getTeacher,
@@ -602,4 +684,5 @@ export {
 	deleteTeacher,
 	getAllTeachers,
 	getAllFacultysEmail,
+	getAllTeacherData,
 };
