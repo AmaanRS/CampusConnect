@@ -6,7 +6,7 @@ import { BarLoader, PulseLoader } from "react-spinners";
 
 // Function to fetch data
 const fetchData = async () => {
-  const response = await axiosInstance.post("/teacher/getTeacher", {}); // Pass an empty object if needed
+  const response = await axiosInstance.post("/teacher/getAllTeacherData", {}); // Pass an empty object if needed
   return response.data;
 };
 
@@ -27,16 +27,9 @@ export default function SelectCommitteeForTeacher({
       const memberarr = data?.data?.committeePositions?.filter(
         (item) => item?.position == "FACULTY_INCHARGE" && item.committeeObjId
       );
-      //   const temp = memberarr?.map((position) => ({
-      //     value: position?.committeeObjId?.committeeId,
-      //     label: position?.committeeObjId?.name,
-      //   }));
-      //   setOptions(temp);
-
-      //   temporary solution
       const temp = memberarr?.map((position) => ({
-        value: position?.committeeObjId,
-        label: position?.committeeObjId,
+        value: position?.committeeObjId?.committeeId,
+        label: position?.committeeObjId?.name,
       }));
       setOptions(temp);
     }

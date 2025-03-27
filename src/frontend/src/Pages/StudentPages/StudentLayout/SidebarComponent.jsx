@@ -72,7 +72,8 @@ export default function SidebarComponent() {
         </>
       )}
       {/* user following committees */}
-      <FollowingCommittee data={data} /> <hr />
+      <FollowingCommittee data={data} />
+      <hr />
       <SidebarButton
         onClick={() => logOutUser()}
         icon={<LogOutIcon className="inline" size={20} />}
