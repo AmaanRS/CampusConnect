@@ -5,6 +5,7 @@ import ApiError from "../../../Components/Errors/ApiError";
 import EventPost from "./EventPost";
 import EventPostSkeleton from "./EventPostSkeleton";
 import Promotion from "../Promotion/Promotion";
+import PromotionSkeleton from "../Promotion/PromotionSkeleton";
 
 const fetchData = async () => {
   const response = await axiosInstance.post("/event/getAllEvents", {});
@@ -21,6 +22,7 @@ export default function AllEvents() {
     return (
       <>
         <div className=" max-w-2xl px-2 m-auto">
+          <PromotionSkeleton />
           <EventPostSkeleton />
           <EventPostSkeleton />
           <EventPostSkeleton />

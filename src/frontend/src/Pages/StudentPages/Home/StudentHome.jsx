@@ -6,6 +6,7 @@ import PostPreviewSkeleton from "../Components/PostPreview/skeletons/PostPreview
 import ApiError from "../../../Components/Errors/ApiError";
 import EmptyComment from "../PostDetails/Comment/EmptyComment";
 import Promotion from "../Promotion/Promotion";
+import PromotionSkeleton from "../Promotion/PromotionSkeleton";
 
 const fetchData = async () => {
   const response = await axiosInstance.post("/post/getAllPosts", {});
@@ -22,6 +23,7 @@ export default function StudentHome() {
     return (
       <>
         <div className=" max-w-2xl px-2 m-auto">
+          <PromotionSkeleton />
           <PostPreviewSkeleton />
           <PostPreviewSkeleton />
           <PostPreviewSkeleton />
