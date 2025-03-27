@@ -2,7 +2,11 @@ import { Avatar, List } from "flowbite-react";
 import React from "react";
 import MemberItem from "./MemberItem";
 
-export default function MemberList({ members = [], committeeId }) {
+export default function MemberList({
+  members = [],
+  committeeId,
+  studentIncharge,
+}) {
   return (
     <List
       unstyled
@@ -10,6 +14,7 @@ export default function MemberList({ members = [], committeeId }) {
     >
       {members?.map((member) => (
         <MemberItem
+          studentIncharge={studentIncharge}
           committeeId={committeeId}
           member={member}
           key={member?._id}

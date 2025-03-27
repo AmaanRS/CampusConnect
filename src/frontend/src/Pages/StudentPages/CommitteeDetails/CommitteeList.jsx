@@ -49,8 +49,6 @@ export default function CommitteeList({
   const isStudentIncharge = committeeData?.studentIncharge?.email === email;
   const isFacultyIncharge = committeeData?.facultyIncharge?.email === email;
 
-  console.log(committeeData, isFacultyIncharge);
-
   return (
     <>
       <div className="flex bg-slate-100 rounded-lg items-center mb-4 px-4 ">
@@ -108,9 +106,13 @@ export default function CommitteeList({
             </Tabs.Item>
 
             {/* members tab */}
-            {isStudentIncharge && (
+            {(isStudentIncharge || isFacultyIncharge) && (
               <Tabs.Item title="Members" icon={MdPersonAddAlt}>
-                <CommitteMembers committeeId={committeeId} members={members} />
+                <CommitteMembers
+                  studentIncharge={committeeData?.studentIncharge?.email || ""}
+                  committeeId={committeeId}
+                  members={members}
+                />
               </Tabs.Item>
             )}
 

@@ -3,11 +3,8 @@ import React, { useContext } from "react";
 import RemoveButton from "./RemoveButton";
 import { UserContext } from "../../../store/UserContextProvider";
 
-export default function MemberItem({ member, committeeId }) {
-  const {
-    userState: { email },
-  } = useContext(UserContext);
-  const isIncharge = email == member?.email;
+export default function MemberItem({ member, committeeId, studentIncharge }) {
+  const isIncharge = member?.email == studentIncharge;
   return (
     <div>
       <List.Item className=" pb-2 pt-3">
