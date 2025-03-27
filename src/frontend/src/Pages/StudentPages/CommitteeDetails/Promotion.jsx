@@ -1,12 +1,13 @@
 import { Button, Label } from "flowbite-react";
 import React, { useContext, useState } from "react";
 import MediaUploader from "../../../Components/MediaUploader/MediaUploader";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import ApiError from "../../../Components/Errors/ApiError";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../store/UserContextProvider";
+import ViewPromotion from "./ViewPromotion";
 
 const postData = async (data) => {
   const response = await axiosInstance.post("/promotion/createPromotion", data);
@@ -18,6 +19,8 @@ export default function Promotion({ committeeId }) {
   const [publicURL, setPublicUrl] = useState("");
   const [filePath, setFilePath] = useState("");
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const {
     userState: { accountType },
   } = useContext(UserContext);
@@ -30,8 +33,13 @@ export default function Promotion({ committeeId }) {
     onSuccess: (data) => {
       setPublicUrl("");
       setFilePath("");
+      setUrl("");
+      queryClient.invalidateQueries({
+        queryKey: ["allPromotions"],
+      });
       toast.success("Promotion posted successfully!");
-      navigate(`/${accountType.toLowerCase()}`);
+
+      // navigate(`/${accountType.toLowerCase()}`);
 
       // alert("Data posted successfully!");
     },
@@ -53,7 +61,6 @@ export default function Promotion({ committeeId }) {
       link: url,
       image: [{ imageUrl: publicURL, imagePath: filePath }],
     };
-    console.log(data);
     mutation.mutate(data);
   }
 
@@ -118,6 +125,8 @@ export default function Promotion({ committeeId }) {
           </div>
         )}
       </form>
+      <hr className="border my-6" />
+      <ViewPromotion key={committeeId} />
     </div>
   );
 }
