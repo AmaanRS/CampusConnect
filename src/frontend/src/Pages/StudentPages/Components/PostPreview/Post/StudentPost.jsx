@@ -9,6 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../../../store/UserContextProvider";
 
 export default function StudentPost({
+  isFacultyIncharge = false,
   mode = "home",
   postData,
   isIncharge = false,
@@ -23,6 +24,7 @@ export default function StudentPost({
     <>
       <div className="mx-4 border my-3 bg-white hover:bg-gray-50 rounded-xl p-4 pb-2 transition-all duration-200 shadow-md mb-6">
         <PostTop
+          isFacultyIncharge={isFacultyIncharge}
           postId={postData?.postId}
           isIncharge={isIncharge}
           mode={mode}

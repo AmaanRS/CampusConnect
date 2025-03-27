@@ -47,6 +47,9 @@ export default function CommitteeList({
     userState: { email },
   } = useContext(UserContext);
   const isStudentIncharge = committeeData?.studentIncharge?.email === email;
+  const isFacultyIncharge = committeeData?.facultyIncharge?.email === email;
+
+  console.log(committeeData, isFacultyIncharge);
 
   return (
     <>
@@ -76,6 +79,7 @@ export default function CommitteeList({
                 posts?.map((post) => {
                   return (
                     <StudentPost
+                      isFacultyIncharge={isFacultyIncharge}
                       committeeId={committeeData?.committeeId}
                       mode="committee"
                       key={post?.postId}

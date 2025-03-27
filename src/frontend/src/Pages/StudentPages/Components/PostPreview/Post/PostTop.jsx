@@ -14,6 +14,7 @@ export default function PostTop({
   username = "username",
   isIncharge,
   postId,
+  isFacultyIncharge,
 }) {
   const {
     userState: { accountType },
@@ -53,7 +54,9 @@ export default function PostTop({
           {" "}
           {formatDistanceToNow(createdAt, { addSuffix: true })}
         </div>
-        {(isIncharge || accountType === AccountType.Admin) && (
+        {(isIncharge ||
+          accountType === AccountType.Admin ||
+          isFacultyIncharge) && (
           <div className="ml-auto">
             <UpdatePost committeeId={committeeId} postId={postId} />
           </div>

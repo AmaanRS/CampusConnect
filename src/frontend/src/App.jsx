@@ -129,6 +129,8 @@ function App() {
                 { path: "explore", element: <Explore /> },
                 { path: "events", element: <AllEventsLayout /> },
                 { path: "post/:postId", element: <PostDetailsLayout /> },
+                { path: "edit/post/:postId", element: <PostUpdateForm /> },
+
                 {
                   path: "committee/:committeeId",
                   element: <CommitteeDetailLayout />,
