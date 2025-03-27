@@ -20,8 +20,6 @@ export default function Promotion() {
     return <PromotionSkeleton />;
   }
 
-  console.log(data?.data);
-
   return (
     <div className="mx-4">
       <hr />
@@ -37,29 +35,12 @@ export default function Promotion() {
         >
           {data?.data?.map((item) => (
             <div key={item?._id}>
-              <Images img={item?.promoImage[0].imageUrl} />
+              <Images
+                img={item?.promoImage[0].imageUrl}
+                url={item?.promoLink}
+              />
             </div>
           ))}
-          {/* <Images
-            img={
-              "https://i.pinimg.com/736x/a2/86/f6/a286f6349f4d14ea7ff77eb4bb11ebbb.jpg"
-            }
-          />
-          <Images
-            img={
-              "https://img.freepik.com/premium-psd/digital-marketing-agency-social-media-post-marketing-agency-promotion-post-business-post_589696-654.jpg"
-            }
-          />
-          <Images
-            img={
-              "https://img.freepik.com/free-vector/new-temlate-instagram-post-business-marketing_125964-976.jpg"
-            }
-          />
-          <Images
-            img={
-              "https://img.pikbest.com/origin/06/27/02/89upIkbEsThif.jpg!w700wp"
-            }
-          /> */}
         </Carousel>
       </div>
       <hr className="mt-1" />
