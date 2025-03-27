@@ -33,7 +33,7 @@ export default function ViewPromotion() {
     return <PromotionSkeleton />;
   }
   return (
-    <div className="grid grid-cols-2  gap-4">
+    <div className="grid px-2 md:px-0 sm:grid-cols-2  gap-4">
       {promArr.map((item) => (
         <div key={item?._id}>
           <Link target="_blank" to={item?.promoLink}>
@@ -44,7 +44,7 @@ export default function ViewPromotion() {
               className="border mb-0 w-full my-1  bg-cover bg-center overflow-hidden  rounded-b-none"
             >
               <img
-                className=" backdrop-blur-3xl   object-contain rounded-b-none  w-full h-36 sm:h-60 "
+                className=" backdrop-blur-3xl   object-contain rounded-b-none  w-full h-60 "
                 src={item?.promoImage[0].imageUrl}
                 alt="image"
               />
