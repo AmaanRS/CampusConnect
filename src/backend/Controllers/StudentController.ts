@@ -60,7 +60,7 @@ const createStudent = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if(!Array.isArray(tags) || tags.length === 0){
+		if (!Array.isArray(tags) || tags.length === 0) {
 			const response: StandardResponse = {
 				message: "Give tags as an non empty array",
 				success: false,
@@ -575,10 +575,16 @@ const getAllStudentData = async (req: Request, res: Response) => {
 									path: "followers.userId",
 									select: "-password",
 								},
+								{
+									path: "studentIncharge",
+									select: "-password",
+								},
 							],
 						},
 					],
-					//TODO NOW:Populate followingCommittees
+				},
+				{
+					path: "followingCommittees",
 				},
 			]);
 

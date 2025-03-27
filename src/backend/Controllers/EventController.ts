@@ -416,33 +416,35 @@ const updateEvent = async (req: Request, res: Response) => {
 				return response;
 			}
 
-			//Get the committee whose event user is trying to update
-			const committees = await committeeModel
-				.find({
-					_id: { $in: oldEvent.hostingCommittees },
-				})
-				.populate<{
-					facultyIncharge: ITeacherDocument;
-					studentIncharge: IStudentDocument;
-				}>(["studentIncharge", "facultyIncharge"])
-				.session(session);
+			if (decodedToken.accountType !== AccountType.Admin) {
+				//Get the committee whose event user is trying to update
+				const committees = await committeeModel
+					.find({
+						_id: { $in: oldEvent.hostingCommittees },
+					})
+					.populate<{
+						facultyIncharge: ITeacherDocument;
+						studentIncharge: IStudentDocument;
+					}>(["studentIncharge", "facultyIncharge"])
+					.session(session);
 
-			if (
-				!committees.some((committee) => {
-					return checkIfFacultyOrStudentInchargeOfCommitteeFunc({
-						decodedToken,
-						studentInchargeEmail: committee.studentIncharge.email,
-						facultyInchargeEmail: committee.facultyIncharge.email,
-					}).success;
-				})
-			) {
-				const response: StandardResponse = {
-					message:
-						"You should be studentIncharge or facultyIncharge of one of the committee under whom you are trying to update an event",
-					success: false,
-				};
+				if (
+					!committees.some((committee) => {
+						return checkIfFacultyOrStudentInchargeOfCommitteeFunc({
+							decodedToken,
+							studentInchargeEmail: committee.studentIncharge.email,
+							facultyInchargeEmail: committee.facultyIncharge.email,
+						}).success;
+					})
+				) {
+					const response: StandardResponse = {
+						message:
+							"You should be studentIncharge or facultyIncharge of one of the committee under whom you are trying to update an event",
+						success: false,
+					};
 
-				return response;
+					return response;
+				}
 			}
 
 			// Delete the old event
@@ -679,9 +681,8 @@ const getAllEvents = async (req: Request, res: Response) => {
 
 		const isAdmin = decodedToken.accountType === AccountType.Admin;
 
-		//TODO NOW: Test this
 		const allEvents = await eventModel
-			.find({}, { _skipDeletedEventsHook: isAdmin })
+			.find({}, null, { _skipDeletedEventsHook: isAdmin })
 			.populate("hostingCommittees")
 			.lean();
 

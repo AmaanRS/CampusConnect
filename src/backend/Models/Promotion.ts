@@ -67,7 +67,7 @@ promotionSchema.pre("validate", async function (next) {
 		}
 
 		if (!Array.isArray(this.promotedBy) || this.promotedBy.length === 0) {
-			throw new MongooseError("Send the comiittee who is promoting");
+			throw new MongooseError("Send the committee who is promoting");
 		}
 
 		this.promotedBy = _.chain(this.promotedBy)
