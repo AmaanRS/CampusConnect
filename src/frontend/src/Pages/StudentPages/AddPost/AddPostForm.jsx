@@ -6,7 +6,7 @@ import {
   Tabs,
   TextInput,
 } from "flowbite-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import TipTap from "../../../Components/RichTextEditor/TipTap";
 import MediaUploader from "../../../Components/MediaUploader/MediaUploader";
 import Title from "./Title";
@@ -15,6 +15,10 @@ import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../store/UserContextProvider";
+import { AccountType } from "../../../utils/enum";
+import SelectCommitteeForTeacher from "./SelectCommitteeForTeacher";
+import ApiError from "../../../Components/Errors/ApiError";
 
 const postData = async (data) => {
   const response = await axiosInstance.post("/post/createPost", data);
@@ -29,6 +33,9 @@ export default function AddPostForm() {
   const [committee, setCommittee] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
 
   // Use the mutation hook
   const mutation = useMutation({
@@ -37,7 +44,7 @@ export default function AddPostForm() {
       setPublicUrl("");
       setFilePath("");
       toast.success("Data posted successfully!");
-      navigate("/student");
+      navigate(`/${accountType.toLowerCase()}`);
 
       // alert("Data posted successfully!");
     },
@@ -83,7 +90,12 @@ export default function AddPostForm() {
           <p className="my-2  text-lg font-semibold">
             Select Committee <sup className="text-red-500">*</sup>{" "}
           </p>
-          <SelectCommittee handleChange={handleChange} />
+          {accountType === AccountType.Student && (
+            <SelectCommittee handleChange={handleChange} />
+          )}
+          {accountType === AccountType.Teacher && (
+            <SelectCommitteeForTeacher handleChange={handleChange} />
+          )}
         </div>
         <div className="mb-8">
           <Title setTitle={setTitle} setError={setError} title={title} />
@@ -120,6 +132,11 @@ export default function AddPostForm() {
         </div>
         {error != "" && (
           <p className="text-center mt-2 text-red-600">{error}</p>
+        )}
+        {mutation.isError && (
+          <div className="text-center mt-2 text-red-600">
+            <ApiError isError={mutation.isError} error={mutation.error} />
+          </div>
         )}
       </form>
     </div>

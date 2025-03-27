@@ -1,5 +1,5 @@
 import { Button, Label } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import TipTap from "../../../Components/RichTextEditor/TipTap";
 import { format, isAfter, parse } from "date-fns";
 
@@ -9,6 +9,10 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import SelectCommittee from "../AddPost/SelectCommittee";
 import { Datepicker } from "flowbite-react";
+import { UserContext } from "../../../store/UserContextProvider";
+import SelectCommitteeForTeacher from "../AddPost/SelectCommitteeForTeacher";
+import { AccountType } from "../../../utils/enum";
+import ApiError from "../../../Components/Errors/ApiError";
 
 const datePickerTheme = {
   root: {
@@ -95,13 +99,16 @@ export default function AddEvent() {
 
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
 
   // Use the mutation hook
   const mutation = useMutation({
     mutationFn: postData,
     onSuccess: (data) => {
       toast.success("Event Created successfully!");
-      navigate("/student");
+      navigate(`/${accountType.toLowerCase()}`);
 
       // alert("Data posted successfully!");
     },
@@ -200,7 +207,15 @@ export default function AddEvent() {
           <p className="my-2  text-lg font-semibold">
             Select Committee <sup className="text-red-500">*</sup>{" "}
           </p>
-          <SelectCommittee isMulti={true} handleChange={handleChange} />
+          {accountType === AccountType.Student && (
+            <SelectCommittee handleChange={handleChange} />
+          )}
+          {accountType === AccountType.Teacher && (
+            <SelectCommitteeForTeacher
+              isMulti={true}
+              handleChange={handleChange}
+            />
+          )}
         </div>
 
         {/* name input */}
@@ -381,9 +396,9 @@ export default function AddEvent() {
           <p className="text-center mt-2 text-red-600">{error}</p>
         )}
         {mutation.isError && (
-          <p className="text-center mt-2 text-red-600">
-            {mutation.error.message}
-          </p>
+          <div className="text-center mt-2 text-red-600">
+            <ApiError isError={mutation.isError} error={mutation.error} />
+          </div>
         )}
       </form>
     </div>

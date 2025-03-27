@@ -123,6 +123,9 @@ function App() {
               element: <TeacherLayout />,
               children: [
                 { index: true, element: <StudentHomeLayout /> },
+                { path: "createPost", element: <AddPost /> },
+                { path: "createEvent", element: <AddEvent /> },
+
                 { path: "explore", element: <Explore /> },
                 { path: "events", element: <AllEventsLayout /> },
                 { path: "post/:postId", element: <PostDetailsLayout /> },

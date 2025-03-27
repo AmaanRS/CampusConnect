@@ -47,7 +47,6 @@ export default function SidebarComponent() {
     }
   }, [data]);
 
-  console.log(data);
   if (isError) {
     console.error(error.message, "\n", error);
   }
