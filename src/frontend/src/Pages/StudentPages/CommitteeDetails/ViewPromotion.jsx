@@ -32,7 +32,6 @@ export default function ViewPromotion() {
   if (isLoading) {
     return <PromotionSkeleton />;
   }
-  // console.log(data?.data[0].promoId);
   return (
     <div className="grid grid-cols-2  gap-4">
       {promArr.map((item) => (
@@ -45,7 +44,7 @@ export default function ViewPromotion() {
               className="border mb-0 w-full my-1  bg-cover bg-center overflow-hidden  rounded-b-none"
             >
               <img
-                className=" backdrop-blur-3xl   object-contain rounded-b-none  w-full h-60 "
+                className=" backdrop-blur-3xl   object-contain rounded-b-none  w-full h-36 sm:h-60 "
                 src={item?.promoImage[0].imageUrl}
                 alt="image"
               />

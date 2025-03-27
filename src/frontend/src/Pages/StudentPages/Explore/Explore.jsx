@@ -41,7 +41,7 @@ export default function Explore() {
   return (
     <div className="mx-2">
       <p className="mb-6 text-3xl font-bold">Explore Committees</p>
-      <div className=" grid grid-cols-3  gap-4">
+      <div className=" grid sm:grid-cols-3  gap-4">
         {data?.data?.length == 0 && <EmptyComment type="Committees" />}
         {data?.data?.map((item) =>
           item?.status === "ACCEPTED" ? (

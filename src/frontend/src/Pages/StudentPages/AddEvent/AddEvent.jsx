@@ -198,7 +198,7 @@ export default function AddEvent() {
   }
 
   return (
-    <div className="ml-8 max-w-2xl">
+    <div className="p-2 sm:p-0 sm:ml-8 max-w-2xl">
       <h1 className="font-bold text-slate-800 text-2xl mb-8">Add Event</h1>
 
       <form>

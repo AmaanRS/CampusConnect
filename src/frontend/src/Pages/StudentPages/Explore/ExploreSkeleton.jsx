@@ -5,7 +5,7 @@ export default function ExploreSkeleton() {
     <div>
       <div className="mx-2 animate-pulse">
         <div className="mb-7 text-3xl font-bold h-10  w-80 rounded-md bg-slate-100"></div>
-        <div className=" grid grid-cols-3  gap-4">
+        <div className=" grid sm:grid-cols-3  gap-4">
           <CommitteSkeleton />
           <CommitteSkeleton />
           <CommitteSkeleton />

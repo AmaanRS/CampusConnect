@@ -243,7 +243,7 @@ export default function EventUpdateForm() {
   }
 
   return (
-    <div className="ml-8 max-w-2xl">
+    <div className=" p-2 sm:p-0  sm:ml-8 max-w-2xl">
       <h1 className="font-bold text-slate-800 text-2xl mb-8">Edit Event</h1>
 
       <form>
