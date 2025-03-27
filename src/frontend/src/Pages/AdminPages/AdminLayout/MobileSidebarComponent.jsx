@@ -12,6 +12,10 @@ import {
   HiUsers,
 } from "react-icons/hi";
 import MobileSidebarLogout from "../../../Components/Layout/mobile/Sidebar/MobileSidebarLogout";
+import { Home, LayoutDashboard, Search } from "lucide-react";
+import { MdEvent } from "react-icons/md";
+import { HiOutlineUserGroup } from "react-icons/hi2";
+import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 
 export default function MobileSidebarComponent({ setIsDrawerOpen }) {
   return (
@@ -19,31 +23,70 @@ export default function MobileSidebarComponent({ setIsDrawerOpen }) {
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           <MobileSidebarItem
-            icon={HiChartPie}
-            routeName={"admin"}
+            icon={Home}
             setIsDrawerOpen={setIsDrawerOpen}
             to={"/admin"}
+            routeName={"admin"}
           >
-            Dashboard
+            Home
           </MobileSidebarItem>
+
           <MobileSidebarItem
-            icon={HiUsers}
+            icon={MdEvent}
             setIsDrawerOpen={setIsDrawerOpen}
-            to={"requests"}
-            routeName={"requests"}
+            to={"/admin/events"}
+            routeName={"events"}
           >
-            Requests
+            Events
           </MobileSidebarItem>
 
-          <Sidebar.Item icon={HiShoppingBag}>Users list</Sidebar.Item>
-          <Sidebar.Item icon={HiLogin}>Sign in</Sidebar.Item>
-          <Sidebar.Item icon={HiPencil}>Sign up</Sidebar.Item>
-        </Sidebar.ItemGroup>
-        <Sidebar.ItemGroup>
-          <Sidebar.Item icon={HiClipboard}>Docs</Sidebar.Item>
-          <Sidebar.Item icon={HiCollection}>Components</Sidebar.Item>
-          <Sidebar.Item icon={HiInformationCircle}>Help</Sidebar.Item>
+          <MobileSidebarItem
+            icon={Search}
+            setIsDrawerOpen={setIsDrawerOpen}
+            to={"explore"}
+            routeName={"explore"}
+          >
+            Explore
+          </MobileSidebarItem>
 
+          <MobileSidebarItem
+            icon={HiOutlineUserGroup}
+            setIsDrawerOpen={setIsDrawerOpen}
+            to={"createcommittee"}
+            routeName={"createcommittee"}
+          >
+            Create Committee
+          </MobileSidebarItem>
+
+          <MobileSidebarItem
+            icon={LayoutDashboard}
+            setIsDrawerOpen={setIsDrawerOpen}
+            to={"allCommittee"}
+            routeName={"allCommittee"}
+          >
+            All Committee
+          </MobileSidebarItem>
+
+          <MobileSidebarItem
+            icon={LiaChalkboardTeacherSolid}
+            setIsDrawerOpen={setIsDrawerOpen}
+            to={"teachers"}
+            routeName={"teachers"}
+          >
+            Teachers
+          </MobileSidebarItem>
+
+          <MobileSidebarItem
+            icon={LiaChalkboardTeacherSolid}
+            setIsDrawerOpen={setIsDrawerOpen}
+            to={"students"}
+            routeName={"students"}
+          >
+            Students
+          </MobileSidebarItem>
+        </Sidebar.ItemGroup>
+
+        <Sidebar.ItemGroup>
           <MobileSidebarLogout />
         </Sidebar.ItemGroup>
       </Sidebar.Items>

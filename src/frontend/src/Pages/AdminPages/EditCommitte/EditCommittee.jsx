@@ -114,7 +114,7 @@ export default function EditCommittee() {
   }
 
   return (
-    <div className="ml-8 max-w-xl">
+    <div className=" p-3 sm:p-0  sm:ml-8 max-w-xl">
       <h1 className="font-bold text-slate-800 text-2xl mb-8">Edit Committee</h1>
 
       <form onSubmit={handleSubmit}>

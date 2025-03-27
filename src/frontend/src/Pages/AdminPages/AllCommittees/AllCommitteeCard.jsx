@@ -36,7 +36,7 @@ export default function AllCommitteeCard({ item, type = "ACTIVE" }) {
   }
   return (
     <>
-      <Card className=" m-auto  max-w-xl w-[500px] bg-white  shadow-lg rounded-lg overflow-hidden ">
+      <Card className=" m-auto  max-w-xl w-full sm:w-[500px] bg-white  shadow-lg rounded-lg overflow-hidden ">
         <h5 className="text-2xl font-bold tracking-tight capitalize text-gray-900  mb-1">
           {item.name}
         </h5>
