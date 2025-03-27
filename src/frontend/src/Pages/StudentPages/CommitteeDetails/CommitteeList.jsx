@@ -117,7 +117,7 @@ export default function CommitteeList({
             )}
 
             {/* promotions */}
-            {isStudentIncharge && (
+            {(isStudentIncharge || isFacultyIncharge) && (
               <Tabs.Item title="Promotions" icon={PiMoneyWavyLight}>
                 <Promotion committeeId={committeeId} />
               </Tabs.Item>

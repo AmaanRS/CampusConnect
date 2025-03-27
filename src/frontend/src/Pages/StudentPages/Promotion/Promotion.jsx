@@ -1,8 +1,27 @@
 import React from "react";
 import { Carousel } from "flowbite-react";
 import Images from "./Images";
+import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import { useQuery } from "@tanstack/react-query";
+import PromotionSkeleton from "./PromotionSkeleton";
+
+const fetchData = async () => {
+  const response = await axiosInstance.post("/promotion/getAllPromotions", {});
+  return response.data;
+};
 
 export default function Promotion() {
+  const { data, isLoading, error, isError } = useQuery({
+    queryKey: ["allPromotions"],
+    queryFn: fetchData,
+  });
+
+  if (isLoading) {
+    return <PromotionSkeleton />;
+  }
+
+  console.log(data?.data);
+
   return (
     <div className="mx-4">
       <hr />
@@ -12,11 +31,16 @@ export default function Promotion() {
           indicators={false}
           leftControl
           rightControl
-          slideInterval={1500}
+          slideInterval={1000}
           pauseOnHover={true}
           slide={true}
         >
-          <Images
+          {data?.data?.map((item) => (
+            <div key={item?._id}>
+              <Images img={item?.promoImage[0].imageUrl} />
+            </div>
+          ))}
+          {/* <Images
             img={
               "https://i.pinimg.com/736x/a2/86/f6/a286f6349f4d14ea7ff77eb4bb11ebbb.jpg"
             }
@@ -35,7 +59,7 @@ export default function Promotion() {
             img={
               "https://img.pikbest.com/origin/06/27/02/89upIkbEsThif.jpg!w700wp"
             }
-          />
+          /> */}
         </Carousel>
       </div>
       <hr className="mt-1" />
