@@ -72,8 +72,10 @@ export default function EventPost({
   } = useContext(UserContext);
 
   let isIncharge = false;
+  let isFacultyIncharge = false;
   if (mode == "committee") {
     isIncharge = email === committeeData?.studentIncharge?.email;
+    isFacultyIncharge = email === committeeData?.facultyIncharge?.email;
   }
 
   return (
@@ -106,7 +108,9 @@ export default function EventPost({
                 {eventStatus}
               </span>
             </div>
-            {(isIncharge || accountType === AccountType.Admin) && (
+            {(isIncharge ||
+              accountType === AccountType.Admin ||
+              isFacultyIncharge) && (
               <UpdateEvent
                 eventId={eventData?.eventId}
                 committeeId={committeeData?.committeeId}

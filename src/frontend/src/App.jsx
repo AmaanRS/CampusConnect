@@ -130,6 +130,7 @@ function App() {
                 { path: "events", element: <AllEventsLayout /> },
                 { path: "post/:postId", element: <PostDetailsLayout /> },
                 { path: "edit/post/:postId", element: <PostUpdateForm /> },
+                { path: "edit/event/:eventId", element: <EventUpdateForm /> },
 
                 {
                   path: "committee/:committeeId",
