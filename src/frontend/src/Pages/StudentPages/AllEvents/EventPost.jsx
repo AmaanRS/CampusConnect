@@ -130,8 +130,8 @@ export default function EventPost({
         </div>
 
         {/* Event Details */}
-        <div className="bg-slate-100 border-slate-300 p-3 rounded-lg text-sm text-gray-700">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="bg-slate-100 border border-slate-300 p-3 rounded-lg text-sm text-gray-700">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <p className="flex items-center gap-1">
               📅 <span className="font-medium">Start:</span>{" "}
               {formatDate(eventData?.startDate)}
@@ -144,7 +144,7 @@ export default function EventPost({
               ⏰ <span className="font-medium">Time:</span>{" "}
               {eventData?.startTime} - {eventData?.endTime}
             </p>
-            <p className="flex items-center gap-1 col-span-2">
+            <p className="flex items-center gap-1 sm:col-span-2">
               📍 <span className="font-medium">Venue:</span> {eventData?.venue}
             </p>
           </div>

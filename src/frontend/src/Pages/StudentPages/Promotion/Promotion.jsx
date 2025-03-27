@@ -24,7 +24,7 @@ export default function Promotion() {
     <div className="mx-4">
       <hr />
       <p className="text-xs font-medium text-gray-500 mt-0.5">Promotions</p>
-      <div className=" h-96 ">
+      <div className=" h-60 sm:h-96 ">
         <Carousel
           indicators={false}
           leftControl
