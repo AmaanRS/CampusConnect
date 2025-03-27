@@ -1,10 +1,12 @@
 import { Button, Label } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import MediaUploader from "../../../Components/MediaUploader/MediaUploader";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import ApiError from "../../../Components/Errors/ApiError";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../store/UserContextProvider";
 
 const postData = async (data) => {
   const response = await axiosInstance.post("/promotion/createPromotion", data);
@@ -15,6 +17,10 @@ export default function Promotion({ committeeId }) {
   const [url, setUrl] = useState("");
   const [publicURL, setPublicUrl] = useState("");
   const [filePath, setFilePath] = useState("");
+  const navigate = useNavigate();
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
 
   const [error, setError] = useState("");
 
@@ -25,7 +31,7 @@ export default function Promotion({ committeeId }) {
       setPublicUrl("");
       setFilePath("");
       toast.success("Promotion posted successfully!");
-      navigate("/student");
+      navigate(`/${accountType.toLowerCase()}`);
 
       // alert("Data posted successfully!");
     },
