@@ -29,7 +29,7 @@ export default function Promotion() {
           indicators={false}
           leftControl
           rightControl
-          slideInterval={1000}
+          slideInterval={1500}
           pauseOnHover={true}
           slide={true}
         >

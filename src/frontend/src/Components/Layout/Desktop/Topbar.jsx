@@ -21,7 +21,7 @@ export default function Topbar() {
         </div>
 
         {/* Center Section - Search Bar */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-lg">
+        {/* <div className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-lg">
           <div className="relative">
             <TextInput
               theme={{
@@ -46,7 +46,7 @@ export default function Topbar() {
               required
             />
           </div>
-        </div>
+        </div> */}
 
         {/* Right Section - User Dropdown */}
         <div className="">
@@ -62,8 +62,6 @@ export default function Topbar() {
               </span>
               <span className=" block truncate text-sm "> {email} </span>
             </Dropdown.Header>
-            <Dropdown.Item className="font-semibold">Profile</Dropdown.Item>
-            <Dropdown.Divider />
             <Dropdown.Item
               onClick={() => logOutUser()}
               className="text-red-700 font-semibold"

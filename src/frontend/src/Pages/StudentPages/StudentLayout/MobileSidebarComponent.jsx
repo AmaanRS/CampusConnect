@@ -1,5 +1,5 @@
 import { Sidebar } from "flowbite-react";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MobileSidebarLogout from "../../../Components/Layout/mobile/Sidebar/MobileSidebarLogout";
 import MobileSidebarItem from "../../../Components/Layout/mobile/Sidebar/MobileSidebarItem";
 import {
@@ -12,8 +12,43 @@ import {
   HiShoppingBag,
   HiUsers,
 } from "react-icons/hi";
+import { MdEvent, MdOutlineEventNote } from "react-icons/md";
+import { Search } from "lucide-react";
+import axiosInstance from "../../../utils/Axios/AxiosInstance";
+import { UserContext } from "../../../store/UserContextProvider";
+import { useQuery } from "@tanstack/react-query";
+import { IoCreateSharp } from "react-icons/io5";
+import MyCommittees from "./MyCommittees";
+import FollowingCommittee from "./FollowingCommittee";
+
+const fetchData = async () => {
+  const response = await axiosInstance.post("/student/getAllStudentData", {}); // Pass an empty object if needed
+  return response.data;
+};
 
 export default function MobileSidebarComponent({ setIsDrawerOpen }) {
+  const { logOutUser } = useContext(UserContext);
+  const [inchargeArr, setInchargeArr] = useState([]);
+
+  const { data, isError, error } = useQuery({
+    queryKey: ["getAllStudentData"],
+    queryFn: fetchData,
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (data?.data?.committeePositions?.length > 0) {
+      const memberarr = data?.data?.committeePositions?.filter(
+        (item) => item?.position == "STUDENT_INCHARGE" && item.committeeObjId
+      );
+      setInchargeArr(memberarr);
+    }
+  }, [data]);
+
+  if (isError) {
+    console.error(error.message, "\n", error);
+  }
+
   return (
     <>
       <Sidebar.Items>
@@ -28,31 +63,59 @@ export default function MobileSidebarComponent({ setIsDrawerOpen }) {
           </MobileSidebarItem>
 
           <MobileSidebarItem
-            icon={HiUsers}
+            icon={MdEvent}
             setIsDrawerOpen={setIsDrawerOpen}
-            to={"page2"}
-            routeName={"page2"}
+            to={"/student/events"}
+            routeName={"events"}
           >
-            Page 2
+            Events
           </MobileSidebarItem>
+
+          {inchargeArr?.length > 0 && (
+            <>
+              <MobileSidebarItem
+                icon={IoCreateSharp}
+                setIsDrawerOpen={setIsDrawerOpen}
+                to={"createPost"}
+                routeName={"createPost"}
+              >
+                Add Post
+              </MobileSidebarItem>
+
+              <MobileSidebarItem
+                icon={MdOutlineEventNote}
+                setIsDrawerOpen={setIsDrawerOpen}
+                to={"createEvent"}
+                routeName={"createEvent"}
+              >
+                Add Event
+              </MobileSidebarItem>
+            </>
+          )}
 
           <MobileSidebarItem
+            icon={Search}
             setIsDrawerOpen={setIsDrawerOpen}
-            to={"page3"}
-            routeName={"page3"}
-            icon={HiShoppingBag}
+            to={"explore"}
+            routeName={"explore"}
           >
-            Page 3
+            Explore
           </MobileSidebarItem>
-          <Sidebar.Item icon={HiShoppingBag}>Users list</Sidebar.Item>
-          <Sidebar.Item icon={HiLogin}>Sign in</Sidebar.Item>
-          <Sidebar.Item icon={HiPencil}>Sign up</Sidebar.Item>
         </Sidebar.ItemGroup>
-        <Sidebar.ItemGroup>
-          <Sidebar.Item icon={HiClipboard}>Docs</Sidebar.Item>
-          <Sidebar.Item icon={HiCollection}>Components</Sidebar.Item>
-          <Sidebar.Item icon={HiInformationCircle}>Help</Sidebar.Item>
 
+        <hr />
+        {inchargeArr?.length > 0 && (
+          <>
+            {/* user committees */}
+            <MyCommittees committeeArray={inchargeArr} />
+
+            <hr />
+          </>
+        )}
+        {/* user following committees */}
+        <FollowingCommittee data={data} />
+
+        <Sidebar.ItemGroup>
           <MobileSidebarLogout />
         </Sidebar.ItemGroup>
       </Sidebar.Items>
