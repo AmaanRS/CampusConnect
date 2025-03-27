@@ -316,9 +316,9 @@ export default function CreateCommittee() {
           <ApiError error={mutation.error} isError={mutation.isError} />
         </form>
       </div>
-      <RightSidebar>
+      {/* <RightSidebar>
         <PopularCommittees />
-      </RightSidebar>
+      </RightSidebar> */}
     </>
   );
 }

@@ -10,9 +10,9 @@ export default function AllEventLayout() {
       <CentreMainContent>
         <AllEvents />
       </CentreMainContent>
-      <RightSidebar>
+      {/* <RightSidebar>
         <PopularCommittees />
-      </RightSidebar>
+      </RightSidebar> */}
     </>
   );
 }

@@ -10,9 +10,9 @@ export default function AllPostsLayout() {
       <CentreMainContent>
         <StudentHome />
       </CentreMainContent>
-      <RightSidebar>
+      {/* <RightSidebar>
         <PopularCommittees />
-      </RightSidebar>
+      </RightSidebar> */}
     </>
   );
 }
