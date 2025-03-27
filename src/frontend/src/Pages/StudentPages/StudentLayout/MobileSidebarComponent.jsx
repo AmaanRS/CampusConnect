@@ -13,7 +13,7 @@ import {
   HiUsers,
 } from "react-icons/hi";
 import { MdEvent, MdOutlineEventNote } from "react-icons/md";
-import { Search } from "lucide-react";
+import { Home, Search } from "lucide-react";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { UserContext } from "../../../store/UserContextProvider";
 import { useQuery } from "@tanstack/react-query";
@@ -54,7 +54,7 @@ export default function MobileSidebarComponent({ setIsDrawerOpen }) {
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           <MobileSidebarItem
-            icon={HiChartPie}
+            icon={Home}
             setIsDrawerOpen={setIsDrawerOpen}
             to={"/student"}
             routeName={"student"}

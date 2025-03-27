@@ -4,32 +4,30 @@ import BottomBarItem from "../../../Components/Layout/mobile/BottomBar/BottomBar
 import { FaHome, FaSearch } from "react-icons/fa";
 import { FaUserGroup } from "react-icons/fa6";
 import BottomBarButton from "../../../Components/Layout/mobile/BottomBar/BottomBarButton";
+import { Home } from "lucide-react";
+import { MdEvent } from "react-icons/md";
 
 export default function BottomBarComponent({ isDrawerOpen, setIsDrawerOpen }) {
   const iconCss = "text-gray-500 group-hover:text-blue-600";
 
   return (
     <BottomBar isDrawerOpen={isDrawerOpen}>
-      {/* button 1 */}
       <BottomBarItem
+        icon={<Home className={iconCss} size={20} />}
+        text={"Home"}
         to={"/teacher"}
-        icon={<FaHome className={iconCss} size={25} />}
-        text={"home"}
       />
-      {/* button 2 */}
-
       <BottomBarItem
-        icon={<FaSearch className={iconCss} size={25} />}
-        text={"Search"}
+        icon={<MdEvent className={iconCss} size={20} />}
+        text={"Events"}
+        to={"/teacher/events"}
       />
-      {/* button 3 */}
-
       <BottomBarItem
-        icon={<FaUserGroup className={iconCss} size={25} />}
-        text={"Committee"}
+        icon={<FaUserGroup className={iconCss} size={20} />}
+        text={"Explore"}
+        to={"/teacher/explore"}
       />
-      {/* button 4 */}
-      <BottomBarButton setIsDrawerOpen={setIsDrawerOpen} iconCss={iconCss} />
+      <BottomBarButton iconCss={iconCss} setIsDrawerOpen={setIsDrawerOpen} />
     </BottomBar>
   );
 }
