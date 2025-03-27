@@ -208,7 +208,7 @@ export default function AddEvent() {
             Select Committee <sup className="text-red-500">*</sup>{" "}
           </p>
           {accountType === AccountType.Student && (
-            <SelectCommittee handleChange={handleChange} />
+            <SelectCommittee isMulti={true} handleChange={handleChange} />
           )}
           {accountType === AccountType.Teacher && (
             <SelectCommitteeForTeacher

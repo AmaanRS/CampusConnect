@@ -1,5 +1,5 @@
 import { Button, Label } from "flowbite-react";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import TipTap from "../../../Components/RichTextEditor/TipTap";
 import { format, isAfter, parse } from "date-fns";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import { Datepicker } from "flowbite-react";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import { HashLoader } from "react-spinners";
 import ApiError from "../../../Components/Errors/ApiError";
+import { UserContext } from "../../../store/UserContextProvider";
 
 const datePickerTheme = {
   root: {
@@ -122,7 +123,9 @@ export default function EventUpdateForm() {
   const [startTime, setStarTime] = useState("");
   const [endTime, setEndtTime] = useState("");
   const [venue, setVenue] = useState("");
-
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -145,7 +148,7 @@ export default function EventUpdateForm() {
       queryClient.invalidateQueries({
         queryKey: ["event", eventId],
       });
-      navigate("/student/events");
+      navigate(`/${accountType.toLowerCase()}/events`);
 
       // alert("Data posted successfully!");
     },
