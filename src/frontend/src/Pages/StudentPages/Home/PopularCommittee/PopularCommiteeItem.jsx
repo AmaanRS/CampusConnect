@@ -1,13 +1,18 @@
 import { Avatar } from "flowbite-react";
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { UserContext } from "../../../../store/UserContextProvider";
 export default function PopularCommiteeItem({
   name = "committee name",
   total = 10,
+  committeeId = "",
 }) {
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
   return (
     <li>
-      <Link to={"/student"}>
+      <Link to={`/${accountType.toLowerCase()}/committee/${committeeId}`}>
         <div className=" hover:bg-slate-200 transition-colors duration-100 rounded-lg flex py-2     px-2 mx-2 my-2">
           <Avatar
             rounded

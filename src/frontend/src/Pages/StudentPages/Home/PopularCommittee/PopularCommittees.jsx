@@ -27,8 +27,6 @@ export default function PopularCommittees() {
     return <></>;
   }
 
-  console.log(data?.data);
-
   return (
     <div className="bg-slate-50 py-3 mt-4  pl-2 rounded-lg">
       <h1 className="font-semibold text-sm mb-6 text-gray-700">
@@ -37,6 +35,7 @@ export default function PopularCommittees() {
       <ul>
         {data?.data?.map((item) => (
           <PopularCommiteeItem
+            committeeId={item?.committeeId}
             name={item?.name}
             total={item?.followers?.length}
             key={item?._id}
