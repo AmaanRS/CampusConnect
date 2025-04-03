@@ -31,7 +31,7 @@ export default function MobileSidebarComponent({ setIsDrawerOpen }) {
   const [inchargeArr, setInchargeArr] = useState([]);
 
   const { data, isError, error } = useQuery({
-    queryKey: ["getAllStudentData"],
+    queryKey: ["studentData"],
     queryFn: fetchData,
     refetchOnWindowFocus: false,
   });

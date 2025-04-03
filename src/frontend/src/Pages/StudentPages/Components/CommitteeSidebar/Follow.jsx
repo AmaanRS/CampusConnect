@@ -24,7 +24,7 @@ export default function Follow({ committeeId = "", followArray = [] }) {
         queryKey: ["committee", committeeId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["getAllStudentData"],
+        queryKey: ["studentData"],
       });
       queryClient.invalidateQueries({
         queryKey: ["teacherData"],

@@ -1,18 +1,27 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import PopularCommiteeItem from "./PopularCommiteeItem";
 import axiosInstance from "../../../../utils/Axios/AxiosInstance";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ApiError from "../../../../Components/Errors/ApiError";
-
-const fetchData = async () => {
-  const response = await axiosInstance.post(
-    "/committee/fetchPopularCommittees",
-    { tags: "science literature" }
-  );
-  return response.data;
-};
+import { UserContext } from "../../../../store/UserContextProvider";
 
 export default function PopularCommittees() {
+  const queryClient = useQueryClient();
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
+  const cachedPosts = queryClient.getQueryData([
+    `${accountType.toLowerCase()}Data`,
+  ]);
+
+  const fetchData = async () => {
+    const response = await axiosInstance.post(
+      "/committee/fetchPopularCommittees",
+      { tags: cachedPosts?.data?.tags.join(" ") }
+    );
+    return response.data;
+  };
+
   const { data, isLoading, error, isError } = useQuery({
     queryKey: ["popularCommittees"],
     queryFn: fetchData,

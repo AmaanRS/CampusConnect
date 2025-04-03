@@ -15,7 +15,7 @@ export default function SelectCommittee({ handleChange, isMulti = false }) {
 
   // Fetch data using React Query
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["getAllStudentData"], // Unique query key
+    queryKey: ["studentData"], // Unique query key
     queryFn: fetchData, // Function to fetch data
   });
 

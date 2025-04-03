@@ -47,7 +47,7 @@ export default function PostBody({ content = "" }) {
       {parse(content)}
       <button
         onClick={isSpeaking ? stopSpeaking : speakText}
-        className="   mb-2"
+        className=" hidden md:block mb-2"
       >
         {isSpeaking ? (
           <span className="text-red-600">⛔ Stop</span>
