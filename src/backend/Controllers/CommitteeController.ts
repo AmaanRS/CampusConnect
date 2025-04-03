@@ -1472,16 +1472,19 @@ const fetchPopularCommittees = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		const resp = await fetch("http://127.0.0.1:5000/predict_rankings", {
-			method: "GET",
+		const mlURL = process.env["CAMPUS_CONNECT_ML_URL"]!;
+
+		const resp = await fetch(`${mlURL}/predict_rankings`, {
+			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
+			body: JSON.stringify({ tags: tags }),
 		});
 
 		const data = (await resp.json()) as {
 			committee_id: string;
-			predicted_score: number;
+			comibined_score: number;
 		}[];
 
 		//TEST: Check if this works
@@ -1499,7 +1502,7 @@ const fetchPopularCommittees = async (req: Request, res: Response) => {
 		});
 
 		const scoreMap = new Map(
-			data.map((obj) => [obj.committee_id, obj.predicted_score]),
+			data.map((obj) => [obj.committee_id, obj.comibined_score]),
 		);
 
 		const committees = await committeeModel.find({
