@@ -47,9 +47,13 @@ export default function PostBody({ content = "" }) {
       {parse(content)}
       <button
         onClick={isSpeaking ? stopSpeaking : speakText}
-        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+        className="   mb-2"
       >
-        {isSpeaking ? "Stop" : "🔊 Listen"}
+        {isSpeaking ? (
+          <span className="text-red-600">⛔ Stop</span>
+        ) : (
+          <span className="text-blue-600">🔊 Listen</span>
+        )}
       </button>
     </div>
   );
