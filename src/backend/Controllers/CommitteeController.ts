@@ -1434,6 +1434,114 @@ const toggleFollower = async (req: Request, res: Response) => {
 	}
 };
 
+const fetchPopularCommittees = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+			tags,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+			tags?: string[];
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		if (!tags) {
+			const response: StandardResponse = {
+				message: "Give tags",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const resp = await fetch("http://127.0.0.1:5000/predict_rankings", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		const data = (await resp.json()) as {
+			committee_id: string;
+			predicted_score: number;
+		}[];
+
+		//TEST: Check if this works
+		if (!data) {
+			const response: StandardResponse = {
+				message: "Didnt get data from python",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const committeeIdsArray = data.map((obj) => {
+			return obj.committee_id;
+		});
+
+		const scoreMap = new Map(
+			data.map((obj) => [obj.committee_id, obj.predicted_score]),
+		);
+
+		const committees = await committeeModel.find({
+			committeeId: { $in: committeeIdsArray },
+		});
+
+		if (!committees || !Array.isArray(committees) || committees.length === 0) {
+			const response: StandardResponse = {
+				message: "Could not find committees in db",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const sortedCommittees = committees.sort(
+			(a, b) =>
+				(scoreMap.get(b.committeeId) || 0) -
+				(scoreMap.get(a.committeeId) || 0),
+		);
+
+		const response: DataResponse = {
+			message: "Popular committees",
+			success: true,
+			data: sortedCommittees,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+
+		const response: StandardResponse = {
+			message:
+				"There is some problem while updating follower of committee" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
 export {
 	createCommittee,
 	getCommitteeById,
@@ -1442,4 +1550,5 @@ export {
 	removeMembersFromCommittee,
 	getAllCommittees,
 	toggleFollower,
+	fetchPopularCommittees,
 };
