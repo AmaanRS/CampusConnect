@@ -2,9 +2,13 @@ import React from "react";
 import PopularCommiteeItem from "./PopularCommiteeItem";
 import axiosInstance from "../../../../utils/Axios/AxiosInstance";
 import { useQuery } from "@tanstack/react-query";
+import ApiError from "../../../../Components/Errors/ApiError";
 
 const fetchData = async () => {
-  const response = await axiosInstance.post("/committee/getAllCommittees", {});
+  const response = await axiosInstance.post(
+    "/committee/fetchPopularCommittees",
+    { tags: "science literature" }
+  );
   return response.data;
 };
 
@@ -20,7 +24,7 @@ export default function PopularCommittees() {
 
   if (isError) {
     console.error(error);
-    return <></>;
+    return <ApiError error={error} isError={isError} />;
   }
 
   if (data?.data && data?.data?.length === 0) {
