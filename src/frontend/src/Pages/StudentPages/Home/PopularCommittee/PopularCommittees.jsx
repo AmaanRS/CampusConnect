@@ -22,11 +22,6 @@ export default function PopularCommittees() {
     return <></>;
   }
 
-  if (isError) {
-    console.error(error);
-    return <ApiError error={error} isError={isError} />;
-  }
-
   if (data?.data && data?.data?.length === 0) {
     return <></>;
   }
