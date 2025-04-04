@@ -42,6 +42,7 @@ import AddPromotion from "./Pages/AdminPages/Promotions/AddPromotion";
 import EditCommittee from "./Pages/AdminPages/EditCommitte/EditCommittee";
 import AllPostsLayout from "./Pages/AdminPages/AllPosts/AllPostsLayout";
 import AllEventLayout from "./Pages/AdminPages/AllEvents/AllEventLayout";
+import Calendar from "./Pages/StudentPages/Calendar/Calendar";
 
 const queryClient = new QueryClient();
 
@@ -106,6 +107,7 @@ function App() {
               children: [
                 { index: true, element: <StudentHomeLayout /> },
                 { path: "createPost", element: <AddPost /> },
+                { path: "calendar", element: <Calendar /> },
                 { path: "createEvent", element: <AddEvent /> },
                 { path: "explore", element: <Explore /> },
                 { path: "post/:postId", element: <PostDetailsLayout /> },
