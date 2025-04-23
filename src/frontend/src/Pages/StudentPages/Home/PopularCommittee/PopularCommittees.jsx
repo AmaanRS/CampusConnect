@@ -17,7 +17,7 @@ export default function PopularCommittees() {
   const fetchData = async () => {
     const response = await axiosInstance.post(
       "/committee/fetchPopularCommittees",
-      { tags: cachedPosts?.data?.tags.join(" ") }
+      { tags: cachedPosts?.data?.tags }
     );
     return response.data;
   };

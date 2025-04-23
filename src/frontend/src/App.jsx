@@ -56,9 +56,9 @@ function App() {
     }, 2000);
   }, []);
 
-  // if (isLoading) {
-  //   return <PreLoader />;
-  // }
+  if (isLoading) {
+    return <PreLoader />;
+  }
 
   const router = createBrowserRouter([
     {
