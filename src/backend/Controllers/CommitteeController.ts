@@ -1466,9 +1466,7 @@ const fetchPopularCommittees = async (req: Request, res: Response) => {
 		
 		const tags = (await model.findOne({email},{tags:1})).tags
 
-		// const mlURL = process.env["CAMPUS_CONNECT_ML_URL"]!;
-
-		const mlURL = "http://192.168.0.107:5000";
+		const mlURL = process.env["CAMPUS_CONNECT_ML_URL"]!;
 
 		const resp = await fetch(`${mlURL}/predict_rankings`, {
 			method: "POST",
