@@ -91,8 +91,8 @@ export default function AddEvent() {
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
   const [committee, setCommittee] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndtDate] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndtDate] = useState(new Date());
   const [startTime, setStarTime] = useState("");
   const [endTime, setEndtTime] = useState("");
   const [venue, setVenue] = useState("");
@@ -264,7 +264,7 @@ export default function AddEvent() {
             <Datepicker
               placeholder="select start date"
               disabled={mutation.isPending}
-              onSelectedDateChanged={(date) => {
+              onChange={(date) => {
                 setStartDate(format(date, "MMMM dd, yyyy"));
                 setError("");
               }}
@@ -288,7 +288,7 @@ export default function AddEvent() {
               placeholder="select end date"
               disabled={mutation.isPending}
               id="enddate"
-              onSelectedDateChanged={(date) => {
+              onChange={(date) => {
                 setEndtDate(format(date, "MMMM dd, yyyy"));
                 setError("");
               }}

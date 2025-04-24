@@ -118,8 +118,8 @@ export default function EventUpdateForm() {
   const queryClient = useQueryClient();
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndtDate] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndtDate] = useState(new Date());
   const [startTime, setStarTime] = useState("");
   const [endTime, setEndtTime] = useState("");
   const [venue, setVenue] = useState("");
@@ -295,7 +295,7 @@ export default function EventUpdateForm() {
             <Datepicker
               placeholder="select start date"
               disabled={mutation.isPending}
-              onSelectedDateChanged={(date) => {
+              onChange={(date) => {
                 setStartDate(format(date, "MMMM dd, yyyy"));
                 setError("");
               }}
@@ -319,7 +319,7 @@ export default function EventUpdateForm() {
               placeholder="select end date"
               disabled={mutation.isPending}
               id="enddate"
-              onSelectedDateChanged={(date) => {
+              onChange={(date) => {
                 setEndtDate(format(date, "MMMM dd, yyyy"));
                 setError("");
               }}
