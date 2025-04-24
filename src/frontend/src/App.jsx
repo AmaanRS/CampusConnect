@@ -126,6 +126,8 @@ function App() {
               children: [
                 { index: true, element: <StudentHomeLayout /> },
                 { path: "createPost", element: <AddPost /> },
+                { path: "calendar", element: <Calendar /> },
+
                 { path: "createEvent", element: <AddEvent /> },
 
                 { path: "explore", element: <Explore /> },

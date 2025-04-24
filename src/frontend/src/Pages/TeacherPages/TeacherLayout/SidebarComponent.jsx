@@ -52,6 +52,8 @@ export default function SidebarComponent() {
     <Sidebar>
       <SidebarItem to="/teacher" icon={<Home size={20} />} text="Home" />
       <SidebarItem to="events" icon={<MdEvent size={20} />} text="Events" />
+      <SidebarItem to="calendar" icon={<MdEvent size={20} />} text="Calendar" />
+
       {inchargeArr?.length > 0 && (
         <>
           <SidebarItem

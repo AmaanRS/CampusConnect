@@ -9,8 +9,9 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../utils/Axios/AxiosInstance";
 import ApiError from "../../../Components/Errors/ApiError";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PulseLoader } from "react-spinners";
+import { UserContext } from "../../../store/UserContextProvider";
 
 // Helper function to convert a date string (DD-MM-YYYY) to a Date object
 const convertToDate = (dateStr, hours = 0, minutes = 0) => {
@@ -53,6 +54,10 @@ const defaultEvents = [
 
 const MyCalendar = (props) => {
   const [events, setEvents] = useState(defaultEvents);
+  const {
+    userState: { accountType },
+  } = useContext(UserContext);
+
   const { data, isLoading, error, isError } = useQuery({
     queryKey: ["allEvents"],
     queryFn: fetchData,
@@ -63,7 +68,7 @@ const MyCalendar = (props) => {
   // Redirect on clicking an event
   const handleSelectEvent = (event) => {
     // Assume each event has an id property; adjust the URL as needed
-    navigate(`/student/committee/${event.id}`);
+    navigate(`/${accountType.toLowerCase()}/committee/${event.id}`);
   };
 
   useEffect(() => {
