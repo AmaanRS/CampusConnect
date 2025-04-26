@@ -7,6 +7,7 @@ import {
 import {
 	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
 	runWithRetrySession,
+	transporter,
 } from "../Utils/util";
 import { committeeModel } from "../Models/Committee";
 import { eventModel } from "../Models/Event";
@@ -14,6 +15,7 @@ import {
 	ITeacherDocument,
 	IStudentDocument,
 	AccountType,
+	ModelTypes,
 } from "../Types/ModelTypes";
 
 const createEvent = async (req: Request, res: Response) => {
@@ -90,7 +92,17 @@ const createEvent = async (req: Request, res: Response) => {
 				.populate<{
 					facultyIncharge: ITeacherDocument;
 					studentIncharge: IStudentDocument;
+					followers: {
+						userId: ITeacherDocument | IStudentDocument;
+						userType: ModelTypes;
+					}[];
 				}>(["studentIncharge", "facultyIncharge"])
+				.populate({
+					path: "followers",
+					populate: {
+						path: "userId",
+					},
+				})
 				.lean();
 
 			if (!hostingCommitteesExists || hostingCommitteesExists.length === 0) {
@@ -197,6 +209,36 @@ const createEvent = async (req: Request, res: Response) => {
 
 				return response;
 			}
+
+			const followers = hostingCommitteesExists.flatMap((committee) => {
+				return committee.followers.map((follower) => {
+					return follower.userId.email;
+				});
+			});
+
+			const mailOptions = {
+				from: `"Campus Connect" ${process.env["EMAIL_FROM"]!}`,
+				to: followers,
+				subject: "New event from your following committee",
+				text: "Signup for this event",
+				html: `<p>🔥 <b>Something BIG is happening!</b> 🔥</p>
+<p>🚀 Get ready for an incredible event, hosted by <b>${hostingCommitteesExists.map((committee) => committee.name).join(", ")}</b>! 🎭🎤</p>
+<p>🤔 Curious? Here’s a sneak peek:</p>
+<ul>
+  <li>📌 <b>Event Name:</b> ${newEvent[0].name}</li>
+  <li>📝 <b>What’s Happening?</b> ${newEvent[0].description}</li>
+  <li>📅 <b>Dates:</b> ${newEvent[0].startDate} - ${newEvent[0].endDate}</li>
+  <li>⏰ <b>Time:</b> ${newEvent[0].startTime} - ${newEvent[0].endTime}</li>
+  <li>📍 <b>Venue:</b> ${newEvent[0].venue}</li>
+</ul>
+<p>🎟️ <b>Spots are limited!</b> Be part of something exciting!</p>
+<p><a href="https://campusconnect-frontend-3crd.onrender.com/student/committee/${hostingCommitteesExists[0].committeeId}" style="font-size: 18px; color: #ff4500; text-decoration: none;"><b>👉 Click here to register NOW! 👈</b></a></p>
+<p>🚀🔥 See you there! 🔥🚀</p>
+`,
+			};
+
+			//@ts-ignore
+			const info = await transporter.sendMail(mailOptions);
 
 			const response: StandardResponse = {
 				message: "Event successfully created",

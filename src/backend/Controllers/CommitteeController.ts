@@ -1438,10 +1438,8 @@ const fetchPopularCommittees = async (req: Request, res: Response) => {
 	try {
 		const {
 			decodedToken,
-			tags,
 		}: {
 			decodedToken: decodedTokenPayload | undefined;
-			tags?: string[];
 		} = req.body;
 
 		if (!decodedToken) {
@@ -1463,14 +1461,10 @@ const fetchPopularCommittees = async (req: Request, res: Response) => {
 			return res.status(401).json(response);
 		}
 
-		if (!tags) {
-			const response: StandardResponse = {
-				message: "Give tags",
-				success: false,
-			};
+		const model = modelMap[decodedToken.accountType]
 
-			return res.status(401).json(response);
-		}
+		
+		const tags = (await model.findOne({email},{tags:1})).tags
 
 		const mlURL = process.env["CAMPUS_CONNECT_ML_URL"]!;
 
@@ -1482,9 +1476,18 @@ const fetchPopularCommittees = async (req: Request, res: Response) => {
 			body: JSON.stringify({ tags: tags }),
 		});
 
+		if(!resp.ok){
+			const response: StandardResponse = {
+				message: "Didnt get data from python server",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
 		const data = (await resp.json()) as {
 			committee_id: string;
-			comibined_score: number;
+			combined_score: number;
 		}[];
 
 		//TEST: Check if this works
@@ -1502,7 +1505,7 @@ const fetchPopularCommittees = async (req: Request, res: Response) => {
 		});
 
 		const scoreMap = new Map(
-			data.map((obj) => [obj.committee_id, obj.comibined_score]),
+			data.map((obj) => [obj.committee_id, obj.combined_score]),
 		);
 
 		const committees = await committeeModel.find({

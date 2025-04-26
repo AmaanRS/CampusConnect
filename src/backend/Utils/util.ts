@@ -17,6 +17,10 @@ import {
 	TeacherPosition,
 } from "../Types/ModelTypes";
 import { studentModel } from "../Models/Student";
+import nodemailer from "nodemailer";
+import dotenv from 'dotenv';
+
+dotenv.config()
 
 // Function for returning a random value from enum
 export function getRandomEnumValue<T extends { [key: string]: string | number }>(
@@ -373,6 +377,14 @@ const updateStudentInchargeOfCommittee = async ({
 	}
 };
 
+const transporter = nodemailer.createTransport({
+	service: "gmail",
+	auth: {
+		user: process.env["EMAIL_FROM"]!,
+		pass: process.env["EMAIL_APP_PASSWORD"]!,
+	},
+});
+
 const runTestServer = async () => {
 	console.log("Connecting to local test db");
 
@@ -394,4 +406,5 @@ export {
 	stopTestServer,
 	checkIfFacultyOrStudentInchargeOfCommitteeFunc,
 	updateStudentInchargeOfCommittee,
+	transporter,
 };
