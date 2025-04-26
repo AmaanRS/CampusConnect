@@ -3,3 +3,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.custom-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M6 9l6 6 6-6'></path></svg>")
+    no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.3em 1.3em;
+}
+
+.custom-select::-ms-expand {
+  display: none;
+}
+
+.bg-custom {
+  background: hsla(217, 92%, 80%, 1);
+
+  background: linear-gradient(
+    45deg,
+    rgba(157, 193, 251, 0.2) 38%,
+    rgba(112, 147, 245, 0.5) 78%
+  );
+
+  background: -moz-linear-gradient(
+    45deg,
+    rgb(157, 193, 251) 38%,
+    rgb(112, 147, 245) 78%
+  );
+
+  background: -webkit-linear-gradient(
+    45deg,
+    hsla(217, 92%, 80%, 0.6) 38%,
+    hsla(224, 87%, 70%, 0.7) 78%
+  );
+
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#9EC2FB", endColorstr="#7194F5", GradientType=1 );
+}
+
+/* input[type="text"]:focus {
+  box-shadow: none;
+} */

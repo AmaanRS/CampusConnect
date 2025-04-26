@@ -1,0 +1,688 @@
+import { Request, Response } from "express";
+import {
+	DataResponse,
+	decodedTokenPayload,
+	StandardResponse,
+	TokenResponse,
+} from "../Types/GeneralTypes";
+import { onlyHodEmailRegex, onlyTeacherEmailRegex } from "../Utils/regexUtils";
+import { runWithRetrySession } from "../Utils/util";
+import { userModel } from "../Models/User";
+import { teacherModel } from "../Models/Teacher";
+import {
+	AccountType,
+	Department,
+	ITeacher,
+	Tags,
+	TeacherPosition,
+} from "../Types/ModelTypes";
+import { createJwtToken } from "../Utils/jwtToken";
+
+// Creates teacher using user jwt token
+const createTeacher = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+			tags = [],
+		}: { decodedToken: decodedTokenPayload; tags?: Tags[] | [] } = req.body;
+
+		let department: Department | undefined = req.body.department;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		if (!tags || !Array.isArray(tags) || tags.length === 0) {
+			const response: StandardResponse = {
+				message: "Give tags as an non empty array",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		// If user is hod remove department given from user since it should already exist in user
+		if (onlyHodEmailRegex.test(email)) {
+			department = undefined;
+		}
+		// If the user is teacher and department is not given or department is not string
+		else if (onlyTeacherEmailRegex.test(email)) {
+			if (!department || typeof department !== "string") {
+				const response: StandardResponse = {
+					message: "Give department",
+					success: false,
+				};
+				return res.status(401).json(response);
+			}
+		}
+		// If the user is not teacher
+		else if (!onlyTeacherEmailRegex.test(email)) {
+			const response: StandardResponse = {
+				message:
+					"The email should be of hod or teacher to signup as a teacher",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const result = await runWithRetrySession(async (session) => {
+			// Get the user from db
+			const userFromDb = await userModel
+				.findOne({ email }, { __v: 0 })
+				.session(session)
+				.lean();
+
+			if (!userFromDb) {
+				const response: StandardResponse = {
+					message: "User is not signed up",
+					success: false,
+				};
+
+				return response;
+			}
+
+			// Passing old objectId ensures that objectid remains same
+			const userId = userFromDb._id;
+			const { ...user } = userFromDb;
+
+			const changedUser = await userModel.updateOne(
+				{ _id: userId },
+				{
+					isProfileComplete: true,
+				},
+				{ session },
+			);
+
+			if (!changedUser.acknowledged) {
+				const response: StandardResponse = {
+					message: "User not updated for isProfileCompleted",
+					success: false,
+				};
+
+				return response;
+			}
+
+			let newTeacherData = { ...user, tags };
+
+			//If department property does not exists on user in db then user is teacher else if department property exists then user is hod
+			if (!user.department) newTeacherData.department = department;
+
+			const newTeacher: ITeacher[] = await teacherModel.create(
+				[newTeacherData],
+				{
+					session,
+				},
+			);
+
+			if (!newTeacher || newTeacher.length === 0) {
+				const response: StandardResponse = {
+					message: "Could not create new teacher while creating teacher",
+					success: false,
+				};
+
+				return response;
+			}
+
+			//Create a jwt token
+			const isTokenCreated = createJwtToken(newTeacher[0]);
+
+			if (!isTokenCreated.success) {
+				const response: StandardResponse = {
+					message: "JWT token could not be created",
+					success: false,
+				};
+
+				return response;
+			}
+
+			if (isTokenCreated.success && "token" in isTokenCreated) {
+				let token: string = isTokenCreated.token;
+
+				const response: TokenResponse = {
+					message: "Teacher creation successfull",
+					success: true,
+					token: token,
+				};
+
+				return response;
+			}
+
+			const response: StandardResponse = {
+				message: "Token was created but could not be sent",
+				success: false,
+			};
+
+			return response;
+		});
+
+		return res.status(result.success ? 201 : 401).json(result);
+	} catch (e) {
+		console.log((e as Error).message);
+
+		const response: StandardResponse = {
+			message:
+				"There is some problem while creating the teacher's account" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+// Gets the teacher whose jwt token is given
+const getTeacher = async (req: Request, res: Response) => {
+	try {
+		const { decodedToken }: { decodedToken: decodedTokenPayload } = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const teacher: ITeacher | null = await teacherModel.findOne(
+			{ email },
+			{ password: 0 },
+		);
+
+		if (!teacher) {
+			const response: StandardResponse = {
+				message: "Could not find teacher",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Found teacher successfully",
+			success: true,
+			data: teacher,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching the teacher's account" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+//
+// position, isInChargeOfCommittees, isInTeamOfCommittees will be updated using create committee, delete committee and some other api's
+//
+
+// Use nanoid as isInChargeOfCommittees, isInTeamOfCommittees id since exposing mongodb objectid can raise security issues
+// Cannot update email or password through this function
+// Updates the teacher whose jwt token is given
+const updateTeacher = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+			department,
+		}: {
+			decodedToken: decodedTokenPayload;
+			department: Department;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		if (!department) {
+			const response: StandardResponse = {
+				message: "Give department",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const result = await runWithRetrySession(async (session) => {
+			//Get the teacher from db
+			const oldTeacher = await teacherModel
+				.findOne({ email }, { __v: 0 })
+				.session(session)
+				.lean();
+
+			if (!oldTeacher) {
+				const response: StandardResponse = {
+					message: "Could not find the teacher",
+					success: false,
+				};
+
+				return response;
+			}
+
+			// Delete the old one
+			const isOldTeacherDeleted = await teacherModel
+				.deleteOne({ email })
+				.session(session);
+
+			if (!isOldTeacherDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not delete the teacher while updating",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const dataForUpdatedTeacher = oldTeacher;
+
+			const updatedTeacher = await teacherModel.create(
+				[dataForUpdatedTeacher],
+				{ session },
+			);
+
+			if (!updatedTeacher || updatedTeacher.length === 0) {
+				const response: StandardResponse = {
+					message: "Could not update the teacher while updating",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const response: StandardResponse = {
+				message: "Updated teacher successfull",
+				success: true,
+			};
+
+			return response;
+		});
+
+		return res.status(result.success ? 201 : 401).json(result);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while updating the teacher's account" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+const deleteTeacher = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+			teacherEmail,
+		}: { decodedToken: decodedTokenPayload; teacherEmail: string | undefined } =
+			req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		if (!teacherEmail) {
+			const response: StandardResponse = {
+				message: "Give teacher email",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		// Make account inactive instead of deleting it
+		const result = await runWithRetrySession(async (session) => {
+			const user = await teacherModel
+				.findOne({ email: teacherEmail })
+				.session(session);
+
+			if (!user) {
+				const response: StandardResponse = {
+					message: "Could not find the teacher",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isUserFacultyIncharge = user.committeePositions?.some(
+				(committeePosition) => {
+					return (
+						committeePosition.position ===
+						TeacherPosition.FacultyIncharge
+					);
+				},
+			);
+
+			if (isUserFacultyIncharge) {
+				const response: StandardResponse = {
+					message:
+						"The user is a faculty incharge of the committee, please replace him from the faculty incharge position then delete him",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isTeacherDeleted = await teacherModel
+				.updateOne({ email: teacherEmail }, { isAccountActive: false })
+				.session(session);
+
+			if (!isTeacherDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not delete the teacher",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const isUserDeleted = await userModel
+				.updateOne({ email: teacherEmail }, { isAccountActive: false })
+				.session(session);
+
+			if (!isUserDeleted.acknowledged) {
+				const response: StandardResponse = {
+					message: "Could not delete the student",
+					success: false,
+				};
+
+				return response;
+			}
+
+			const response: StandardResponse = {
+				message: "Teacher deleted successfully",
+				success: true,
+			};
+
+			return response;
+		});
+
+		return res.status(result.success ? 201 : 401).json(result);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while deleting teachers's account" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+const getAllTeachers = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const isAdmin = decodedToken.accountType === AccountType.Admin;
+
+		const allTeachers = await teacherModel
+			.find({}, null, {
+				_skipInactiveTeachersHook: isAdmin,
+			})
+			.lean();
+
+		if (allTeachers.length === 0) {
+			const response: DataResponse = {
+				message: "There are no teachers in db",
+				success: true,
+				data: [],
+			};
+
+			return res.status(201).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Fetched all posts successfully",
+			success: true,
+			data: allTeachers,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all teachers" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+const getAllFacultysEmail = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const emails = await userModel
+			.find({ accType: AccountType.Teacher }, { email: 1, _id: 0 })
+			.lean();
+
+		if (!Array.isArray(emails) || emails.length === 0) {
+			const response: DataResponse = {
+				message: "No teacher emails found in db",
+				success: true,
+				data: [],
+			};
+
+			return res.status(201).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Emails of teachers found successfully",
+			success: true,
+			data: emails,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all email of teachers" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+const getAllTeacherData = async (req: Request, res: Response) => {
+	try {
+		const {
+			decodedToken,
+		}: {
+			decodedToken: decodedTokenPayload | undefined;
+		} = req.body;
+
+		if (!decodedToken) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+			return res.status(401).json(response);
+		}
+
+		const email = decodedToken.email;
+
+		if (!email) {
+			const response: StandardResponse = {
+				message: "User is not authenticated",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const teacherData = await teacherModel
+			.findOne({ email }, { password: 0 })
+			.populate([
+				{
+					path: "committeePositions",
+					populate: [
+						{
+							path: "committeeObjId",
+							populate: [
+								{
+									path: "followers.userId",
+									select: "-password",
+								},
+								{
+									path: "facultyIncharge",
+									select: "-password",
+								},
+							],
+						},
+					],
+				},
+				{
+					path: "followingCommittees",
+				},
+			]);
+
+		if (!teacherData) {
+			const response: StandardResponse = {
+				message: "Teacher not found",
+				success: false,
+			};
+
+			return res.status(401).json(response);
+		}
+
+		const response: DataResponse = {
+			message: "Teacher found successfully",
+			success: true,
+			data: teacherData,
+		};
+
+		return res.status(201).json(response);
+	} catch (e) {
+		console.log((e as Error).message);
+		const response: StandardResponse = {
+			message:
+				"There is some problem while fetching all the data of teacher" +
+				(e as Error).message,
+			success: false,
+		};
+
+		return res.status(401).json(response);
+	}
+};
+
+export {
+	createTeacher,
+	getTeacher,
+	updateTeacher,
+	deleteTeacher,
+	getAllTeachers,
+	getAllFacultysEmail,
+	getAllTeacherData,
+};

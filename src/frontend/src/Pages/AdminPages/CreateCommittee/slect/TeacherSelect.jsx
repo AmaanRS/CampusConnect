@@ -1,0 +1,59 @@
+import React, { useEffect, useState } from "react";
+import Select from "react-select";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../../../../utils/Axios/AxiosInstance";
+
+// Function to fetch data
+const fetchData = async () => {
+  const response = await axiosInstance.post("/teacher/getAllFacultysEmail", {});
+  return response.data;
+};
+
+export default function TeacherSelect({
+  handleTeacherEmail = "",
+  defaultValue = "",
+}) {
+  const [options, setOptions] = useState([]);
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["teacherEmailList"],
+    queryFn: fetchData,
+  });
+
+  useEffect(() => {
+    if (data?.data) {
+      const temp = data?.data?.map((student) => ({
+        value: student?.email,
+        label: student?.email,
+      }));
+      setOptions(temp);
+    }
+  }, [data]);
+
+  if (isError) return <p className="text-red-500">Error: {error?.message}</p>;
+
+  return (
+    <Select
+      placeholder="Select Teacher Incharge"
+      styles={{
+        input: (base) => ({
+          ...base,
+          "input:focus": {
+            boxShadow: "none",
+          },
+          cursor: "text",
+        }),
+        valueContainer: (base) => ({
+          ...base,
+          padding: "8px",
+        }),
+      }}
+      isLoading={isLoading}
+      defaultValue={defaultValue}
+      isClearable={true}
+      isSearchable={true}
+      options={options}
+      onChange={handleTeacherEmail}
+    />
+  );
+}

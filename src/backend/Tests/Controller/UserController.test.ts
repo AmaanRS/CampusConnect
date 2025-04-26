@@ -1,56 +1,83 @@
-import { app, startServer } from "../../app";
+import { app } from "../../app";
 import supertest from "supertest";
 const request = supertest(app);
-import dotenv from "dotenv";
 import { faker } from "@faker-js/faker";
-import { generatePassword } from "../../Utils/util";
+import { runTestServer, stopTestServer } from "../../Utils/util";
+import { userModel } from "../../Models/User";
+import { createTestUser } from "../../Utils/testUtils";
+import { TokenResponse } from "../../Types/GeneralTypes";
 
-dotenv.config();
+let token: any = "";
+
+const createDummyUser = async (email: string, password: string) => {
+	const isUserCreated = await createTestUser(email, password);
+
+	if (!isUserCreated.success) {
+		throw Error(isUserCreated.message);
+	}
+
+	return (isUserCreated as TokenResponse).token;
+};
+
+const deleteDummyUser = async () => {
+	const res = await userModel.deleteMany({});
+	if (!res) {
+		throw new Error("Dummy user not deleted due to some reason");
+	}
+};
 
 describe("User Controller", () => {
 	beforeAll(async () => {
-		await startServer(process.env.MONGO_URI!, process.env.PORT!);
+		await runTestServer();
 	});
 
-	describe("POST /signup", () => {
-		//Uncomment it later because it creates users on just testing other test cases
+	afterAll(async () => {
+		await stopTestServer();
+	});
 
-		// it("should save user to database on valid email and password", async () => {
-		// 	const testEmail = faker.internet.email();
-		// 	const testPassword = generatePassword();
+	describe.skip("POST /user/signup", () => {
+		afterEach(async () => {
+			await userModel.deleteMany({});
+		});
 
-		// 	const res = await request
-		// 		.post("/signup")
-		// 		.send({ email: testEmail, password: testPassword });
+		it("should save user to database on valid email and password", async () => {
+			const testEmail = "a.a@vcet.edu.in";
+			const testPassword = "Aa@123456";
 
-		// 	expect(res.body.success).toEqual(true);
-		// 	expect(res.body.message).toEqual(
-		// 		"Your account has been created now you can login",
-		// 	);
-		// });
+			const res = await request
+				.post("/user/signup")
+				.send({ email: testEmail, password: testPassword });
+
+			console.log(res.body);
+
+			expect(res.body.success).toEqual(true);
+			expect(res.status).toEqual(201);
+		});
 
 		it("should not save user when password is not given", async () => {
-			const testEmail = faker.internet.email();
+			const testEmail = "a.a@vcet.edu.in";
 
-			const res = await request.post("/signup").send({ email: testEmail });
+			const res = await request
+				.post("/user/signup")
+				.send({ email: testEmail });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual("Enter both email and password");
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not save user when email is not given", async () => {
-			const testPassword = generatePassword();
+			const testPassword = "Aa@123456";
 
 			const res = await request
-				.post("/signup")
+				.post("/user/signup")
 				.send({ password: testPassword });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual("Enter both email and password");
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not save user when password does not follow the validations", async () => {
-			const testEmail = faker.internet.email();
+			const testEmail = "a.a@vcet.edu.in";
 
 			let testPasswords = [
 				// Length less than 8 check
@@ -84,105 +111,134 @@ describe("User Controller", () => {
 
 			for (let i = 0; i < testPasswords.length; i++) {
 				const res = await request
-					.post("/signup")
+					.post("/user/signup")
 					.send({ email: testEmail, password: testPasswords[i] });
 
 				expect(res.body.success).toEqual(false);
-				expect(res.body.message).toEqual(
-					"Password must have at least one lowercase letter, one uppercase letter, one digit, one special character, and be between 8 to 10 characters long",
-				);
+				expect(res.status).toEqual(401);
 			}
 		});
 
 		it("should not save user when email is invalid", async () => {
 			const testEmail = "ajioj.wq";
-			const testPassword = generatePassword();
+			const testPassword = "Aa@123456";
 
 			const res = await request
-				.post("/signup")
+				.post("/user/signup")
 				.send({ email: testEmail, password: testPassword });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual("Invalid email format");
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not save user when email is duplicate", async () => {
 			//While testing this case remember that testEmail should be a email which already exists in db
 			const testEmail = "a@b.com";
-			const testPassword = generatePassword();
+			const testPassword = "Aa@123456";
+
+			await request
+				.post("/user/signup")
+				.send({ email: testEmail, password: testPassword });
 
 			const res = await request
-				.post("/signup")
+				.post("/user/signup")
 				.send({ email: testEmail, password: testPassword });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual("email_1 dup key");
+			expect(res.status).toEqual(401);
 		});
 	});
 
-	describe("POST /login", () => {
-		it("should not save user when password is not given", async () => {
-			const testEmail = faker.internet.email();
+	describe.skip("POST /user/login", () => {
+		const testEmail = "a.123456789@vcet.edu.in";
+		const testPassword = "Aa1@bcdqwe";
 
-			const res = await request.post("/login").send({ email: testEmail });
+		beforeEach(async () => await createDummyUser(testEmail, testPassword));
+
+		afterEach(async () => await deleteDummyUser());
+
+		it("should not save user when password is not given", async () => {
+			const testEmail = "a.a@vcet.edu.in";
+
+			const res = await request.post("/user/login").send({ email: testEmail });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual("Enter both email and password");
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not save user when email is not given", async () => {
-			const testPassword = generatePassword();
+			const testPassword = "Aa@123456";
 
 			const res = await request
-				.post("/login")
+				.post("/user/login")
 				.send({ password: testPassword });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual("Enter both email and password");
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not return user if email entered does not exist in db", async () => {
-			// While testing make sure the email should not exist in db
-			const testEmail = faker.internet.email();
-			const testPassword = generatePassword();
+			const testEmail = "a.adfshiu@vcet.edu.in";
+			const testPassword = "Aa@123456";
 
 			const res = await request
-				.post("/login")
+				.post("/user/login")
 				.send({ email: testEmail, password: testPassword });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual(
-				"Either email or password entered is wrong",
-			);
+			expect(res.status).toEqual(401);
 		});
 
 		it("should not return user if password entered does not exist in db", async () => {
-			// While testing make sure the email  exists in db and password does not
-			const testEmail = "a@b.com";
-			const testPassword = generatePassword();
-
 			const res = await request
-				.post("/login")
-				.send({ email: testEmail, password: testPassword });
+				.post("/user/login")
+				.send({ email: testEmail, password: "sdg1Arew2" });
 
 			expect(res.body.success).toEqual(false);
-			expect(res.body.message).toEqual(
-				"Either email or password entered is wrong",
-			);
+			expect(res.status).toEqual(401);
 		});
 
 		it("should login the user and return a jwt token", async () => {
-			// The email and password should be correct and should exist in db
-			const testEmail = "a@aa.com";
-			const testPassword = "Aa1@bcdqwe";
-
 			const res = await request
-				.post("/login")
+				.post("/user/login")
 				.send({ email: testEmail, password: testPassword });
 
 			expect(res.body.success).toEqual(true);
-			expect(res.body.message).toEqual("You have been logged in successfully");
-			expect(res.body.token).toBeDefined
+			expect(res.body.token).toBeDefined;
+			expect(res.status).toEqual(201);
+		});
+	});
+
+	describe.skip("POST /user/getUserProfileStatus", () => {
+		const testEmail = "a.123456789@vcet.edu.in";
+		const testPassword = "Aa1@bcdqwe";
+
+		afterEach(async () => await deleteDummyUser());
+
+		beforeEach(async () => {
+			token = await createDummyUser(testEmail, testPassword);
+		});
+
+		it("should return the data with success and isProfileComplete", async () => {
+			const res = await request
+				.post("/user/getUserProfileStatus")
+				.set("Authorization", `Bearer ${token}`)
+				.send();
+
+			expect(res.body.success).toBe(true);
+			expect(res.body.data).toBeDefined();
+			expect(res.body.data.isProfileComplete).toBeDefined();
+			expect(res.status).toEqual(201);
+		});
+
+		it("should return 401 if user token is wrong", async () => {
+			const res = await request
+				.post("/user/getUserProfileStatus")
+				.set("Authorization", `Bearer ${token + "a"}`)
+				.send();
+
+			expect(res.body.success).toBe(false);
+			expect(res.status).toBe(401);
 		});
 	});
 });

@@ -1,0 +1,34 @@
+import React from "react";
+import { Avatar } from "flowbite-react";
+
+export default function CommiteeSidebarMemberList({
+  facultyTeam = [],
+  members = [],
+}) {
+  return (
+    <div className="px-4 mb-4">
+      <p className="text-sm font-medium text-slate-700  mb-2">Faculty</p>
+      <div>
+        {facultyTeam.map((member) => {
+          return <MemberList key={member?.email} value={member?.email} />;
+        })}
+      </div>
+
+      <p className="text-sm font-medium text-slate-700  mb-2">Students</p>
+      <div>
+        {members.map((member) => {
+          return <MemberList key={member?.email} value={member?.email} />;
+        })}
+      </div>
+    </div>
+  );
+}
+
+function MemberList({ value }) {
+  return (
+    <div className="flex py-1 px-1 rounded-lg transition-colors duration-200 my-1 items-center hover:bg-slate-200">
+      <Avatar rounded size="xs" />
+      <div className="text-slate-700 text-xs ml-2 font-medium">{value}</div>
+    </div>
+  );
+}
